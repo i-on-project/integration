@@ -2,5 +2,5 @@
 # Each line is a file pattern followed by one or more owners.
 
 # Default owners for all files in the repo
-*	@jtrindade
-*	@pmhsfelix
+*	@jtrindade @pmhsfelix
+
