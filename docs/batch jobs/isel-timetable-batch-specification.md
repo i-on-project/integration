@@ -2,7 +2,7 @@
 
 ## Overview
 
-This documents aims to specify the process of extracting information from the timetable document published by ISEL in the beggining of each semester. The extraction is a batch job developed using [Spring Batch](https://spring.io/projects/spring-batch) - a framework to build and run batch applications. For more information on how the isel timetable extraction batch job uses the components of Spring Batch, refer to the [batch job architecture summary]()
+This documents aims to specify the process of extracting information from the timetable document published by ISEL in the beggining of each semester. For more information on how the isel timetable extraction batch job uses the components of Spring Batch, refer to the [batch job architecture summary]()
 
 ## Extractable information
 
