@@ -6,7 +6,7 @@ This documents aims to specify the process of extracting information from the ti
 
 ## Extractable information
 
-From the timetable document there is a wide variety of information that can be extracted about school activities and organization, including course offer and the teaching body of the course. We divide the information according to its source, as it is found on the page header or on the tables in the center and footer of the page. This categorization is relevant in the context of the batch job, because the library used to parse the section of the page that contains tabular data (tabula) is not the same that is used to parse the headers (iText) and so these two segments of the job are independent.
+From the timetable document there is a wide variety of information that can be extracted about school activities and organization, including course offer and the teaching staff of the course. We divide the information according to its source, as it is found on the page header or on the tables in the center and footer of the page. This categorization is relevant in the context of the batch job, because the library used to parse the section of the page that contains tabular data (tabula) is not the same that is used to parse the headers (iText) and so these two segments of the job are independent.
 
 Following is a summary of the information that can be extracted from the timetable document according to what section of the page it is located in, accompanied with its type and an example.
 
