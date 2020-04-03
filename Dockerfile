@@ -11,6 +11,9 @@ COPY . .
 RUN ./gradlew extractUberJar --no-daemon --stacktrace
 
 FROM openjdk:${RUN_TAG} AS run-env
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
+
 ARG EXTRACT_DEPENDENCY_PATH=/src/build/dependency
 
 # Copy dependencies in multi layers
