@@ -31,7 +31,7 @@ The following diagram shows the sequence of actions necessary to complete the ti
 ![timetable-extraction-flow](isel-timetable-extraction-flow.png)
 
 ## Job Architecture
-With Spring Batch we can configure a Job as a sequence of ordered steps. A step can be defined as a TaskletStep, which can contain an ordered sequence of tasklets (a more flexible piece with no necessity of read/write logic) or a step based on chunks wich will read, process and write a fixed number of items with associated ItemReader, ItemProcessor and ItemWriter definitions.
+With Spring Batch we can configure a Job as a sequence of ordered steps. A step can consist of a tasklet (a more flexible piece with no necessity of read/write logic) or a step based on chunks wich will read, process and write a fixed number of items with associated ItemReader, ItemProcessor and ItemWriter definitions.
 
 One of the limitations of tasklets is that they don't enable passing state to future tasklets whithin the step in the seamless way that the chunk-based definition of steps can. In order to do this, StepExecutionContext has to be used, which has limitations in terms of the amount of data it suports (65kb).
 
