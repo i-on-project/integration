@@ -24,7 +24,12 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
-	testImplementation("org.springframework.batch:spring-batch-test")
+}
+
+tasks.register<Copy>("extractUberJar") {
+	dependsOn("build")
+	from(zipTree("$buildDir/libs/${rootProject.name}-$version.jar"))
+	into("$buildDir/dependency")
 }
 
 tasks.withType<Test> {
