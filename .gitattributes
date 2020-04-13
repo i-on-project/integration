@@ -1,0 +1,14 @@
+# Gradle
+gradlew           text eol=lf
+gradlew.bat       text eol=crlf
+
+# Docker
+Dockerfile        text
+
+# Git config
+.gitattributes text=auto
+.gitignore text=auto
+
+# Exclude files from exporting
+.gitattributes  export-ignore
+.gitignore      export-ignore
