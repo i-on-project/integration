@@ -1,0 +1,38 @@
+name: I-On Integration Integration
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+
+env:
+  IMAGE_NAME: i-on-integration
+
+jobs:
+  push_integration:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.ref, 'heads')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build image
+        id: integration_build_image
+        run: docker build . --tag image
+
+      - name: Log into registry
+        id: integration_login_registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        id: integration_push_image
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+          echo IMAGE_ID=$IMAGE_ID
+
+          docker tag image $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
