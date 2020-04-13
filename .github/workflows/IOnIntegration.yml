@@ -1,0 +1,94 @@
+name: I-On Integration
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+    tags:
+      - v*
+
+env:
+  IMAGE_NAME: i-on-integration
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        id: build_image
+        run: docker build . --file Dockerfile
+
+  push_integration:
+    needs: build
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == *'heads'*
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build image
+        id: integration_build_image
+        run: docker build . --file Dockerfile --tag image
+
+      - name: Log into registry
+        id: integration_login_registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        id: integration_push_image
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+          echo IMAGE_ID=$IMAGE_ID
+
+          docker tag image $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
+
+  push_production:
+    needs: build
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == *'tags'*
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build image
+        id: production_build_image
+        run: docker build . --file Dockerfile --tag image
+
+      - name: Log into registry
+        id: production_login_registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        id: production_push_image
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          docker tag image $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
