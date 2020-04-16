@@ -18,3 +18,4 @@ jobs:
       - name: Build Docker image
         id: build_image
         run: docker build .
+        
