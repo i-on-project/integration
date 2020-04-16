@@ -29,6 +29,8 @@ dependencies {
 
 tasks.register<Copy>("extractUberJar") {
     dependsOn("build")
+    dependsOn("test")
+    dependsOn("ktlintCheck")
     from(zipTree("$buildDir/libs/${rootProject.name}-$version.jar"))
     into("$buildDir/dependency")
 }
