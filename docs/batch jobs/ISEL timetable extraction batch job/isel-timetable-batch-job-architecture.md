@@ -27,27 +27,32 @@ Following is a summary of the concepts that are relevant in order to understand 
 
 
 ## Representation of the timetable extraction as a Finite State Machine
-The following diagram shows the sequence of actions necessary to complete the timetable extraction process. This is meant as a first approach to what are possible states within the process and their sequence. Note that there is no direct correspondence between each state of the finite state machine the steps within the job. This representation also omits that after the source file (ISEL timetable PDF) is successfully fetched and identified as a new document with a valid format, the extraction itself can be divided in two parts (tabular and non-tabular information) and parallelized.
+The following diagram shows the sequence of actions necessary to complete the timetable extraction process. This is meant as a first approach to what are possible states within the process and their sequence. Note that there is no direct correspondence between each state of the finite state machine the steps within the job.
 ![timetable-extraction-flow](isel-timetable-extraction-flow.png)
 
 ## Job Architecture
-With Spring Batch we can configure a Job as a sequence of ordered steps. A step can consist of a tasklet (a more flexible piece with no necessity of read/write logic) or a step based on chunks wich will read, process and write a fixed number of items with associated ItemReader, ItemProcessor and ItemWriter definitions.
+With Spring Batch we can configure a Job as a sequence of ordered steps. A step can consist of a tasklet (a more flexible piece with no necessity of configuring readers and writers) or a step based on chunks wich will read and process a fixed number of items and write once. It has associated mandatory ItemReader and ItemWriter definitions and an optional ItemProcessor.
 
-One of the limitations of tasklets is that they don't enable passing state to future tasklets whithin the step in the seamless way that the chunk-based definition of steps can. In order to do this, StepExecutionContext has to be used, which has limitations in terms of the amount of data it suports (65kb).
+The following diagram presents the sequence of steps included in the ISEL timetable extraction job:
 
-Passing state between steps requires the promotion of a key-value pair from the StepExecution Context to the Job ExecutionContext. ExecutionContext is designed to share small quantities of data between steps and not to act as the main channel of information flow across a batch application.
+![dependence](isel-timetable-extraction-architecture.png)
 
-The following diagram presents the sequence of job actions and their dependencies. Actions are classified according to type : Read, Process or Write.
+Step 1 makes sure that that the timetable document is reachable in the URL specified in the configuration document (for more information on the document, visit [this]() page), and that it wasn't parsed in the past. The second step verifies that the format of the file is as expected. This is relevant since the extraction process strongly depends on it. Next, step 3 maps the verified object to a business object, more suited to the upload. Step 4 is comprised of two tasklets that are executed in parallel, which upload timetable and faculty information to I-On Core. Step 5 updates the database with the hash of the parsed file and notifies watchers of success.
 
-![dependence](isel-timetable-extraction-action-dependencies.png)
+### Step 1 - Download and Compare
+Given that the timetable extraction job is dependent on information that is not controlled by the I-On Integration project, namely the ISEL timetable PDF, we need to make sure the document is in the designated location. Also, we don't want to send information that is already present in I-On Core. This step downloads the pdf document, (most likely from ISEL's website, but the location is configurable through the configuration document) and writes it to the local filesystem. It calculates a hash of the file. Then it reads the value of the hash of the document used in the last time the job ran successfully. Assuming a non-broken cryptographic hash and no collisions, if the two hashes are the same, then we know that the document content is certainly the same. In that case, the job does not proceed, as the extracted information is already present in I-On Core. On the other hand, if the saved hash is different from the one just calculated, then the file contents have changed since the last run of the job. Because the integration project doesn't save state, this is a fairly inexpensive way of avoiding processing repeated information. It is suited to this document in particular, since it is not expected that the document should change frequently. It is normally posted in the start of the semester. There may be an isolated change in the following weeks, but then the document persists until the end of the semester.
 
-In this job there is a clear read, process, write sequence. There is no need to read and transform data after it has been written. There is only one read-process-write cycle. The timetable extraction requires reading from one source, chaining processors, processing in different ways based on the type received and writing to more than one location different routes of the i-on core http API. For these reasons, a suitable solution is to define a single-step job.
+### Step 2 - Verify format
 
-Processors can be chained using CompositeItemProcessor.
 
-Different processors for the same input data can be executed based on developer defined criteria using BackToBackPatternClassifier.
+### Step 3 - Mapping
 
-In order to write to multiple locations, we can use ClassifierCompositeItemWriter.
+
+### Step 4 - Upload to I-On Core
+
+
+### Step 5 - PostUpload
+
 
 ## Retry capabilities
 To be able to use the retry mechanism embedded in Spring Batch, all that need to be done is configuring a step using StepBuilderFactory, call the faultTolerant method of [SimpleStepBuilder](https://docs.spring.io/spring-batch/docs/current/api/org/springframework/batch/core/step/builder/SimpleStepBuilder.html) and specify the retry limit and the Exceptions upon which retry is attempted.
