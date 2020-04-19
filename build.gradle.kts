@@ -15,6 +15,7 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 val imageId = "docker.pkg.github.com/i-on-project/integration/i-on-integration"
 val onlyBuild: String = "false"
 val githubRef: String = ""
+val dockerTag: String = "i-on-integration-image"
 
 repositories {
     mavenCentral()
@@ -43,7 +44,7 @@ tasks.register<Exec>("buildDockerImage") {
     if ("$onlyBuild".toBoolean()) {
         commandLine("docker", "build", ".")
     } else {
-        commandLine("docker", "build", ".", "--tag", "image")
+        commandLine("docker", "build", ".", "--tag", "$dockerTag")
     }
 }
 
@@ -60,7 +61,7 @@ tasks.register<Exec>("tagPushDockerImage") {
         version = standardOutput.toString()
     }
 
-    commandLine("docker", "tag", "image", "$imageId:$version")
+    commandLine("docker", "tag", "$dockerTag", "$imageId:$version")
     commandLine("docker", "push", "$imageId:$version")
 }
 
