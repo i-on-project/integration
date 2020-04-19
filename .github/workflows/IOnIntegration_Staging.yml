@@ -29,11 +29,5 @@ jobs:
 
       - name: Push image
         id: integration_push_image
-        run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
-
-          echo IMAGE_ID=$IMAGE_ID
-
-          docker tag image $IMAGE_ID:latest
-          docker push $IMAGE_ID:latest
+        run: ./gradlew tagPushDockerImage
           

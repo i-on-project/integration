@@ -14,6 +14,7 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 val imageId = "docker.pkg.github.com/i-on-project/integration/i-on-integration"
 val onlyBuild: String = "false"
+val githubRef: String = ""
 
 repositories {
     mavenCentral()
@@ -30,20 +31,37 @@ dependencies {
     }
 }
 
-tasks.register<Exec>("buildDockerImage") {
-    if("$onlyBuild".toBoolean()) {
-        commandLine("docker", "build", ".")
-    } else {
-        commandLine("docker", "build", ".", "--tag", "image")
-    }
-}
-
 tasks.register<Copy>("extractUberJar") {
     dependsOn("build")
     dependsOn("test")
     dependsOn("ktlintCheck")
     from(zipTree("$buildDir/libs/${rootProject.name}-$version.jar"))
     into("$buildDir/dependency")
+}
+
+tasks.register<Exec>("buildDockerImage") {
+    if ("$onlyBuild".toBoolean()) {
+        commandLine("docker", "build", ".")
+    } else {
+        commandLine("docker", "build", ".", "--tag", "image")
+    }
+}
+
+tasks.register<Exec>("tagPushDockerImage") {
+    var version: String
+
+    if ("$githubRef".isBlank()) {
+        version = "latest"
+    } else {
+        commandLine("echo", "\"$githubRef\"", "|", "sed -e 's,.*/\\(.*\\),\\1,'")
+        version = standardOutput.toString()
+
+        commandLine("echo", "$version", "|", "sed -e 's/^v//'")
+        version = standardOutput.toString()
+    }
+
+    commandLine("docker", "tag", "image", "$imageId:$version")
+    commandLine("docker", "push", "$imageId:$version")
 }
 
 tasks.withType<Test> {
