@@ -34,7 +34,7 @@ The following diagram shows the sequence of actions necessary to complete the ti
 ![timetable-extraction-flow](isel-timetable-extraction-flow.png)
 
 ## Job Architecture
-With Spring Batch we can configure a Job as a sequence of ordered steps. A step can consist of a tasklet (a more flexible piece with no necessity of configuring readers and writers) or a step based on chunks wich will read and process a fixed number of items (a chunk) and write that chunk once. It has associated mandatory ItemReader and ItemWriter definitions and an optional ItemProcessor.
+With Spring Batch we can configure a Job as a sequence of ordered steps. A step can consist of a tasklet (a more flexible piece with no necessity of configuring readers and writers) or a step based on chunks wich will read and process a fixed number of items (a chunk) and write it once. It has associated mandatory ItemReader and ItemWriter definitions and an optional ItemProcessor.
 
 The following diagram presents the sequence of steps included in the ISEL timetable extraction job:
 
@@ -67,10 +67,14 @@ Maintaining state only in memory is sufficient as we don't need the data availab
 The writer of the present step is a no-op if the format of the source document is correct. But if the format is not, then all configurated alerts are generated and the job is stopped.
 
 ### Step 3 - Mapping
-From the data generated in step 2, step 3 builds business objects that have type compatibility with what will be sent to I-On Core. Then it makes this information visible to a reference that is shared with step 4. For this purpose, it was declared in the configuration class and injected to both this tasklet and the ones in step 4.
+From the data generated in step 2, step 3 builds business objects that have type compatibility with what will be sent to I-On Core. Then it makes this information visible to a reference that is shared with step 4. It was declared in the configuration class and injected to both this tasklet and the ones in step 4.
 
 ### Step 4 - Upload to I-On Core
 This step is comprised of two tasklets that can run in parallel. One of them uploads timetable information, one *class-section set* at a time to I-On core, and the other uploads faculty with the same granularity.
+
+The integration module holds no state accross multiple executions of the same job. If data does not reach the I-On Core system for some reason, it needs to be calculated again. With this in mind, if some HTTP request fails, it is retried a number of times. This value can be configured via the configuration file. This prevents any additional fault in data integrity in I-On Core.
+
+If by chance the I-On Core system is down at the time of upload, the job fails after retrying a specified number of times.
 
 ### Step 5 - PostUpload
 As the job approaches termination, after the information was successfully extracted and uploaded, we register in a database the hash of the succesfully parsed document. This is done in order to prevent wasting time, memory and processing capabilities by running the job again with the same timetable document as input.
