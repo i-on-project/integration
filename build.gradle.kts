@@ -12,6 +12,9 @@ group = "org.ionproject"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
+val imageId = "docker.pkg.github.com/i-on-project/integration/i-on-integration"
+val onlyBuild: String = "false"
+
 repositories {
     mavenCentral()
 }
@@ -24,6 +27,14 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    }
+}
+
+tasks.register<Exec>("buildDockerImage") {
+    if("$onlyBuild".toBoolean()) {
+        commandLine("docker", "build", ".")
+    } else {
+        commandLine("docker", "build", ".", "--tag", "image")
     }
 }
 

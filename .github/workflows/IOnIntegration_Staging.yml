@@ -21,7 +21,7 @@ jobs:
 
       - name: Build image
         id: integration_build_image
-        run: docker build . --tag image
+        run: ./gradlew buildDockerImage
 
       - name: Log into registry
         id: integration_login_registry
