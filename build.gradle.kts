@@ -13,9 +13,7 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 val imageId = "docker.pkg.github.com/i-on-project/integration/i-on-integration"
-val onlyBuild: String = "false"
-val githubRef: String = ""
-val dockerTag: String = "i-on-integration-image"
+val tempDockerTag: String = "i-on-integration-image"
 
 repositories {
     mavenCentral()
@@ -41,28 +39,26 @@ tasks.register<Copy>("extractUberJar") {
 }
 
 tasks.register<Exec>("buildDockerImage") {
-    if ("$onlyBuild".toBoolean()) {
+    if (project.properties["onlyBuild"].toString().toBoolean()) {
         commandLine("docker", "build", ".")
     } else {
-        commandLine("docker", "build", ".", "--tag", "$dockerTag")
+        commandLine("docker", "build", ".", "--tag", "$tempDockerTag")
     }
 }
 
-tasks.register<Exec>("tagPushDockerImage") {
-    var version: String
+tasks.register("tagPushDockerImage") {
+    val githubRef = project.properties["githubRef"]
+    val finalDockerTag = githubRef?.toString()?.removePrefix("refs/heads/v") ?: "latest"
 
-    if ("$githubRef".isBlank()) {
-        version = "latest"
-    } else {
-        commandLine("echo", "\"$githubRef\"", "|", "sed -e 's,.*/\\(.*\\),\\1,'")
-        version = standardOutput.toString()
+    doLast {
 
-        commandLine("echo", "$version", "|", "sed -e 's/^v//'")
-        version = standardOutput.toString()
+        exec {
+            commandLine("docker", "tag", "$tempDockerTag", "$imageId:$finalDockerTag")
+        }
+        exec {
+            commandLine("docker", "push", "$imageId:$finalDockerTag")
+        }
     }
-
-    commandLine("docker", "tag", "$dockerTag", "$imageId:$version")
-    commandLine("docker", "push", "$imageId:$version")
 }
 
 tasks.withType<Test> {
