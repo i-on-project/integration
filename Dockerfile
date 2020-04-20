@@ -7,7 +7,7 @@ WORKDIR /src
 # Copy project .dockerignore prevents copy of unnecessary files
 COPY . .
 
-# Gradle task build and extract dependencies with daemon disabled
+# Gradle task to build, test, run lint and extract dependencies with daemon disabled
 RUN ./gradlew extractUberJar --no-daemon --stacktrace
 
 FROM openjdk:${RUN_TAG} AS run-env

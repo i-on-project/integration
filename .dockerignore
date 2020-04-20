@@ -2,3 +2,5 @@
 .git
 .gitignore
 .github/*
+.gradle/*
+build/
