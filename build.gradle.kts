@@ -48,7 +48,7 @@ tasks.register<Exec>("buildDockerImage") {
 
 tasks.register("tagPushDockerImage") {
     val githubRef = project.properties["githubRef"]
-    val finalDockerTag = githubRef?.toString()?.removePrefix("refs/heads/v") ?: "latest"
+    val finalDockerTag = githubRef?.toString()?.removePrefix("refs/tags/v") ?: "latest"
 
     doLast {
 
