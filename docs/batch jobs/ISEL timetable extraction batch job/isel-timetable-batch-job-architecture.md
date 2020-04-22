@@ -7,7 +7,7 @@ There is a small number of concepts that need to be introduced in advance relati
 
 ## Spring Batch Framework Architecture
 
-Spring Batch is a framework used to abstract the common pieces used in batch applications, maximizing code reuse and minizing the amount of boilerplate code written.
+Spring Batch is a framework used to abstract the common building blocks of batch applications.
 
 In order to acchieve this, it has three layers - application, core and infrastructure. Wrapping the remaining two is the application layer, which consists of custom code and configuration used to build new batch processes. It is at this level that developers can intervene to build new batch jobs.
 
@@ -22,7 +22,7 @@ The Spring Batch Documentation has a section on [Domain Specific Language](https
 Following is a summary of the concepts that are relevant in order to understand this document:
 
 * `Job` - A process that executes from start to finish without interruption or interaction, consisting of one or more `steps`. It can have associated retry logic;
-* `Step` - Independent and sequential phase of a batch job;
+* `Step` - Independent phase of a batch job;
 * `Chunk` - Fixed amount of items;
 * `ItemReader` - Abstraction that represents `Step` input, per item;
 * `ItemProcessor` - Abstraction that represents `Step` processing logic, associated to the domain of the application
@@ -53,7 +53,15 @@ The final step updates the database with the hash of the parsed file and notifie
 Following is a more detailed explanation of what each step does, how it is done, and why.
 
 ### Step 1 - Download and Compare
-Given that the timetable extraction job is dependent on information that is not controlled by the I-On Integration project, namely the ISEL timetable PDF, we need to make sure the document is in the designated location. Also, we don't want to send information that is already present in I-On Core. This step downloads the pdf document, (most likely from ISEL's website, but the location is configurable through the configuration document) and writes it to the local filesystem. It calculates a hash of the file. Then it reads the value of the hash of the document used in the last time the job ran successfully. Assuming a non-broken cryptographic hash and no collisions, if the two hashes are the same, then we know that the document content is certainly the same. In that case, the job does not proceed, as the extracted information is already present in I-On Core. On the other hand, if the saved hash is different from the one just calculated, then the file contents have changed since the last run of the job. Because the integration project doesn't save state, this is a fairly inexpensive way of avoiding processing repeated information. It is suited to this document in particular, since it is not expected that it should change frequently. It is normally posted in the start of the semester. There may be an isolated change in the following weeks, but then the document persists until the end of the semester.
+Given that the timetable extraction job is dependent on information that is not controlled by the I-On Integration project, namely the ISEL timetable PDF, we need to make sure the document is in the designated location. Also, we don't want to send information that is already present in I-On Core.
+
+This step downloads the pdf document, (most likely from ISEL's website, but the location is configurable through the configuration document) and writes it to the local filesystem.
+
+It calculates a hash of the file. Then it reads from a database the value of the hash of the document used in the last time the job ran successfully. Assuming a non-broken cryptographic hash and no collisions, if the two hashes are the same, then we know that the document content is certainly the same. In that case, the job does not proceed, as the extracted information is already present in I-On Core.
+
+On the other hand, if the saved hash is different from the one just calculated, then the file contents have changed since the last run of the job.
+
+Because the integration project doesn't save state, this is a fairly inexpensive way of avoiding processing repeated information. It is suited to this document in particular, since it is not expected that it should change frequently. It is normally posted in the start of the semester. There may be an isolated change in the following weeks, but then the document persists until the end of the semester.
 
 ### Step 2 - Verify format
 The second step is configured with a reader, processor and writer. The chunk size is equal to one, as an input item contains information for all the document.
