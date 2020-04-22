@@ -9,7 +9,7 @@ import org.junit.jupiter.api.assertThrows
 
 internal class PDFFileDownloaderTest {
 
-    val LOCAL_FILE_DESTINATION = "/home/ssco/Downloads/Ficheiro.pdf"
+    val LOCAL_FILE_DESTINATION = "/tmp/dummy.pdf"
     @Test
     fun testDownloadSuccessful() {
         val dummyFileUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
