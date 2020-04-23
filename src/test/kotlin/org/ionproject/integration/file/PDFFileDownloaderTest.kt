@@ -48,13 +48,13 @@ internal class PDFFileDownloaderTest {
     }
 
     @Test
-    fun whenHostDoesntExistThrowsException() {
+    fun whenHostDoesntExistThrowsUnknownHostException() {
         val dummyFileUrl = "https://www.oajsfaspfkl.com"
         val notUsedPath = "/tmp/unknownHost.pdf"
         downloadPdfAndAssertThrows<UnknownHostException>(dummyFileUrl, notUsedPath)
     }
     @Test
-    fun whenServiceIsUnavailableThrowsException() {
+    fun whenServiceIsUnavailableThrowsIOException() {
         val dummyFileUrl = "http://getstatuscode.com/404"
         val notUsedPath = "/tmp/server403.pdf"
         downloadPdfAndAssertThrows<IOException>(dummyFileUrl, notUsedPath)
