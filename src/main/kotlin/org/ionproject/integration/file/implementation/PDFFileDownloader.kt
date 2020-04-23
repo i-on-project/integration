@@ -2,7 +2,7 @@ package org.ionproject.integration.file.implementation
 
 class PDFFileDownloader : AbstractFileDownloader("PDF") {
     private val PDF_HEADER = "%PDF-1."
-    private val MIN_PDF_VERSION = '1'
+    private val MIN_PDF_VERSION = '0'
     private val MAX_PDF_VERSION = '7'
 
     override fun checkFormat(bytes: ByteArray): Boolean {
