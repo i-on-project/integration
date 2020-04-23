@@ -21,11 +21,12 @@ internal class PDFFileDownloaderTest {
         assertTrue(matcher.matches(path))
     }
     @Test
-    fun whenContentIsntPdfThenThrowsException() {
+    fun whenContentIsntPdfThenThrowsInvalidArgumentException() {
         val remoteLocation = "https://www.google.pt"
         val fd: FileDownloader = PDFFileDownloader()
         assertThrows<InvalidFormatException> {
             fd.download(remoteLocation, LOCAL_FILE_DESTINATION)
         }
     }
+
 }
