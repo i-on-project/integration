@@ -1,8 +1,10 @@
 package org.ionproject.integration.file
 
+import org.ionproject.integration.file.`interface`.FileDownloader
 import java.nio.file.FileSystems
 import java.nio.file.PathMatcher
 import org.ionproject.integration.file.exception.InvalidFormatException
+import org.ionproject.integration.file.implementation.PDFFileDownloader
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

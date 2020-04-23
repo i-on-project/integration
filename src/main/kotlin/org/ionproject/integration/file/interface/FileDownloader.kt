@@ -1,4 +1,4 @@
-package org.ionproject.integration.file
+package org.ionproject.integration.file.`interface`
 
 import java.nio.file.Path
 

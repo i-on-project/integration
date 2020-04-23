@@ -1,11 +1,13 @@
-package org.ionproject.integration.file
+package org.ionproject.integration.file.implementation
 
+import org.ionproject.integration.file.`interface`.FileDownloader
 import java.io.File
 import java.net.URL
 import java.nio.file.Path
 import org.ionproject.integration.file.exception.InvalidFormatException
 
-abstract class AbstractFileDownloader(private val format: String) : FileDownloader {
+abstract class AbstractFileDownloader(private val format: String) :
+    FileDownloader {
 
     override fun download(url: String, localDestination: String): Path {
         val url = URL(url)

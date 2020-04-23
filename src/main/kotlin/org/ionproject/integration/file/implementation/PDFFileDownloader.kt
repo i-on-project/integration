@@ -1,4 +1,4 @@
-package org.ionproject.integration.file
+package org.ionproject.integration.file.implementation
 
 class PDFFileDownloader : AbstractFileDownloader("PDF") {
     private val PDF_HEADER = "%PDF-1."
