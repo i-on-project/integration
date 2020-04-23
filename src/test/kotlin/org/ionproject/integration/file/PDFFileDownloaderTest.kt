@@ -13,7 +13,7 @@ internal class PDFFileDownloaderTest {
 
     val LOCAL_FILE_DESTINATION = "/tmp/dummy.pdf"
     @Test
-    fun testDownloadSuccessful() {
+    fun whenValidThenDownloadIsSuccessful() {
         val dummyFileUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
         val fd: FileDownloader = PDFFileDownloader()
         val path = fd.download(dummyFileUrl, LOCAL_FILE_DESTINATION)
@@ -21,7 +21,7 @@ internal class PDFFileDownloaderTest {
         assertTrue(matcher.matches(path))
     }
     @Test
-    fun testDownloadUnsuccessful() {
+    fun whenContentIsntPdfThenThrowsException() {
         val remoteLocation = "https://www.google.pt"
         val fd: FileDownloader = PDFFileDownloader()
         assertThrows<InvalidFormatException> {
