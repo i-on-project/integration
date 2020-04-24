@@ -8,6 +8,7 @@ import java.nio.file.PathMatcher
 import org.ionproject.integration.file.`interface`.FileDownloader
 import org.ionproject.integration.file.exception.InvalidFormatException
 import org.ionproject.integration.file.implementation.PDFFileDownloader
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -39,6 +40,7 @@ internal class PDFFileDownloaderTest {
         val path = downloadPdf(dummyFileUrl, dummyFileDst)
 
         assertTrue(matcher.matches(path))
+        assertEquals(String(path.toFile().readBytes().slice(0..6).toByteArray()),"%PDF-1.")
         deleteFile(path)
     }
     @Test
