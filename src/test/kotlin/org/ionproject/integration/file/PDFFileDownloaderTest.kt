@@ -8,6 +8,7 @@ import java.nio.file.PathMatcher
 import java.nio.file.Paths
 import org.ionproject.integration.file.`interface`.FileDownloader
 import org.ionproject.integration.file.exception.InvalidFormatException
+import org.ionproject.integration.file.exception.ServerErrorException
 import org.ionproject.integration.file.implementation.PDFFileDownloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -57,7 +58,6 @@ internal class PDFFileDownloaderTest {
         callDownloadAndAssertResultIsException<InvalidFormatException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
-
     @Test
     fun whenHostDoesntExist_ThenThrowsUnknownHostException() {
         val url = "https://www.oajsfaspfkl.com"
@@ -75,15 +75,22 @@ internal class PDFFileDownloaderTest {
     @Test
     fun whenUrlIsNotPassed_ThenThrowsIllegalArgumentException() {
         val url = ""
-        val notUsedPath = "/tmp/notUsedPath"
-        callDownloadAndAssertResultIsException<IllegalArgumentException>(url, notUsedPath)
-        assertFileDoesntExist(notUsedPath)
+        val fileDst = "/tmp/notUsedPath"
+        callDownloadAndAssertResultIsException<IllegalArgumentException>(url, fileDst)
+        assertFileDoesntExist(fileDst)
     }
     @Test
     fun whenLocalPathIsNotPassed_ThenThrowsIllegalArgumentException() {
         val url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
         val fileDst = ""
         callDownloadAndAssertResultIsException<IllegalArgumentException>(url, fileDst)
+        assertFileDoesntExist(fileDst)
+    }
+    @Test
+    fun whenServerError_thenThrowsServerErrorException() {
+        val url = "http://httpstat.us/500"
+        val fileDst = "/tmp/notUsedPath"
+        callDownloadAndAssertResultIsException<ServerErrorException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
 }
