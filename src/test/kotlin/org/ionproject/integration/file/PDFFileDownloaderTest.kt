@@ -65,9 +65,9 @@ internal class PDFFileDownloaderTest {
         assertFileDoesntExist(notUsedPath)
     }
     @Test
-    fun whenServiceIsUnavailableThrowsIOException() {
+    fun whenClientAsksForUnexistingResource_ThrowsIOException() {
         val dummyFileUrl = "http://getstatuscode.com/404"
-        val notUsedPath = "/tmp/server403.pdf"
+        val notUsedPath = "/tmp/server404.pdf"
         callDownloadAndAssertResultIsException<IOException>(dummyFileUrl, notUsedPath)
         assertFileDoesntExist(notUsedPath)
     }
