@@ -9,8 +9,10 @@ import org.ionproject.integration.file.`interface`.FileDownloader
 import org.ionproject.integration.file.exception.InvalidFormatException
 import org.ionproject.integration.file.implementation.PDFFileDownloader
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.nio.file.Paths
 
 internal class PDFFileDownloaderTest {
 
@@ -28,6 +30,10 @@ internal class PDFFileDownloaderTest {
         }
         fun deleteFile(path: Path) {
             path.toFile().delete()
+        }
+        fun assertFileDoesntExist(path : String) : Unit {
+            val file =  Paths.get(path).toFile()
+            assertFalse(file.exists())
         }
     }
 
@@ -48,6 +54,7 @@ internal class PDFFileDownloaderTest {
         val remoteLocation = "https://www.google.pt"
         val notUsedPath = "/tmp/invalidArgument.pdf"
         callDownloadAndAssertResultIsException<InvalidFormatException>(remoteLocation, notUsedPath)
+        assertFileDoesntExist(notUsedPath)
     }
 
     @Test
@@ -55,11 +62,13 @@ internal class PDFFileDownloaderTest {
         val dummyFileUrl = "https://www.oajsfaspfkl.com"
         val notUsedPath = "/tmp/unknownHost.pdf"
         callDownloadAndAssertResultIsException<UnknownHostException>(dummyFileUrl, notUsedPath)
+        assertFileDoesntExist(notUsedPath)
     }
     @Test
     fun whenServiceIsUnavailableThrowsIOException() {
         val dummyFileUrl = "http://getstatuscode.com/404"
         val notUsedPath = "/tmp/server403.pdf"
         callDownloadAndAssertResultIsException<IOException>(dummyFileUrl, notUsedPath)
+        assertFileDoesntExist(notUsedPath)
     }
 }
