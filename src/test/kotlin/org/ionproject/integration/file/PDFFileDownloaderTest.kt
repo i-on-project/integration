@@ -5,6 +5,7 @@ import java.net.UnknownHostException
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
+import java.nio.file.Paths
 import org.ionproject.integration.file.`interface`.FileDownloader
 import org.ionproject.integration.file.exception.InvalidFormatException
 import org.ionproject.integration.file.implementation.PDFFileDownloader
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.nio.file.Paths
 
 internal class PDFFileDownloaderTest {
 
@@ -21,7 +21,7 @@ internal class PDFFileDownloaderTest {
         private val pdfDownloader: FileDownloader = PDFFileDownloader()
 
         inline fun <reified T : Throwable> callDownloadAndAssertResultIsException(url: String, dstFile: String) {
-            val ex = kotlin.runCatching { downloadPdf(url, dstFile)  }
+            val ex = kotlin.runCatching { downloadPdf(url, dstFile) }
             assert(ex.isFailure)
             assertTrue(ex.exceptionOrNull() is T)
         }
@@ -31,44 +31,59 @@ internal class PDFFileDownloaderTest {
         fun deleteFile(path: Path) {
             path.toFile().delete()
         }
-        fun assertFileDoesntExist(path : String) : Unit {
-            val file =  Paths.get(path).toFile()
+        fun assertFileDoesntExist(path: String) {
+            val file = Paths.get(path).toFile()
             assertFalse(file.exists())
         }
     }
 
     @Test
     fun whenValid_ThenDownloadIsSuccessful() {
-        val dummyFileUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-        val dummyFileDst = "/tmp/dummy.pdf"
+        val url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+        val fileDst = "/tmp/dummy.pdf"
         val matcher: PathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.pdf")
 
-        val path = downloadPdf(dummyFileUrl, dummyFileDst)
+        val path = downloadPdf(url, fileDst)
 
         assertTrue(matcher.matches(path))
-        assertEquals(String(path.toFile().readBytes().slice(0..6).toByteArray()),"%PDF-1.")
+        assertEquals(String(path.toFile().readBytes().slice(0..6).toByteArray()), "%PDF-1.")
+
         deleteFile(path)
     }
     @Test
     fun whenContentIsntPdf_ThenThrowsInvalidArgumentException() {
-        val remoteLocation = "https://www.google.pt"
-        val notUsedPath = "/tmp/invalidArgument.pdf"
-        callDownloadAndAssertResultIsException<InvalidFormatException>(remoteLocation, notUsedPath)
-        assertFileDoesntExist(notUsedPath)
+        val url = "https://www.google.pt"
+        val fileDst = "/tmp/invalidArgument.pdf"
+        callDownloadAndAssertResultIsException<InvalidFormatException>(url, fileDst)
+        assertFileDoesntExist(fileDst)
     }
 
     @Test
     fun whenHostDoesntExist_ThenThrowsUnknownHostException() {
-        val dummyFileUrl = "https://www.oajsfaspfkl.com"
-        val notUsedPath = "/tmp/unknownHost.pdf"
-        callDownloadAndAssertResultIsException<UnknownHostException>(dummyFileUrl, notUsedPath)
-        assertFileDoesntExist(notUsedPath)
+        val url = "https://www.oajsfaspfkl.com"
+        val fileDst = "/tmp/unknownHost.pdf"
+        callDownloadAndAssertResultIsException<UnknownHostException>(url, fileDst)
+        assertFileDoesntExist(fileDst)
     }
     @Test
     fun whenClientAsksForUnexistingResource_ThenThrowsIOException() {
-        val dummyFileUrl = "http://getstatuscode.com/404"
-        val notUsedPath = "/tmp/server404.pdf"
-        callDownloadAndAssertResultIsException<IOException>(dummyFileUrl, notUsedPath)
+        val url = "http://getstatuscode.com/404"
+        val fileDst = "/tmp/server404.pdf"
+        callDownloadAndAssertResultIsException<IOException>(url, fileDst)
+        assertFileDoesntExist(fileDst)
+    }
+    @Test
+    fun whenUrlIsNotPassed_ThenThrowsIllegalArgumentException() {
+        val url = ""
+        val notUsedPath = "/tmp/notUsedPath"
+        callDownloadAndAssertResultIsException<IllegalArgumentException>(url, notUsedPath)
         assertFileDoesntExist(notUsedPath)
+    }
+    @Test
+    fun whenLocalPathIsNotPassed_ThenThrowsIllegalArgumentException() {
+        val url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+        val fileDst = ""
+        callDownloadAndAssertResultIsException<IllegalArgumentException>(url, fileDst)
+        assertFileDoesntExist(fileDst)
     }
 }

@@ -11,8 +11,8 @@ abstract class AbstractFileDownloader(private val format: String) :
 
     override fun download(url: String, localDestination: String): Path {
         // fast path
-        if(url.isEmpty()){
-            throw IllegalArgumentException("Url parameter is empty")
+        if (url.isEmpty() || localDestination.isEmpty()) {
+            throw IllegalArgumentException("Parameters url and localDestination need not be empty")
         }
         val url = URL(url)
         val bytes: ByteArray = url.readBytes()
