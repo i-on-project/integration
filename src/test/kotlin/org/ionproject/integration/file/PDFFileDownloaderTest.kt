@@ -30,7 +30,6 @@ internal class PDFFileDownloaderTest {
             path.toFile().delete()
         }
     }
-
     @Test
     fun whenValidThenDownloadIsSuccessful() {
         val dummyFileUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
