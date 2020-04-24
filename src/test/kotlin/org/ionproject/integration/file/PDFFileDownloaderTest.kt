@@ -38,7 +38,7 @@ internal class PDFFileDownloaderTest {
     }
 
     @Test
-    fun whenValidThenDownloadIsSuccessful() {
+    fun whenValid_ThenDownloadIsSuccessful() {
         val dummyFileUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
         val dummyFileDst = "/tmp/dummy.pdf"
         val matcher: PathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.pdf")
@@ -50,7 +50,7 @@ internal class PDFFileDownloaderTest {
         deleteFile(path)
     }
     @Test
-    fun whenContentIsntPdfThenThrowsInvalidArgumentException() {
+    fun whenContentIsntPdf_ThenThrowsInvalidArgumentException() {
         val remoteLocation = "https://www.google.pt"
         val notUsedPath = "/tmp/invalidArgument.pdf"
         callDownloadAndAssertResultIsException<InvalidFormatException>(remoteLocation, notUsedPath)
@@ -58,14 +58,14 @@ internal class PDFFileDownloaderTest {
     }
 
     @Test
-    fun whenHostDoesntExistThrowsUnknownHostException() {
+    fun whenHostDoesntExist_ThenThrowsUnknownHostException() {
         val dummyFileUrl = "https://www.oajsfaspfkl.com"
         val notUsedPath = "/tmp/unknownHost.pdf"
         callDownloadAndAssertResultIsException<UnknownHostException>(dummyFileUrl, notUsedPath)
         assertFileDoesntExist(notUsedPath)
     }
     @Test
-    fun whenClientAsksForUnexistingResource_ThrowsIOException() {
+    fun whenClientAsksForUnexistingResource_ThenThrowsIOException() {
         val dummyFileUrl = "http://getstatuscode.com/404"
         val notUsedPath = "/tmp/server404.pdf"
         callDownloadAndAssertResultIsException<IOException>(dummyFileUrl, notUsedPath)
