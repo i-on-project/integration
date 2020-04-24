@@ -11,7 +11,6 @@ import org.ionproject.integration.file.exception.ServerErrorException
 abstract class AbstractFileDownloader(private val format: String) :
     FileDownloader {
     private val SERVER_ERROR = 500
-
     override fun download(url: String, localDestination: String): Path {
         if (url.isEmpty() || localDestination.isEmpty()) {
             throw IllegalArgumentException("Parameters url and localDestination need not be empty")
@@ -19,9 +18,7 @@ abstract class AbstractFileDownloader(private val format: String) :
 
         val url = URL(url)
 
-        val conn = url.openConnection() as HttpURLConnection
-        if (conn.responseCode >= SERVER_ERROR)
-            throw ServerErrorException("Server responded with error code ${conn.responseCode}")
+        probe(url)
 
         val bytes: ByteArray = url.readBytes()
 
@@ -31,6 +28,12 @@ abstract class AbstractFileDownloader(private val format: String) :
         file.writeBytes(bytes)
 
         return file.toPath()
+    }
+
+    private fun probe(url: URL) {
+        val conn = url.openConnection() as HttpURLConnection
+        if (conn.responseCode >= SERVER_ERROR)
+            throw ServerErrorException("Server responded with error code ${conn.responseCode}")
     }
 
     protected abstract fun checkFormat(bytes: ByteArray): Boolean
