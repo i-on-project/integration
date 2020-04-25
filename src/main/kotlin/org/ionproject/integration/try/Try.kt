@@ -39,7 +39,6 @@ sealed class Try<out T> {
     abstract fun orElse(default: Try<@UnsafeVariance T>): Try<T>
 
     abstract fun <U> fold(fa: (Throwable) -> U, fb: (T) -> U): U
-
 }
 
 data class Success<out T>(val value: T) : Try<T>() {
