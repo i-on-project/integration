@@ -1,4 +1,4 @@
-package org.ionproject.integration.`try`
+package org.ionproject.integration.model.internal
 
 sealed class Try<out T> {
 
