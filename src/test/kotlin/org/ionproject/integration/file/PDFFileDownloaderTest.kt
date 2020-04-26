@@ -25,7 +25,7 @@ internal class PDFFileDownloaderTest {
 
         private val pdfDownloader: FileDownloader = PDFFileDownloader()
 
-        inline fun <reified T : Throwable> callDownloadAndAssertResultIsException(url: String, dstFile: String) {
+        inline fun <reified T : Throwable> downloadAndAssertThrows(url: String, dstFile: String) {
             assertThrows<T> { downloadPdf(url, dstFile).orThrow() }
         }
 
@@ -60,7 +60,7 @@ internal class PDFFileDownloaderTest {
     fun whenContentIsntPdf_ThenThrowsInvalidArgumentException() {
         val url = "https://www.google.pt"
         val fileDst = "/tmp/invalidArgument.pdf"
-        callDownloadAndAssertResultIsException<InvalidFormatException>(url, fileDst)
+        downloadAndAssertThrows<InvalidFormatException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
 
@@ -68,7 +68,7 @@ internal class PDFFileDownloaderTest {
     fun whenHostDoesntExist_ThenThrowsUnknownHostException() {
         val url = "https://www.oajsfaspfkl.com"
         val fileDst = "/tmp/unknownHost.pdf"
-        callDownloadAndAssertResultIsException<UnknownHostException>(url, fileDst)
+        downloadAndAssertThrows<UnknownHostException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
 
@@ -76,7 +76,7 @@ internal class PDFFileDownloaderTest {
     fun whenClientAsksForUnexistingResource_ThenThrowsIOException() {
         val url = "http://httpstat.us/404"
         val fileDst = "/tmp/server404.pdf"
-        callDownloadAndAssertResultIsException<IOException>(url, fileDst)
+        downloadAndAssertThrows<IOException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
 
@@ -84,7 +84,7 @@ internal class PDFFileDownloaderTest {
     fun whenUrlIsNotPassed_ThenThrowsIllegalArgumentException() {
         val url = ""
         val fileDst = "/tmp/notUsedPath"
-        callDownloadAndAssertResultIsException<IllegalArgumentException>(url, fileDst)
+        downloadAndAssertThrows<IllegalArgumentException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
 
@@ -92,7 +92,7 @@ internal class PDFFileDownloaderTest {
     fun whenLocalPathIsNotPassed_ThenThrowsIllegalArgumentException() {
         val url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
         val fileDst = ""
-        callDownloadAndAssertResultIsException<IllegalArgumentException>(url, fileDst)
+        downloadAndAssertThrows<IllegalArgumentException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
 
@@ -100,7 +100,7 @@ internal class PDFFileDownloaderTest {
     fun whenServerError_thenThrowsServerErrorException() {
         val url = "http://httpstat.us/500"
         val fileDst = "/tmp/notUsedPath"
-        callDownloadAndAssertResultIsException<ServerErrorException>(url, fileDst)
+        downloadAndAssertThrows<ServerErrorException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
 }
