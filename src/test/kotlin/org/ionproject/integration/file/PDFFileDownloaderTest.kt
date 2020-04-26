@@ -10,10 +10,14 @@ import org.ionproject.integration.file.`interface`.FileDownloader
 import org.ionproject.integration.file.exception.InvalidFormatException
 import org.ionproject.integration.file.exception.ServerErrorException
 import org.ionproject.integration.file.implementation.PDFFileDownloader
+import org.ionproject.integration.utils.Try
+import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 
 internal class PDFFileDownloaderTest {
 
@@ -22,16 +26,17 @@ internal class PDFFileDownloaderTest {
         private val pdfDownloader: FileDownloader = PDFFileDownloader()
 
         inline fun <reified T : Throwable> callDownloadAndAssertResultIsException(url: String, dstFile: String) {
-            val ex = kotlin.runCatching { downloadPdf(url, dstFile) }
-            assert(ex.isFailure)
-            assertTrue(ex.exceptionOrNull() is T)
+            assertThrows<T> { downloadPdf(url, dstFile).orThrow() }
         }
-        fun downloadPdf(url: String, dstFile: String): Path {
+
+        fun downloadPdf(url: String, dstFile: String): Try<Path> {
             return pdfDownloader.download(url, dstFile)
         }
+
         fun deleteFile(path: Path) {
             path.toFile().delete()
         }
+
         fun assertFileDoesntExist(path: String) {
             val file = Paths.get(path).toFile()
             assertFalse(file.exists())
@@ -44,13 +49,13 @@ internal class PDFFileDownloaderTest {
         val fileDst = "/tmp/dummy.pdf"
         val matcher: PathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.pdf")
 
-        val path = downloadPdf(url, fileDst)
-
+        val path = assertDoesNotThrow { downloadPdf(url, fileDst).orThrow() }
         assertTrue(matcher.matches(path))
         assertEquals(String(path.toFile().readBytes().slice(0..6).toByteArray()), "%PDF-1.")
 
         deleteFile(path)
     }
+
     @Test
     fun whenContentIsntPdf_ThenThrowsInvalidArgumentException() {
         val url = "https://www.google.pt"
@@ -58,6 +63,7 @@ internal class PDFFileDownloaderTest {
         callDownloadAndAssertResultIsException<InvalidFormatException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
+
     @Test
     fun whenHostDoesntExist_ThenThrowsUnknownHostException() {
         val url = "https://www.oajsfaspfkl.com"
@@ -65,6 +71,7 @@ internal class PDFFileDownloaderTest {
         callDownloadAndAssertResultIsException<UnknownHostException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
+
     @Test
     fun whenClientAsksForUnexistingResource_ThenThrowsIOException() {
         val url = "http://httpstat.us/404"
@@ -72,6 +79,7 @@ internal class PDFFileDownloaderTest {
         callDownloadAndAssertResultIsException<IOException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
+
     @Test
     fun whenUrlIsNotPassed_ThenThrowsIllegalArgumentException() {
         val url = ""
@@ -79,6 +87,7 @@ internal class PDFFileDownloaderTest {
         callDownloadAndAssertResultIsException<IllegalArgumentException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
+
     @Test
     fun whenLocalPathIsNotPassed_ThenThrowsIllegalArgumentException() {
         val url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
@@ -86,6 +95,7 @@ internal class PDFFileDownloaderTest {
         callDownloadAndAssertResultIsException<IllegalArgumentException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
+
     @Test
     fun whenServerError_thenThrowsServerErrorException() {
         val url = "http://httpstat.us/500"

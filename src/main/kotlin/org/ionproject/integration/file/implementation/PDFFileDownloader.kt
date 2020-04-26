@@ -1,16 +1,20 @@
 package org.ionproject.integration.file.implementation
 
-class PDFFileDownloader : AbstractFileDownloader("PDF") {
+import org.ionproject.integration.file.exception.InvalidFormatException
+
+class PDFFileDownloader : AbstractFileDownloader() {
     private val PDF_HEADER = "%PDF-1."
     private val MINIMUM_PDF_VERSION = '0'
     private val MAXIMUM_PDF_VERSION = '7'
     private val HEADER_MIN_VERSION_POSITION = 7
     private val HEADER_RANGE = 0..6
 
-    override fun checkFormat(bytes: ByteArray): Boolean {
+    override fun checkFormat(bytes: ByteArray) {
         val minorVersion: Char = bytes[HEADER_MIN_VERSION_POSITION].toChar()
         val headerBytes: ByteArray = bytes.slice(HEADER_RANGE).toByteArray()
         val header = String(headerBytes, Charsets.UTF_8)
-        return header == PDF_HEADER && minorVersion in MINIMUM_PDF_VERSION..MAXIMUM_PDF_VERSION
+        val result = header == PDF_HEADER && minorVersion in MINIMUM_PDF_VERSION..MAXIMUM_PDF_VERSION
+        if (!result)
+            throw InvalidFormatException("Downloaded content was not in the PDF format.")
     }
 }

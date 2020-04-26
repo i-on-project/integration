@@ -5,33 +5,43 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.Path
 import org.ionproject.integration.file.`interface`.FileDownloader
-import org.ionproject.integration.file.exception.InvalidFormatException
 import org.ionproject.integration.file.exception.ServerErrorException
+import org.ionproject.integration.utils.Try
 
-abstract class AbstractFileDownloader(private val format: String) :
+abstract class AbstractFileDownloader() :
     FileDownloader {
 
-    override fun download(url: String, localDestination: String): Path {
-        if (url.isEmpty() || localDestination.isEmpty()) {
-            throw IllegalArgumentException("Parameters url and localDestination need not be empty")
+    override fun download(urlStr: String, localDestination: String): Try<Path> {
+        if (urlStr.isEmpty() || localDestination.isEmpty()) {
+            return Try.ofError(IllegalArgumentException("Parameters url and localDestination need not be empty"))
         }
 
-        val url = URL(url)
+        val url = URL(urlStr)
 
-        val conn = url.openConnection() as HttpURLConnection
+        val httpConn = Try.of(url.openConnection() as HttpURLConnection)
 
-        if (conn.responseCode >= HttpURLConnection.HTTP_INTERNAL_ERROR)
-            throw ServerErrorException("Server responded with error code ${conn.responseCode}")
+        val responseCode = httpConn
+            .map { conn -> conn.responseCode }
+            .map { code -> throwIfServerError(code) }
 
-        val bytes = conn.inputStream.readBytes()
+        val bytes = Try.map(responseCode, httpConn) { _, conn -> conn.inputStream.readBytes() }
 
-        if (!checkFormat(bytes))
-            throw InvalidFormatException("Downloaded content was not in the $format format.")
-        val file = File(localDestination)
-        file.writeBytes(bytes)
+        val isValidFormat = bytes.map { byteArray -> checkFormat(byteArray) }
 
-        return file.toPath()
+        val file = isValidFormat.map { File(localDestination) }
+
+        Try.map(file, bytes) { f: File, b: ByteArray -> f.writeBytes(b) }
+
+        return file.map { f -> f.toPath() }
     }
 
-    protected abstract fun checkFormat(bytes: ByteArray): Boolean
+    private fun throwIfServerError(code: Int): Int {
+        return when (code) {
+            in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
+                throw ServerErrorException("Server responded with error code $code")
+            else -> code
+        }
+    }
+
+    protected abstract fun checkFormat(bytes: ByteArray): Unit
 }
