@@ -33,6 +33,6 @@ class ITextPdfExtractor : PdfExtractor {
 
         reader.close()
 
-        return Try.of(mutableListOf(data.toString()))
+        return Try.of(data)
     }
 }
