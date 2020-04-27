@@ -10,9 +10,9 @@ import technology.tabula.CommandLineApp
 class TabulaPdfExtractor : PdfExtractor {
     /**
      * Extract table data from pdf file locate at [pdfPath]
-     * @return Pair<Boolean, String>
-     *     Boolean - Indicates if extracting was successful
-     *     String list - Contains all extracted data in json format
+     * @return Try<MutableList<String>>
+     *     Success - String list contains all extracted data in json format
+     *     Failure - PdfExtractorException
      */
     override suspend fun extract(pdfPath: String): Try<MutableList<String>> {
         if (pdfPath.isEmpty()) return Try.ofError(PdfExtractorException("Empty path"))
@@ -30,7 +30,6 @@ class TabulaPdfExtractor : PdfExtractor {
         val parser = DefaultParser()
         val cmd = parser.parse(CommandLineApp.buildOptions(), args)
 
-        // CommandLineApp(data, cmd).extractTables(cmd)
         val data = StringBuilder()
         var result = Try
             .of { CommandLineApp(data, cmd).extractTables(cmd) }

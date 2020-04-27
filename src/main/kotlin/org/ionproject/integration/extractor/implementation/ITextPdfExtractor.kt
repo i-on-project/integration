@@ -10,9 +10,9 @@ import org.ionproject.integration.utils.Try
 class ITextPdfExtractor : PdfExtractor {
     /**
      * Extract text data from pdf file locate at [pdfPath]
-     * @return Pair<Boolean, String>
-     *     Boolean - Indicates if extracting was successful
-     *     String - Contains extracted data in text format by page
+     * @return Try<MutableList<String>>
+     *     Success - String list contains all extracted data in text format
+     *     Failure - PdfExtractorException
      */
     override suspend fun extract(pdfPath: String): Try<MutableList<String>> {
         if (pdfPath.isEmpty()) return Try.ofError(PdfExtractorException("Empty path"))
