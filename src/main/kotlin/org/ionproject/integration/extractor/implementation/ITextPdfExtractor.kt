@@ -3,6 +3,8 @@ package org.ionproject.integration.extractor.implementation
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.ionproject.integration.extractor.`interface`.PdfExtractor
 import org.ionproject.integration.extractor.exception.PdfExtractorException
 import org.ionproject.integration.utils.Try
@@ -25,7 +27,9 @@ class ITextPdfExtractor : PdfExtractor {
 
         val data = mutableListOf<String>()
         for (i in 1..pdfDoc.numberOfPages) {
-            val result = Try.of { PdfTextExtractor.getTextFromPage(pdfDoc.getPage(i)) }
+            val result = withContext(Dispatchers.IO) {
+                Try.of { PdfTextExtractor.getTextFromPage(pdfDoc.getPage(i)) }
+            }
             if (result is Try.Error) return Try.ofError(PdfExtractorException("Itext cannot process file"))
 
             data.add((result as Try<String>).toString())

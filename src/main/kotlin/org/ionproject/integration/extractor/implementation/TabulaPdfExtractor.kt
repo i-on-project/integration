@@ -1,6 +1,8 @@
 package org.ionproject.integration.extractor.implementation
 
 import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.apache.commons.cli.DefaultParser
 import org.ionproject.integration.extractor.`interface`.PdfExtractor
 import org.ionproject.integration.extractor.exception.PdfExtractorException
@@ -31,8 +33,9 @@ class TabulaPdfExtractor : PdfExtractor {
         val cmd = parser.parse(CommandLineApp.buildOptions(), args)
 
         val data = StringBuilder()
-        var result = Try
-            .of { CommandLineApp(data, cmd).extractTables(cmd) }
+        var result = withContext(Dispatchers.IO) {
+            Try.of { CommandLineApp(data, cmd).extractTables(cmd) }
+        }
 
         return if (result is Try.Error) {
             Try.ofError(PdfExtractorException("Tabula cannot process file"))
