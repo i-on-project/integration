@@ -1,5 +1,5 @@
-ARG BUILD_TAG=8-jdk-alpine
-ARG RUN_TAG=8-jre-alpine
+ARG BUILD_TAG=11-jdk-slim
+ARG RUN_TAG=11.0.7-jre-slim
 
 FROM openjdk:${BUILD_TAG} AS build-env
 WORKDIR /src
@@ -11,7 +11,7 @@ COPY . .
 RUN ./gradlew extractUberJar --no-daemon --stacktrace
 
 FROM openjdk:${RUN_TAG} AS run-env
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN useradd -m spring && usermod -a -G spring spring
 USER spring:spring
 
 ARG EXTRACT_DEPENDENCY_PATH=/src/build/dependency
