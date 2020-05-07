@@ -36,7 +36,7 @@ abstract class AbstractFileDownloader() :
 
         Try.map(file, response) { f, r -> f.writeBytes(r.body) }
 
-        return file.map{ f -> f.toPath()}
+        return file.map { f -> f.toPath() }
     }
 
     private fun validateResponseCode(response: Response): Try<Response> {
