@@ -123,5 +123,25 @@ class TryTests {
         assertEquals("CompositeException", result)
     }
 
+    @Test
+    fun whenNonZeroOperandsAndMapError_thenReturnsArithmeticResult() {
+        // Act
+        val result = oper(2, 1)
+            .mapError { NullPointerException("NullPointer Exception") }
+            .match({ it.toString() }, { it.message })
 
+        // Assert
+        assertEquals("6", result)
+    }
+
+    @Test
+    fun whenDivideByZeroAndMapError_thenReturnsErrorWithCompositeMessage() {
+        // Act
+        val result = oper(1, 0)
+            .mapError { NullPointerException("NullPointer Exception") }
+            .match({ it.toString() }, { it.javaClass.simpleName })
+
+        // Assert
+        assertEquals("CompositeException", result)
+    }
 }
