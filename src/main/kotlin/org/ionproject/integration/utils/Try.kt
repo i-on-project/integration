@@ -21,7 +21,7 @@ sealed class Try<out T> {
 
     class Value<out T>(val value: T) : Try<T>() {
 
-        override fun <R> map(f: (T) -> R): Try<R> = Try.of { f(value) }
+        override fun <R> map(f: (T) -> R): Try<R> = of { f(value) }
 
         override fun <R> flatMap(f: (T) -> Try<R>): Try<R> = try {
             f(value)
@@ -40,18 +40,19 @@ sealed class Try<out T> {
     }
 
     companion object {
-        fun <T> of(value: T) = Value(value)
-        fun ofError(e: Exception) = Error(e)
         fun <T> of(f: () -> T): Try<T> = try {
             Value(f())
         } catch (e: Exception) {
             Error(e)
         }
 
+        fun <T> ofValue(value: T) = Value(value)
+        fun ofError(e: Exception) = Error(e)
+
         fun <T1, T2, R> map(a: Try<T1>, b: Try<T2>, f: (T1, T2) -> R): Try<R> =
             when (a) {
                 is Value -> when (b) {
-                    is Value -> Try.of { f(a.value, b.value) }
+                    is Value -> of { f(a.value, b.value) }
                     is Error -> Error(b.e)
                 }
                 is Error -> when (b) {
