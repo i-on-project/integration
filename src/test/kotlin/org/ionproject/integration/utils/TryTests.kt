@@ -81,13 +81,13 @@ class TryTests {
         val result = Try.ofValue(1)
 
         // Assert
-        assertEquals("1", result.get())
+        assertEquals(1, result.get())
     }
 
     @Test
     fun whenOfError_thenErrorInstance() {
         // Act
-        val result = Try.ofError(Exception())
+        val result = Try.ofError<Exception>(Exception())
 
         // Assert
         assertThrows<Exception> { result.get() }
@@ -122,4 +122,6 @@ class TryTests {
         // Assert
         assertEquals("CompositeException", result)
     }
+
+
 }
