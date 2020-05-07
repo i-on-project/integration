@@ -1,6 +1,6 @@
 package org.ionproject.integration.model.internal
 
-data class Response(val statusCode : Int, val body : ByteArray) {
+data class Response(val statusCode: Int, val body: ByteArray) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

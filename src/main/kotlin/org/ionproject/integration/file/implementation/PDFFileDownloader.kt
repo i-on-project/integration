@@ -11,7 +11,7 @@ class PDFFileDownloader : AbstractFileDownloader() {
     private val HEADER_LENGTH = 7
 
     override fun checkFormat(bytes: ByteArray) {
-        if(bytes.size < HEADER_LENGTH)
+        if (bytes.size < HEADER_LENGTH)
             throw InvalidFormatException("Downloaded content was not in the PDF format.")
         val minorVersion: Char = bytes[HEADER_MIN_VERSION_POSITION].toChar()
         val headerBytes: ByteArray = bytes.slice(HEADER_RANGE).toByteArray()
