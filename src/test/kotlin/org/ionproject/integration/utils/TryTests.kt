@@ -139,9 +139,11 @@ class TryTests {
         // Act
         val result = oper(1, 0)
             .mapError { NullPointerException("NullPointer Exception") }
-            .match({ it.toString() }, { it.javaClass.simpleName })
 
         // Assert
-        assertEquals("CompositeException", result)
+        val e = assertThrows<CompositeException> { result.orThrow() }
+        assertEquals(2, e.exceptions.count())
+        assertEquals(true, e.exceptions[0] is ArithmeticException)
+        assertEquals(true, e.exceptions[1] is NullPointerException)
     }
 }
