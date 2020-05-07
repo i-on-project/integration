@@ -41,7 +41,7 @@ class TryTests {
 
         // Assert
         assertDoesNotThrow { result.orThrow() }
-        assertEquals("6", result.get())
+        assertEquals("6", result.orThrow())
     }
 
     @Test
@@ -81,7 +81,7 @@ class TryTests {
         val result = Try.ofValue(1)
 
         // Assert
-        assertEquals(1, result.get())
+        assertEquals(1, result.orThrow())
     }
 
     @Test
@@ -90,7 +90,7 @@ class TryTests {
         val result = Try.ofError<Exception>(Exception())
 
         // Assert
-        assertThrows<Exception> { result.get() }
+        assertThrows<Exception> { result.orThrow() }
     }
 
     @Test
