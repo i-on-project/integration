@@ -51,7 +51,7 @@ sealed class Try<out T> {
         }
 
         fun <T> ofValue(value: T) = Value(value)
-        fun <T> ofError(e: Exception) = Error<Exception>(e)
+        fun <T> ofError(e: Exception) = Error<T>(e)
 
         fun <T1, T2, R> map(a: Try<T1>, b: Try<T2>, f: (T1, T2) -> R): Try<R> =
             when (a) {
