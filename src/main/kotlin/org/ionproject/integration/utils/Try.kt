@@ -35,12 +35,12 @@ sealed class Try<out T> {
         override fun <R> match(success: (T) -> R, error: (Exception) -> R) = success(value)
     }
 
-    class Error<out T>(val e: Exception) : Try<T>() {
+    class Error(val e: Exception) : Try<Nothing>() {
 
-        override fun <R> map(f: (T) -> R): Try<R> = this as Error<R>
-        override fun mapError(f: (Exception) -> Exception): Try<T> = Error(merge(e, f(e)))
-        override fun <R> flatMap(f: (T) -> Try<R>): Try<R> = this as Error<R>
-        override fun <R> match(success: (T) -> R, error: (Exception) -> R) = error(e)
+        override fun <R> map(f: (Nothing) -> R): Try<R> = this
+        override fun mapError(f: (Exception) -> Exception) = Error(merge(e, f(e)))
+        override fun <R> flatMap(f: (Nothing) -> Try<R>): Try<R> = this
+        override fun <R> match(success: (Nothing) -> R, error: (Exception) -> R) = error(e)
     }
 
     companion object {
@@ -51,7 +51,7 @@ sealed class Try<out T> {
         }
 
         fun <T> ofValue(value: T) = Value(value)
-        fun <T> ofError(e: Exception) = Error<T>(e)
+        fun <T> ofError(e: Exception) = Error(e)
 
         fun <T1, T2, R> map(a: Try<T1>, b: Try<T2>, f: (T1, T2) -> R): Try<R> =
             when (a) {
