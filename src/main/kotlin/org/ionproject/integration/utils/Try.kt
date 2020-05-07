@@ -15,11 +15,13 @@ private fun merge(e1: Exception, e2: Exception) =
     }
 
 sealed class Try<out T> {
+    abstract fun get(): T
     abstract fun <R> map(f: (T) -> R): Try<R>
     abstract fun <R> flatMap(f: (T) -> Try<R>): Try<R>
     abstract fun <R> match(success: (T) -> R, error: (Exception) -> R): R
 
     class Value<out T>(val value: T) : Try<T>() {
+        override fun get() = value
 
         override fun <R> map(f: (T) -> R): Try<R> = of { f(value) }
 
@@ -34,6 +36,7 @@ sealed class Try<out T> {
 
     class Error(val e: Exception) : Try<Nothing>() {
 
+        override fun get() = throw e
         override fun <R> map(f: (Nothing) -> R): Try<R> = this
         override fun <R> flatMap(f: (Nothing) -> Try<R>): Try<R> = this
         override fun <R> match(success: (Nothing) -> R, error: (Exception) -> R) = error(e)
