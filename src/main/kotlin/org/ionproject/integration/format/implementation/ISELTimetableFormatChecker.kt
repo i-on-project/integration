@@ -14,7 +14,7 @@ class ISELTimetableFormatChecker {
 
     fun checkFormat(dynamicObject: DynamicObject): Try<Boolean> {
 
-        val jsonChecker = JsonFormatChecker(jsonRootType)
+        val jsonChecker = JsonFormatChecker<List<Table>>(jsonRootType)
         val stringChecker = StringFormatChecker(regexPattern)
 
         val isJsonValid = Try.of(jsonChecker.checkFormat(dynamicObject.jsonData))
