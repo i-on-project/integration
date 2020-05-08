@@ -8,14 +8,16 @@ import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orElse
 
 class JsonFormatChecker<T>(type: Type) : FormatChecker {
-
     private val moshi: Moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
-    private val jsonAdapter = moshi.adapter<T>(type)
+    private val jsonAdapter = moshi
+        .adapter<T>(type)
+        .failOnUnknown()
 
     override fun checkFormat(content: String): Boolean {
-        return Try.of(jsonAdapter.fromJson(content))
+        return Try.of(content)
+            .map { c -> jsonAdapter.fromJson(c) }
             .map { true }
             .orElse(false)
     }
