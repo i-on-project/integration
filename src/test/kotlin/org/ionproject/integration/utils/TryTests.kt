@@ -90,7 +90,7 @@ class TryTests {
         val result = Try.ofError<Exception>(Exception())
 
         // Assert
-        assertThrows<Exception> { result.orThrow() }
+        assertThrows<Exception> { result.orThrow<Exception>() }
     }
 
     @Test
