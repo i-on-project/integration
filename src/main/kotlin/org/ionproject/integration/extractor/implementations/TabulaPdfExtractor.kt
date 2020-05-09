@@ -10,31 +10,27 @@ import technology.tabula.CommandLineApp
 class TabulaPdfExtractor : PdfExtractor {
     /**
      * Extract table data from pdf file locate at [pdfPath]
-     * @return Try<MutableList<String>>
-     *     Success - String list contains all extracted data in json format
-     *     Failure - PdfExtractorException
+     * @return CompositeException with list of exceptions in case of any error
      */
     override fun extract(pdfPath: String): Try<MutableList<String>> {
-        if (pdfPath.isEmpty()) return Try.ofError(PdfExtractorException("Empty path"))
+        if (pdfPath.isEmpty()) return Try.ofError<PdfExtractorException>(PdfExtractorException("Empty path"))
 
         val pdfFile = File(pdfPath)
 
-        if (!pdfFile.exists()) return Try.ofError(PdfExtractorException("File doesn't exist"))
+        if (!pdfFile.exists()) return Try.ofError<PdfExtractorException>(PdfExtractorException("File doesn't exist"))
+
+        val parser = DefaultParser()
+        val data = StringBuilder()
 
         // Arguments to pass to tabula
         // -g = Guess the portion of the page to analyze per page
         // -l = Force PDF to be extracted using lattice-mode extraction
         // -p = Page range
         // -f = Output format JSON
-        val args = arrayOf(pdfFile.absolutePath, "-g", "-l", "-p", "all", "-f", "JSON")
-        val parser = DefaultParser()
-        val cmd = parser.parse(CommandLineApp.buildOptions(), args)
-
-        val data = StringBuilder()
-        var result = Try.of { CommandLineApp(data, cmd).extractTables(cmd) }
-
-        return if (result is Try.Error) {
-            Try.ofError(PdfExtractorException("Tabula cannot process file"))
-        } else Try.of(mutableListOf(data.toString()))
+        return Try.of { arrayOf(pdfFile.absolutePath, "-g", "-l", "-p", "all", "-f", "JSON") }
+            .map { args -> parser.parse(CommandLineApp.buildOptions(), args) }
+            .map { cmd -> CommandLineApp(data, cmd).extractTables(cmd) }
+            .map { mutableListOf(data.toString()) }
+            .mapError { PdfExtractorException("Tabula cannot process file") }
     }
 }

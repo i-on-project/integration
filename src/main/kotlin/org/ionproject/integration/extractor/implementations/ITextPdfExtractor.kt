@@ -10,30 +10,27 @@ import org.ionproject.integration.utils.Try
 class ITextPdfExtractor : PdfExtractor {
     /**
      * Extract text data from pdf file locate at [pdfPath]
-     * @return Try<MutableList<String>>
-     *     Success - String list contains all extracted data in text format
-     *     Failure - PdfExtractorException
+     * @return CompositeException with list of exceptions in case of any error
      */
     override fun extract(pdfPath: String): Try<MutableList<String>> {
-        if (pdfPath.isEmpty()) return Try.ofError(PdfExtractorException("Empty path"))
+        if (pdfPath.isEmpty()) return Try.ofError<PdfExtractorException>(PdfExtractorException("Empty path"))
 
-        val tryReader = Try.of { PdfReader(pdfPath) }
-        if (tryReader is Try.Error) return Try.ofError(PdfExtractorException("File doesn't exist or Invalid file format"))
+        val pdfReader = Try.of { PdfReader(pdfPath) }
 
-        val reader = (tryReader as Try.Value<PdfReader>).value
-        val pdfDoc = PdfDocument(reader)
+        try {
+            val data = mutableListOf<String>()
 
-        val data = mutableListOf<String>()
-        for (i in 1..pdfDoc.numberOfPages) {
-            val result = Try.of { PdfTextExtractor.getTextFromPage(pdfDoc.getPage(i)) }
-
-            if (result is Try.Error) return Try.ofError(PdfExtractorException("Itext cannot process file"))
-
-            data.add((result as Try<String>).toString())
+            return pdfReader
+                .map { reader -> PdfDocument(reader) }
+                .map { pdfDoc ->
+                    for (i in 1..pdfDoc.numberOfPages)
+                        data.add(PdfTextExtractor.getTextFromPage(pdfDoc.getPage(i)))
+                }
+                .map { data }
+                .mapError { PdfExtractorException("Itext cannot process file") }
+        } finally {
+            pdfReader
+                .match({ reader -> reader.close() }, {})
         }
-
-        reader.close()
-
-        return Try.of(data)
     }
 }
