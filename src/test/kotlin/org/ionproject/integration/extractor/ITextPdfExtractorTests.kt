@@ -2,7 +2,7 @@ package org.ionproject.integration.extractor
 
 import java.io.File
 import kotlinx.coroutines.runBlocking
-import org.ionproject.integration.extractor.implementation.ITextPdfExtractor
+import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
 import org.ionproject.integration.utils.Try
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

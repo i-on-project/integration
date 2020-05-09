@@ -1,11 +1,11 @@
-package org.ionproject.integration.extractor.implementation
+package org.ionproject.integration.extractor.implementations
 
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.commons.cli.DefaultParser
-import org.ionproject.integration.extractor.`interface`.PdfExtractor
-import org.ionproject.integration.extractor.exception.PdfExtractorException
+import org.ionproject.integration.extractor.exceptions.PdfExtractorException
+import org.ionproject.integration.extractor.interfaces.PdfExtractor
 import org.ionproject.integration.utils.Try
 import technology.tabula.CommandLineApp
 

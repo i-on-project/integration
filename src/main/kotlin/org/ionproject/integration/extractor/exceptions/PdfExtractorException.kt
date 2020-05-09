@@ -1,3 +1,3 @@
-package org.ionproject.integration.extractor.exception
+package org.ionproject.integration.extractor.exceptions
 
 class PdfExtractorException(message: String) : Exception(message)

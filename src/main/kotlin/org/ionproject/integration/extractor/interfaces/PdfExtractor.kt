@@ -1,4 +1,4 @@
-package org.ionproject.integration.extractor.`interface`
+package org.ionproject.integration.extractor.interfaces
 
 import org.ionproject.integration.utils.Try
 

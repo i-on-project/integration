@@ -1,12 +1,12 @@
-package org.ionproject.integration.extractor.implementation
+package org.ionproject.integration.extractor.implementations
 
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.ionproject.integration.extractor.`interface`.PdfExtractor
-import org.ionproject.integration.extractor.exception.PdfExtractorException
+import org.ionproject.integration.extractor.exceptions.PdfExtractorException
+import org.ionproject.integration.extractor.interfaces.PdfExtractor
 import org.ionproject.integration.utils.Try
 
 class ITextPdfExtractor : PdfExtractor {
