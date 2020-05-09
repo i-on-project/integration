@@ -1,6 +1,6 @@
-package org.ionproject.integration.format.implementation
+package org.ionproject.integration.format.implementations
 
-import org.ionproject.integration.format.exception.FormatCheckException
+import org.ionproject.integration.format.exceptions.FormatCheckException
 import org.ionproject.integration.model.internal.DynamicObject
 import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.orThrow

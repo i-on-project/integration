@@ -1,4 +1,4 @@
-package org.ionproject.integration.format.`interface`
+package org.ionproject.integration.format.interfaces
 
 interface FormatChecker {
     fun checkFormat(content: String): Boolean

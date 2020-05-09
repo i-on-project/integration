@@ -1,4 +1,4 @@
-package org.ionproject.integration.format.exception
+package org.ionproject.integration.format.exceptions
 
 import java.lang.Exception
 

@@ -1,4 +1,4 @@
-package org.ionproject.integration.format.implementation
+package org.ionproject.integration.format.implementations
 
 import com.squareup.moshi.Types
 import org.ionproject.integration.model.Nested

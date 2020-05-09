@@ -1,4 +1,4 @@
-package org.ionproject.integration.format.implementation
+package org.ionproject.integration.format.implementations
 
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

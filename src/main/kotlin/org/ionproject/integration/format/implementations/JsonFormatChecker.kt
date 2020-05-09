@@ -1,9 +1,9 @@
-package org.ionproject.integration.format.implementation
+package org.ionproject.integration.format.implementations
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.lang.reflect.Type
-import org.ionproject.integration.format.`interface`.FormatChecker
+import org.ionproject.integration.format.interfaces.FormatChecker
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orElse
 

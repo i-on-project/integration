@@ -1,6 +1,6 @@
-package org.ionproject.integration.format.implementation
+package org.ionproject.integration.format.implementations
 
-import org.ionproject.integration.format.`interface`.FormatChecker
+import org.ionproject.integration.format.interfaces.FormatChecker
 
 class StringFormatChecker(pattern: String) : FormatChecker {
 

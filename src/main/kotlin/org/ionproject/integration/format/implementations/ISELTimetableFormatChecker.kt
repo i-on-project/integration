@@ -1,7 +1,7 @@
-package org.ionproject.integration.format.implementation
+package org.ionproject.integration.format.implementations
 
 import com.squareup.moshi.Types
-import org.ionproject.integration.format.exception.FormatCheckException
+import org.ionproject.integration.format.exceptions.FormatCheckException
 import org.ionproject.integration.model.internal.DynamicObject
 import org.ionproject.integration.model.internal.Table
 import org.ionproject.integration.utils.Try
@@ -20,6 +20,7 @@ class ISELTimetableFormatChecker {
         val isJsonValid = Try.of { jsonChecker.checkFormat(dynamicObject.jsonData) }
             .flatMap { res -> mapToErrorOnFalseResult(res, "The timetable table changed its format") }
 
+        // It is assumed that if the data from the first page respects format, then all pages do
         val isStringValid = Try.of { stringChecker.checkFormat(dynamicObject.textData.first()) }
             .flatMap { res -> mapToErrorOnFalseResult(res, "The timetable header changed its format") }
 
