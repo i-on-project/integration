@@ -1,10 +1,13 @@
 package org.ionproject.integration.extractor
 
 import java.io.File
+import org.ionproject.integration.extractor.exceptions.PdfExtractorException
 import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
-import org.ionproject.integration.utils.Try
-import org.junit.jupiter.api.Assertions
+import org.ionproject.integration.utils.CompositeException
+import org.ionproject.integration.utils.orThrow
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
@@ -14,30 +17,30 @@ class ITextPdfExtractorTests {
     fun whenPdfPathIsEmpty_thenReturnExtractionFailed() {
         // Arrange
         val pdfPath = ""
-        val result: Try<MutableList<String>>
         val iTextPdfExtractor = ITextPdfExtractor()
 
         // Act
-        result = iTextPdfExtractor.extract(pdfPath)
+        val result = iTextPdfExtractor.extract(pdfPath)
 
         // Assert
-        Assertions.assertEquals(true, result is Try.Error)
-        Assertions.assertEquals("Empty path", (result as Try.Error).e.message)
+        val e = assertThrows<PdfExtractorException> { result.orThrow() }
+        assertEquals("Empty path", e.message)
     }
 
     @Test
     fun whenFileDoesntExist_thenReturnExtractionFailed() {
         // Arrange
         val pdfPath = "/invalidpath"
-        val result: Try<MutableList<String>>
         val iTextPdfExtractor = ITextPdfExtractor()
 
         // Act
-        result = iTextPdfExtractor.extract(pdfPath)
+        val result = iTextPdfExtractor.extract(pdfPath)
 
         // Assert
-        Assertions.assertEquals(true, result is Try.Error)
-        Assertions.assertEquals("File doesn't exist or Invalid file format", (result as Try.Error).e.message)
+        val e = assertThrows<CompositeException> { result.orThrow() }
+        assertEquals(2, e.exceptions.count())
+        assertEquals(true, e.exceptions[1] is PdfExtractorException)
+        assertEquals("Itext cannot process file", e.exceptions[1].message)
     }
 
     @Test
@@ -45,31 +48,30 @@ class ITextPdfExtractorTests {
         // Arrange
         val file = File.createTempFile("test", ".txt")
         val pdfPath = file.path
-        val result: Try<MutableList<String>>
         val iTextPdfExtractor = ITextPdfExtractor()
 
         // Act
-        result = iTextPdfExtractor.extract(pdfPath)
+        val result = iTextPdfExtractor.extract(pdfPath)
         file.deleteOnExit()
 
         // Assert
-        Assertions.assertEquals(true, result is Try.Error)
-        Assertions.assertEquals("File doesn't exist or Invalid file format", (result as Try.Error).e.message)
+        val e = assertThrows<CompositeException> { result.orThrow() }
+        assertEquals(2, e.exceptions.count())
+        assertEquals(true, e.exceptions[1] is PdfExtractorException)
+        assertEquals("Itext cannot process file", e.exceptions[1].message)
     }
 
     @Test
     fun whenValidFileFormat_thenReturnExtractionSuccessAndJsonData() {
         // Arrange
         val pdfPath = "src/test/resources/test.pdf"
-        val result: Try<MutableList<String>>
         val iTextPdfExtractor = ITextPdfExtractor()
 
         // Act
-        result = iTextPdfExtractor.extract(pdfPath)
+        val result = iTextPdfExtractor.extract(pdfPath)
+            .orThrow()
 
         // Assert
-        Assertions.assertEquals(true, result is Try.Value<MutableList<String>>)
-        Assertions.assertNotEquals(emptyList<String>(), (result as Try.Value<MutableList<String>>).value)
-        Assertions.assertEquals(1, result.value.size)
+        assertEquals(1, result.count())
     }
 }
