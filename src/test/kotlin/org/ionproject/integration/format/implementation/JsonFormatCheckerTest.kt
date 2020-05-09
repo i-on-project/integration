@@ -1,8 +1,8 @@
 package org.ionproject.integration.format.implementation
 
 import com.squareup.moshi.Types
-import org.ionproject.integration.model.Simple
 import org.ionproject.integration.model.Nested
+import org.ionproject.integration.model.Simple
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -11,15 +11,15 @@ internal class JsonFormatCheckerTest {
 
     companion object {
         private val dummyJfc = JsonFormatChecker<Simple>(Types.getRawType(Simple::class.java))
-        fun matchesSimpleSchema(jsonString: String) : Boolean {
+        fun matchesSimpleSchema(jsonString: String): Boolean {
             return dummyJfc.checkFormat(jsonString)
         }
         private val dummyListJfc = JsonFormatChecker<List<Simple>>(Types.newParameterizedType(List::class.java, Simple::class.java))
-        fun matchesArrayOfSimpleSchema(jsonString: String) : Boolean {
+        fun matchesArrayOfSimpleSchema(jsonString: String): Boolean {
             return dummyListJfc.checkFormat(jsonString)
         }
         private val nestedObjectJfc = JsonFormatChecker<Nested>(Nested::class.java)
-        fun matchesNestedSchema(jsonString: String) : Boolean {
+        fun matchesNestedSchema(jsonString: String): Boolean {
             return nestedObjectJfc.checkFormat(jsonString)
         }
     }
