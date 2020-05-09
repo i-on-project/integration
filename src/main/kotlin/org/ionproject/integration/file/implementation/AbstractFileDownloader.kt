@@ -17,15 +17,16 @@ abstract class AbstractFileDownloader() :
 
     override fun download(url: String, localDestination: String): Try<Path> {
         if (url.isEmpty() || localDestination.isEmpty()) {
-            return Try.ofError(IllegalArgumentException("Parameters url and localDestination need not be empty"))
+            return Try.ofError<IllegalArgumentException>(IllegalArgumentException("Parameters url and localDestination need not be empty"))
         }
 
-        val client = Try.of(HttpClient.newHttpClient())
+        val client = Try.ofValue(HttpClient.newHttpClient())
 
-        val request = Try.of(
+        val request = Try.ofValue(
             HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .build())
+                .uri(URI.create(url))
+                .build()
+        )
 
         val response = Try.map(client, request) { c, r -> c.send(r, HttpResponse.BodyHandlers.ofByteArray()) }
             .map { resp -> Response(resp.statusCode(), resp.body()) }
@@ -42,8 +43,8 @@ abstract class AbstractFileDownloader() :
     private fun validateResponseCode(response: Response): Try<Response> {
         return when (response.statusCode) {
             in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
-                return Try.ofError(ServerErrorException("Server responded with error code ${response.statusCode}"))
-            else -> Try.of(response)
+                return Try.ofError<ServerErrorException>(ServerErrorException("Server responded with error code ${response.statusCode}"))
+            else -> Try.ofValue(response)
         }
     }
 
