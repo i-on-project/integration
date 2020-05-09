@@ -7,8 +7,8 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Path
-import org.ionproject.integration.file.interfaces.FileDownloader
 import org.ionproject.integration.file.exceptions.ServerErrorException
+import org.ionproject.integration.file.interfaces.FileDownloader
 import org.ionproject.integration.model.internal.Response
 import org.ionproject.integration.utils.Try
 
