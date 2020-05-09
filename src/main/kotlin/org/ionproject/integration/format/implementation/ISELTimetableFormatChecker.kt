@@ -17,19 +17,20 @@ class ISELTimetableFormatChecker {
         val jsonChecker = JsonFormatChecker<List<Table>>(jsonRootType)
         val stringChecker = StringFormatChecker(regexPattern)
 
-        val isJsonValid = Try.of(jsonChecker.checkFormat(dynamicObject.jsonData))
+        val isJsonValid = Try.of { jsonChecker.checkFormat(dynamicObject.jsonData) }
             .flatMap { res -> mapToErrorOnFalseResult(res, "The timetable table changed its format") }
 
-        val isStringValid = Try.of(stringChecker.checkFormat(dynamicObject.textData.first()))
+        val isStringValid = Try.of { stringChecker.checkFormat(dynamicObject.textData.first()) }
             .flatMap { res -> mapToErrorOnFalseResult(res, "The timetable header changed its format") }
 
         return Try.map(isJsonValid, isStringValid) { j, s -> j.and(s) }
     }
+
     private fun mapToErrorOnFalseResult(res: Boolean, errorMessage: String): Try<Boolean> {
         return if (!res) {
-            Try.ofError(FormatCheckException(errorMessage))
+            Try.ofError<FormatCheckException>(FormatCheckException(errorMessage))
         } else {
-            Try.of(res)
+            Try.ofValue(res)
         }
     }
 }

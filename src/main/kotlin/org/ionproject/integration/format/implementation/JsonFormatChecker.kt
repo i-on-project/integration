@@ -16,7 +16,7 @@ class JsonFormatChecker<T>(type: Type) : FormatChecker {
         .failOnUnknown()
 
     override fun checkFormat(content: String): Boolean {
-        return Try.of(content)
+        return Try.ofValue(content)
             .map { c -> jsonAdapter.fromJson(c) }
             .map { true }
             .orElse(false)
