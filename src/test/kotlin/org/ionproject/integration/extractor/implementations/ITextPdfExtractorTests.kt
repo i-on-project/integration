@@ -1,8 +1,7 @@
-package org.ionproject.integration.extractor
+package org.ionproject.integration.extractor.implementations
 
 import java.io.File
 import org.ionproject.integration.extractor.exceptions.PdfExtractorException
-import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
 import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
