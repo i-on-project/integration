@@ -1,6 +1,6 @@
-package org.ionproject.integration.file.implementation
+package org.ionproject.integration.file.implementations
 
-import org.ionproject.integration.file.exception.InvalidFormatException
+import org.ionproject.integration.file.exceptions.InvalidFormatException
 
 class PDFFileDownloader : AbstractFileDownloader() {
     private val PDF_HEADER = "%PDF-1."

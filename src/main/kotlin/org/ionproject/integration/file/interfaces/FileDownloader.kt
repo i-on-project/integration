@@ -1,4 +1,4 @@
-package org.ionproject.integration.file.`interface`
+package org.ionproject.integration.file.interfaces
 
 import java.nio.file.Path
 import org.ionproject.integration.utils.Try

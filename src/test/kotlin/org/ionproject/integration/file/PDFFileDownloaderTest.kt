@@ -6,10 +6,10 @@ import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
 import java.nio.file.Paths
-import org.ionproject.integration.file.`interface`.FileDownloader
-import org.ionproject.integration.file.exception.InvalidFormatException
-import org.ionproject.integration.file.exception.ServerErrorException
-import org.ionproject.integration.file.implementation.PDFFileDownloader
+import org.ionproject.integration.file.interfaces.FileDownloader
+import org.ionproject.integration.file.exceptions.InvalidFormatException
+import org.ionproject.integration.file.exceptions.ServerErrorException
+import org.ionproject.integration.file.implementations.PDFFileDownloader
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
