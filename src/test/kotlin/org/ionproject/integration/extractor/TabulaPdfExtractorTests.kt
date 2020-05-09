@@ -1,7 +1,6 @@
 package org.ionproject.integration.extractor
 
 import java.io.File
-import kotlinx.coroutines.runBlocking
 import org.ionproject.integration.extractor.implementations.TabulaPdfExtractor
 import org.ionproject.integration.utils.Try
 import org.junit.jupiter.api.Assertions
@@ -19,7 +18,7 @@ class TabulaPdfExtractorTests {
         val tabulaPdfExtractor = TabulaPdfExtractor()
 
         // Act
-        result = runBlocking { tabulaPdfExtractor.extract(pdfPath) }
+        result = tabulaPdfExtractor.extract(pdfPath)
 
         // Assert
         Assertions.assertEquals(true, result is Try.Error)
@@ -34,7 +33,7 @@ class TabulaPdfExtractorTests {
         val tabulaPdfExtractor = TabulaPdfExtractor()
 
         // Act
-        result = runBlocking { tabulaPdfExtractor.extract(pdfPath) }
+        result = tabulaPdfExtractor.extract(pdfPath)
 
         // Assert
         Assertions.assertEquals(true, result is Try.Error)
@@ -50,7 +49,7 @@ class TabulaPdfExtractorTests {
         val tabulaPdfExtractor = TabulaPdfExtractor()
 
         // Act
-        result = runBlocking { tabulaPdfExtractor.extract(pdfPath) }
+        result = tabulaPdfExtractor.extract(pdfPath)
         file.deleteOnExit()
 
         // Assert
@@ -66,7 +65,7 @@ class TabulaPdfExtractorTests {
         val tabulaPdfExtractor = TabulaPdfExtractor()
 
         // Act
-        result = runBlocking { tabulaPdfExtractor.extract(pdfPath) }
+        result = tabulaPdfExtractor.extract(pdfPath)
 
         // Assert
         Assertions.assertEquals(true, result is Try.Value<MutableList<String>>)

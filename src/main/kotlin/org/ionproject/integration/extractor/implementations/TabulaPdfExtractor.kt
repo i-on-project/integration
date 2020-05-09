@@ -1,8 +1,6 @@
 package org.ionproject.integration.extractor.implementations
 
 import java.io.File
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.apache.commons.cli.DefaultParser
 import org.ionproject.integration.extractor.exceptions.PdfExtractorException
 import org.ionproject.integration.extractor.interfaces.PdfExtractor
@@ -16,7 +14,7 @@ class TabulaPdfExtractor : PdfExtractor {
      *     Success - String list contains all extracted data in json format
      *     Failure - PdfExtractorException
      */
-    override suspend fun extract(pdfPath: String): Try<MutableList<String>> {
+    override fun extract(pdfPath: String): Try<MutableList<String>> {
         if (pdfPath.isEmpty()) return Try.ofError(PdfExtractorException("Empty path"))
 
         val pdfFile = File(pdfPath)
@@ -33,9 +31,7 @@ class TabulaPdfExtractor : PdfExtractor {
         val cmd = parser.parse(CommandLineApp.buildOptions(), args)
 
         val data = StringBuilder()
-        var result = withContext(Dispatchers.IO) {
-            Try.of { CommandLineApp(data, cmd).extractTables(cmd) }
-        }
+        var result = Try.of { CommandLineApp(data, cmd).extractTables(cmd) }
 
         return if (result is Try.Error) {
             Try.ofError(PdfExtractorException("Tabula cannot process file"))
