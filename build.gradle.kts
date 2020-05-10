@@ -28,7 +28,6 @@ dependencies {
         exclude(group = "org.slf4j")
     }
     implementation("com.itextpdf:kernel:7.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5")
     runtimeOnly("org.postgresql:postgresql")
     testRuntimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
