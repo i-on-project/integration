@@ -10,7 +10,7 @@ import technology.tabula.CommandLineApp
 class TabulaPdfExtractor : PdfExtractor {
     /**
      * Extract table data from pdf file locate at [pdfPath]
-     * @return CompositeException with list of exceptions in case of any error
+     * @return PdfExtractorException in case of any error
      */
     override fun extract(pdfPath: String): Try<MutableList<String>> {
         if (pdfPath.isEmpty()) return Try.ofError<PdfExtractorException>(PdfExtractorException("Empty path"))
