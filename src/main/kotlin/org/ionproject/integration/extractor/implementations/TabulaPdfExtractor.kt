@@ -12,7 +12,7 @@ class TabulaPdfExtractor : PdfExtractor {
      * Extract table data from pdf file locate at [pdfPath]
      * @return PdfExtractorException in case of any error
      */
-    override fun extract(pdfPath: String): Try<MutableList<String>> {
+    override fun extract(pdfPath: String): Try<List<String>> {
         if (pdfPath.isEmpty()) return Try.ofError<PdfExtractorException>(PdfExtractorException("Empty path"))
 
         val pdfFile = File(pdfPath)
@@ -30,7 +30,7 @@ class TabulaPdfExtractor : PdfExtractor {
         return Try.of { arrayOf(pdfFile.absolutePath, "-g", "-l", "-p", "all", "-f", "JSON") }
             .map { args -> parser.parse(CommandLineApp.buildOptions(), args) }
             .map { cmd -> CommandLineApp(data, cmd).extractTables(cmd) }
-            .map { mutableListOf(data.toString()) }
+            .map { listOf(data.toString()) }
             .mapError { PdfExtractorException("Tabula cannot process file") }
     }
 }

@@ -12,7 +12,7 @@ class ITextPdfExtractor : PdfExtractor {
      * Extract text data from pdf file locate at [pdfPath]
      * @return PdfExtractorException in case of any error
      */
-    override fun extract(pdfPath: String): Try<MutableList<String>> {
+    override fun extract(pdfPath: String): Try<List<String>> {
         if (pdfPath.isEmpty()) return Try.ofError<PdfExtractorException>(PdfExtractorException("Empty path"))
 
         val pdfReader = Try.of { PdfReader(pdfPath) }
@@ -26,7 +26,7 @@ class ITextPdfExtractor : PdfExtractor {
                     for (i in 1..pdfDoc.numberOfPages)
                         data.add(PdfTextExtractor.getTextFromPage(pdfDoc.getPage(i)))
                 }
-                .map { data }
+                .map { data.toList() }
                 .mapError { PdfExtractorException("Itext cannot process file") }
         } finally {
             pdfReader

@@ -9,5 +9,5 @@ interface PdfExtractor {
      *     Success - String list contains extracted data
      *     Failure - PdfExtractorException
      */
-    fun extract(pdfPath: String): Try<MutableList<String>>
+    fun extract(pdfPath: String): Try<List<String>>
 }
