@@ -1,7 +1,7 @@
 package org.ionproject.integration.format.implementations
 
 import org.ionproject.integration.format.exceptions.FormatCheckException
-import org.ionproject.integration.model.internal.DynamicObject
+import org.ionproject.integration.model.internal.iseltimetable.DynamicObject
 import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -20,14 +20,20 @@ internal class ISELTimetableFormatCheckerTest {
     private val notMatchingText = "Alice 123"
     @Test
     fun whenBothFieldsOfDynamicObjectAreValid_ThenAssertResultTrue() {
-        val dynamicObject = DynamicObject(validJson, listOf(exactMatch))
+        val dynamicObject = DynamicObject(
+            validJson,
+            listOf(exactMatch)
+        )
         val fc = ISELTimetableFormatChecker()
         val res = fc.checkFormat(dynamicObject).orThrow()
         assertTrue(res)
     }
     @Test
     fun whenBothFieldsDoNotMatch_ThenThrowCompositeException() {
-        val dynamicObject = DynamicObject(validButNotMatchingJson, listOf(notMatchingText))
+        val dynamicObject = DynamicObject(
+            validButNotMatchingJson,
+            listOf(notMatchingText)
+        )
         val fc = ISELTimetableFormatChecker()
         val ex = assertThrows<CompositeException> { fc.checkFormat(dynamicObject).orThrow() }
         assertEquals("FormatCheckException", ex.exceptions[0].javaClass.simpleName)
@@ -35,35 +41,50 @@ internal class ISELTimetableFormatCheckerTest {
     }
     @Test
     fun whenInvalidJsonAndMatchingString_ThenThrowFormatCheckException() {
-        val dynamicObject = DynamicObject(invalidJson, listOf(matchingText))
+        val dynamicObject = DynamicObject(
+            invalidJson,
+            listOf(matchingText)
+        )
         val fc = ISELTimetableFormatChecker()
         val ex = assertThrows<FormatCheckException> { fc.checkFormat(dynamicObject).orThrow() }
         assertEquals("The timetable table changed its format", ex.message)
     }
     @Test
     fun whenValidButNotMatchingJsonAndMatchingText_ThenThrowFormatCheckException() {
-        val dynamicObject = DynamicObject(validButNotMatchingJson, listOf(matchingText))
+        val dynamicObject = DynamicObject(
+            validButNotMatchingJson,
+            listOf(matchingText)
+        )
         val fc = ISELTimetableFormatChecker()
         val ex = assertThrows<FormatCheckException> { fc.checkFormat(dynamicObject).orThrow() }
         assertEquals("The timetable table changed its format", ex.message)
     }
     @Test
     fun whenValidJsonAndMatchingText_ThenAssertResultIsTrue() {
-        val dynamicObject = DynamicObject(validJson, listOf(matchingText))
+        val dynamicObject = DynamicObject(
+            validJson,
+            listOf(matchingText)
+        )
         val fc = ISELTimetableFormatChecker()
         val res = fc.checkFormat(dynamicObject).orThrow()
         assertTrue(res)
     }
     @Test
     fun whenValidJsonAndEmptyString_ThenThrowFormatCheckException() {
-        val dynamicObject = DynamicObject(validJson, listOf(""))
+        val dynamicObject = DynamicObject(
+            validJson,
+            listOf("")
+        )
         val fc = ISELTimetableFormatChecker()
         val ex = assertThrows<FormatCheckException> { fc.checkFormat(dynamicObject).orThrow() }
         assertEquals("The timetable header changed its format", ex.message)
     }
     @Test
     fun whenValidJsonAndNotMatchingText_ThenThrowFormatCheckException() {
-        val dynamicObject = DynamicObject(validJson, listOf(notMatchingText))
+        val dynamicObject = DynamicObject(
+            validJson,
+            listOf(notMatchingText)
+        )
         val fc = ISELTimetableFormatChecker()
         val ex = assertThrows<FormatCheckException> { fc.checkFormat(dynamicObject).orThrow() }
         assertEquals("The timetable header changed its format", ex.message)

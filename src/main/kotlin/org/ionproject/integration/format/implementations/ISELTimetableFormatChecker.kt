@@ -2,7 +2,7 @@ package org.ionproject.integration.format.implementations
 
 import com.squareup.moshi.Types
 import org.ionproject.integration.format.exceptions.FormatCheckException
-import org.ionproject.integration.model.internal.DynamicObject
+import org.ionproject.integration.model.internal.iseltimetable.DynamicObject
 import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.utils.Try
 
