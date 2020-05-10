@@ -5,7 +5,6 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.lang.reflect.Type
 import org.ionproject.integration.format.interfaces.FormatChecker
 import org.ionproject.integration.utils.Try
-import org.ionproject.integration.utils.orElse
 
 class JsonFormatChecker<T>(type: Type) : FormatChecker {
     private val moshi: Moshi = Moshi.Builder()
@@ -18,7 +17,9 @@ class JsonFormatChecker<T>(type: Type) : FormatChecker {
     override fun checkFormat(content: String): Boolean {
         return Try.ofValue(content)
             .map { c -> jsonAdapter.fromJson(c) }
-            .map { true }
-            .orElse(false)
+            .match(
+                { true },
+                { false }
+            )
     }
 }

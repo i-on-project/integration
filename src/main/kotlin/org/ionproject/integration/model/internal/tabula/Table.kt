@@ -1,4 +1,4 @@
-package org.ionproject.integration.model.internal
+package org.ionproject.integration.model.internal.tabula
 
 data class Table(
     val extraction_method: String,
