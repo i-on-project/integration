@@ -30,7 +30,7 @@ class ITextPdfExtractor : PdfExtractor {
                 .mapError { PdfExtractorException("Itext cannot process file") }
         } finally {
             pdfReader
-                .match({ reader -> reader.close() }, {})
+                .map{ reader -> reader.close() }
         }
     }
 }
