@@ -9,10 +9,11 @@ import java.net.http.HttpResponse
 import java.nio.file.Path
 import org.ionproject.integration.file.exceptions.ServerErrorException
 import org.ionproject.integration.file.interfaces.FileDownloader
+import org.ionproject.integration.file.interfaces.FormatChecker
 import org.ionproject.integration.model.internal.Response
 import org.ionproject.integration.utils.Try
 
-abstract class AbstractFileDownloader() :
+class FileDownloaderImpl(private val checker: FormatChecker) :
     FileDownloader {
 
     override fun download(uri: URI, localDestination: String): Try<Path> {
@@ -32,7 +33,7 @@ abstract class AbstractFileDownloader() :
             .map { resp -> Response(resp.statusCode(), resp.body()) }
             .flatMap { resp -> validateResponseCode(resp) }
 
-        val file = response.map { r -> checkFormat(r.body) }
+        val file = response.map { r -> checker.checkFormat(r.body) }
             .map { File(localDestination) }
 
         Try.map(file, response) { f, r -> f.writeBytes(r.body) }
@@ -47,6 +48,4 @@ abstract class AbstractFileDownloader() :
             else -> Try.ofValue(response)
         }
     }
-
-    protected abstract fun checkFormat(bytes: ByteArray): Unit
 }
