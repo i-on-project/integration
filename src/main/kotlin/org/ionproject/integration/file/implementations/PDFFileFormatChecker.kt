@@ -1,9 +1,9 @@
 package org.ionproject.integration.file.implementations
 
 import org.ionproject.integration.file.exceptions.InvalidFormatException
-import org.ionproject.integration.file.interfaces.FormatChecker
+import org.ionproject.integration.file.interfaces.FileFormatChecker
 
-class PDFFormatChecker : FormatChecker {
+class PDFFileFormatChecker : FileFormatChecker {
     private val PDF_HEADER = "%PDF-1."
     private val MINIMUM_PDF_VERSION = '0'
     private val MAXIMUM_PDF_VERSION = '7'

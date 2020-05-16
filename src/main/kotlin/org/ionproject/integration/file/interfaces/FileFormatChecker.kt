@@ -1,5 +1,5 @@
 package org.ionproject.integration.file.interfaces
 
-interface FormatChecker {
+interface FileFormatChecker {
     fun checkFormat(bytes: ByteArray)
 }

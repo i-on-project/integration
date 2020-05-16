@@ -9,7 +9,7 @@ import java.nio.file.Paths
 import org.ionproject.integration.file.exceptions.InvalidFormatException
 import org.ionproject.integration.file.exceptions.ServerErrorException
 import org.ionproject.integration.file.implementations.FileDownloaderImpl
-import org.ionproject.integration.file.implementations.PDFFormatChecker
+import org.ionproject.integration.file.implementations.PDFFileFormatChecker
 import org.ionproject.integration.file.interfaces.FileDownloader
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.assertThrows
 
 internal class PDFFileDownloaderImplTest {
     companion object {
-        private val checker = PDFFormatChecker()
+        private val checker = PDFFileFormatChecker()
         private val pdfDownloader: FileDownloader = FileDownloaderImpl(checker)
         inline fun <reified T : Throwable> downloadAndAssertThrows(uri: URI, dstFile: String) {
             assertThrows<T> { downloadPdf(uri, dstFile).orThrow() }
