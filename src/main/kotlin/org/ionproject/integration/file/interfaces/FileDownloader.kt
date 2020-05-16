@@ -1,8 +1,9 @@
 package org.ionproject.integration.file.interfaces
 
+import java.net.URI
 import java.nio.file.Path
 import org.ionproject.integration.utils.Try
 
 interface FileDownloader {
-    fun download(url: String, localDestination: String): Try<Path>
+    fun download(uri: URI, localDestination: String): Try<Path>
 }

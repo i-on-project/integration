@@ -15,20 +15,20 @@ import org.ionproject.integration.utils.Try
 abstract class AbstractFileDownloader() :
     FileDownloader {
 
-    override fun download(url: String, localDestination: String): Try<Path> {
-        if (url.isEmpty() || localDestination.isEmpty()) {
+    override fun download(uri: URI, localDestination: String): Try<Path> {
+        if (localDestination.isEmpty()) {
             return Try.ofError<IllegalArgumentException>(IllegalArgumentException("Parameters url and localDestination need not be empty"))
         }
 
-        val client = Try.ofValue(HttpClient.newHttpClient())
+        val client = HttpClient.newHttpClient()
 
         val request = Try.ofValue(
             HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(uri)
                 .build()
         )
 
-        val response = Try.map(client, request) { c, r -> c.send(r, HttpResponse.BodyHandlers.ofByteArray()) }
+        val response = request.map { r -> client.send(r, HttpResponse.BodyHandlers.ofByteArray()) }
             .map { resp -> Response(resp.statusCode(), resp.body()) }
             .flatMap { resp -> validateResponseCode(resp) }
 
