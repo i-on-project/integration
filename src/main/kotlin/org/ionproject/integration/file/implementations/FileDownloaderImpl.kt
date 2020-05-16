@@ -8,12 +8,12 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Path
 import org.ionproject.integration.file.exceptions.ServerErrorException
+import org.ionproject.integration.file.interfaces.BytesFormatChecker
 import org.ionproject.integration.file.interfaces.FileDownloader
-import org.ionproject.integration.file.interfaces.FileFormatChecker
 import org.ionproject.integration.model.internal.Response
 import org.ionproject.integration.utils.Try
 
-class FileDownloaderImpl(private val checker: FileFormatChecker) :
+class FileDownloaderImpl(private val checker: BytesFormatChecker) :
     FileDownloader {
 
     override fun download(uri: URI, localDestination: String): Try<Path> {
