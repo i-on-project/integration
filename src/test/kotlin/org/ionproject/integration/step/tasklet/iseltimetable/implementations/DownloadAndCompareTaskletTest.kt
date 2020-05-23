@@ -20,7 +20,6 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
 import org.springframework.batch.core.StepContribution
-import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration
 import org.springframework.test.context.ContextConfiguration
@@ -29,7 +28,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [ISELTimetable::class, DownloadAndCompareTasklet::class, BatchAutoConfiguration::class, IOnIntegrationApplication::class])
-@SpringBatchTest
 @TestPropertySource(properties = ["local-file-destination=/tmp/TIMETABLE-SUCCESSFUL.pdf", "pdf-remote-location:https://www.isel.pt/media/uploads/LEIC_0310.pdf"])
 internal class DownloadAndCompareTaskletTestSuccessFul {
 
@@ -58,7 +56,6 @@ internal class DownloadAndCompareTaskletTestSuccessFul {
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [ISELTimetable::class, DownloadAndCompareTasklet::class, BatchAutoConfiguration::class, IOnIntegrationApplication::class])
-@SpringBatchTest
 internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
     @Autowired
@@ -98,7 +95,6 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [ISELTimetable::class, DownloadAndCompareTasklet::class, BatchAutoConfiguration::class, IOnIntegrationApplication::class])
-@SpringBatchTest
 @TestPropertySource(properties = ["local-file-destination=/tmp/NOT-USED.pdf", "pdf-remote-location=https://kotlinlang.org/"])
 internal class DownloadAndCompareTaskletUrlNotPdfTest {
 
@@ -141,7 +137,6 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [ISELTimetable::class, DownloadAndCompareTasklet::class, BatchAutoConfiguration::class, IOnIntegrationApplication::class])
-@SpringBatchTest
 @TestPropertySource(properties = ["local-file-destination=/tmp/SERVER_DOWN.pdf", "pdf-remote-location=http://httpstat.us/500"])
 internal class DownloadAndCompareTaskletServerErrorTest {
 
