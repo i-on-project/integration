@@ -34,6 +34,7 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
+    testImplementation("org.springframework.batch:spring-batch-test:4.2.2.RELEASE")
 }
 
 tasks.register<Copy>("extractUberJar") {
