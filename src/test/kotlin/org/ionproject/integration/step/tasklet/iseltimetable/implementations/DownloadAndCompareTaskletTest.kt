@@ -1,7 +1,6 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.nio.file.Path
 import java.nio.file.Paths
 import org.ionproject.integration.IOnIntegrationApplication
@@ -62,21 +61,7 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
     private lateinit var downloadAndCompareTasklet: DownloadAndCompareTasklet
 
     @Test
-    fun whenUrlIsNotDefined_ThenReturnsIllegalArgumentException() {
-        val localFileDestination = "/tmp/TIMETABLE.pdf"
-        val contribution = Mockito.mock(StepContribution::class.java)
-        val chunkContext = SpringBatchTestUtils().createChunkContext()
-        val file = File(localFileDestination)
-        try {
-            val repeatStatus = Try.of { downloadAndCompareTasklet.execute(contribution, chunkContext) }
-            assertThrows<IllegalArgumentException> { repeatStatus.orThrow() }
-            assertFalse(file.exists())
-        } finally {
-            file.deleteOnExit()
-        }
-    }
-    @Test
-    fun whenUrlIsNotDefined_ThenPathIsNotIncludedInContext() {
+    fun whenUrlIsNotDefined_ThenReturnsIllegalArgumentExceptionAndPathIsNotIncludedInContext() {
         val localFileDestination = "/tmp/TIMETABLE.pdf"
         val pathKey = "pdf-path"
         val contribution = Mockito.mock(StepContribution::class.java)
@@ -85,6 +70,7 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
         try {
             val repeatStatus = Try.of { downloadAndCompareTasklet.execute(contribution, chunkContext) }
             assertThrows<IllegalArgumentException> { repeatStatus.orThrow() }
+            assertFalse(file.exists())
             val actualPath = chunkContext.stepContext.stepExecution.jobExecution.executionContext.get(pathKey)
             assertNull(actualPath)
         } finally {
@@ -102,22 +88,7 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
     private lateinit var downloadAndCompareTasklet: DownloadAndCompareTasklet
 
     @Test
-    fun whenUrlIsNotPdf_ThenAssertExceptionIsInvalidFormat() {
-        val localFileDestination = "/tmp/NOT-USED.pdf"
-        val contribution = Mockito.mock(StepContribution::class.java)
-        val chunkContext = SpringBatchTestUtils().createChunkContext()
-        val file = File(localFileDestination)
-        try {
-            val repeatStatus = Try.of { downloadAndCompareTasklet.execute(contribution, chunkContext) }
-            val ex = assertThrows<InvalidFormatException> { repeatStatus.orThrow() }
-            assertEquals("Downloaded content was not in the PDF format.", ex.message)
-            assertFalse(file.exists())
-        } finally {
-            file.deleteOnExit()
-        }
-    }
-    @Test
-    fun whenUrlIsNotPdf_ThenPathInsNotInExecutionContext() {
+    fun whenUrlIsNotPdf_ThenAssertExceptionIsInvalidFormatAndPathIsNotIncludedInContext() {
         val localFileDestination = "/tmp/NOT-USED.pdf"
         val pathKey = "pdf-path"
         val contribution = Mockito.mock(StepContribution::class.java)
@@ -125,8 +96,9 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
         val file = File(localFileDestination)
         try {
             val repeatStatus = Try.of { downloadAndCompareTasklet.execute(contribution, chunkContext) }
-            assertThrows<InvalidFormatException> { repeatStatus.orThrow() }
+            val ex = assertThrows<InvalidFormatException> { repeatStatus.orThrow() }
             val actualPath = chunkContext.stepContext.stepExecution.jobExecution.executionContext.get(pathKey)
+            assertEquals("Downloaded content was not in the PDF format.", ex.message)
             assertNull(actualPath)
             assertFalse(file.exists())
         } finally {
@@ -144,22 +116,7 @@ internal class DownloadAndCompareTaskletServerErrorTest {
     private lateinit var downloadAndCompareTasklet: DownloadAndCompareTasklet
 
     @Test
-    fun whenServerResponds5xx_ThenAssertExceptionIsServerError() {
-        val localFileDestination = "/tmp/SERVER_DOWN.pdf"
-        val contribution = Mockito.mock(StepContribution::class.java)
-        val chunkContext = SpringBatchTestUtils().createChunkContext()
-        val file = File(localFileDestination)
-        try {
-            val repeatStatus = Try.of { downloadAndCompareTasklet.execute(contribution, chunkContext) }
-            val ex = assertThrows<ServerErrorException> { repeatStatus.orThrow() }
-            assertEquals("Server responded with error code 500", ex.message)
-            assertFalse(file.exists())
-        } finally {
-            file.deleteOnExit()
-        }
-    }
-    @Test
-    fun whenServerResponds5xx_ThenAssertPathIsNotInContext() {
+    fun whenServerResponds5xx_ThenAssertExceptionIsServerErrorAndPathIsNotInContext() {
         val localFileDestination = "/tmp/SERVER_DOWN.pdf"
         val pathKey = "pdf-path"
         val contribution = Mockito.mock(StepContribution::class.java)
@@ -167,8 +124,9 @@ internal class DownloadAndCompareTaskletServerErrorTest {
         val file = File(localFileDestination)
         try {
             val repeatStatus = Try.of { downloadAndCompareTasklet.execute(contribution, chunkContext) }
-            assertThrows<ServerErrorException> { repeatStatus.orThrow() }
+            val ex = assertThrows<ServerErrorException> { repeatStatus.orThrow() }
             val actualPath = chunkContext.stepContext.stepExecution.jobExecution.executionContext.get(pathKey)
+            assertEquals("Server responded with error code 500", ex.message)
             assertNull(actualPath)
             assertFalse(file.exists())
         } finally {
