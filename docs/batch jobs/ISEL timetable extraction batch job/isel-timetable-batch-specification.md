@@ -16,16 +16,16 @@ Example data in json format
 {
     "school": "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
     "programme": "Licenciatura Engenharia Informática e Computadores",
-    "term": "2019/20-Verão",
-    "class": "LI11D",
+    "calendarTerm": "2019/20-Verão",
+    "classSection": "LI11D",
     "courses": [
         {
-            "course": "ALGA[I]",
-            "course_type": "(T)",
+            "acronym": "ALGA[I]",
+            "type": "(T)",
             "room": "E.1.31",
-            "begin_time": "14:00:00",
-            "end_time": "15:30:00",
-            "duration": "1:30:00",
+            "begin_time": "2020-05-27T12:30",
+            "end_time": "2020-05-27T15:30",
+            "duration": "PT3H",
             "weekday": "Monday"
         }
     ]
@@ -36,12 +36,12 @@ And the kotlin data classes that generate it
 data class Timetable (
 	@JsonProperty("school") val school : String,
 	@JsonProperty("programme") val programme : String,
-	@JsonProperty("term") val term : String,
-	@JsonProperty("class") val klass : String,
+	@JsonProperty("calendarTerm") val calendarTerm : String,
+	@JsonProperty("classSection") val classSection : String,
 	@JsonProperty("courses") val courses : List<Course>
 )
 data class Course (
-	@JsonProperty("name") val name : String,
+	@JsonProperty("acronym") val acronym : String,
 	@JsonProperty("type") val type : String,
 	@JsonProperty("room") val room : String,
 	@JsonProperty("begin_time") val begin_time : String,
@@ -56,8 +56,8 @@ Example data in json format
 {
     "school": "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
     "programme": "Licenciatura Engenharia Informática e Computadores",
-    "term": "2019/20-Verão",
-    "class": "LI11D",
+    "calendarTerm": "2019/20-Verão",
+    "classSection": "LI11D",
     "faculty": [
         {
             "course": "ALGA",
@@ -76,8 +76,8 @@ And the kotlin data classes that generate it
 data class CourseTeacher (
 	@JsonProperty("school") val school : String,
 	@JsonProperty("programme") val programme : String,
-	@JsonProperty("term") val term : String,
-	@JsonProperty("class") val klass : String,
+	@JsonProperty("calendarTerm") val calendarTerm : String,
+	@JsonProperty("classSection") val classSection : String,
 	@JsonProperty("faculty") val faculty : List<Faculty>
 )
 data class Faculty (
