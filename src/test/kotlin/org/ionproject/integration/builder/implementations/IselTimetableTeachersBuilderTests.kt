@@ -1,6 +1,6 @@
 package org.ionproject.integration.builder.implementations
 
-import java.time.LocalDateTime
+import java.time.LocalTime
 import org.ionproject.integration.model.internal.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -48,7 +48,7 @@ class IselTimetableTeachersBuilderTests {
 
         // Act
         builder.setTeachers(rawData)
-        val timetableTeacher = builder.getTimetableTeachers()
+        builder.getTimetableTeachers()
         val emptyTimetableTeacher = builder.getTimetableTeachers()
 
         // Assert
@@ -72,8 +72,8 @@ class IselTimetableTeachersBuilderTests {
         assertEquals("LI11D", timetableTeacher.teachers[0].classSection)
 
         // Timetable data
-        val beginTime = LocalDateTime.parse(timetableTeacher.timetable[0].courses[0].begin_time)
-        val endTime = LocalDateTime.parse(timetableTeacher.timetable[0].courses[0].end_time)
+        val beginTime = LocalTime.parse(timetableTeacher.timetable[0].courses[0].begin_time)
+        val endTime = LocalTime.parse(timetableTeacher.timetable[0].courses[0].end_time)
 
         assertEquals(3, timetableTeacher.timetable[0].courses.count())
         assertEquals("ALGA[I]", timetableTeacher.timetable[0].courses[0].acronym)
@@ -92,12 +92,12 @@ class IselTimetableTeachersBuilderTests {
         // Faculty data
         assertEquals(3, timetableTeacher.teachers[0].faculty.count())
         assertEquals("ALGA[I]", timetableTeacher.teachers[0].faculty[0].course)
-        assertEquals("(T)", timetableTeacher.teachers[0].faculty[0].course_type)
+        assertEquals("(T)", timetableTeacher.teachers[0].faculty[0].courseType)
         assertEquals(1, timetableTeacher.teachers[0].faculty[0].teachers.count())
         assertEquals("Teresa Maria de Araújo Melo Quinteiro", timetableTeacher.teachers[0].faculty[0].teachers[0].name)
 
         assertEquals("E[I]", timetableTeacher.teachers[0].faculty[1].course)
-        assertEquals("(P)", timetableTeacher.teachers[0].faculty[1].course_type)
+        assertEquals("(P)", timetableTeacher.teachers[0].faculty[1].courseType)
         assertEquals(2, timetableTeacher.teachers[0].faculty[1].teachers.count())
         assertEquals("Fernando dos Santos Azevedo", timetableTeacher.teachers[0].faculty[1].teachers[0].name)
         assertEquals("João Manuel Ferreira Martins", timetableTeacher.teachers[0].faculty[1].teachers[1].name)

@@ -23,8 +23,8 @@ Example data in json format
             "acronym": "ALGA[I]",
             "type": "(T)",
             "room": "E.1.31",
-            "begin_time": "2020-05-27T12:30",
-            "end_time": "2020-05-27T15:30",
+            "begin_time": "12:30",
+            "end_time": "15:30",
             "duration": "PT3H",
             "weekday": "Monday"
         }
@@ -61,7 +61,7 @@ Example data in json format
     "faculty": [
         {
             "course": "ALGA",
-            "course_type": "(T)",
+            "courseType": "(T)",
             "teachers": [
                 {
                     "name": "João Trindade"
@@ -82,7 +82,7 @@ data class CourseTeacher (
 )
 data class Faculty (
 	@JsonProperty("course") val course : String,
-	@JsonProperty("course_type") val course_type : String,
+	@JsonProperty("courseType") val course_type : String,
 	@JsonProperty("teachers") val teachers : List<Teacher>
 )
 data class Teacher (

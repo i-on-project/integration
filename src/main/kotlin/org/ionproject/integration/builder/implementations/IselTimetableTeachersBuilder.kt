@@ -2,7 +2,7 @@ package org.ionproject.integration.builder.implementations
 
 import com.squareup.moshi.Types
 import java.time.Duration
-import java.time.LocalDateTime
+import java.time.LocalTime
 import org.ionproject.integration.builder.interfaces.TimetableTeachersBuilder
 import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table
@@ -54,33 +54,35 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
 
     private fun rawDataToBusiness(rawData: RawData) {
         JsonUtils.fromJson<List<Table>>(rawData.jsonData, Types.newParameterizedType(List::class.java, Table::class.java))
-            .map {
-                var timetableList = mutableListOf<Timetable>()
-                var teacherList = mutableListOf<CourseTeacher>()
+            .map { mapTablesToBusiness(rawData, it) }
+    }
 
-                var i = 0
-                rawData
-                    .textData
-                    .forEach { data ->
-                        var timetable =
-                            Timetable()
-                        var courseTeacher =
-                            CourseTeacher()
+    private fun mapTablesToBusiness(rawData: RawData, tableList: List<Table>) {
+            val timetableList = mutableListOf<Timetable>()
+            val teacherList = mutableListOf<CourseTeacher>()
 
-                        setCommonData(data, timetable, courseTeacher)
+            var i = 0
+            rawData
+                .textData
+                .forEach { data ->
+                    var timetable =
+                        Timetable()
+                    var courseTeacher =
+                        CourseTeacher()
 
-                        timetable.courses = getCourseList(it[i].data)
-                        courseTeacher.faculty = getFacultyList(it[i + 1].data)
+                    setCommonData(data, timetable, courseTeacher)
 
-                        timetableList.add(timetable)
-                        teacherList.add(courseTeacher)
+                    timetable.courses = getCourseList(tableList[i].data)
+                    courseTeacher.faculty = getFacultyList(tableList[i + 1].data)
 
-                        i += 2
-                    }
+                    timetableList.add(timetable)
+                    teacherList.add(courseTeacher)
 
-                iselTimetableTeachers.timetable = timetableList
-                iselTimetableTeachers.teachers = teacherList
-            }
+                    i += 2
+                }
+
+            iselTimetableTeachers.timetable = timetableList
+            iselTimetableTeachers.teachers = teacherList
     }
 
     private fun setCommonData(data: String, timetable: Timetable, courseTeacher: CourseTeacher) {
@@ -113,7 +115,7 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
                 continue
             }
 
-            var beginTime = LocalDateTime.now()
+            var beginTime = LocalTime.now()
 
             for (j in 0 until cells.count()) {
                 val cell = cells[j]
@@ -155,7 +157,7 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
     }
 
     private fun getFacultyList(data: Array<Array<Cell>>): List<Faculty> {
-        var facultyList = mutableListOf<Faculty>()
+        val facultyList = mutableListOf<Faculty>()
         var leftFaculty = Faculty()
         var rightFaculty = Faculty()
 
@@ -184,13 +186,12 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
         }
     }
 
-    private fun getBeginTime(matches: List<String>): LocalDateTime? {
-        val today = LocalDateTime.now()
+    private fun getBeginTime(matches: List<String>): LocalTime? {
         val time = matches[0]
             .split('.')
 
-        return LocalDateTime
-            .of(today.year, today.monthValue, today.dayOfMonth, time[0].toInt(), time[1].toInt())
+        return LocalTime
+            .of(time[0].toInt(), time[1].toInt())
     }
 
     private fun populateCourseDetails(text: String): Triple<String, String, String> {
@@ -215,7 +216,7 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
             val courseDetails = populateCourseDetails(courseText)
             f = Faculty(
                 course = courseDetails.first.trim(),
-                course_type = courseDetails.second
+                courseType = courseDetails.second
             )
 
             f.teachers = mutableListOf(

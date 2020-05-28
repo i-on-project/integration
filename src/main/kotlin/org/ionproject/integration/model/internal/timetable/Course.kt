@@ -1,11 +1,11 @@
 package org.ionproject.integration.model.internal.timetable
 
 data class Course(
-    var acronym: String = "",
-    var type: String = "",
-    var room: String = "",
-    var begin_time: String = "",
-    var end_time: String = "",
-    var duration: String = "",
-    var weekday: String = ""
+    val acronym: String,
+    val type: String,
+    val room: String,
+    val begin_time: String,
+    val end_time: String,
+    val duration: String,
+    val weekday: String
 )

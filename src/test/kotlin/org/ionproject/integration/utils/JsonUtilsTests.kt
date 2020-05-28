@@ -31,7 +31,7 @@ class JsonUtilsTests {
     }
 
     @Test
-    fun whenInvalidJson_thenReturnsException() {
+    fun whenJsonDoesntConformToSchema_thenReturnsException() {
         // Arrange
         val json = "{\"x\": 1, \"y\":\"abc\"}"
 
