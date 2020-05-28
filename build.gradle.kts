@@ -10,7 +10,7 @@ plugins {
 
 group = "org.ionproject"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 val imageId = "docker.pkg.github.com/i-on-project/integration/i-on-integration"
 val tempDockerTag: String = "i-on-integration-image"
