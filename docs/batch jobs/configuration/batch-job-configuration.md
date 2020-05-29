@@ -55,9 +55,8 @@ The only drawback of this, as with command line switches, the java command can b
 
 # Conclusion
 
-From what was gathered, the two strongest options for this task would be using a .properties/.yml file per job or using Spring Batch Job Parameters.
+From what was gathered, the strongest option for this task is using a .properties/.yml file per job.
 
 Using an external non-relational database would provide the most flexibility but as it is not otherwise needed, it represents administration overhead, which we cannot absorb at the moment.
 Having a custom configuration file would require development of a module for parsing it. Having a .properties file per job acchieves the same result and does not require additional development time.
-
-Using Job Parameters is advised on the standard references for Spring Batch.
+Despite being advised on the standard references for Spring Batch, the use Job Parameters raises the same concern as command line switches, i.e. the launch command of the app would be very lengthy. On the other hand, using a .properties file does not have this inconvenient.
