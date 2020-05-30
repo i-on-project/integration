@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import java.io.File
 
 internal class PDFFileDownloaderImplTest {
     companion object {
@@ -45,7 +46,7 @@ internal class PDFFileDownloaderImplTest {
     @Test
     fun whenValid_ThenDownloadIsSuccessful() {
         val uri = URI.create("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
-        val fileDst = "/tmp/dummy.pdf"
+        val fileDst = File("dummy.pdf").absolutePath
         val matcher: PathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.pdf")
         try {
             val path = assertDoesNotThrow { downloadPdf(uri, fileDst).orThrow() }
