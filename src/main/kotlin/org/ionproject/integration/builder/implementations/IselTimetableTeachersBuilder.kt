@@ -1,9 +1,9 @@
 package org.ionproject.integration.builder.implementations
 
 import com.squareup.moshi.Types
-import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
 import java.time.Duration
 import java.time.LocalTime
+import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
 import org.ionproject.integration.builder.interfaces.TimetableTeachersBuilder
 import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table

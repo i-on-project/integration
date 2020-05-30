@@ -1,10 +1,9 @@
 package org.ionproject.integration.builder.implementations
 
-import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
 import java.time.LocalTime
+import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
 import org.ionproject.integration.model.internal.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.isel.RawData
-import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
