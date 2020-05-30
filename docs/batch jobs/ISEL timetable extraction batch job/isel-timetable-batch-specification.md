@@ -103,7 +103,7 @@ Example data in json format
     "classSection": "LI11D",
     "faculty": [
         {
-            "course": "ALGA",
+            "course": "ALGA[I]",
             "courseType": "(T)",
             "teachers": [
                 {
