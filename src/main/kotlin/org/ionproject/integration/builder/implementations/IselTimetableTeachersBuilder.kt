@@ -8,7 +8,11 @@ import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.Course
 import org.ionproject.integration.model.internal.timetable.CourseTeacher
+import org.ionproject.integration.model.internal.timetable.Event
 import org.ionproject.integration.model.internal.timetable.Faculty
+import org.ionproject.integration.model.internal.timetable.Label
+import org.ionproject.integration.model.internal.timetable.Programme
+import org.ionproject.integration.model.internal.timetable.School
 import org.ionproject.integration.model.internal.timetable.Teacher
 import org.ionproject.integration.model.internal.timetable.Timetable
 import org.ionproject.integration.model.internal.timetable.TimetableTeachers
@@ -96,13 +100,13 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
         val calendarTerm = RegexUtils.findMatches(CALENDAR_TERM_REGEX, data, RegexOption.MULTILINE)[0].replace("Ano Letivo:", "").trim()
         val classSection = RegexUtils.findMatches(CLASS_SECTION_REGEX, data, RegexOption.MULTILINE)[0].replace("Turma:", "").trim()
 
-        timetable.school = school
-        timetable.programme = programme
+        timetable.school = School(name = school)
+        timetable.programme = Programme(name = programme)
         timetable.calendarTerm = calendarTerm
         timetable.classSection = classSection
 
-        courseTeacher.school = school
-        courseTeacher.programme = programme
+        courseTeacher.school = School(name = school)
+        courseTeacher.programme = Programme(name = programme)
         courseTeacher.calendarTerm = calendarTerm
         courseTeacher.classSection = classSection
     }
@@ -148,13 +152,16 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
 
                             courseList.add(
                                 Course(
-                                    acronym = courseDetails.first.trim(),
-                                    type = courseDetails.second,
-                                    room = courseDetails.third,
-                                    begin_time = beginTime.toString(),
-                                    end_time = beginTime.plusSeconds(duration.toSeconds()).toString(),
-                                    duration = duration.toString(),
-                                    weekday = weekdays.getOrDefault(cell.left, "")
+                                    label = Label(acr = courseDetails.first.trim()),
+                                    events = listOf(
+                                        Event(type = courseDetails.second,
+                                        location = listOf(courseDetails.third),
+                                        beginTime = beginTime.toString(),
+                                        endTime = beginTime.plusSeconds(duration.toSeconds()).toString(),
+                                        duration = duration.toString(),
+                                        weekday = listOf(weekdays.getOrDefault(cell.left, ""))
+                                        )
+                                    )
                                 )
                             )
                         }
