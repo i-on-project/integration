@@ -1,6 +1,7 @@
 package org.ionproject.integration.builder.implementations
 
 import com.squareup.moshi.Types
+import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
 import java.time.Duration
 import java.time.LocalTime
 import org.ionproject.integration.builder.interfaces.TimetableTeachersBuilder
@@ -30,30 +31,27 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
     val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 47
     val HEIGHT_HALF_HOUR_THRESHOLD = 17
 
-    private lateinit var iselTimetableTeachers: TimetableTeachers
+    private lateinit var iselTimetableTeachers: Try<TimetableTeachers>
 
     init {
         reset()
     }
 
     override fun reset() {
-        iselTimetableTeachers =
-            TimetableTeachers()
+        iselTimetableTeachers = Try.ofValue(TimetableTeachers())
     }
 
     override fun setTimetable(rawData: RawData) {
-        if (iselTimetableTeachers.timetable.count() != 0 && iselTimetableTeachers.teachers.count() != 0)
-            return
-
-        rawDataToBusiness(rawData)
+        iselTimetableTeachers
+            .map { timetableTeachers -> if (timetableTeachers.timetable.count() == 0 || timetableTeachers.teachers.count() == 0) rawDataToBusiness(rawData) }
     }
 
     override fun setTeachers(rawData: RawData) {
         setTimetable(rawData)
     }
 
-    fun getTimetableTeachers(): TimetableTeachers {
-        val result = this.iselTimetableTeachers.copy()
+    fun getTimetableTeachers(): Try<TimetableTeachers> {
+        val result = this.iselTimetableTeachers.map { it.copy() }
         reset()
         return result
     }
@@ -64,6 +62,7 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
     }
 
     private fun mapTablesToBusiness(rawData: RawData, tableList: List<Table>) {
+        iselTimetableTeachers = Try.of {
             val timetableList = mutableListOf<Timetable>()
             val teacherList = mutableListOf<CourseTeacher>()
 
@@ -78,11 +77,8 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
 
                     setCommonData(data, timetable, courseTeacher)
 
-                    getCourseList(tableList[i].data)
-                        .map { timetable.courses = it }
-
-                    getFacultyList(tableList[i + 1].data)
-                        .map { courseTeacher.faculty = it }
+                    timetable.courses = getCourseList(tableList[i].data)
+                    courseTeacher.faculty = getFacultyList(tableList[i + 1].data)
 
                     timetableList.add(timetable)
                     teacherList.add(courseTeacher)
@@ -90,8 +86,8 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
                     i += 2
                 }
 
-            iselTimetableTeachers.timetable = timetableList
-            iselTimetableTeachers.teachers = teacherList
+            TimetableTeachers(timetableList, teacherList)
+        }
     }
 
     private fun setCommonData(data: String, timetable: Timetable, courseTeacher: CourseTeacher) {
@@ -111,86 +107,88 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
         courseTeacher.classSection = classSection
     }
 
-    private fun getCourseList(data: Array<Array<Cell>>): Try<List<Course>> {
+    private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
         var courseList = mutableListOf<Course>()
         var weekdays = mutableMapOf<Double, String>()
         var courseDetails: Triple<String, String, String>
 
-        return Try.of {
-            for (i in 0 until data.count()) {
-                val cells = data[i]
+        for (i in 0 until data.count()) {
+            val cells = data[i]
 
-                if (weekdays.keys.isEmpty()) {
-                    populateWeekdays(cells, weekdays)
+            if (weekdays.keys.isEmpty()) {
+                populateWeekdays(cells, weekdays)
+                continue
+            }
+
+            var beginTime = LocalTime.now()
+
+            for (j in 0 until cells.count()) {
+                val cell = cells[j]
+
+                if (cell.text.isNullOrEmpty()) continue
+
+                val matches = RegexUtils.findMatches(TIME_SLOT_REGEX, cells[j].text)
+                if (matches.count() != 0) {
+                    beginTime = getBeginTime(matches)
                     continue
                 }
 
-                var beginTime = LocalTime.now()
+                cell.text.split('\r')
+                    .forEach {
+                        courseDetails = populateCourseDetails(it)
 
-                for (j in 0 until cells.count()) {
-                    val cell = cells[j]
+                        var duration: Duration = if (cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD) {
+                            Duration.ofHours(3)
+                        } else if (cell.height > HEIGHT_HALF_HOUR_THRESHOLD) {
+                            Duration.ofHours(1).plusMinutes(30)
+                        } else {
+                            Duration.ofMinutes(30)
+                        }
 
-                    if (cell.text.isNullOrEmpty()) continue
+                        if (!weekdays.contains(cell.left)) throw TimetableTeachersBuilderException("Can't find weekday")
 
-                    val matches = RegexUtils.findMatches(TIME_SLOT_REGEX, cells[j].text)
-                    if (matches.count() != 0) {
-                        beginTime = getBeginTime(matches)
-                        continue
-                    }
-
-                    cell.text.split('\r')
-                        .forEach {
-                            courseDetails = populateCourseDetails(it)
-
-                            var duration: Duration = if (cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD) {
-                                Duration.ofHours(3)
-                            } else if (cell.height > HEIGHT_HALF_HOUR_THRESHOLD) {
-                                Duration.ofHours(1).plusMinutes(30)
-                            } else {
-                                Duration.ofMinutes(30)
-                            }
-
-                            courseList.add(
-                                Course(
-                                    label = Label(acr = courseDetails.first.trim()),
-                                    events = listOf(
-                                        Event(type = courseDetails.second,
-                                        location = listOf(courseDetails.third),
-                                        beginTime = beginTime.toString(),
-                                        endTime = beginTime.plusSeconds(duration.toSeconds()).toString(),
-                                        duration = duration.toString(),
-                                        weekday = listOf(weekdays.getOrDefault(cell.left, ""))
-                                        )
+                        courseList.add(
+                            Course(
+                                label = Label(acr = courseDetails.first.trim()),
+                                events = listOf(
+                                    Event(type = courseDetails.second,
+                                    location = listOf(courseDetails.third),
+                                    beginTime = beginTime.toString(),
+                                    endTime = beginTime.plusSeconds(duration.toSeconds()).toString(),
+                                    duration = duration.toString(),
+                                    weekday = listOf(weekdays.getOrDefault(cell.left, ""))
                                     )
                                 )
                             )
-                        }
-                }
+                        )
+                    }
             }
-        }.map { courseList }
+        }
+
+        return courseList
     }
 
-    private fun getFacultyList(data: Array<Array<Cell>>): Try<List<Faculty>> {
+    private fun getFacultyList(data: Array<Array<Cell>>): List<Faculty> {
         val facultyList = mutableListOf<Faculty>()
         var leftFaculty = Faculty()
         var rightFaculty = Faculty()
 
-        return Try.of {
-            for (i in 0 until data.count()) {
-                val cells = data[i]
+        for (i in 0 until data.count()) {
+            val cells = data[i]
 
-                val leftCourseText = cells[0].text
-                val leftTeacherText = cells[1].text
-                val rightCourseText = cells[2].text
-                val rightTeacherText = cells[3].text
+            val leftCourseText = cells[0].text
+            val leftTeacherText = cells[1].text
+            val rightCourseText = cells[2].text
+            val rightTeacherText = cells[3].text
 
-                leftFaculty = populateFaculty(leftCourseText, leftTeacherText, leftFaculty, facultyList)
-                rightFaculty = populateFaculty(rightCourseText, rightTeacherText, rightFaculty, facultyList)
-            }
+            leftFaculty = populateFaculty(leftCourseText, leftTeacherText, leftFaculty, facultyList)
+            rightFaculty = populateFaculty(rightCourseText, rightTeacherText, rightFaculty, facultyList)
+        }
 
-            if (!leftFaculty.course.isNullOrEmpty()) facultyList.add(leftFaculty)
-            if (!rightFaculty.course.isNullOrEmpty()) facultyList.add(rightFaculty)
-        }.map { facultyList }
+        if (!leftFaculty.course.isNullOrEmpty()) facultyList.add(leftFaculty)
+        if (!rightFaculty.course.isNullOrEmpty()) facultyList.add(rightFaculty)
+
+        return facultyList
     }
 
     private fun populateWeekdays(cells: Array<Cell>, weekdays: MutableMap<Double, String>) {
