@@ -1,5 +1,6 @@
 package org.ionproject.integration.file
 
+import java.io.File
 import java.net.ConnectException
 import java.net.URI
 import java.nio.file.FileSystems
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import java.io.File
 
 internal class PDFFileDownloaderImplTest {
     companion object {
