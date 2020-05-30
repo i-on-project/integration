@@ -23,7 +23,8 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
     val CLASS_SECTION_REGEX = "\\bTurma\\b: [LM][A-Z+]\\d{2}[DN]"
     val CALENDAR_TERM_REGEX = "\\bAno Letivo\\b: \\d{4}/\\d{2}-\\b(Verão|Inverno)\\b"
     val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).(0|3)0"
-    val HEIGHT_THRESHOLD = 47
+    val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 47
+    val HEIGHT_HALF_HOUR_THRESHOLD = 17
 
     private lateinit var iselTimetableTeachers: TimetableTeachers
 
@@ -137,10 +138,12 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
                         .forEach {
                             courseDetails = populateCourseDetails(it)
 
-                            var duration: Duration = if (cell.height > HEIGHT_THRESHOLD) {
+                            var duration: Duration = if (cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD) {
                                 Duration.ofHours(3)
-                            } else {
+                            } else if (cell.height > HEIGHT_HALF_HOUR_THRESHOLD) {
                                 Duration.ofHours(1).plusMinutes(30)
+                            } else {
+                                Duration.ofMinutes(30)
                             }
 
                             courseList.add(
