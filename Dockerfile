@@ -1,7 +1,7 @@
-ARG BUILD_TAG=11-jdk-slim
-ARG RUN_TAG=11.0.7-jre-slim
+ARG BUILD_TAG=11.0.7_10-jdk-hotspot-bionic
+ARG RUN_TAG=11.0.7_10-jre-hotspot-bionic
 
-FROM openjdk:${BUILD_TAG} AS build-env
+FROM adoptopenjdk:${BUILD_TAG} AS build-env
 WORKDIR /src
 
 # Copy project .dockerignore prevents copy of unnecessary files
@@ -10,7 +10,7 @@ COPY . .
 # Gradle task to build, test, run lint and extract dependencies with daemon disabled
 RUN ./gradlew extractUberJar --no-daemon --stacktrace
 
-FROM openjdk:${RUN_TAG} AS run-env
+FROM adoptopenjdk:${RUN_TAG} AS run-env
 RUN useradd -m spring && usermod -a -G spring spring
 USER spring:spring
 
