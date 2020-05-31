@@ -103,15 +103,14 @@ class IselTimetableTeachersBuilderTests {
         assertEquals("INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA", timetableTeacher.timetable[0].school.name)
         assertEquals("Licenciatura em Engenharia Informática e de Computadores", timetableTeacher.timetable[0].programme.name)
         assertEquals("2019/20-Verão", timetableTeacher.timetable[0].calendarTerm)
-        assertEquals("LI11D", timetableTeacher.timetable[0].classSection)
+        assertEquals("LI11D", timetableTeacher.timetable[0].calendarSection)
         assertEquals("INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA", timetableTeacher.teachers[0].school.name)
         assertEquals("Licenciatura em Engenharia Informática e de Computadores", timetableTeacher.teachers[0].programme.name)
         assertEquals("2019/20-Verão", timetableTeacher.teachers[0].calendarTerm)
-        assertEquals("LI11D", timetableTeacher.teachers[0].classSection)
+        assertEquals("LI11D", timetableTeacher.teachers[0].calendarSection)
 
         // Timetable data
         val beginTime = LocalTime.parse(timetableTeacher.timetable[0].courses[0].events[0].beginTime)
-        val endTime = LocalTime.parse(timetableTeacher.timetable[0].courses[0].events[0].endTime)
 
         assertEquals(4, timetableTeacher.timetable[0].courses.count())
         assertEquals("ALGA[I]", timetableTeacher.timetable[0].courses[0].label.acr)
@@ -119,16 +118,14 @@ class IselTimetableTeachersBuilderTests {
         assertTrue(timetableTeacher.timetable[0].courses[0].events[0].location.contains("E.1.08"))
         assertEquals(12, beginTime.hour)
         assertEquals(30, beginTime.minute)
-        assertEquals(15, endTime.hour)
-        assertEquals(30, endTime.minute)
         assertEquals("PT3H", timetableTeacher.timetable[0].courses[0].events[0].duration)
-        assertTrue(timetableTeacher.timetable[0].courses[0].events[0].weekday.contains("Sexta"))
+        assertTrue(timetableTeacher.timetable[0].courses[0].events[0].weekday.contains("FR"))
 
         assertEquals("PT30M", timetableTeacher.timetable[0].courses[1].events[0].duration)
-        assertTrue(timetableTeacher.timetable[0].courses[1].events[0].weekday.contains("Quinta"))
+        assertTrue(timetableTeacher.timetable[0].courses[1].events[0].weekday.contains("TH"))
 
         assertEquals("PT1H30M", timetableTeacher.timetable[0].courses[2].events[0].duration)
-        assertTrue(timetableTeacher.timetable[0].courses[2].events[0].weekday.contains("Quarta"))
+        assertTrue(timetableTeacher.timetable[0].courses[2].events[0].weekday.contains("WE"))
 
         // Faculty data
         assertEquals(4, timetableTeacher.teachers[0].faculty.count())
