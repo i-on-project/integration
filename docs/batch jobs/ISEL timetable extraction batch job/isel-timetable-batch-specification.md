@@ -22,7 +22,7 @@ Example data in json format
         "name": "Licenciatura em Engenharia Informática e de Computadores"
     },
     "calendarTerm": "2019/20-Verão",
-    "classSection": "LI11D",
+    "calendarSection": "LI11D",
     "courses": [
         {
             "label": {
@@ -40,7 +40,7 @@ Example data in json format
                     "endTime": "15:30",
                     "duration": "PT3H",
                     "weekday": [
-                        "Sexta"
+                        "FR"
                     ]
                 }
             ]
@@ -54,7 +54,7 @@ data class Timetable (
 	@JsonProperty("school") val school : School,
 	@JsonProperty("programme") val programme : Programme,
 	@JsonProperty("calendarTerm") val calendarTerm : String,
-	@JsonProperty("classSection") val classSection : String,
+	@JsonProperty("calendarSection") val calendarSection : String,
 	@JsonProperty("courses") val courses : List<Course>
 )
 data class School(
@@ -66,13 +66,7 @@ data class Programme(
 )
 data class Course (
 	@JsonProperty("label") val label : Label,
-    @JsonProperty("events") val events : List<Event>,
-	@JsonProperty("type") val type : String,
-	@JsonProperty("room") val room : String,
-	@JsonProperty("begin_time") val begin_time : String,
-	@JsonProperty("end_time") val end_time : String,
-	@JsonProperty("duration") val duration : String,
-	@JsonProperty("weekday") val weekday : String
+    @JsonProperty("events") val events : List<Event>
 )
 data class Label(
     @JsonProperty("acr") val acr: String
@@ -85,7 +79,7 @@ data class Event (
 	@JsonProperty("beginTime") val beginTime : String,
 	@JsonProperty("endTime") val endTime : String,
 	@JsonProperty("duration") val duration : String,
-    @JsonProperty("weekday") val weekday : List<String>,
+    @JsonProperty("weekday") val weekday : List<String>
 )
 ```
 ### Faculty
@@ -100,7 +94,7 @@ Example data in json format
         "name": "Licenciatura em Engenharia Informática e de Computadores"
     },
     "calendarTerm": "2019/20-Verão",
-    "classSection": "LI11D",
+    "calendarSection": "LI11D",
     "faculty": [
         {
             "course": "ALGA[I]",
@@ -120,7 +114,7 @@ data class CourseTeacher (
 	@JsonProperty("school") val school : School,
     @JsonProperty("programme") val programme : Programme,
 	@JsonProperty("calendarTerm") val calendarTerm : String,
-	@JsonProperty("classSection") val classSection : String,
+	@JsonProperty("calendarSection") val calendarSection : String,
 	@JsonProperty("faculty") val faculty : List<Faculty>
 )
 data class School(
