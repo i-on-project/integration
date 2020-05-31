@@ -17,6 +17,7 @@ import org.ionproject.integration.model.internal.timetable.School
 import org.ionproject.integration.model.internal.timetable.Teacher
 import org.ionproject.integration.model.internal.timetable.Timetable
 import org.ionproject.integration.model.internal.timetable.TimetableTeachers
+import org.ionproject.integration.model.internal.timetable.Weekdays
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.utils.JsonUtils
 import org.ionproject.integration.utils.RegexUtils
@@ -99,12 +100,12 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
         timetable.school = School(name = school)
         timetable.programme = Programme(name = programme)
         timetable.calendarTerm = calendarTerm
-        timetable.classSection = classSection
+        timetable.calendarSection = classSection
 
         courseTeacher.school = School(name = school)
         courseTeacher.programme = Programme(name = programme)
         courseTeacher.calendarTerm = calendarTerm
-        courseTeacher.classSection = classSection
+        courseTeacher.calendarSection = classSection
     }
 
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
@@ -154,7 +155,6 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
                                     Event(type = courseDetails.second,
                                     location = listOf(courseDetails.third),
                                     beginTime = beginTime.toString(),
-                                    endTime = beginTime.plusSeconds(duration.toSeconds()).toString(),
                                     duration = duration.toString(),
                                     weekday = listOf(weekdays.getOrDefault(cell.left, ""))
                                     )
@@ -194,7 +194,7 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
     private fun populateWeekdays(cells: Array<Cell>, weekdays: MutableMap<Double, String>) {
         for (i in 0 until cells.count()) {
             if (cells[i].width == 0.0 || cells[i].height == 0.0 || cells[i].text.isNullOrEmpty()) continue
-            weekdays[cells[i].left] = cells[i].text
+            weekdays[cells[i].left] = Weekdays.values().first { it.toPortuguese() == cells[i].text.toUpperCase() }.toShortString()
         }
     }
 
