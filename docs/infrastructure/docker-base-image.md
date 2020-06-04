@@ -6,7 +6,7 @@ Oracle releases binaries for what are called OpenJDK distributions. Then, mainta
 
 This is true for Java versions. As for Docker images, despite images being associated with the same designations (OpenJDK and AdoptOpenJDK), there is a slight difference in who publishes them. OpenJDK docker images are not released by Oracle, but use OpenJDK java distributions to assemble docker images. These are entirely [crowd-sourced](https://github.com/docker-library/openjdk).
 
-As for image size, addition of a [modular architecture](https://www.oracle.com/corporate/features/understanding-java-9-modules.html) in Java 9 – project jigsaw – requires the jre to contain a `modules` file that lists all the modules that are shipped with the jre, contributing to larger jre images than in previous versions. Contrary to what happens with java 8, no linux alpine image exists currently for java 11.
+As for image size, images of jre >= 9 take up more storage than previous versions. Addition of a [modular architecture](https://www.oracle.com/corporate/features/understanding-java-9-modules.html) in Java 9 – project jigsaw – requires the jre to contain a `modules` file that lists all the modules that are shipped with the jre, contributing to larger jre images than in previous versions. Contrary to what happens with java 8, no linux alpine image exists currently for java 11.
 
 The OpenJDK docker hub publishes [slim](https://github.com/docker-slim/docker-slim) images which are minified versions of its other images.
 
