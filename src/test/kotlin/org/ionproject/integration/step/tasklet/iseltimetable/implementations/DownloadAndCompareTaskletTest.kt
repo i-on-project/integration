@@ -25,8 +25,19 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [ISELTimetable::class, DownloadAndCompareTasklet::class, BatchAutoConfiguration::class, IOnIntegrationApplication::class])
-@TestPropertySource(properties = ["local-file-destination=src/test/resources/TIMETABLE-SUCCESSFUL.pdf", "pdf-remote-location:https://www.isel.pt/media/uploads/LEIC_0310.pdf"])
+@ContextConfiguration(
+    classes = [
+        ISELTimetable::class,
+        DownloadAndCompareTasklet::class,
+        BatchAutoConfiguration::class,
+        IOnIntegrationApplication::class]
+)
+@TestPropertySource(
+    properties = [
+        "isel-timetable.localFileDestination=src/test/resources/TIMETABLE-SUCCESSFUL.pdf",
+        "isel-timetable.pdfRemoteLocation:https://www.isel.pt/media/uploads/LEIC_0310.pdf"
+    ]
+)
 internal class DownloadAndCompareTaskletTestSuccessFul {
 
     @Autowired
@@ -51,7 +62,21 @@ internal class DownloadAndCompareTaskletTestSuccessFul {
 }
 
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [ISELTimetable::class, DownloadAndCompareTasklet::class, BatchAutoConfiguration::class, IOnIntegrationApplication::class])
+@ContextConfiguration(
+    classes = [
+        ISELTimetable::class,
+        DownloadAndCompareTasklet::class,
+        BatchAutoConfiguration::class,
+        IOnIntegrationApplication::class
+    ]
+)
+@TestPropertySource(
+    properties = [
+        "isel-timetable.localFileDestination=src/test/resources/TIMETABLE.pdf",
+        "isel-timetable.pdfRemoteLocation=''",
+        "isel-timetable.pdfKey=pdf-path"
+    ]
+)
 internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
     @Autowired
@@ -77,8 +102,20 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
 }
 
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [ISELTimetable::class, DownloadAndCompareTasklet::class, BatchAutoConfiguration::class, IOnIntegrationApplication::class])
-@TestPropertySource(properties = ["local-file-destination=src/test/resources/NOT-USED.pdf", "pdf-remote-location=https://kotlinlang.org/"])
+@ContextConfiguration(
+    classes = [
+        ISELTimetable::class,
+        DownloadAndCompareTasklet::class,
+        BatchAutoConfiguration::class,
+        IOnIntegrationApplication::class
+    ]
+)
+@TestPropertySource(
+    properties = [
+        "isel-timetable.localFileDestination=src/test/resources/NOT-USED.pdf",
+        "isel-timetable.pdfRemoteLocation=https://kotlinlang.org/"
+    ]
+)
 internal class DownloadAndCompareTaskletUrlNotPdfTest {
 
     @Autowired
@@ -105,8 +142,20 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
 }
 
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [ISELTimetable::class, DownloadAndCompareTasklet::class, BatchAutoConfiguration::class, IOnIntegrationApplication::class])
-@TestPropertySource(properties = ["local-file-destination=src/test/resources/SERVER_DOWN.pdf", "pdf-remote-location=http://httpstat.us/500"])
+@ContextConfiguration(
+    classes = [
+        ISELTimetable::class,
+        DownloadAndCompareTasklet::class,
+        BatchAutoConfiguration::class,
+        IOnIntegrationApplication::class
+    ]
+)
+@TestPropertySource(
+    properties = [
+        "isel-timetable.localFileDestination=src/test/resources/SERVER_DOWN.pdf",
+        "isel-timetable.pdfRemoteLocation=http://httpstat.us/500"
+    ]
+)
 internal class DownloadAndCompareTaskletServerErrorTest {
 
     @Autowired
