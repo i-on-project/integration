@@ -14,19 +14,36 @@ Following we have the information that can be extracted from the timetable docum
 Example data in json format
 ```json
 {
-    "school": "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
-    "programme": "Licenciatura Engenharia Informática e Computadores",
-    "term": "2019/20-Verão",
-    "class": "LI11D",
+    "school": {
+        "name": "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
+        "acr": ""
+    },
+    "programme": {
+        "name": "Licenciatura em Engenharia Informática e de Computadores"
+    },
+    "calendarTerm": "2019/20-Verão",
+    "calendarSection": "LI11D",
     "courses": [
         {
-            "course": "ALGA[I]",
-            "course_type": "(T)",
-            "room": "E.1.31",
-            "begin_time": "14:00:00",
-            "end_time": "15:30:00",
-            "duration": "1:30:00",
-            "weekday": "Monday"
+            "label": {
+                "acr": "ALGA[I]"
+            },
+            "events": [
+                {
+                    "title": "",
+                    "description": "",
+                    "type": "(T)",
+                    "location": [
+                        "E.1.08"
+                    ],
+                    "beginTime": "12:30",
+                    "endTime": "15:30",
+                    "duration": "PT3H",
+                    "weekday": [
+                        "FR"
+                    ]
+                }
+            ]
         }
     ]
 }
@@ -34,37 +51,57 @@ Example data in json format
 And the kotlin data classes that generate it
 ```kotlin
 data class Timetable (
-	@JsonProperty("school") val school : String,
-	@JsonProperty("programme") val programme : String,
-	@JsonProperty("term") val term : String,
-	@JsonProperty("class") val klass : String,
+	@JsonProperty("school") val school : School,
+	@JsonProperty("programme") val programme : Programme,
+	@JsonProperty("calendarTerm") val calendarTerm : String,
+	@JsonProperty("calendarSection") val calendarSection : String,
 	@JsonProperty("courses") val courses : List<Course>
 )
+data class School(
+    @JsonProperty("name") val name: String,
+    @JsonProperty("acr") val acr: String
+)
+data class Programme(
+    @JsonProperty("name") val name: String
+)
 data class Course (
-	@JsonProperty("name") val name : String,
-	@JsonProperty("type") val type : String,
-	@JsonProperty("room") val room : String,
-	@JsonProperty("begin_time") val begin_time : String,
-	@JsonProperty("end_time") val end_time : String,
+	@JsonProperty("label") val label : Label,
+    @JsonProperty("events") val events : List<Event>
+)
+data class Label(
+    @JsonProperty("acr") val acr: String
+)
+data class Event (
+	@JsonProperty("title") val title : String,
+    @JsonProperty("description") val description : String,
+    @JsonProperty("type") val type : String,
+	@JsonProperty("location") val location : List<String>,
+	@JsonProperty("beginTime") val beginTime : String,
+	@JsonProperty("endTime") val endTime : String,
 	@JsonProperty("duration") val duration : String,
-	@JsonProperty("weekday") val weekday : String
+    @JsonProperty("weekday") val weekday : List<String>
 )
 ```
 ### Faculty
 Example data in json format
 ```json
 {
-    "school": "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
-    "programme": "Licenciatura Engenharia Informática e Computadores",
-    "term": "2019/20-Verão",
-    "class": "LI11D",
+    "school": {
+        "name": "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
+        "acr": ""
+    },
+    "programme": {
+        "name": "Licenciatura em Engenharia Informática e de Computadores"
+    },
+    "calendarTerm": "2019/20-Verão",
+    "calendarSection": "LI11D",
     "faculty": [
         {
-            "course": "ALGA",
-            "course_type": "(T)",
+            "course": "ALGA[I]",
+            "courseType": "(T)",
             "teachers": [
                 {
-                    "name": "João Trindade"
+                    "name": "Teresa Maria de Araújo Melo Quinteiro"
                 }
             ]
         }
@@ -74,15 +111,22 @@ Example data in json format
 And the kotlin data classes that generate it
 ```kotlin
 data class CourseTeacher (
-	@JsonProperty("school") val school : String,
-	@JsonProperty("programme") val programme : String,
-	@JsonProperty("term") val term : String,
-	@JsonProperty("class") val klass : String,
+	@JsonProperty("school") val school : School,
+    @JsonProperty("programme") val programme : Programme,
+	@JsonProperty("calendarTerm") val calendarTerm : String,
+	@JsonProperty("calendarSection") val calendarSection : String,
 	@JsonProperty("faculty") val faculty : List<Faculty>
+)
+data class School(
+    @JsonProperty("name") val name: String,
+    @JsonProperty("acr") val acr: String
+)
+data class Programme(
+    @JsonProperty("name") val name: String
 )
 data class Faculty (
 	@JsonProperty("course") val course : String,
-	@JsonProperty("course_type") val course_type : String,
+	@JsonProperty("courseType") val course_type : String,
 	@JsonProperty("teachers") val teachers : List<Teacher>
 )
 data class Teacher (
