@@ -33,13 +33,15 @@ What is done for different instances of the same job (having different applicati
 - Fairly easy to maintain properties segregation, having one config file per job. This would mean that the class where it was used would have to be annotated with @PropertySource if we wanted to change the name of the file to a more meaningful name.
 - The number of files could grow very fast.
 
-Job configuration files are stored in a directory in the compute engine VM and can be mounted as a volume when executing the docker run command. That way the docker image could be reused and wouldn't store any configuration files. Doing so, when configurations are changed it shouldn't be necessary to re-build the docker image.
+Job configuration files are included in the project's image, in .../resources/config/{batch-name}/{school-name}/{course-name}. The mapping from job to file is 1:N, as for the same job, multiple job instances can be initiated with different configuration files. Each of these relate to a course.
 
-As the same job can be executed more than once with different configurations (e.g. executing the isel timetable job for two different courses requires different pdf urls), the team developing a job specifies the name of the configuration file. When using different files for executing more than one instance of the same job, the files need to be in different directories.
+The configuration file name is static and defined by the team developing the job. 
 
-For example, suppose we wanted to execute the same job for two courses in the acme school (MechanicalEngineering and Computer Science). Then, we would need to have two directories in our host machine (e.g. acme-school-mechanical-eng and acme-shool-isel-timetable). When running a container instance we would need to mount a volume in /config: `docker run -v /home/user/acme-school-mechanical-eng:/config i-on-integration-image`. Running the same job for the computer science course, we could execute `docker run -v /home/user/acme-school-computer-science:/config i-on-integration-image`.
+As an alternative, we could concentrate in one file all configurations for jobs relating to a course. That would not require all configurations to unregistered jobs to be present and would reduce the total number of files. That is a viable option, as for now, the number of configurations is not exceptionally large (8).
 
-These files can be maintained in a dedicated repository and pulled from it on-demand.
+Defining how to configure jobs is tied to how the spring batch application is launched, because it is at launch time that configurations are provided. The entrypoint command on the Dockerfile calls a script that contains all java commands for initiating spring batch applications, each with different configuration.
+
+Configurations for a job are coerced from the string type whenever possible, to ensure the correctedness of the configurations as soon as possible ([example](https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config-typesafe-configuration-properties)). Each job's properties are to be designated with a prefix that identifies the job. That way, configurations for one job are abstracted in a single class .
 
 ## 4 External database
 
