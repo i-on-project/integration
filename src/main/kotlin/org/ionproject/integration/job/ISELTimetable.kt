@@ -1,12 +1,15 @@
 package org.ionproject.integration.job
 
 import org.ionproject.integration.config.ISELTimetableProperties
+import org.ionproject.integration.format.implementations.ISELTimetableFormatChecker
 import org.ionproject.integration.model.internal.timetable.isel.RawData
+import org.ionproject.integration.step.chunkbased.processor.FormatVerifierProcessor
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.DownloadAndCompareTasklet
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Component
 
 @Configuration
 class ISELTimetable(
@@ -28,6 +31,7 @@ class ISELTimetable(
     fun downloadAndCompareTasklet(props: ISELTimetableProperties) =
         DownloadAndCompareTasklet(props)
 
+    @Component
     object State {
         lateinit var rawData: RawData
     }

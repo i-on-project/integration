@@ -2,17 +2,20 @@ package org.ionproject.integration.format.implementations
 
 import com.squareup.moshi.Types
 import org.ionproject.integration.format.exceptions.FormatCheckException
+import org.ionproject.integration.format.interfaces.RawDataFormatChecker
 import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.utils.Try
+import org.springframework.stereotype.Component
 
-class ISELTimetableFormatChecker {
+@Component
+class ISELTimetableFormatChecker: RawDataFormatChecker {
 
     private val jsonRootType = Types.newParameterizedType(List::class.java, Table::class.java)
 
     private val regexPattern = "\\bTurma\\b: [LM][A-Z+]\\d{2}[DN] \\bAno Letivo\\b: \\d{4}/\\d{2}-\\b(Verão|Inverno)\\b"
 
-    fun checkFormat(rawData: RawData): Try<Boolean> {
+    override fun checkFormat(rawData: RawData): Try<Boolean> {
 
         val jsonChecker = JsonFormatChecker<List<Table>>(jsonRootType)
         val stringChecker = StringFormatChecker(regexPattern)
