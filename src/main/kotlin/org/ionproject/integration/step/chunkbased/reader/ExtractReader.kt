@@ -1,5 +1,6 @@
 package org.ionproject.integration.step.chunkbased.reader
 
+import java.nio.file.Path
 import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
 import org.ionproject.integration.extractor.implementations.TabulaPdfExtractor
@@ -9,8 +10,9 @@ import org.ionproject.integration.utils.orThrow
 import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.annotation.BeforeStep
 import org.springframework.batch.item.ItemReader
-import java.nio.file.Path
+import org.springframework.stereotype.Component
 
+@Component("ExtractReader")
 class ExtractReader(val props: ISELTimetableProperties) : ItemReader<RawData> {
 
     private lateinit var stepExecution: StepExecution
@@ -32,11 +34,7 @@ class ExtractReader(val props: ISELTimetableProperties) : ItemReader<RawData> {
         val headerText = itext.extract(path.toString())
         val tabularText = tabula.extract(path.toString())
 
-        println("header")
-        println(headerText.orThrow())
-        println("tabula")
-        println(tabularText.orThrow())
-        props.localFileDestination.toFile().deleteOnExit()
+        path.toFile().delete()
         val rawData = Try.map(headerText, tabularText) { txt, tab -> RawData(tab.first(), txt) }
         nItems += 1
         return rawData.orThrow()

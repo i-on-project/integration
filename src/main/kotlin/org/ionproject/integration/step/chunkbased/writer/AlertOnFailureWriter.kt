@@ -1,11 +1,11 @@
 package org.ionproject.integration.step.chunkbased.writer
 
+import javax.mail.internet.InternetAddress
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.annotation.BeforeStep
 import org.springframework.batch.item.ItemWriter
-import javax.mail.internet.InternetAddress
 
 class AlertOnFailureWriter(private val alertRecipient: InternetAddress) : ItemWriter<Try<Boolean>> {
 
