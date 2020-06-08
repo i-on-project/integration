@@ -40,19 +40,28 @@ internal class FormatVerifierStepBuilderTest {
     @Autowired
     private lateinit var props: ISELTimetableProperties
 
-    private val utils = SpringBatchTestUtils()
+    @Autowired
+    private lateinit var state: ISELTimetable.State
 
+    private val utils = SpringBatchTestUtils()
+    private val json = "[{\"extraction_method\":\"lattice\",\"top\":70.61023,\"left\":56.7,\"width\":481.9666748046875,\"height\":38.750816345214844,\"right\":538.6667,\"bottom\":109.361046,\"data\":[[{\"top\":70.61023,\"left\":56.7,\"width\":241.00001525878906,\"height\":19.450233459472656,\"text\":\"Table header 1\"},{\"top\":70.61023,\"left\":297.7,\"width\":240.9666748046875,\"height\":19.450233459472656,\"text\":\"Table header 2\"}],[{\"top\":90.06046,\"left\":56.7,\"width\":241.00001525878906,\"height\":19.300582885742188,\"text\":\"1\"},{\"top\":90.06046,\"left\":297.7,\"width\":240.9666748046875,\"height\":19.300582885742188,\"text\":\"2\"}]]}]"
+    private val text = listOf("Turma: LI11D Ano Letivo: 2019/20-Verão\nTable header 1 Table header 2\n1 2")
     @Test
     fun whenSuccessAlertIsSent_thenAssertX() {
+        // Arrange
         val src = File("src/test/resources/formatTest.pdf")
         val temp = props.localFileDestination.toFile()
         src.copyTo(temp)
         val se = utils.createStepExecution()
         se.jobExecution.executionContext.put(props.pdfKey, props.localFileDestination)
 
+        // Act
         val je = jobLauncherTestUtils.launchStep("Verify Format", se.jobExecution.executionContext)
+        // Assert
         // how to test alert sent??
         assertFalse(temp.exists())
-        assertEquals(ExitStatus.COMPLETED,je.exitStatus)
+        assertEquals(text, state.rawData.textData)
+        assertEquals(json, state.rawData.jsonData)
+        assertEquals(ExitStatus.COMPLETED, je.exitStatus)
     }
 }
