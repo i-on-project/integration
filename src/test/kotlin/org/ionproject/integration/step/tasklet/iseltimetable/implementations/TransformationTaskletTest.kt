@@ -39,9 +39,9 @@ internal class TransformationTaskletTest {
     @Test
     fun test() {
         state.rawData = rawData
-        val se = jobLauncherTestUtils.launchStep("RawData to Business Object")
+        val je = jobLauncherTestUtils.launchStep("RawData to Business Object")
         assertions(state.timetableTeachers)
-        assertEquals(ExitStatus.COMPLETED, se.exitStatus)
+        assertEquals(ExitStatus.COMPLETED, je.exitStatus)
     }
 
     private fun assertions(timetableTeacher: TimetableTeachers) {
