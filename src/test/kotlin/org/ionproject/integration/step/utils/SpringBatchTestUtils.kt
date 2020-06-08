@@ -28,4 +28,8 @@ class SpringBatchTestUtils {
     private fun createJobExecution(): JobExecution {
         return MetaDataInstanceFactory.createJobExecution()
     }
+
+    fun createStepExecution(): StepExecution {
+        return MetaDataInstanceFactory.createStepExecution()
+    }
 }

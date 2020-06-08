@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component
 @Component
 class EmailAlertChannel(val props: ISELTimetableProperties) : AlertChannel {
     override fun sendFailureAlert(e: Exception): Try<Boolean> {
-        TODO("Not yet implemented")
+        return Try.ofValue(true)
     }
 
     override fun sendSuccessAlert(): Try<Boolean> {
-        TODO("Not yet implemented")
+        return Try.ofValue(false)
     }
 }
