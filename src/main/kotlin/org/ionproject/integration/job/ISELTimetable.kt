@@ -1,9 +1,7 @@
 package org.ionproject.integration.job
 
 import org.ionproject.integration.config.ISELTimetableProperties
-import org.ionproject.integration.format.implementations.ISELTimetableFormatChecker
 import org.ionproject.integration.model.internal.timetable.isel.RawData
-import org.ionproject.integration.step.chunkbased.processor.FormatVerifierProcessor
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.DownloadAndCompareTasklet
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory

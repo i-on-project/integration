@@ -1,7 +1,6 @@
 package org.ionproject.integration.step.chunkbased.processor
 
 import org.ionproject.integration.IOnIntegrationApplication
-import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.format.exceptions.FormatCheckException
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.model.internal.timetable.isel.RawData
@@ -16,7 +15,6 @@ import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -27,16 +25,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         BatchAutoConfiguration::class,
         IOnIntegrationApplication::class]
 )
-@TestPropertySource(
-    properties = [
-        "isel-timetable.localFileDestination=src/test/resources/invalid.pdf",
-        "isel-timetable.pdfKey=pdf-path"
-    ]
-)
 @SpringBatchTest
 internal class FormatVerifierProcessorTest {
-    @Autowired
-    private lateinit var props: ISELTimetableProperties
 
     @Autowired
     private lateinit var processor: FormatVerifierProcessor

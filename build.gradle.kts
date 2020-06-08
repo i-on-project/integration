@@ -35,7 +35,7 @@ dependencies {
     }
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     testImplementation("org.springframework.batch:spring-batch-test:4.2.2.RELEASE")
-    implementation("javax.mail:javax.mail-api:1.6.2")
+    implementation("com.sun.mail:javax.mail:1.6.2")
 }
 
 tasks.register<Copy>("extractUberJar") {

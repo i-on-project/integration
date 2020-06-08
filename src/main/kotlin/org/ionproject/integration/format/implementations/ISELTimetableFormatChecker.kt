@@ -9,7 +9,7 @@ import org.ionproject.integration.utils.Try
 import org.springframework.stereotype.Component
 
 @Component
-class ISELTimetableFormatChecker: RawDataFormatChecker {
+class ISELTimetableFormatChecker : RawDataFormatChecker {
 
     private val jsonRootType = Types.newParameterizedType(List::class.java, Table::class.java)
 

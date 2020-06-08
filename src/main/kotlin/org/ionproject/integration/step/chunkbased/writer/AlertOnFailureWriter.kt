@@ -1,30 +1,18 @@
 package org.ionproject.integration.step.chunkbased.writer
 
-import javax.mail.internet.InternetAddress
+import org.ionproject.integration.alert.interfaces.AlertChannel
+import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
-import org.springframework.batch.core.StepExecution
-import org.springframework.batch.core.annotation.BeforeStep
 import org.springframework.batch.item.ItemWriter
+import org.springframework.stereotype.Component
 
-class AlertOnFailureWriter(private val alertRecipient: InternetAddress) : ItemWriter<Try<Boolean>> {
-
-    private lateinit var stepExecution: StepExecution
-
-    @BeforeStep
-    fun saveStepExecution(stepExecution: StepExecution) {
-        this.stepExecution = stepExecution
-    }
+@Component
+class AlertOnFailureWriter(private val props: ISELTimetableProperties, private val alert: AlertChannel) : ItemWriter<Try<Boolean>> {
 
     override fun write(items: MutableList<out Try<Boolean>>) {
-        println("Step 2 - End")
         val item = items.first()
-
-        item.match({}, { e -> alert(e) })
-
+        item.match({ alert.sendSuccessAlert() }, { e -> alert.sendFailureAlert(e) })
         item.orThrow()
-    }
-    private fun alert(e: Exception) {
-        println("${alertRecipient.toUnicodeString()} was notified of exception: $e")
     }
 }
