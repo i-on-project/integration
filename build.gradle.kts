@@ -48,7 +48,13 @@ tasks.register<Exec>("buildDockerImage") {
     if (project.properties["onlyBuild"].toString().toBoolean()) {
         commandLine("docker", "build", ".")
     } else {
-        commandLine("docker", "build", ".", "--tag", "$tempDockerTag")
+        commandLine("docker", "build",
+            "--build-arg", "SPRING_PROFILE=${System.getenv()["SPRING_PROFILE"]}",
+            "--build-arg", "GOOGLE_CLOUD_SQL_POSTGRES_USER=${System.getenv()["GOOGLE_CLOUD_SQL_POSTGRES_USER"]}",
+            "--build-arg", "GOOGLE_CLOUD_SQL_POSTGRES_PASSWORD=${System.getenv()["GOOGLE_CLOUD_SQL_POSTGRES_PASSWORD"]}",
+            "--build-arg", "ION_CORE_BASE_URL=${System.getenv()["ION_CORE_BASE_URL"]}",
+            "--build-arg", "ION_CORE_TOKEN=${System.getenv()["ION_CORE_TOKEN"]}",
+            ".", "--tag", "$tempDockerTag")
     }
 }
 
