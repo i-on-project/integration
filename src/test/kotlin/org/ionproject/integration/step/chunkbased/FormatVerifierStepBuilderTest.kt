@@ -5,9 +5,11 @@ import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.test.JobLauncherTestUtils
 import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
@@ -48,8 +50,9 @@ internal class FormatVerifierStepBuilderTest {
         val se = utils.createStepExecution()
         se.jobExecution.executionContext.put(props.pdfKey, props.localFileDestination)
 
-        jobLauncherTestUtils.launchStep("Verify Format", se.jobExecution.executionContext)
+        val je = jobLauncherTestUtils.launchStep("Verify Format", se.jobExecution.executionContext)
         // how to test alert sent??
         assertFalse(temp.exists())
+        assertEquals(ExitStatus.COMPLETED,je.exitStatus)
     }
 }
