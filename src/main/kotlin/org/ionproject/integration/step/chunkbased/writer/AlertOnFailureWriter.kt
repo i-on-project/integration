@@ -1,18 +1,23 @@
 package org.ionproject.integration.step.chunkbased.writer
 
-import org.ionproject.integration.alert.interfaces.AlertChannel
 import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
+import org.slf4j.LoggerFactory
 import org.springframework.batch.item.ItemWriter
 import org.springframework.stereotype.Component
 
 @Component
-class AlertOnFailureWriter(private val props: ISELTimetableProperties, private val alert: AlertChannel) : ItemWriter<Try<Boolean>> {
+class AlertOnFailureWriter(private val props: ISELTimetableProperties) : ItemWriter<Try<Boolean>> {
+
+    val log = LoggerFactory.getLogger(AlertOnFailureWriter::class.java)
 
     override fun write(items: MutableList<out Try<Boolean>>) {
         val item = items.first()
-        item.match({ alert.sendSuccessAlert() }, { e -> alert.sendFailureAlert(e) })
+        item.match(
+            { r -> log.info("Result for Step 2 is $r") },
+            { e -> log.info("Step 2 is about to throw exception $e with message ${e.message}") }
+        )
         item.orThrow()
     }
 }

@@ -1,6 +1,5 @@
 package org.ionproject.integration.job
 
-import org.ionproject.integration.alert.implementations.EmailAlertChannel
 import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.format.implementations.ISELTimetableFormatChecker
 import org.ionproject.integration.model.internal.timetable.TimetableTeachers
@@ -59,7 +58,7 @@ class ISELTimetable(
         .build(
             ExtractReader(properties),
             FormatVerifierProcessor(State, ISELTimetableFormatChecker()),
-            AlertOnFailureWriter(properties, EmailAlertChannel(properties))
+            AlertOnFailureWriter(properties)
         )
 
     @Bean
@@ -104,7 +103,7 @@ class ISELTimetable(
 
     @Bean
     fun postUploadTasklet() =
-        PostUploadTasklet()
+        PostUploadTasklet(properties)
 
     @Component
     object State {

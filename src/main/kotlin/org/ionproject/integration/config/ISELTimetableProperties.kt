@@ -14,5 +14,6 @@ class ISELTimetableProperties {
     lateinit var pdfRemoteLocation: URI
     lateinit var localFileDestination: Path
     lateinit var pdfKey: String
+    lateinit var hashKey: String
     lateinit var alertRecipient: InternetAddress
 }
