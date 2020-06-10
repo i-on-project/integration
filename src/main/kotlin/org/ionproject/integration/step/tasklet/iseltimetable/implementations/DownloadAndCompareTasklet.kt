@@ -13,7 +13,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.nio.file.Paths
 
 @Component("DownloadAndCompareTasklet")
 @StepScope

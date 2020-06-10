@@ -40,14 +40,12 @@ class ExtractReader : ItemReader<RawData> {
         val tabula = TabulaPdfExtractor()
 
         val path = stepExecution.jobExecution.executionContext.get(pdfKey) as Path
-
         stepExecution.jobExecution.executionContext.put(hashKey, path.toFile().hashCode())
 
         val headerText = itext.extract(path.toString())
         val tabularText = tabula.extract(path.toString())
 
         path.toFile().delete()
-
         val rawData = Try.map(headerText, tabularText) { txt, tab -> RawData(tab.first(), txt) }
 
         nItems += 1

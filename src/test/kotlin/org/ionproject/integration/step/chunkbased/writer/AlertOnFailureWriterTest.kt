@@ -10,7 +10,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.batch.test.context.SpringBatchTest
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
@@ -20,7 +19,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ContextConfiguration(
     classes = [
         ISELTimetable::class,
-        ISELTimetableProperties::class,
         BatchAutoConfiguration::class,
         IOnIntegrationApplication::class]
 )
@@ -31,13 +29,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 )
 @SpringBatchTest
 internal class AlertOnFailureWriterTest {
-    @Autowired
-    private lateinit var props: ISELTimetableProperties
 
     @Test
     fun whenValueIsTrue_ThenDoNotThrow() {
         // Arrange
-        val writer = AlertOnFailureWriter(props)
+        val writer = AlertOnFailureWriter()
         val processed = mutableListOf(Try.ofValue(true))
 
         // Act & Assert
@@ -49,7 +45,7 @@ internal class AlertOnFailureWriterTest {
         // Arrange
         val msg = "The timetable header has changed its format"
         val ex = PdfExtractorException(msg)
-        val writer = AlertOnFailureWriter(props)
+        val writer = AlertOnFailureWriter()
         val processed = mutableListOf(Try.ofError<PdfExtractorException>(ex))
         // Act & Assert
         val actualEx = assertThrows<PdfExtractorException> { writer.write(processed) }
