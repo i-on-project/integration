@@ -4,7 +4,6 @@ import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.file.implementations.FileDownloaderImpl
 import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
-import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -19,25 +18,17 @@ class DownloadAndCompareTasklet(val props: ISELTimetableProperties) : Tasklet {
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
 
-        val pdfUri = Try.ofValue(props.pdfRemoteLocation)
         val pdfChecker = PDFBytesFormatChecker()
         val downloader = FileDownloaderImpl(pdfChecker)
 
-        val file = Try.ofValue(props.localFileDestination.toFile())
-            .flatMap { f ->
-                if (f.exists()) {
-                    Try.ofError<DownloadAndCompareTaskletException>(DownloadAndCompareTaskletException("File already exists in ${props.localFileDestination}"))
-                } else {
-                    Try.ofValue(f)
-                }
-            }
+        val file = props.localFileDestination.toFile()
+        if (file.exists()) {
+            throw DownloadAndCompareTaskletException("File already exists in ${props.localFileDestination}")
+        }
 
-        var exitStatus = Try.map(pdfUri, file) { uri, _ -> downloader.download(uri, props.localFileDestination) }
-            .flatMap { it -> it }
-            .map { path ->
-                chunkContext.stepContext.stepExecution.jobExecution.executionContext.put(props.pdfKey, path)
-                RepeatStatus.FINISHED
-            }
-        return exitStatus.orThrow()
+        val path = downloader.download(props.pdfRemoteLocation, props.localFileDestination).orThrow()
+        chunkContext.stepContext.stepExecution.jobExecution.executionContext.put(props.pdfKey, path)
+
+        return RepeatStatus.FINISHED
     }
 }
