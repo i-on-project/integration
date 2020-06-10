@@ -11,6 +11,7 @@ import org.ionproject.integration.step.chunkbased.reader.ExtractReader
 import org.ionproject.integration.step.chunkbased.writer.AlertOnFailureWriter
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.DownloadAndCompareTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.FacultyTasklet
+import org.ionproject.integration.step.tasklet.iseltimetable.implementations.PostUploadTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.TimetableTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.TransformationTasklet
 import org.springframework.batch.core.Step
@@ -39,6 +40,7 @@ class ISELTimetable(
         .next(formatVerifierStep())
         .next(taskletStep("RawData to Business Object", transformationTasklet()))
         .next(uploadStep())
+        .next(taskletStep("PostUpload", postUploadTasklet()))
         .build()
 
     private fun taskletStep(name: String, tasklet: Tasklet): TaskletStep {
@@ -99,6 +101,10 @@ class ISELTimetable(
         "Upload Faculty Information to I-On Core",
         FacultyTasklet(properties, State)
     )
+
+    @Bean
+    fun postUploadTasklet() =
+        PostUploadTasklet()
 
     @Component
     object State {
