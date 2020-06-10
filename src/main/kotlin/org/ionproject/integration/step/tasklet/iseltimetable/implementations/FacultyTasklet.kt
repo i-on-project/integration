@@ -13,7 +13,7 @@ import org.springframework.batch.repeat.RepeatStatus
 
 class FacultyTasklet(val properties: ISELTimetableProperties, val state: ISELTimetable.State) :
     Tasklet {
-    val log = LoggerFactory.getLogger(FacultyTasklet::class.java)
+    private val log = LoggerFactory.getLogger(FacultyTasklet::class.java)
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
 
         val json = Try.ofValue(state.timetableTeachers.teachers.toTypedArray())

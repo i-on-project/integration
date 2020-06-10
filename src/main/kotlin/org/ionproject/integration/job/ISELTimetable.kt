@@ -38,8 +38,8 @@ class ISELTimetable(
         .start(taskletStep("Download And Compare", downloadAndCompareTasklet(properties)))
         .next(formatVerifierStep())
         .next(taskletStep("RawData to Business Object", transformationTasklet()))
-        .next(uploadStep())
-        .next(taskletStep("PostUpload", postUploadTasklet()))
+        .next(uploadStep(properties))
+        .next(taskletStep("PostUpload", postUploadTasklet(properties)))
         .build()
 
     private fun taskletStep(name: String, tasklet: Tasklet): TaskletStep {
@@ -66,7 +66,7 @@ class ISELTimetable(
         TransformationTasklet(State)
 
     @Bean
-    fun uploadStep(): Step {
+    fun uploadStep(props: ISELTimetableProperties): Step {
         val uploadFlow = FlowBuilder<SimpleFlow>("Upload to I-On Core")
             .split(taskExecutor())
             .add(
@@ -102,7 +102,7 @@ class ISELTimetable(
     )
 
     @Bean
-    fun postUploadTasklet() =
+    fun postUploadTasklet(properties: ISELTimetableProperties) =
         PostUploadTasklet(properties)
 
     @Component

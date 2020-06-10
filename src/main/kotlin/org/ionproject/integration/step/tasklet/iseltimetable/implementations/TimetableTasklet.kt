@@ -13,9 +13,8 @@ import org.springframework.batch.repeat.RepeatStatus
 
 class TimetableTasklet(val props: ISELTimetableProperties, val state: ISELTimetable.State) :
     Tasklet {
-    val log = LoggerFactory.getLogger(TimetableTasklet::class.java)
+    private val log = LoggerFactory.getLogger(TimetableTasklet::class.java)
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
-        println("sent timetable to core - ${state.timetableTeachers.timetable}")
 
         val json = Try.ofValue(state.timetableTeachers.timetable.toTypedArray())
             .flatMap { t -> JsonUtils.toJson(t) }

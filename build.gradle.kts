@@ -28,14 +28,15 @@ dependencies {
         exclude(group = "org.slf4j")
     }
     implementation("com.itextpdf:kernel:7.0.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
+    implementation("com.sun.mail:javax.mail:1.6.2")
     runtimeOnly("org.postgresql:postgresql")
     testRuntimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
-    implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     testImplementation("org.springframework.batch:spring-batch-test:4.2.2.RELEASE")
-    implementation("com.sun.mail:javax.mail:1.6.2")
+
 }
 
 tasks.register<Copy>("extractUberJar") {

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 class AlertOnFailureWriter(private val props: ISELTimetableProperties) : ItemWriter<Try<Boolean>> {
 
-    val log = LoggerFactory.getLogger(AlertOnFailureWriter::class.java)
+    private val log = LoggerFactory.getLogger(AlertOnFailureWriter::class.java)
 
     override fun write(items: MutableList<out Try<Boolean>>) {
         val item = items.first()
