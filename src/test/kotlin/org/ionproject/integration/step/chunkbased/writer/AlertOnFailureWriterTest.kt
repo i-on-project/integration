@@ -1,7 +1,6 @@
 package org.ionproject.integration.step.chunkbased.writer
 
 import org.ionproject.integration.IOnIntegrationApplication
-import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.extractor.exceptions.PdfExtractorException
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.utils.Try

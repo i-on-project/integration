@@ -1,6 +1,5 @@
 package org.ionproject.integration.job
 
-import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.format.implementations.ISELTimetableFormatChecker
 import org.ionproject.integration.model.internal.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.isel.RawData
@@ -16,6 +15,7 @@ import org.ionproject.integration.step.tasklet.iseltimetable.implementations.Tra
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
+import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.job.builder.FlowBuilder
 import org.springframework.batch.core.job.flow.Flow
 import org.springframework.batch.core.job.flow.support.SimpleFlow
@@ -30,16 +30,15 @@ import org.springframework.stereotype.Component
 @Configuration
 class ISELTimetable(
     val jobBuilderFactory: JobBuilderFactory,
-    val stepBuilderFactory: StepBuilderFactory,
-    val properties: ISELTimetableProperties
+    val stepBuilderFactory: StepBuilderFactory
 ) {
     @Bean
     fun timetableJob() = jobBuilderFactory.get("ISEL Timetable Batch Job")
-        .start(taskletStep("Download And Compare", downloadAndCompareTasklet(properties)))
+        .start(taskletStep("Download And Compare", downloadAndCompareTasklet()))
         .next(formatVerifierStep())
         .next(taskletStep("RawData to Business Object", transformationTasklet()))
-        .next(uploadStep(properties))
-        .next(taskletStep("PostUpload", postUploadTasklet(properties)))
+        .next(uploadStep())
+        .next(taskletStep("PostUpload", postUploadTasklet()))
         .build()
 
     private fun taskletStep(name: String, tasklet: Tasklet): TaskletStep {
@@ -49,24 +48,30 @@ class ISELTimetable(
             .build()
     }
 
+    @StepScope
     @Bean
-    fun downloadAndCompareTasklet(props: ISELTimetableProperties) =
-        DownloadAndCompareTasklet(props)
+    fun downloadAndCompareTasklet() =
+        DownloadAndCompareTasklet()
+
+    @StepScope
+    @Bean
+    fun extractReader() = ExtractReader()
 
     @Bean
     fun formatVerifierStep() = FormatVerifierStepBuilder(stepBuilderFactory)
         .build(
-            ExtractReader(properties),
+            extractReader(),
             FormatVerifierProcessor(State, ISELTimetableFormatChecker()),
-            AlertOnFailureWriter(properties)
+            AlertOnFailureWriter()
         )
 
     @Bean
+    @StepScope
     fun transformationTasklet() =
         TransformationTasklet(State)
 
     @Bean
-    fun uploadStep(props: ISELTimetableProperties): Step {
+    fun uploadStep(): Step {
         val uploadFlow = FlowBuilder<SimpleFlow>("Upload to I-On Core")
             .split(taskExecutor())
             .add(
@@ -78,11 +83,6 @@ class ISELTimetable(
             .build()
     }
 
-    @Bean
-    fun taskExecutor(): TaskExecutor {
-        return SimpleAsyncTaskExecutor("spring_batch")
-    }
-
     fun flow(name: String, step: Step): Flow {
         return FlowBuilder<SimpleFlow>(name)
             .from(step)
@@ -90,20 +90,26 @@ class ISELTimetable(
     }
 
     @Bean
+    fun taskExecutor(): TaskExecutor {
+        return SimpleAsyncTaskExecutor("spring_batch")
+    }
+
+    @Bean
     fun timetableStep() = taskletStep(
         "Upload Timetable Information to I-On Core",
-        TimetableTasklet(properties, State)
+        TimetableTasklet(State)
     )
 
     @Bean
     fun facultyStep() = taskletStep(
         "Upload Faculty Information to I-On Core",
-        FacultyTasklet(properties, State)
+        FacultyTasklet(State)
     )
 
     @Bean
-    fun postUploadTasklet(properties: ISELTimetableProperties) =
-        PostUploadTasklet(properties)
+    @StepScope
+    fun postUploadTasklet() =
+        PostUploadTasklet()
 
     @Component
     object State {

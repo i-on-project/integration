@@ -1,6 +1,5 @@
 package org.ionproject.integration.step.chunkbased.writer
 
-import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.slf4j.LoggerFactory
@@ -8,7 +7,7 @@ import org.springframework.batch.item.ItemWriter
 import org.springframework.stereotype.Component
 
 @Component
-class AlertOnFailureWriter(private val props: ISELTimetableProperties) : ItemWriter<Try<Boolean>> {
+class AlertOnFailureWriter() : ItemWriter<Try<Boolean>> {
 
     private val log = LoggerFactory.getLogger(AlertOnFailureWriter::class.java)
 

@@ -3,7 +3,6 @@ package org.ionproject.integration.step.chunkbased.reader
 import java.io.File
 import java.nio.file.Paths
 import org.ionproject.integration.IOnIntegrationApplication
-import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.step.utils.SpringBatchTestUtils

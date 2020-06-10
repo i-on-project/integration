@@ -13,7 +13,7 @@ class ISELTimetableFormatChecker : RawDataFormatChecker {
 
     private val jsonRootType = Types.newParameterizedType(List::class.java, Table::class.java)
 
-    private val regexPattern = "\\bTurma\\b: [LM][A-Z+]\\d{2}[DN] \\bAno Letivo\\b: \\d{4}/\\d{2}-\\b(Verão|Inverno)\\b"
+    private val regexPattern = "\\bTurma\\b: [LM][A-Z+]\\d{1,2}[DN] \\bAno Letivo\\b: \\d{4}/\\d{2}-\\b(Verão|Inverno)\\b"
 
     override fun checkFormat(rawData: RawData): Try<Boolean> {
 

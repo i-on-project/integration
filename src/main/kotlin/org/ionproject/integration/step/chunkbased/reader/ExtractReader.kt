@@ -1,7 +1,6 @@
 package org.ionproject.integration.step.chunkbased.reader
 
 import java.nio.file.Path
-import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
 import org.ionproject.integration.extractor.implementations.TabulaPdfExtractor
 import org.ionproject.integration.model.internal.timetable.isel.RawData
@@ -9,11 +8,14 @@ import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.annotation.BeforeStep
+import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.ItemReader
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component("ExtractReader")
-class ExtractReader(val props: ISELTimetableProperties) : ItemReader<RawData> {
+@StepScope
+class ExtractReader : ItemReader<RawData> {
 
     private lateinit var stepExecution: StepExecution
 
@@ -21,6 +23,12 @@ class ExtractReader(val props: ISELTimetableProperties) : ItemReader<RawData> {
     fun saveStepExecution(stepExecution: StepExecution) {
         this.stepExecution = stepExecution
     }
+
+    @Value("#{jobParameters['pdfKey']}")
+    private lateinit var pdfKey: String
+
+    @Value("#{jobParameters['hashKey']}")
+    private lateinit var hashKey: String
 
     private var nItems: Int = 0
 
@@ -30,9 +38,10 @@ class ExtractReader(val props: ISELTimetableProperties) : ItemReader<RawData> {
 
         val itext = ITextPdfExtractor()
         val tabula = TabulaPdfExtractor()
-        val path = stepExecution.jobExecution.executionContext.get(props.pdfKey) as Path
 
-        stepExecution.jobExecution.executionContext.put(props.hashKey, path.toFile().hashCode())
+        val path = stepExecution.jobExecution.executionContext.get(pdfKey) as Path
+
+        stepExecution.jobExecution.executionContext.put(hashKey, path.toFile().hashCode())
 
         val headerText = itext.extract(path.toString())
         val tabularText = tabula.extract(path.toString())

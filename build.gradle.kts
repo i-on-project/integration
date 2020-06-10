@@ -36,7 +36,6 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("org.springframework.batch:spring-batch-test:4.2.2.RELEASE")
-
 }
 
 tasks.register<Copy>("extractUberJar") {

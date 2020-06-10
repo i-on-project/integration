@@ -2,7 +2,6 @@ package org.ionproject.integration.step.chunkbased
 
 import java.io.File
 import org.ionproject.integration.IOnIntegrationApplication
-import org.ionproject.integration.config.ISELTimetableProperties
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.utils.CompositeException
