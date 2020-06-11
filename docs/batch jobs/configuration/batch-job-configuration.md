@@ -27,21 +27,21 @@ Apart from the default [properties](https://docs.spring.io/spring-boot/docs/curr
 - Launching different instances of the same job would require the properties file to be updated or having a folder per job instance with an application.properties file. To specify the location of the properties file -Dspring.config.location=/path/to/application.properties should be used. Example:
 `java -jar configurations-0.0.1-SNAPSHOT.jar --spring.config.location=./confs/job1/application.properties`
 
-## 3 Additional .properties/.yml files passed in --spring.config.location or spring.config.additional-location
+## 3 Additional .properties/.yml files
 
-What is done for different instances of the same job (having different application.properties files in different folders) can be done to segregate properties across jobs. In practice, we could define a properties file per job instance.
-- Fairly easy to maintain properties segregation, having one config file per job. This would mean that the class where it was used would have to be annotated with @PropertySource if we wanted to change the name of the file to a more meaningful name.
+A properties file per job can be defined. In the cases where the job is defined per course (e.g. the isel timetable job), it is defined a file per course.
+- Fairly easy to maintain properties segregation, having one config file per job.
 - The number of files could grow very fast.
 
-Job configuration files are included in the project's image, in .../resources/config/{batch-name}/{school-name}/{course-name}. The mapping from job to file is 1:N, as for the same job, multiple job instances can be initiated with different configuration files. Each of these relate to a course.
+Job configuration files are included in the project's image, in .../resources/main/config/{batch-name}/{school-name}/.
 
-The configuration file name is static and defined by the team developing the job. 
+The configuration file name can be chosen freely, but for reasons of organization it should be named {school-name}-{course-name}.properties(e.g. isel-leic.properties). There is no need to include the job name in the properties file name because the path of the file already identifies the school.
 
-As an alternative, we could concentrate in one file all configurations for jobs relating to a course. That would not require all configurations to unregistered jobs to be present and would reduce the total number of files. That is a viable option, as for now, the number of configurations is not exceptionally large (8).
+On application launch, the jobs that are to be run are specified, as well as the directories where to look for configuration files. For example, if the timetable job will run for isel and estsl, the method runJob will be executed with the job name and the configuration Path.(e.g. runJob("ISEL Timetable Batch Job","src/main/resources/config/timetable/isel"), and runJob("ISEL Timetable Batch Job","src/main/resources/config/timetable/estsl"))
 
-Defining how to configure jobs is tied to how the spring batch application is launched, because it is at launch time that configurations are provided. The entrypoint command on the Dockerfile calls a script that contains all java commands for initiating spring batch applications, each with different configuration.
+This method will list all the files in the directory. Then, for each file, it will inject its properties on a jobparameters object. Finally, it will start a job instance with the added parameters, including a timestamp in order to be able to run the same job with the same parameters more than once.
 
-Configurations for a job are coerced from the string type whenever possible, to ensure the correctedness of the configurations as soon as possible ([example](https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config-typesafe-configuration-properties)). Each job's properties are to be designated with a prefix that identifies the job. That way, configurations for one job are abstracted in a single class .
+As said, configurations for a job are passed as strings to job parameters on startup, but before being used they are coerced from the string type whenever possible, to ensure the correctness of the configurations.
 
 ## 4 External database
 
@@ -65,7 +65,7 @@ The only drawback of this, as with command line switches, the java command can b
 
 # Conclusion
 
-After considering the different options we chose to use option 3 - a .properties/.yml file per job.
+After considering the different options we chose to use option 3 - a .properties file per job.
 
 Using an external non-relational database would provide the most flexibility but as it is not otherwise needed, it represents administration overhead, which we cannot absorb at the moment.
 
