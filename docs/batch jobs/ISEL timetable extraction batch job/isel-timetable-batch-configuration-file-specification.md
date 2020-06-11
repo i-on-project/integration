@@ -1,7 +1,5 @@
 # ISEL Timetable Batch Job Configurations
-The isel timetable batch job receives as input one or more input files with the extension .properties. The files have to be located in .../src/resources/config/timetable/isel.
-
-Each file will correspond to an execution of the timetable batch job.
+The integration application starts an instance of the ISEL Timetable Batch job for each file present in src/main/resources/config/timetable/isel. The parameters passed for each job instance are the properties contained in a file of that directory.
 
 The following properties are accepted:
 
@@ -12,5 +10,3 @@ The following properties are accepted:
 | localFileDestination     | Path in the local filesystem in which the timetable pdf file is saved. When multiple instances of the job are running simultaneously, this property needs to be specified, otherwise different jobs will be potentially reading and writing on the same file. |
 | pdfRemoteLocation | Url of the timetable pdf to be used on the job. |
 | alertRecipient  | Email of the point-of-contact to notify about job outcome |
-| uploadRetryLimit | Number of times upload should be retried in case I-On Core responds with server error |
-| uploadRetrySleepSeconds | Amount of seconds to wait before retrying upload |
