@@ -12,7 +12,5 @@ The following properties are accepted:
 | localFileDestination     | Path in the local filesystem in which the timetable pdf file is saved. When multiple instances of the job are running simultaneously, this property needs to be specified, otherwise different jobs will be potentially reading and writing on the same file. |
 | pdfRemoteLocation | Url of the timetable pdf to be used on the job. |
 | alertRecipient  | Email of the point-of-contact to notify about job outcome |
-| timetableUploadUrl | Url to upload timetable information |
-| facultyUploadUrl | Url to upload faculty information |
 | uploadRetryLimit | Number of times upload should be retried in case I-On Core responds with server error |
 | uploadRetrySleepSeconds | Amount of seconds to wait before retrying upload |
