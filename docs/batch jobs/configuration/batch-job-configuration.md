@@ -1,8 +1,6 @@
 # Goal
 This document aims to weigh in on different options for configuring the integration sub-system batch jobs. Examples of job configuration include the location of the source documents used, whom to notify about job outcome, and where to write the produced information.
 
-Options that would require the application to be compiled in order to change the value associated with a configuration were left out. The application configurations should be provided at launch-time.
-
 In the remainder of the document different alternatives that meet the criteria are discussed, and finally the research conclusion is stated.
 
 # Alternatives
@@ -33,7 +31,7 @@ A properties file per job can be defined. In the cases where the job is defined 
 - Fairly easy to maintain properties segregation, having one config file per job.
 - The number of files could grow very fast.
 
-Job configuration files are included in the project's image, in .../resources/main/config/{batch-name}/{school-name}/.
+Job configuration files are included in the project's image, in .../resources/config/{batch-name}/{school-name}/.
 
 The configuration file name can be chosen freely, but for reasons of organization it should be named {school-name}-{course-name}.properties(e.g. isel-leic.properties). There is no need to include the job name in the properties file name because the path of the file already identifies the school.
 

@@ -1,5 +1,5 @@
 # ISEL Timetable Batch Job Configurations
-The isel timetable batch job receives as input one or more input files with the extension .properties. The files have to be located in .../src/main/resources/config/timetable/isel.
+The isel timetable batch job receives as input one or more input files with the extension .properties. The files have to be located in .../src/resources/config/timetable/isel.
 
 Each file will correspond to an execution of the timetable batch job.
 
