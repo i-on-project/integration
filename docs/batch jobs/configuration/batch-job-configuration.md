@@ -63,10 +63,12 @@ The only drawback of this, as with command line switches, the java command can b
 
 # Conclusion
 
-After considering the different options we chose to use option 3 - a .properties file per job.
+After considering the different options we chose to use a combination of options 3 and 6.
 
 Using an external non-relational database would provide the most flexibility but as it is not otherwise needed, it represents administration overhead, which we cannot absorb at the moment.
 
 Having a custom configuration file would require development of a module for parsing it. Having a .properties file per job acchieves the same result and does not require additional development time.
 
 Despite being advised on the standard references for Spring Batch, the use Job Parameters raises the same concern as command line switches, i.e. the launch command of the app would be very lengthy. On the other hand, using a .properties file does not have this inconvenient.
+
+As we needed to have the same application running multiple instances of the same job in one go, and we also wanted the convenience of changing configuration alone when adding new instances, we ended up going with a hybrid solution between having properties files and using job parameters. Job parameters are used when launching a batch job instance, but they are not passed on the command line. Instead, they are built from properties contained in a file, which needs to be in a designated directory for it to be identified.
