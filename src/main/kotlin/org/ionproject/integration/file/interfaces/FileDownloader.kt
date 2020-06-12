@@ -5,5 +5,5 @@ import java.nio.file.Path
 import org.ionproject.integration.utils.Try
 
 interface FileDownloader {
-    fun download(uri: URI, localDestination: String): Try<Path>
+    fun download(uri: URI, localDestination: Path): Try<Path>
 }
