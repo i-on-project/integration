@@ -11,7 +11,7 @@ import org.ionproject.integration.step.tasklet.iseltimetable.implementations.Dow
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.FacultyTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.PostUploadTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.TimetableTasklet
-import org.ionproject.integration.step.tasklet.iseltimetable.implementations.TransformationTasklet
+import org.ionproject.integration.step.tasklet.iseltimetable.implementations.MappingTasklet
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
@@ -36,7 +36,7 @@ class ISELTimetable(
     fun timetableJob() = jobBuilderFactory.get("ISEL Timetable Batch Job")
         .start(taskletStep("Download And Compare", downloadAndCompareTasklet()))
         .next(formatVerifierStep())
-        .next(taskletStep("RawData to Business Object", transformationTasklet()))
+        .next(taskletStep("RawData to Business Object", mappingTasklet()))
         .next(uploadStep())
         .next(taskletStep("PostUpload", postUploadTasklet()))
         .build()
@@ -67,8 +67,8 @@ class ISELTimetable(
 
     @Bean
     @StepScope
-    fun transformationTasklet() =
-        TransformationTasklet(State)
+    fun mappingTasklet() =
+        MappingTasklet(State)
 
     @Bean
     fun uploadStep(): Step {

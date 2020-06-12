@@ -19,12 +19,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ContextConfiguration(
     classes = [
         ISELTimetable::class,
-        TransformationTasklet::class,
+        MappingTasklet::class,
         IOnIntegrationApplication::class
     ]
 )
 @SpringBatchTest
-internal class TransformationTaskletTest {
+internal class MappingTaskletTest {
 
     @Autowired
     lateinit var jobLauncherTestUtils: JobLauncherTestUtils
