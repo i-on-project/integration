@@ -14,7 +14,6 @@ class MappingTasklet(private val state: ISELTimetable.State) : Tasklet {
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         val builder = IselTimetableTeachersBuilder()
 
-        builder.reset()
         builder.setTimetable(state.rawData)
         builder.setTeachers(state.rawData)
 

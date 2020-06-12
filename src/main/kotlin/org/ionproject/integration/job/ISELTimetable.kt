@@ -9,9 +9,9 @@ import org.ionproject.integration.step.chunkbased.reader.ExtractReader
 import org.ionproject.integration.step.chunkbased.writer.AlertOnFailureWriter
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.DownloadAndCompareTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.FacultyTasklet
+import org.ionproject.integration.step.tasklet.iseltimetable.implementations.MappingTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.PostUploadTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.TimetableTasklet
-import org.ionproject.integration.step.tasklet.iseltimetable.implementations.MappingTasklet
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
