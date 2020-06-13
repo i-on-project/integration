@@ -3,7 +3,6 @@ package org.ionproject.integration.step.chunkbased
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.utils.Try
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
-import org.springframework.batch.core.listener.JobParameterExecutionContextCopyListener
 import org.springframework.batch.core.step.tasklet.TaskletStep
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.batch.item.ItemReader
