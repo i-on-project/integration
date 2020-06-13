@@ -24,23 +24,17 @@ import org.ionproject.integration.utils.RegexUtils
 import org.ionproject.integration.utils.Try
 
 class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
-    private val SCHOOL_REGEX = "\\A.*"
-    private val PROGRAMME_REGEX = "^(Licenciatura|Mestrado).*$"
-    private val CLASS_SECTION_REGEX = "\\bTurma\\b: [LM][A-Z+]\\d{2}[DN]"
-    private val CALENDAR_TERM_REGEX = "\\bAno Letivo\\b: \\d{4}/\\d{2}-\\b(Verão|Inverno)\\b"
-    private val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).(0|3)0"
-    private val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 47
-    private val HEIGHT_HALF_HOUR_THRESHOLD = 17
-
-    private lateinit var iselTimetableTeachers: Try<TimetableTeachers>
-
-    init {
-        reset()
+    companion object {
+        private val SCHOOL_REGEX = "\\A.*"
+        private val PROGRAMME_REGEX = "^(Licenciatura|Mestrado).*$"
+        private val CLASS_SECTION_REGEX = "\\bTurma\\b: [LM][A-Z+]\\d{2}[DN]"
+        private val CALENDAR_TERM_REGEX = "\\bAno Letivo\\b: \\d{4}/\\d{2}-\\b(Verão|Inverno)\\b"
+        private val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).(0|3)0"
+        private val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 47
+        private val HEIGHT_HALF_HOUR_THRESHOLD = 17
     }
 
-    override fun reset() {
-        iselTimetableTeachers = Try.ofValue(TimetableTeachers())
-    }
+    private var iselTimetableTeachers = Try.of { TimetableTeachers() }
 
     override fun setTimetable(rawData: RawData) {
         iselTimetableTeachers
@@ -52,9 +46,7 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
     }
 
     fun getTimetableTeachers(): Try<TimetableTeachers> {
-        val result = this.iselTimetableTeachers.map { it.copy() }
-        reset()
-        return result
+        return iselTimetableTeachers.map { it.copy() }
     }
 
     private fun rawDataToBusiness(rawData: RawData) {
