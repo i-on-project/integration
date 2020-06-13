@@ -23,7 +23,6 @@ class FormatVerifierStepBuilder(private val stepBuilderFactory: StepBuilderFacto
             .reader(r)
             .processor(p)
             .writer(w)
-            .listener(JobParameterExecutionContextCopyListener())
             .build()
     }
 }
