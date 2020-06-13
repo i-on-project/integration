@@ -9,7 +9,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.stereotype.Component
 
-@Component("TransformationTasklet")
+@Component("MappingTasklet")
 class MappingTasklet(private val state: ISELTimetable.State) : Tasklet {
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         val builder = IselTimetableTeachersBuilder()
