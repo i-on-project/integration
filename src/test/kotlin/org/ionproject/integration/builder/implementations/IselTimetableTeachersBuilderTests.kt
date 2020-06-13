@@ -17,14 +17,12 @@ class IselTimetableTeachersBuilderTests {
         private val textData = listOf("INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA \nGabinete de Planeamento de Salas e Horários \nLicenciatura em Engenharia Informática e de Computadores \nTurma: LI11D Ano Letivo: 2019/20-Verão \n\n...")
         private val rawData = RawData(jsonData, textData)
         private val rawDataInvalidWeekday = RawData(jsonDataInvalidWeekday, textData)
-
-        private val builder = IselTimetableTeachersBuilder()
     }
 
     @Test
     fun whenSetTimetable_thenReturnTimetableTeacherFullyFilled() {
         // Arrange
-        builder.reset()
+        val builder = IselTimetableTeachersBuilder()
 
         // Act
         builder.setTimetable(rawData)
@@ -38,7 +36,7 @@ class IselTimetableTeachersBuilderTests {
     @Test
     fun whenSetTeacher_thenReturnTimetableTeacherFullyFilled() {
         // Arrange
-        builder.reset()
+        val builder = IselTimetableTeachersBuilder()
 
         // Act
         builder.setTeachers(rawData)
@@ -52,7 +50,7 @@ class IselTimetableTeachersBuilderTests {
     @Test
     fun whenSetTeacher_ThenSetTimetable_thenReturnTimetableTeacherFullyFilled() {
         // Arrange
-        builder.reset()
+        val builder = IselTimetableTeachersBuilder()
 
         // Act
         builder.setTeachers(rawData)
@@ -65,25 +63,9 @@ class IselTimetableTeachersBuilderTests {
     }
 
     @Test
-    fun whenSetTeacher_ThenGetTimetableTeachers_thenBuilderObjectIsEmpty() {
-        // Arrange
-        builder.reset()
-
-        // Act
-        builder.setTeachers(rawData)
-        builder.getTimetableTeachers()
-        val emptyTimetableTeacher = builder.getTimetableTeachers()
-            .orThrow()
-
-        // Assert
-        assertEquals(0, emptyTimetableTeacher.timetable.count())
-        assertEquals(0, emptyTimetableTeacher.teachers.count())
-    }
-
-    @Test
     fun whenSetTimetableInvalidWeekday_thenReturnBuilderFailed() {
         // Arrange
-        builder.reset()
+        val builder = IselTimetableTeachersBuilder()
 
         // Act
         builder.setTimetable(rawDataInvalidWeekday)
