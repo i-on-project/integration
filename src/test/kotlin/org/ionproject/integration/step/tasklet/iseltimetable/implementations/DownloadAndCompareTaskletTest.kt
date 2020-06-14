@@ -35,7 +35,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @TestPropertySource(
     properties = [
         "isel-timetable.localFileDestination=src/test/resources/TIMETABLE-SUCCESSFUL.pdf",
-        "isel-timetable.pdfRemoteLocation:https://www.isel.pt/media/uploads/LEIC_0310.pdf"
+        "isel-timetable.pdfRemoteLocation:https://www.isel.pt/media/uploads/LEIC_0310.pdf",
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 internal class DownloadAndCompareTaskletTestSuccessFul {
@@ -74,7 +77,10 @@ internal class DownloadAndCompareTaskletTestSuccessFul {
     properties = [
         "isel-timetable.localFileDestination=src/test/resources/TIMETABLE.pdf",
         "isel-timetable.pdfRemoteLocation=''",
-        "isel-timetable.pdfKey=pdf-path"
+        "isel-timetable.pdfKey=pdf-path",
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 internal class DownloadAndCompareTaskletMissingPropertiesTest {
@@ -113,7 +119,10 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
 @TestPropertySource(
     properties = [
         "isel-timetable.localFileDestination=src/test/resources/NOT-USED.pdf",
-        "isel-timetable.pdfRemoteLocation=https://kotlinlang.org/"
+        "isel-timetable.pdfRemoteLocation=https://kotlinlang.org/",
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 internal class DownloadAndCompareTaskletUrlNotPdfTest {
@@ -153,7 +162,10 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
 @TestPropertySource(
     properties = [
         "isel-timetable.localFileDestination=src/test/resources/SERVER_DOWN.pdf",
-        "isel-timetable.pdfRemoteLocation=http://httpstat.us/500"
+        "isel-timetable.pdfRemoteLocation=http://httpstat.us/500",
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 internal class DownloadAndCompareTaskletServerErrorTest {
