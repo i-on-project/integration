@@ -12,7 +12,7 @@ group = "org.ionproject"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
-val imageId = "gcr.io/single-conquest-272617/i-on-project/integration/i-on-integration"
+val imageId = "gcr.io/${System.getenv()["GCLOUD_PROJECT_ID"]}/i-on-project/integration/i-on-integration"
 val tempDockerTag: String = "i-on-integration-image"
 
 repositories {
