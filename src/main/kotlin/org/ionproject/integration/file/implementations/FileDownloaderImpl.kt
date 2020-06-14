@@ -1,12 +1,12 @@
 package org.ionproject.integration.file.implementations
 
-import java.io.File
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Path
+import java.nio.file.Paths
 import org.ionproject.integration.file.exceptions.ServerErrorException
 import org.ionproject.integration.file.interfaces.BytesFormatChecker
 import org.ionproject.integration.file.interfaces.FileDownloader
@@ -15,9 +15,10 @@ import org.ionproject.integration.utils.Try
 
 class FileDownloaderImpl(private val checker: BytesFormatChecker) :
     FileDownloader {
+    private val EMPTY_PATH = Paths.get("")
 
-    override fun download(uri: URI, localDestination: String): Try<Path> {
-        if (localDestination.isEmpty()) {
+    override fun download(uri: URI, localDestination: Path): Try<Path> {
+        if (localDestination == EMPTY_PATH) {
             return Try.ofError<IllegalArgumentException>(IllegalArgumentException("Parameters url and localDestination need not be empty"))
         }
 
@@ -34,7 +35,7 @@ class FileDownloaderImpl(private val checker: BytesFormatChecker) :
             .flatMap { resp -> validateResponseCode(resp) }
 
         val file = response.map { r -> checker.checkFormat(r.body) }
-            .map { File(localDestination) }
+            .map { localDestination.toFile() }
 
         Try.map(file, response) { f, r -> f.writeBytes(r.body) }
 

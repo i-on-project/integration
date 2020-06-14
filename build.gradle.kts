@@ -10,7 +10,7 @@ plugins {
 
 group = "org.ionproject"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 val imageId = "docker.pkg.github.com/i-on-project/integration/i-on-integration"
 val tempDockerTag: String = "i-on-integration-image"
@@ -34,6 +34,7 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
+    testImplementation("org.springframework.batch:spring-batch-test:4.2.2.RELEASE")
 }
 
 tasks.register<Copy>("extractUberJar") {

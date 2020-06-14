@@ -1,5 +1,6 @@
 package org.ionproject.integration.file
 
+import java.io.File
 import java.net.ConnectException
 import java.net.URI
 import java.nio.file.FileSystems
@@ -24,11 +25,11 @@ internal class PDFFileDownloaderImplTest {
     companion object {
         private val checker = PDFBytesFormatChecker()
         private val pdfDownloader: FileDownloader = FileDownloaderImpl(checker)
-        inline fun <reified T : Throwable> downloadAndAssertThrows(uri: URI, dstFile: String) {
+        inline fun <reified T : Throwable> downloadAndAssertThrows(uri: URI, dstFile: Path) {
             assertThrows<T> { downloadPdf(uri, dstFile).orThrow() }
         }
 
-        fun downloadPdf(uri: URI, dstFile: String): Try<Path> {
+        fun downloadPdf(uri: URI, dstFile: Path): Try<Path> {
             return pdfDownloader.download(uri, dstFile)
         }
 
@@ -36,8 +37,8 @@ internal class PDFFileDownloaderImplTest {
             path.toFile().delete()
         }
 
-        fun assertFileDoesntExist(path: String) {
-            val file = Paths.get(path).toFile()
+        fun assertFileDoesntExist(path: Path) {
+            val file = path.toFile()
             assertFalse(file.exists())
         }
     }
@@ -45,21 +46,21 @@ internal class PDFFileDownloaderImplTest {
     @Test
     fun whenValid_ThenDownloadIsSuccessful() {
         val uri = URI.create("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
-        val fileDst = "/tmp/dummy.pdf"
+        val fileDst = File("dummy.pdf").toPath()
         val matcher: PathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.pdf")
         try {
             val path = assertDoesNotThrow { downloadPdf(uri, fileDst).orThrow() }
             assertTrue(matcher.matches(path))
             assertEquals(String(path.toFile().readBytes().slice(0..6).toByteArray()), "%PDF-1.")
         } finally {
-            deleteFile(Paths.get(fileDst))
+            deleteFile(fileDst)
         }
     }
 
     @Test
     fun whenContentIsntPdf_ThenThrowsInvalidArgumentException() {
         val uri = URI.create("https://www.google.pt")
-        val fileDst = "/tmp/invalidArgument.pdf"
+        val fileDst = Paths.get("/tmp/invalidArgument.pdf")
         downloadAndAssertThrows<InvalidFormatException>(uri, fileDst)
         assertFileDoesntExist(fileDst)
     }
@@ -67,7 +68,7 @@ internal class PDFFileDownloaderImplTest {
     @Test
     fun whenHostDoesntExist_ThenThrowsConnectException() {
         val uri = URI.create("https://www.oajsfaspfkl.com")
-        val fileDst = "/tmp/unknownHost.pdf"
+        val fileDst = Paths.get("/tmp/unknownHost.pdf")
         downloadAndAssertThrows<ConnectException>(uri, fileDst)
         assertFileDoesntExist(fileDst)
     }
@@ -75,7 +76,7 @@ internal class PDFFileDownloaderImplTest {
     @Test
     fun whenClientAsksForUnexistingResource_ThenThrowsInvalidFormatException() {
         val uri = URI.create("http://google.com/i-on-project")
-        val fileDst = "/tmp/server404.pdf"
+        val fileDst = Paths.get("/tmp/server404.pdf")
         downloadAndAssertThrows<InvalidFormatException>(uri, fileDst)
         assertFileDoesntExist(fileDst)
     }
@@ -83,7 +84,7 @@ internal class PDFFileDownloaderImplTest {
     @Test
     fun whenUrlIsNotPassed_ThenThrowsIllegalArgumentException() {
         val uri = URI.create("")
-        val fileDst = "/tmp/notUsedPath"
+        val fileDst = Paths.get("/tmp/notUsedPath")
         downloadAndAssertThrows<IllegalArgumentException>(uri, fileDst)
         assertFileDoesntExist(fileDst)
     }
@@ -91,7 +92,7 @@ internal class PDFFileDownloaderImplTest {
     @Test
     fun whenLocalPathIsNotPassed_ThenThrowsIllegalArgumentException() {
         val uri = URI.create("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
-        val fileDst = ""
+        val fileDst = Paths.get("")
         downloadAndAssertThrows<IllegalArgumentException>(uri, fileDst)
         assertFileDoesntExist(fileDst)
     }
@@ -99,7 +100,7 @@ internal class PDFFileDownloaderImplTest {
     @Test
     fun whenServerError_thenThrowsServerErrorException() {
         val url = URI.create("http://httpstat.us/500")
-        val fileDst = "/tmp/notUsedPath"
+        val fileDst = Paths.get("/tmp/notUsedPath")
         downloadAndAssertThrows<ServerErrorException>(url, fileDst)
         assertFileDoesntExist(fileDst)
     }
