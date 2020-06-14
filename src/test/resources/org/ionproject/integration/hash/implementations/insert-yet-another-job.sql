@@ -1,0 +1,1 @@
+insert into filehashes values ('yetAnotherJob', 0x987);

@@ -1,0 +1,1 @@
+insert into filehashes values ('testJob', 0x123);
