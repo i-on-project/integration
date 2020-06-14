@@ -34,3 +34,7 @@ jobs:
       - name: Push image
         id: production_push_image
         run: ./gradlew tagPushDockerImage -PgithubRef=${{ github.ref }}
+
+      - name: Deploy
+        id: integration_deploy
+        run: ./gradlew deploy -PgithubRef=${{ github.ref }}

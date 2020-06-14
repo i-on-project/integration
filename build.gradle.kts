@@ -68,6 +68,25 @@ tasks.register("tagPushDockerImage") {
     }
 }
 
+tasks.register<Exec>("deploy") {
+    val githubRef = project.properties["githubRef"]
+    val finalDockerTag = githubRef?.toString()?.removePrefix("refs/tags/v") ?: "latest"
+    val containerName = if (githubRef == null) {
+        "i-on-integration-staging"
+    } else {
+        "i-on-integration-production"
+    }
+
+    commandLine(
+        "gcloud",
+        "compute instances",
+        "update-container",
+        "$containerName",
+        "--container-image",
+        "$imageId:$finalDockerTag"
+    )
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }

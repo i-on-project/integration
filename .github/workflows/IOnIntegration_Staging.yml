@@ -36,4 +36,7 @@ jobs:
       - name: Push image
         id: integration_push_image
         run: ./gradlew tagPushDockerImage
-          
+
+      - name: Deploy
+        id: integration_deploy
+        run: ./gradlew deploy
