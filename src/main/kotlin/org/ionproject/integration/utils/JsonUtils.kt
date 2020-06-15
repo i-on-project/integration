@@ -22,4 +22,17 @@ object JsonUtils {
             }
             .mapError { JsonDataException("Invalid json") }
     }
+
+    fun <T : Any> toJson(t: T): Try<String> {
+        val moshi: Moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
+        val jsonAdapter = moshi
+            .adapter<T>(t::class.java)
+            .failOnUnknown()
+
+        return Try.of { jsonAdapter.toJson(t) }
+            .mapError { JsonDataException("Could not stringify value $t") }
+    }
 }

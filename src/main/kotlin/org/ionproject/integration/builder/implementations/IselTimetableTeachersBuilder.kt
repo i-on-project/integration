@@ -27,7 +27,7 @@ class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
     companion object {
         private val SCHOOL_REGEX = "\\A.*"
         private val PROGRAMME_REGEX = "^(Licenciatura|Mestrado).*$"
-        private val CLASS_SECTION_REGEX = "\\bTurma\\b: [LM][A-Z+]\\d{2}[DN]"
+        private val CLASS_SECTION_REGEX = "\\bTurma\\b: [LM][A-Z+]\\d{1,2}[DN]"
         private val CALENDAR_TERM_REGEX = "\\bAno Letivo\\b: \\d{4}/\\d{2}-\\b(Verão|Inverno)\\b"
         private val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).(0|3)0"
         private val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 47
