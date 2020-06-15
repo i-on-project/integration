@@ -19,8 +19,10 @@ class TimetableTasklet(private val state: ISELTimetable.State) :
 
         val json = Try.ofValue(state.timetableTeachers.timetable.toTypedArray())
             .flatMap { t -> JsonUtils.toJson(t) }
+            .orThrow()
 
-        log.info(json.orThrow())
+        log.info(json)
+
         return RepeatStatus.FINISHED
     }
 }

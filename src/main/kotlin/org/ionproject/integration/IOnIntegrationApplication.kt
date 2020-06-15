@@ -2,6 +2,7 @@ package org.ionproject.integration
 
 import java.io.File
 import java.time.Instant
+import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
@@ -18,7 +19,7 @@ class IOnIntegrationApplication
 
     lateinit var ctx: ConfigurableApplicationContext
     lateinit var jobLauncher: JobLauncher
-
+    private val log = LoggerFactory.getLogger(IOnIntegrationApplication::class.java)
     fun main(args: Array<String>) {
         ctx = SpringApplication
             .run(IOnIntegrationApplication::class.java, *args)
@@ -34,19 +35,22 @@ class IOnIntegrationApplication
                 val resource = FileSystemResource(it.absolutePath)
                 PropertiesLoaderUtils.loadProperties(resource)
             }
-            ?: return
 
-        props
-            .forEach {
-                val job = ctx.getBean(jobName, Job::class.java)
-                val jobParametersBuilder = JobParametersBuilder()
+        if (props == null) {
+            log.warn("$configPath has no files. Consider adding properties files for job $jobName to $configPath")
+        } else {
+            props
+                .forEach {
+                    val job = ctx.getBean(jobName, Job::class.java)
+                    val jobParametersBuilder = JobParametersBuilder()
 
-                jobParametersBuilder.addLong("timestamp", Instant.now().epochSecond)
+                    jobParametersBuilder.addLong("timestamp", Instant.now().epochSecond)
 
-                it.forEach { p ->
-                    jobParametersBuilder.addString(p.key.toString(), p.value.toString())
+                    it.forEach { p ->
+                        jobParametersBuilder.addString(p.key.toString(), p.value.toString())
+                    }
+
+                    jobLauncher.run(job, jobParametersBuilder.toJobParameters())
                 }
-
-                jobLauncher.run(job, jobParametersBuilder.toJobParameters())
-            }
+        }
     }
