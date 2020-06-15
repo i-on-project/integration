@@ -20,7 +20,7 @@ jobs:
       - name: Setup gcloud CLI
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          project_id: $GCLOUD_PROJECT_ID
           service_account_key: ${{ secrets.GOOGLE_CLOUD_SERVICE_ACCOUNT_KEY }}
 
       - name: Gcloud as credential helper
