@@ -12,7 +12,7 @@ group = "org.ionproject"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
-val imageId = "docker.pkg.github.com/i-on-project/integration/i-on-integration"
+val imageId = "gcr.io/${System.getenv()["GCLOUD_PROJECT_ID"]}/i-on-project/integration/i-on-integration"
 val tempDockerTag: String = "i-on-integration-image"
 
 repositories {
@@ -29,12 +29,12 @@ dependencies {
         exclude(group = "org.slf4j")
     }
     implementation("com.itextpdf:kernel:7.0.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     runtimeOnly("org.postgresql:postgresql")
     testRuntimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
-    implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     testImplementation("org.springframework.batch:spring-batch-test:4.2.2.RELEASE")
 }
 
@@ -73,6 +73,25 @@ tasks.register("tagPushDockerImage") {
             commandLine("docker", "push", "$imageId:$finalDockerTag")
         }
     }
+}
+
+tasks.register<Exec>("deploy") {
+    val githubRef = project.properties["githubRef"]
+    val finalDockerTag = githubRef?.toString()?.removePrefix("refs/tags/v") ?: "latest"
+    val containerName = if (githubRef == null) {
+        "i-on-integration-staging"
+    } else {
+        "i-on-integration-production"
+    }
+
+    commandLine(
+        "gcloud",
+        "compute instances",
+        "update-container",
+        "$containerName",
+        "--container-image",
+        "$imageId:$finalDockerTag"
+    )
 }
 
 tasks.withType<Test> {

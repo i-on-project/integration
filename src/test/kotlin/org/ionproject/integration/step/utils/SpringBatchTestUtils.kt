@@ -5,6 +5,7 @@ import org.springframework.batch.core.JobExecution
 import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.scope.context.StepContext
+import org.springframework.batch.item.ExecutionContext
 import org.springframework.batch.test.MetaDataInstanceFactory
 
 class SpringBatchTestUtils {
@@ -27,5 +28,13 @@ class SpringBatchTestUtils {
 
     private fun createJobExecution(): JobExecution {
         return MetaDataInstanceFactory.createJobExecution()
+    }
+
+    fun createStepExecution(): StepExecution {
+        return MetaDataInstanceFactory.createStepExecution()
+    }
+
+    fun createExecutionContext(): ExecutionContext? {
+        return MetaDataInstanceFactory.createJobExecution().executionContext
     }
 }
