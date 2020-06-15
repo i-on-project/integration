@@ -22,7 +22,7 @@ jobs:
         with:
           version: '270.0.0'
           service_account_email: ${{ secrets.GOOGLE_CLOUD_USER }}
-          service_account_key: ${{ secrets.GOOGLE_CLOUD_PASSWORD }}
+          service_account_key: '${{ secrets.GOOGLE_CLOUD_PASSWORD }}'
 
       - name: Gcloud as credential helper
         run: gcloud auth configure-docker
