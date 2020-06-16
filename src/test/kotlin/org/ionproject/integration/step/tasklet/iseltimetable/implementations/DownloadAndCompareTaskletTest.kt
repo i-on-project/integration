@@ -34,7 +34,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 )
 @SpringBatchTest
 @SpringBootTest
-internal class DownloadAndCompareTaskletDownloadSuccessful{
+internal class DownloadAndCompareTaskletDownloadSuccessful {
 
     @Autowired
     private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
@@ -49,7 +49,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessful{
         val file = File("src/test/resources/TIMETABLE-SUCCESSFUL.pdf")
         val expectedPath = file.toPath()
         try {
-            
+
             val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
 
             assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)

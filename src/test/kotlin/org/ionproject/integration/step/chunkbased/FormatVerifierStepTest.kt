@@ -1,14 +1,11 @@
 package org.ionproject.integration.step.chunkbased
 
-import java.io.File
-import java.lang.reflect.UndeclaredThrowableException
-import java.nio.file.Paths
-import java.time.Instant
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.utils.CompositeException
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.batch.core.ExitStatus
@@ -19,6 +16,10 @@ import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.io.File
+import java.lang.reflect.UndeclaredThrowableException
+import java.nio.file.Paths
+import java.time.Instant
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
@@ -43,12 +44,16 @@ internal class FormatVerifierStepTestSuccessful {
     private val text = listOf("Turma: LI11D Ano Letivo: 2019/20-Verão\nTable header 1 Table header 2\n1 2")
 
     @Test
-    fun whenStepIsSuccessful_thenAssertFileDoesNotExistAndRawDataIsComplete() {
+    fun whenStepIsSuccessful_thenAssertFileDoesNotExistAndRawDataIsCompleteAndHashIsInContext() {
         // Arrange
         val src = File("src/test/resources/formatTest.pdf")
         val temp = File("src/test/resources/formatVerifierStepTestSuccess.pdf")
         src.copyTo(temp)
 
+        val expectedHash = byteArrayOf(
+            -70, -110, -93, -28, -124, 69, 56, -46, -91, -76, 41, 111, -107, -35, -112,
+            27, 124, -55, 81, 40, 84, 37, 44, 85, 41, 63, -116, -8, -19, 84, -15, -50
+        )
         val jp = initJobParameters()
         val se = utils.createStepExecution()
         se.jobExecution.executionContext.put("pdf-path", temp.toPath())
@@ -61,9 +66,11 @@ internal class FormatVerifierStepTestSuccessful {
             ec
         )
         // Assert
+        val hash = je.executionContext["file-hash"] as ByteArray
         assertEquals(text, state.rawData.textData)
         assertEquals(json, state.rawData.jsonData)
         assertEquals(ExitStatus.COMPLETED, je.exitStatus)
+        assertTrue(expectedHash.contentEquals(hash))
     }
 }
 
@@ -190,6 +197,7 @@ internal class FormatVerifierStepTestEmptyPath {
         assertEquals("Empty path", cex.exceptions[0].message)
     }
 }
+
 private fun initJobParameters(): JobParameters {
     return JobParametersBuilder()
         .addString("pdfKey", "pdf-path")
