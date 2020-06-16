@@ -1,5 +1,9 @@
 package org.ionproject.integration.step.chunkbased
 
+import java.io.File
+import java.lang.reflect.UndeclaredThrowableException
+import java.nio.file.Paths
+import java.time.Instant
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
@@ -16,10 +20,6 @@ import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.io.File
-import java.lang.reflect.UndeclaredThrowableException
-import java.nio.file.Paths
-import java.time.Instant
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(

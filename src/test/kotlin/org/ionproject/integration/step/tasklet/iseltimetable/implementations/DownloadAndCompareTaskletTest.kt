@@ -59,6 +59,35 @@ internal class DownloadAndCompareTaskletDownloadSuccessful {
             file.deleteOnExit()
         }
     }
+    private fun initJobParameters(): JobParameters {
+        return JobParametersBuilder()
+            .addString("pdfKey", "pdf-path")
+            .addString("hashKey", "file-hash")
+            .addString("localFileDestination", "src/test/resources/TIMETABLE-SUCCESSFUL.pdf")
+            .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
+            .addLong("timestamp", Instant.now().toEpochMilli())
+            .addString("jobId", "1")
+            .toJobParameters()
+    }
+}
+
+@ExtendWith(SpringExtension::class)
+@ContextConfiguration(
+    classes = [
+        ISELTimetable::class,
+        DownloadAndCompareTasklet::class,
+        IOnIntegrationApplication::class
+    ]
+)
+@SpringBatchTest
+@SpringBootTest
+internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecorded {
+
+    @Autowired
+    private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
+
+    val utils = SpringBatchTestUtils()
+
     @Test
     @Sql("insert-timetable-pdf-hash.sql")
     fun whenHashIsSameAsRecorded_ThenThrowDownloadAndCompareTaskletException() {
