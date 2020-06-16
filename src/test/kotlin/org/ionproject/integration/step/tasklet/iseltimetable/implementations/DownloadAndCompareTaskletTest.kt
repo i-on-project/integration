@@ -21,6 +21,7 @@ import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -33,7 +34,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 )
 @SpringBatchTest
 @SpringBootTest
-internal class DownloadAndCompareTaskletTestSuccessFul {
+internal class DownloadAndCompareTaskletDownloadSuccessful{
 
     @Autowired
     private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
@@ -48,10 +49,33 @@ internal class DownloadAndCompareTaskletTestSuccessFul {
         val file = File("src/test/resources/TIMETABLE-SUCCESSFUL.pdf")
         val expectedPath = file.toPath()
         try {
+            
             val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+
             assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)
             assertEquals(expectedPath, je.executionContext[pathKey])
             assertTrue(file.exists())
+        } finally {
+            file.deleteOnExit()
+        }
+    }
+    @Test
+    @Sql("insert-timetable-pdf-hash.sql")
+    fun whenHashIsSameAsRecorded_ThenThrowDownloadAndCompareTaskletException() {
+        val pathKey = "pdf-path"
+        val ec = utils.createExecutionContext()
+        val jp = initJobParameters()
+        val file = File("src/test/resources/TIMETABLE-SAME-AS-RECORDED.pdf")
+        val expectedPath = file.toPath()
+        try {
+
+            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+            val ex = (je.allFailureExceptions[0] as UndeclaredThrowableException).undeclaredThrowable
+
+            assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
+            assertEquals(expectedPath, je.executionContext[pathKey])
+            assertTrue(file.exists())
+            assertEquals("DownloadAndCompareTaskletException", ex::class.java.simpleName)
         } finally {
             file.deleteOnExit()
         }
@@ -61,10 +85,10 @@ internal class DownloadAndCompareTaskletTestSuccessFul {
         return JobParametersBuilder()
             .addString("pdfKey", "pdf-path")
             .addString("hashKey", "file-hash")
-            .addString("localFileDestination", "src/test/resources/TIMETABLE-SUCCESSFUL.pdf")
+            .addString("localFileDestination", "src/test/resources/TIMETABLE-SAME-AS-RECORDED.pdf")
             .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
             .addLong("timestamp", Instant.now().toEpochMilli())
-            .addString("jobId", "1")
+            .addString("jobId", "2")
             .toJobParameters()
     }
 }
