@@ -83,6 +83,8 @@ tasks.register<Exec>("deploy") {
         "instances",
         "update-container",
         "$containerName",
+        "--zone",
+        "us-east1-b",
         "--container-image",
         "$imageId:$finalDockerTag"
     )
