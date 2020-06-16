@@ -19,6 +19,7 @@ import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.test.JobLauncherTestUtils
 import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
@@ -31,6 +32,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     ]
 )
 @SpringBatchTest
+@SpringBootTest
 internal class DownloadAndCompareTaskletTestSuccessFul {
 
     @Autowired
@@ -62,6 +64,7 @@ internal class DownloadAndCompareTaskletTestSuccessFul {
             .addString("localFileDestination", "src/test/resources/TIMETABLE-SUCCESSFUL.pdf")
             .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
             .addLong("timestamp", Instant.now().toEpochMilli())
+            .addString("jobId", "1")
             .toJobParameters()
     }
 }
