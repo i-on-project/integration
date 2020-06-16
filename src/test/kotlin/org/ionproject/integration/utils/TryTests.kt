@@ -1,6 +1,7 @@
 package org.ionproject.integration.utils
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -51,7 +52,7 @@ class TryTests {
             .match({ it.toString() }, { it.message })
 
         // Assert
-        assertEquals("/ by zero", result)
+        assertTrue("/ by zero" == result || "divide by zero" == result)
     }
 
     @Test
