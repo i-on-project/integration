@@ -8,7 +8,7 @@ on:
       - 'docs/**'
 
 env:
-  IMAGE_NAME: i-on-integration
+  GCLOUD_PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
 
 jobs:
   push_integration:
@@ -19,15 +19,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Setup gcloud CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
+          service_account_key: ${{ secrets.GOOGLE_CLOUD_SERVICE_ACCOUNT_KEY }}
+
+      - name: Gcloud as credential helper
+        run: gcloud auth configure-docker
+
       - name: Build image
         id: integration_build_image
         run: ./gradlew buildDockerImage
 
-      - name: Log into registry
-        id: integration_login_registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
       - name: Push image
         id: integration_push_image
         run: ./gradlew tagPushDockerImage
-          
+
+      - name: Deploy
+        id: integration_deploy
+        run: ./gradlew deploy
