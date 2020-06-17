@@ -53,7 +53,8 @@ class IOnIntegrationApplication
                     // We want to detect executions of the job
                     // for the same course without peeking into the pdf.
                     // One way is to concat all the jobParameters
-                    // with job name. It does not detect all,
+                    // with job name and calculate the hash of the resulting string.
+                    // It does not detect all,
                     // but a reasonable amount of times.
                     val jobHash = jobName.plus(it.entries.joinToString()).hashCode()
                     jobParametersBuilder.addString("jobId", jobHash.toString())
