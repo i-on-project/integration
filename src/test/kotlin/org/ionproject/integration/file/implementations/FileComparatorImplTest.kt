@@ -40,7 +40,7 @@ internal class FileComparatorImplTest {
         val fc = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
         val file = File("src/test/resources")
         val ex = assertThrows<FileNotFoundException> { fc.compare(file, "job").orThrow() }
-        assertEquals("src/test/resources (Is a directory)", ex.message)
+        assertTrue("${file.path} (Is a directory)" == ex.message || "${file.path} (Access is denied)" == ex.message)
     }
 
     @Test
@@ -48,7 +48,7 @@ internal class FileComparatorImplTest {
         val fc = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
         val file = File("src/test/resources/non-existing.pdf")
         val ex = assertThrows<IllegalArgumentException> { fc.compare(file, "job").orThrow() }
-        assertEquals("File src/test/resources/non-existing.pdf does not exist", ex.message)
+        assertEquals("File ${file.path} does not exist", ex.message)
     }
 
     @Test
