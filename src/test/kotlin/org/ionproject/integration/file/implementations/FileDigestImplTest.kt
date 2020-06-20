@@ -2,7 +2,6 @@ package org.ionproject.integration.file.implementations
 
 import java.io.File
 import java.io.FileNotFoundException
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -24,12 +23,18 @@ internal class FileDigestImplTest {
     fun whenFileDoesntExist_thenThrowFileNotFoundException() {
         val file = File("src/test/resources/non-existant.pdf")
         val ex = assertThrows<FileNotFoundException> { fd.digest(file) }
-        assertEquals("src/test/resources/non-existant.pdf (No such file or directory)", ex.message)
+        assertTrue(
+            "${file.path} (No such file or directory)" == ex.message ||
+                "${file.path} (The system cannot find the file specified)" == ex.message
+        )
     }
     @Test
-    fun whenFileIsDirectory_thenThrow() {
+    fun whenFileIsDirectory_thenThrowFileNotFoundException() {
         val file = File("src/test/resources")
         val ex = assertThrows<FileNotFoundException> { fd.digest(file) }
-        assertEquals("src/test/resources (Is a directory)", ex.message)
+        assertTrue(
+            "${file.path} (Is a directory)" == ex.message ||
+                "${file.path} (Access is denied)" == ex.message
+        )
     }
 }

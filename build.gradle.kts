@@ -86,9 +86,12 @@ tasks.register<Exec>("deploy") {
 
     commandLine(
         "gcloud",
-        "compute instances",
+        "compute",
+        "instances",
         "update-container",
         "$containerName",
+        "--zone",
+        "us-east1-b",
         "--container-image",
         "$imageId:$finalDockerTag"
     )

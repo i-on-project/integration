@@ -45,7 +45,7 @@ class ExtractReader : ItemReader<RawData> {
         val headerText = itext.extract(path.toString())
         val tabularText = tabula.extract(path.toString())
 
-        path.toFile().delete()
+        path.toFile().deleteOnExit()
         val rawData = Try.map(headerText, tabularText) { txt, tab -> RawData(tab.first(), txt) }
 
         nItems += 1
