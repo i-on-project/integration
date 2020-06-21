@@ -12,9 +12,21 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 
 @SpringBootTest
+@TestPropertySource(
+    properties = [
+        "spring.datasource.url = jdbc:h2:mem:testdb",
+        "spring.datasource.driverClassName = org.h2.Driver",
+        "spring.datasource.username = sa",
+        "spring.datasource.password = ",
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
+    ]
+)
 internal class FileComparatorImplTest {
     @Autowired
     private lateinit var ds: DataSource

@@ -18,6 +18,7 @@ import org.springframework.batch.test.JobLauncherTestUtils
 import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -26,6 +27,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         ISELTimetable::class,
         FormatVerifierStepBuilder::class,
         IOnIntegrationApplication::class
+    ]
+)
+@TestPropertySource(
+    properties = [
+        "spring.datasource.url = jdbc:h2:mem:testdb",
+        "spring.datasource.driverClassName = org.h2.Driver",
+        "spring.datasource.username = sa",
+        "spring.datasource.password = ",
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 @SpringBatchTest
@@ -75,6 +87,17 @@ internal class FormatVerifierStepTestSuccessful {
         IOnIntegrationApplication::class
     ]
 )
+@TestPropertySource(
+    properties = [
+        "spring.datasource.url = jdbc:h2:mem:testdb",
+        "spring.datasource.driverClassName = org.h2.Driver",
+        "spring.datasource.username = sa",
+        "spring.datasource.password = ",
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
+    ]
+)
 @SpringBatchTest
 internal class FormatVerifierStepTestUnexistingFile {
 
@@ -120,6 +143,17 @@ internal class FormatVerifierStepTestUnexistingFile {
         IOnIntegrationApplication::class
     ]
 )
+@TestPropertySource(
+    properties = [
+        "spring.datasource.url = jdbc:h2:mem:testdb",
+        "spring.datasource.driverClassName = org.h2.Driver",
+        "spring.datasource.username = sa",
+        "spring.datasource.password = ",
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
+    ]
+)
 @SpringBatchTest
 internal class FormatVerifierStepTestInvalidFormat {
 
@@ -159,6 +193,17 @@ internal class FormatVerifierStepTestInvalidFormat {
         ISELTimetable::class,
         FormatVerifierStepBuilder::class,
         IOnIntegrationApplication::class
+    ]
+)
+@TestPropertySource(
+    properties = [
+        "spring.datasource.url = jdbc:h2:mem:testdb",
+        "spring.datasource.driverClassName = org.h2.Driver",
+        "spring.datasource.username = sa",
+        "spring.datasource.password = ",
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 @SpringBatchTest

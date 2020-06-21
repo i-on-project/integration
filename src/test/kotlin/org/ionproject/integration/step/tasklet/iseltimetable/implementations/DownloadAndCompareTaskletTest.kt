@@ -20,6 +20,7 @@ import org.springframework.batch.test.JobLauncherTestUtils
 import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -28,6 +29,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         ISELTimetable::class,
         DownloadAndCompareTasklet::class,
         IOnIntegrationApplication::class
+    ]
+)
+@TestPropertySource(
+    properties = [
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 @SpringBatchTest
@@ -74,6 +82,13 @@ internal class DownloadAndCompareTaskletTestSuccessFul {
         IOnIntegrationApplication::class
     ]
 )
+@TestPropertySource(
+    properties = [
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
+    ]
+)
 @SpringBatchTest
 internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
@@ -116,6 +131,13 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
         ISELTimetable::class,
         DownloadAndCompareTasklet::class,
         IOnIntegrationApplication::class
+    ]
+)
+@TestPropertySource(
+    properties = [
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 @SpringBatchTest
@@ -164,6 +186,13 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
         ISELTimetable::class,
         DownloadAndCompareTasklet::class,
         IOnIntegrationApplication::class
+    ]
+)
+@TestPropertySource(
+    properties = [
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 @SpringBatchTest
