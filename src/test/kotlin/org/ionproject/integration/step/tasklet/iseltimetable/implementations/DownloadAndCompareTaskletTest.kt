@@ -33,6 +33,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         IOnIntegrationApplication::class
     ]
 )
+@TestPropertySource(
+    properties = [
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
+    ]
+)
 @SpringBatchTest
 @SpringBootTest
 internal class DownloadAndCompareTaskletDownloadSuccessful {
@@ -78,6 +85,14 @@ internal class DownloadAndCompareTaskletDownloadSuccessful {
         ISELTimetable::class,
         DownloadAndCompareTasklet::class,
         IOnIntegrationApplication::class
+    ]
+)
+
+@TestPropertySource(
+    properties = [
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 @SpringBatchTest
@@ -129,6 +144,13 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         IOnIntegrationApplication::class
     ]
 )
+@TestPropertySource(
+    properties = [
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
+    ]
+)
 @SpringBatchTest
 internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
@@ -171,6 +193,13 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
         ISELTimetable::class,
         DownloadAndCompareTasklet::class,
         IOnIntegrationApplication::class
+    ]
+)
+@TestPropertySource(
+    properties = [
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 @SpringBatchTest

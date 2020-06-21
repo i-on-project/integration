@@ -24,7 +24,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 )
 @TestPropertySource(
     properties = [
-        "isel-timetable.alertRecipient=org.ionproject@gmail.com"
+        "isel-timetable.alertRecipient=org.ionproject@gmail.com",
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
     ]
 )
 @SpringBatchTest
