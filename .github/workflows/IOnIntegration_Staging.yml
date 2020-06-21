@@ -30,12 +30,6 @@ jobs:
 
       - name: Build image
         id: integration_build_image
-        env:
-          SPRING_PROFILE: staging
-          GOOGLE_CLOUD_SQL_POSTGRES_USER: ${{ secrets.GOOGLE_CLOUD_SQL_POSTGRES_USER }}
-          GOOGLE_CLOUD_SQL_POSTGRES_PASSWORD: ${{ secrets.GOOGLE_CLOUD_SQL_POSTGRES_PASSWORD }}
-          ION_CORE_BASE_URL: ${{ secrets.ION_CORE_BASE_URL }}
-          ION_CORE_TOKEN: ${{ secrets.ION_CORE_TOKEN }}
         run: ./gradlew buildDockerImage
 
       - name: Push image
