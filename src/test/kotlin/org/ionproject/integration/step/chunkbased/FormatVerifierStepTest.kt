@@ -50,6 +50,7 @@ internal class FormatVerifierStepTestSuccessful {
         val temp = File("src/test/resources/formatVerifierStepTestSuccess.pdf")
         src.copyTo(temp)
 
+        // SHA256 digest from src file
         val expectedHash = byteArrayOf(
             -70, -110, -93, -28, -124, 69, 56, -46, -91, -76, 41, 111, -107, -35, -112,
             27, 124, -55, 81, 40, 84, 37, 44, 85, 41, 63, -116, -8, -19, 84, -15, -50
