@@ -12,6 +12,10 @@ RUN ./gradlew extractUberJar --no-daemon --stacktrace
 
 FROM adoptopenjdk:${RUN_TAG} AS run-env
 RUN useradd -m spring && usermod -a -G spring spring
+
+RUN mkdir -p /app/resources
+RUN chown spring /app/resources
+
 USER spring:spring
 
 ARG EXTRACT_DEPENDENCY_PATH=/src/build/dependency
