@@ -1,10 +1,10 @@
 package org.ionproject.integration.file.implementations
 
+import java.io.File
 import org.ionproject.integration.file.interfaces.FileComparator
 import org.ionproject.integration.file.interfaces.FileDigest
 import org.ionproject.integration.hash.interfaces.HashRepository
 import org.ionproject.integration.utils.Try
-import java.io.File
 
 class FileComparatorImpl(private val fd: FileDigest, private val hr: HashRepository) : FileComparator {
 

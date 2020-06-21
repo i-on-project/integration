@@ -1,5 +1,8 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import java.net.URI
+import java.nio.file.Path
+import javax.sql.DataSource
 import org.ionproject.integration.file.implementations.FileComparatorImpl
 import org.ionproject.integration.file.implementations.FileDigestImpl
 import org.ionproject.integration.file.implementations.FileDownloaderImpl
@@ -19,9 +22,6 @@ import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.net.URI
-import java.nio.file.Path
-import javax.sql.DataSource
 
 @Component("DownloadAndCompareTasklet")
 @StepScope

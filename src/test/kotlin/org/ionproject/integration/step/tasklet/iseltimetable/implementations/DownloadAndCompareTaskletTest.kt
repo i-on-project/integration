@@ -90,7 +90,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 
     @Test
     @Sql("insert-timetable-pdf-hash.sql")
-    fun whenHashIsSameAsRecorded_ThenThrowDownloadAndCompareTaskletException() {
+    fun whenHashIsSameAsRecorded_ThenExitStatusIsStopped() {
         val pathKey = "pdf-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters()
@@ -99,12 +99,10 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         try {
 
             val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
-            val ex = (je.allFailureExceptions[0] as UndeclaredThrowableException).undeclaredThrowable
 
-            assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
+            assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
             assertEquals(expectedPath, je.executionContext[pathKey])
             assertTrue(file.exists())
-            assertEquals("DownloadAndCompareTaskletException", ex::class.java.simpleName)
         } finally {
             file.deleteOnExit()
         }
