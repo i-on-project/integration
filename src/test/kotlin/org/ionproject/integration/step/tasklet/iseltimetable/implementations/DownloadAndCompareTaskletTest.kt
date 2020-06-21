@@ -19,8 +19,10 @@ import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.test.JobLauncherTestUtils
 import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -39,7 +41,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     ]
 )
 @SpringBatchTest
-internal class DownloadAndCompareTaskletTestSuccessFul {
+@SpringBootTest
+internal class DownloadAndCompareTaskletDownloadSuccessful {
 
     @Autowired
     private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
@@ -54,8 +57,66 @@ internal class DownloadAndCompareTaskletTestSuccessFul {
         val file = File("src/test/resources/TIMETABLE-SUCCESSFUL.pdf")
         val expectedPath = file.toPath()
         try {
+
             val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+
             assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)
+            assertEquals(expectedPath, je.executionContext[pathKey])
+            assertTrue(file.exists())
+        } finally {
+            file.deleteOnExit()
+        }
+    }
+    private fun initJobParameters(): JobParameters {
+        return JobParametersBuilder()
+            .addString("pdfKey", "pdf-path")
+            .addString("hashKey", "file-hash")
+            .addString("localFileDestination", "src/test/resources/TIMETABLE-SUCCESSFUL.pdf")
+            .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
+            .addLong("timestamp", Instant.now().toEpochMilli())
+            .addString("jobId", "1")
+            .toJobParameters()
+    }
+}
+
+@ExtendWith(SpringExtension::class)
+@ContextConfiguration(
+    classes = [
+        ISELTimetable::class,
+        DownloadAndCompareTasklet::class,
+        IOnIntegrationApplication::class
+    ]
+)
+
+@TestPropertySource(
+    properties = [
+        "ion.core-base-url = test",
+        "ion.core-token = test",
+        "ion.core-request-timeout-seconds = 1"
+    ]
+)
+@SpringBatchTest
+@SpringBootTest
+internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecorded {
+
+    @Autowired
+    private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
+
+    val utils = SpringBatchTestUtils()
+
+    @Test
+    @Sql("insert-timetable-pdf-hash.sql")
+    fun whenHashIsSameAsRecorded_ThenExitStatusIsStopped() {
+        val pathKey = "pdf-path"
+        val ec = utils.createExecutionContext()
+        val jp = initJobParameters()
+        val file = File("src/test/resources/TIMETABLE-SAME-AS-RECORDED.pdf")
+        val expectedPath = file.toPath()
+        try {
+
+            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+
+            assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
             assertEquals(expectedPath, je.executionContext[pathKey])
             assertTrue(file.exists())
         } finally {
@@ -67,9 +128,10 @@ internal class DownloadAndCompareTaskletTestSuccessFul {
         return JobParametersBuilder()
             .addString("pdfKey", "pdf-path")
             .addString("hashKey", "file-hash")
-            .addString("localFileDestination", "src/test/resources/TIMETABLE-SUCCESSFUL.pdf")
+            .addString("localFileDestination", "src/test/resources/TIMETABLE-SAME-AS-RECORDED.pdf")
             .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
             .addLong("timestamp", Instant.now().toEpochMilli())
+            .addString("jobId", "2")
             .toJobParameters()
     }
 }

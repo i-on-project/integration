@@ -34,7 +34,7 @@ class SpringBatchTestUtils {
         return MetaDataInstanceFactory.createStepExecution()
     }
 
-    fun createExecutionContext(): ExecutionContext? {
+    fun createExecutionContext(): ExecutionContext {
         return MetaDataInstanceFactory.createJobExecution().executionContext
     }
 }

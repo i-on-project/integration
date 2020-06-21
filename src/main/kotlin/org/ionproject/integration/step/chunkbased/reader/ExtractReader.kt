@@ -3,6 +3,7 @@ package org.ionproject.integration.step.chunkbased.reader
 import java.nio.file.Path
 import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
 import org.ionproject.integration.extractor.implementations.TabulaPdfExtractor
+import org.ionproject.integration.file.implementations.FileDigestImpl
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
@@ -35,21 +36,27 @@ class ExtractReader : ItemReader<RawData> {
     override fun read(): RawData? {
         if (nItems > 0)
             return null
-
-        val itext = ITextPdfExtractor()
-        val tabula = TabulaPdfExtractor()
-
         val path = stepExecution.jobExecution.executionContext.get(pdfKey) as Path
-        stepExecution.jobExecution.executionContext.put(hashKey, path.toFile().hashCode())
+        try {
+            val itext = ITextPdfExtractor()
+            val tabula = TabulaPdfExtractor()
+            val fd = FileDigestImpl()
 
-        val headerText = itext.extract(path.toString())
-        val tabularText = tabula.extract(path.toString())
+            val headerText = itext.extract(path.toString())
+            val tabularText = tabula.extract(path.toString())
 
-        path.toFile().deleteOnExit()
-        val rawData = Try.map(headerText, tabularText) { txt, tab -> RawData(tab.first(), txt) }
+            path.toFile().deleteOnExit()
+            val rawData = Try.map(headerText, tabularText) { txt, tab -> RawData(tab.first(), txt) }
+                .orThrow()
 
-        nItems += 1
+            val fileHash = fd.digest(path.toFile())
+            stepExecution.jobExecution.executionContext.put(hashKey, fileHash)
 
-        return rawData.orThrow()
+            nItems += 1
+
+            return rawData
+        } finally {
+            path.toFile().delete()
+        }
     }
 }

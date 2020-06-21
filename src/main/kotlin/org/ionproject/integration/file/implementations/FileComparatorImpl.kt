@@ -14,12 +14,12 @@ class FileComparatorImpl(private val fd: FileDigest, private val hr: HashReposit
         if (!file.exists()) {
             return Try.ofError<IllegalArgumentException>(IllegalArgumentException("File $file does not exist"))
         }
-
-        val freshHash: ByteArray = fd.digest(file)
-        val recordedHash: ByteArray? = hr.fetchHash(jobId)
-
-        return if (recordedHash is ByteArray)
-            Try.ofValue(freshHash.contentEquals(recordedHash))
-        else Try.ofValue(false)
+        return Try.of {
+            val freshHash: ByteArray = fd.digest(file)
+            val recordedHash: ByteArray? = hr.fetchHash(jobId)
+            if (recordedHash is ByteArray)
+                freshHash.contentEquals(recordedHash)
+            else false
+        }
     }
 }

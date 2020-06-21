@@ -35,11 +35,12 @@ class ISELTimetable(
     @Bean
     fun timetableJob() = jobBuilderFactory.get("ISEL Timetable Batch Job")
         .start(taskletStep("Download And Compare", downloadAndCompareTasklet()))
+        .on("STOPPED").end()
         .next(formatVerifierStep())
         .next(taskletStep("RawData to Business Object", mappingTasklet()))
         .next(uploadStep())
         .next(taskletStep("PostUpload", postUploadTasklet()))
-        .build()
+        .build().build()
 
     private fun taskletStep(name: String, tasklet: Tasklet): TaskletStep {
         return stepBuilderFactory
