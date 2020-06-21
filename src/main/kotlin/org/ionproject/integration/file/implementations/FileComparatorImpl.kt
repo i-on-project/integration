@@ -1,10 +1,10 @@
 package org.ionproject.integration.file.implementations
 
-import java.io.File
 import org.ionproject.integration.file.interfaces.FileComparator
 import org.ionproject.integration.file.interfaces.FileDigest
 import org.ionproject.integration.hash.interfaces.HashRepository
 import org.ionproject.integration.utils.Try
+import java.io.File
 
 class FileComparatorImpl(private val fd: FileDigest, private val hr: HashRepository) : FileComparator {
 
@@ -14,12 +14,12 @@ class FileComparatorImpl(private val fd: FileDigest, private val hr: HashReposit
         if (!file.exists()) {
             return Try.ofError<IllegalArgumentException>(IllegalArgumentException("File $file does not exist"))
         }
-
-        val freshHash: ByteArray = fd.digest(file)
-        val recordedHash: ByteArray? = hr.fetchHash(jobId)
-
-        return if (recordedHash is ByteArray)
-            Try.ofValue(freshHash.contentEquals(recordedHash))
-        else Try.ofValue(false)
+        return Try.of {
+            val freshHash: ByteArray = fd.digest(file)
+            val recordedHash: ByteArray? = hr.fetchHash(jobId)
+            if (recordedHash is ByteArray)
+                freshHash.contentEquals(recordedHash)
+            else false
+        }
     }
 }
