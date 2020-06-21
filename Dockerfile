@@ -14,6 +14,8 @@ FROM adoptopenjdk:${RUN_TAG} AS run-env
 RUN useradd -m spring && usermod -a -G spring spring
 USER spring:spring
 
+ARG EXTRACT_DEPENDENCY_PATH=/src/build/dependency
+
 # Copy dependencies in multi layers
 COPY --from=build-env ${EXTRACT_DEPENDENCY_PATH}/BOOT-INF/classes /app
 COPY --from=build-env ${EXTRACT_DEPENDENCY_PATH}/BOOT-INF/lib /app/lib
