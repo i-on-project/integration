@@ -1,6 +1,6 @@
 package org.ionproject.integration.builder.interfaces
 
-interface TimetableTeachersBuilder<T> {
+interface ITimetableTeachersBuilder<T> {
     /**
      * Convert timetable raw data to business data
      */

@@ -4,7 +4,7 @@ import com.squareup.moshi.Types
 import java.time.Duration
 import java.time.LocalTime
 import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
-import org.ionproject.integration.builder.interfaces.TimetableTeachersBuilder
+import org.ionproject.integration.builder.interfaces.ITimetableTeachersBuilder
 import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.Course
@@ -23,7 +23,7 @@ import org.ionproject.integration.utils.JsonUtils
 import org.ionproject.integration.utils.RegexUtils
 import org.ionproject.integration.utils.Try
 
-class IselTimetableTeachersBuilder() : TimetableTeachersBuilder<RawData> {
+class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
     companion object {
         private val SCHOOL_REGEX = "\\A.*"
         private val PROGRAMME_REGEX = "^(Licenciatura|Mestrado).*$"

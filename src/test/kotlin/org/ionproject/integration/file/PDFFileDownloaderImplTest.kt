@@ -11,7 +11,7 @@ import org.ionproject.integration.file.exceptions.InvalidFormatException
 import org.ionproject.integration.file.exceptions.ServerErrorException
 import org.ionproject.integration.file.implementations.FileDownloaderImpl
 import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
-import org.ionproject.integration.file.interfaces.FileDownloader
+import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,7 +24,7 @@ import org.junit.jupiter.api.assertThrows
 internal class PDFFileDownloaderImplTest {
     companion object {
         private val checker = PDFBytesFormatChecker()
-        private val pdfDownloader: FileDownloader = FileDownloaderImpl(checker)
+        private val pdfDownloader: IFileDownloader = FileDownloaderImpl(checker)
         inline fun <reified T : Throwable> downloadAndAssertThrows(uri: URI, dstFile: Path) {
             assertThrows<T> { downloadPdf(uri, dstFile).orThrow() }
         }

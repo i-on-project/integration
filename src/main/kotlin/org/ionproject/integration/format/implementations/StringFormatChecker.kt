@@ -1,8 +1,8 @@
 package org.ionproject.integration.format.implementations
 
-import org.ionproject.integration.format.interfaces.FormatChecker
+import org.ionproject.integration.format.interfaces.IFormatChecker
 
-class StringFormatChecker(pattern: String) : FormatChecker {
+class StringFormatChecker(pattern: String) : IFormatChecker {
 
     private val regex = Regex(pattern)
 
