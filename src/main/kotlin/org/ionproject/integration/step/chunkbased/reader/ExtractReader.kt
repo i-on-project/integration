@@ -11,7 +11,6 @@ import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.annotation.BeforeStep
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.ItemReader
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component("ExtractReader")
@@ -25,18 +24,12 @@ class ExtractReader : ItemReader<RawData> {
         this.stepExecution = stepExecution
     }
 
-    @Value("#{jobParameters['pdfKey']}")
-    private lateinit var pdfKey: String
-
-    @Value("#{jobParameters['hashKey']}")
-    private lateinit var hashKey: String
-
     private var nItems: Int = 0
 
     override fun read(): RawData? {
         if (nItems > 0)
             return null
-        val path = stepExecution.jobExecution.executionContext.get(pdfKey) as Path
+        val path = stepExecution.jobExecution.executionContext.get("pdf-path") as Path
         try {
             val itext = ITextPdfExtractor()
             val tabula = TabulaPdfExtractor()
@@ -50,7 +43,7 @@ class ExtractReader : ItemReader<RawData> {
                 .orThrow()
 
             val fileHash = fd.digest(path.toFile())
-            stepExecution.jobExecution.executionContext.put(hashKey, fileHash)
+            stepExecution.jobExecution.executionContext.put("file-hash", fileHash)
 
             nItems += 1
 

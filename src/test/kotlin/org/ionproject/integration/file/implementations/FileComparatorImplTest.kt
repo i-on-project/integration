@@ -24,7 +24,8 @@ import org.springframework.test.context.jdbc.Sql
         "spring.datasource.password = ",
         "ion.core-base-url = test",
         "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
+        "ion.core-request-timeout-seconds = 1",
+        "ion.resources-folder=src/test/resources/"
     ]
 )
 internal class FileComparatorImplTest {

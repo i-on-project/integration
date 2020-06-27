@@ -37,9 +37,7 @@ class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
         val file = response.map { r -> checker.checkFormat(r.body) }
             .map { localDestination.toFile() }
 
-        Try.map(file, response) { f, r -> f.writeBytes(r.body) }
-
-        return file.map { f -> f.toPath() }
+        return Try.map(file, response) { f, r -> f.writeBytes(r.body); f.toPath() }
     }
 
     private fun validateResponseCode(response: Response): Try<Response> {

@@ -20,16 +20,13 @@ class PostUploadTasklet() : Tasklet {
     @Autowired
     private lateinit var ds: DataSource
 
-    @Value("#{jobParameters['hashKey']}")
-    private lateinit var hashKey: String
-
     @Value("#{jobParameters['jobId']}")
     private lateinit var jobId: String
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         val hr = HashRepositoryImpl(ds)
 
-        val fileHash = chunkContext.stepContext.stepExecution.jobExecution.executionContext.get(hashKey) as ByteArray
+        val fileHash = chunkContext.stepContext.stepExecution.jobExecution.executionContext.get("file-hash") as ByteArray
         hr.putHash(jobId, fileHash)
 
         return RepeatStatus.FINISHED

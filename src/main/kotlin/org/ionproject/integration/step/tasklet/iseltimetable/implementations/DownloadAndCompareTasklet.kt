@@ -2,7 +2,9 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
 import java.net.URI
 import java.nio.file.Path
+import java.nio.file.Paths
 import javax.sql.DataSource
+import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.file.implementations.FileComparatorImpl
 import org.ionproject.integration.file.implementations.FileDigestImpl
 import org.ionproject.integration.file.implementations.FileDownloaderImpl
@@ -32,31 +34,34 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
     @Value("#{jobParameters['pdfRemoteLocation']}")
     private lateinit var pdfRemoteLocation: URI
 
-    @Value("#{jobParameters['localFileDestination']}")
-    private lateinit var localFileDestination: Path
-
-    @Value("#{jobParameters['pdfKey']}")
-    private lateinit var pdfKey: String
-
     @Value("#{jobParameters['jobId']}")
     private lateinit var jobId: String
+
+    @Autowired
+    private lateinit var appProperties: AppProperties
 
     @Autowired
     private lateinit var ds: DataSource
 
     private var fileIsEqualToLast: Boolean = false
+
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
+        val localFileDestination: Path = Paths.get(appProperties.resourcesFolder, parseFileName(pdfRemoteLocation))
+
         val pdfChecker = PDFBytesFormatChecker()
         val downloader = FileDownloaderImpl(pdfChecker)
         val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
 
         val file = localFileDestination.toFile()
+        if (file.isDirectory) {
+            throw DownloadAndCompareTaskletException("Specified path $localFileDestination is a directory")
+        }
         if (file.exists()) {
             throw DownloadAndCompareTaskletException("File already exists in $localFileDestination")
         }
 
         val path = downloader.download(pdfRemoteLocation, localFileDestination).orThrow()
-        chunkContext.stepContext.stepExecution.jobExecution.executionContext.put(pdfKey, path)
+        chunkContext.stepContext.stepExecution.jobExecution.executionContext.put("pdf-path", path)
 
         fileIsEqualToLast = fileComparator.compare(file, jobId)
             .match(
@@ -83,5 +88,10 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
             return ExitStatus.STOPPED
         }
         return ExitStatus.COMPLETED
+    }
+
+    private fun parseFileName(uri: URI): String {
+        val path = uri.path
+        return path.substring(path.lastIndexOf('/'), path.length)
     }
 }

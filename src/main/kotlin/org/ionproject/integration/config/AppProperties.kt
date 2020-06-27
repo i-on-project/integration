@@ -24,4 +24,7 @@ class AppProperties {
     @Max(5)
     @Min(0)
     var coreRetries: Int = 0
+
+    @NotEmpty
+    lateinit var resourcesFolder: String
 }
