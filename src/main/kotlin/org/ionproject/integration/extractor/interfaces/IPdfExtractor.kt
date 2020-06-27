@@ -2,7 +2,7 @@ package org.ionproject.integration.extractor.interfaces
 
 import org.ionproject.integration.utils.Try
 
-interface PdfExtractor {
+interface IPdfExtractor {
     /**
      * Extract data from pdf file locate at [pdfPath]
      * @return Try<MutableList<String>>

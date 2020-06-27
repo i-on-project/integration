@@ -28,7 +28,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     properties = [
         "ion.core-base-url = test",
         "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
+        "ion.core-request-timeout-seconds = 1",
+        "ion.resources-folder=src/test/resources/"
     ]
 )
 @SpringBatchTest

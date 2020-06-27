@@ -4,15 +4,18 @@ import java.io.File
 import java.lang.reflect.UndeclaredThrowableException
 import java.time.Instant
 import org.ionproject.integration.IOnIntegrationApplication
-import org.ionproject.integration.file.exceptions.InvalidFormatException
 import org.ionproject.integration.job.ISELTimetable
+import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
+import org.ionproject.integration.utils.CompositeException
+import org.junit.FixMethodOrder
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.runners.MethodSorters
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
@@ -33,16 +36,19 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         IOnIntegrationApplication::class
     ]
 )
+
 @TestPropertySource(
     properties = [
         "ion.core-base-url = test",
         "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
+        "ion.core-request-timeout-seconds = 1",
+        "ion.resources-folder=src/test/resources/"
     ]
 )
 @SpringBatchTest
 @SpringBootTest
-internal class DownloadAndCompareTaskletDownloadSuccessful {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecorded {
 
     @Autowired
     private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
@@ -53,8 +59,8 @@ internal class DownloadAndCompareTaskletDownloadSuccessful {
     fun whenTaskletIsSuccessful_ThenAssertPathIsInContextAndFileExists() {
         val pathKey = "pdf-path"
         val ec = utils.createExecutionContext()
-        val jp = initJobParameters()
-        val file = File("src/test/resources/TIMETABLE-SUCCESSFUL.pdf")
+        val jp = initJobParameters("1")
+        val file = File("src/test/resources/LEIC_0310.pdf")
         val expectedPath = file.toPath()
         try {
 
@@ -64,53 +70,16 @@ internal class DownloadAndCompareTaskletDownloadSuccessful {
             assertEquals(expectedPath, je.executionContext[pathKey])
             assertTrue(file.exists())
         } finally {
-            file.deleteOnExit()
+            file.delete()
         }
     }
-    private fun initJobParameters(): JobParameters {
-        return JobParametersBuilder()
-            .addString("pdfKey", "pdf-path")
-            .addString("hashKey", "file-hash")
-            .addString("localFileDestination", "src/test/resources/TIMETABLE-SUCCESSFUL.pdf")
-            .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
-            .addLong("timestamp", Instant.now().toEpochMilli())
-            .addString("jobId", "1")
-            .toJobParameters()
-    }
-}
-
-@ExtendWith(SpringExtension::class)
-@ContextConfiguration(
-    classes = [
-        ISELTimetable::class,
-        DownloadAndCompareTasklet::class,
-        IOnIntegrationApplication::class
-    ]
-)
-
-@TestPropertySource(
-    properties = [
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
-    ]
-)
-@SpringBatchTest
-@SpringBootTest
-internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecorded {
-
-    @Autowired
-    private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
-
-    val utils = SpringBatchTestUtils()
-
     @Test
     @Sql("insert-timetable-pdf-hash.sql")
     fun whenHashIsSameAsRecorded_ThenExitStatusIsStopped() {
         val pathKey = "pdf-path"
         val ec = utils.createExecutionContext()
-        val jp = initJobParameters()
-        val file = File("src/test/resources/TIMETABLE-SAME-AS-RECORDED.pdf")
+        val jp = initJobParameters("2")
+        val file = File("src/test/resources/LEIC_0310.pdf")
         val expectedPath = file.toPath()
         try {
 
@@ -120,18 +89,15 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
             assertEquals(expectedPath, je.executionContext[pathKey])
             assertTrue(file.exists())
         } finally {
-            file.deleteOnExit()
+            file.delete()
         }
     }
 
-    private fun initJobParameters(): JobParameters {
+    private fun initJobParameters(jobId: String): JobParameters {
         return JobParametersBuilder()
-            .addString("pdfKey", "pdf-path")
-            .addString("hashKey", "file-hash")
-            .addString("localFileDestination", "src/test/resources/TIMETABLE-SAME-AS-RECORDED.pdf")
             .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
             .addLong("timestamp", Instant.now().toEpochMilli())
-            .addString("jobId", "2")
+            .addString("jobId", jobId)
             .toJobParameters()
     }
 }
@@ -148,7 +114,8 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
     properties = [
         "ion.core-base-url = test",
         "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
+        "ion.core-request-timeout-seconds = 1",
+        "ion.resources-folder=src/test/resources/"
     ]
 )
 @SpringBatchTest
@@ -178,9 +145,6 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
     private fun initJobParameters(): JobParameters {
         return JobParametersBuilder()
-            .addString("pdfKey", "pdf-path")
-            .addString("hashKey", "file-hash")
-            .addString("localFileDestination", "src/test/resources/TIMETABLE.pdf")
             .addString("pdfRemoteLocation", "")
             .addLong("timestamp", Instant.now().toEpochMilli())
             .toJobParameters()
@@ -199,7 +163,8 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
     properties = [
         "ion.core-base-url = test",
         "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
+        "ion.core-request-timeout-seconds = 1",
+        "ion.resources-folder=src/test/resources/"
     ]
 )
 @SpringBatchTest
@@ -212,30 +177,23 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
 
     @Test
     fun whenUrlIsNotPdf_ThenAssertExceptionIsInvalidFormatAndPathIsNotIncludedInContext() {
-        val localFileDestination = "src/test/resources/NOT-USED.pdf"
+        val localFileDestination = "src/test/resources"
         val pathKey = "pdf-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters()
         val file = File(localFileDestination)
-        try {
-            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
-            val actualPath = je.executionContext.get(pathKey)
-            val ex = je.allFailureExceptions[0] as UndeclaredThrowableException
-            assertEquals("InvalidFormatException", ex.undeclaredThrowable::class.java.simpleName)
-            val iFEx = ex.undeclaredThrowable as InvalidFormatException
-            assertEquals("Downloaded content was not in the PDF format.", iFEx.message)
-            assertNull(actualPath)
-            assertFalse(file.exists())
-        } finally {
-            file.deleteOnExit()
-        }
+        val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+        val actualPath = je.executionContext.get(pathKey)
+        val ex = je.allFailureExceptions[0] as UndeclaredThrowableException
+        assertEquals("DownloadAndCompareTaskletException", ex.undeclaredThrowable::class.java.simpleName)
+        val dCTEx = ex.undeclaredThrowable as DownloadAndCompareTaskletException
+        assertEquals("Specified path $localFileDestination is a directory", dCTEx.message)
+        assertNull(actualPath)
+        assertTrue(file.isDirectory)
     }
 
     private fun initJobParameters(): JobParameters {
         return JobParametersBuilder()
-            .addString("pdfKey", "pdf-path")
-            .addString("hashKey", "file-hash")
-            .addString("localFileDestination", "src/test/resources/NOT-USED.pdf")
             .addString("pdfRemoteLocation", "https://kotlinlang.org/")
             .addLong("timestamp", Instant.now().toEpochMilli())
             .toJobParameters()
@@ -254,7 +212,8 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
     properties = [
         "ion.core-base-url = test",
         "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
+        "ion.core-request-timeout-seconds = 1",
+        "ion.resources-folder=src/test/resources/"
     ]
 )
 @SpringBatchTest
@@ -277,8 +236,9 @@ internal class DownloadAndCompareTaskletServerErrorTest {
             val actualPath = je.executionContext.get(pathKey)
             assertNull(actualPath)
             val ute = je.allFailureExceptions[0] as UndeclaredThrowableException
-            assertEquals("ServerErrorException", ute.undeclaredThrowable::class.java.simpleName)
-            assertEquals("Server responded with error code 500", ute.undeclaredThrowable.message)
+            val compEx = ute.undeclaredThrowable as CompositeException
+            assertEquals("ServerErrorException", compEx.exceptions[0]::class.java.simpleName)
+            assertEquals("Server responded with error code 500", compEx.exceptions[0].message)
             assertFalse(file.exists())
         } finally {
             file.deleteOnExit()
@@ -287,9 +247,6 @@ internal class DownloadAndCompareTaskletServerErrorTest {
 
     private fun initJobParameters(): JobParameters {
         return JobParametersBuilder()
-            .addString("pdfKey", "pdf-path")
-            .addString("hashKey", "file-hash")
-            .addString("localFileDestination", "src/test/resources/SERVER_DOWN.pdf")
             .addString("pdfRemoteLocation", "http://httpstat.us/500")
             .addLong("timestamp", Instant.now().toEpochMilli())
             .toJobParameters()

@@ -2,6 +2,6 @@ package org.ionproject.integration.file.interfaces
 
 import java.io.File
 
-interface FileDigest {
+interface IFileDigest {
     fun digest(f: File): ByteArray
 }

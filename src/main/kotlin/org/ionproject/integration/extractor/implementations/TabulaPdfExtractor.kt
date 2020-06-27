@@ -3,11 +3,11 @@ package org.ionproject.integration.extractor.implementations
 import java.io.File
 import org.apache.commons.cli.DefaultParser
 import org.ionproject.integration.extractor.exceptions.PdfExtractorException
-import org.ionproject.integration.extractor.interfaces.PdfExtractor
+import org.ionproject.integration.extractor.interfaces.IPdfExtractor
 import org.ionproject.integration.utils.Try
 import technology.tabula.CommandLineApp
 
-class TabulaPdfExtractor : PdfExtractor {
+class TabulaPdfExtractor : IPdfExtractor {
     /**
      * Extract table data from pdf file locate at [pdfPath]
      * @return PdfExtractorException in case of any error

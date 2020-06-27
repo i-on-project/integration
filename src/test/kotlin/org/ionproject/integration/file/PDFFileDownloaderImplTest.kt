@@ -1,17 +1,16 @@
 package org.ionproject.integration.file
 
 import java.io.File
-import java.net.ConnectException
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
 import java.nio.file.Paths
 import org.ionproject.integration.file.exceptions.InvalidFormatException
-import org.ionproject.integration.file.exceptions.ServerErrorException
 import org.ionproject.integration.file.implementations.FileDownloaderImpl
 import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
-import org.ionproject.integration.file.interfaces.FileDownloader
+import org.ionproject.integration.file.interfaces.IFileDownloader
+import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,9 +23,9 @@ import org.junit.jupiter.api.assertThrows
 internal class PDFFileDownloaderImplTest {
     companion object {
         private val checker = PDFBytesFormatChecker()
-        private val pdfDownloader: FileDownloader = FileDownloaderImpl(checker)
-        inline fun <reified T : Throwable> downloadAndAssertThrows(uri: URI, dstFile: Path) {
-            assertThrows<T> { downloadPdf(uri, dstFile).orThrow() }
+        private val pdfDownloader: IFileDownloader = FileDownloaderImpl(checker)
+        inline fun <reified T : Throwable> downloadAndAssertThrows(uri: URI, dstFile: Path): T {
+            return assertThrows<T> { downloadPdf(uri, dstFile).orThrow() }
         }
 
         fun downloadPdf(uri: URI, dstFile: Path): Try<Path> {
@@ -69,7 +68,8 @@ internal class PDFFileDownloaderImplTest {
     fun whenHostDoesntExist_ThenThrowsConnectException() {
         val uri = URI.create("https://www.oajsfaspfkl.com")
         val fileDst = Paths.get("/tmp/unknownHost.pdf")
-        downloadAndAssertThrows<ConnectException>(uri, fileDst)
+        val cEx = downloadAndAssertThrows<CompositeException>(uri, fileDst)
+        assertEquals("ConnectException", cEx.exceptions[0]::class.java.simpleName)
         assertFileDoesntExist(fileDst)
     }
 
@@ -101,7 +101,8 @@ internal class PDFFileDownloaderImplTest {
     fun whenServerError_thenThrowsServerErrorException() {
         val url = URI.create("http://httpstat.us/500")
         val fileDst = Paths.get("/tmp/notUsedPath")
-        downloadAndAssertThrows<ServerErrorException>(url, fileDst)
+        val cEx = downloadAndAssertThrows<CompositeException>(url, fileDst)
+        assertEquals("ServerErrorException", cEx.exceptions[0]::class.java.simpleName)
         assertFileDoesntExist(fileDst)
     }
 }

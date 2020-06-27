@@ -1,12 +1,12 @@
 package org.ionproject.integration.file.implementations
 
 import java.io.File
-import org.ionproject.integration.file.interfaces.FileComparator
-import org.ionproject.integration.file.interfaces.FileDigest
-import org.ionproject.integration.hash.interfaces.HashRepository
+import org.ionproject.integration.file.interfaces.IFileComparator
+import org.ionproject.integration.file.interfaces.IFileDigest
+import org.ionproject.integration.hash.interfaces.IHashRepository
 import org.ionproject.integration.utils.Try
 
-class FileComparatorImpl(private val fd: FileDigest, private val hr: HashRepository) : FileComparator {
+class FileComparatorImpl(private val fd: IFileDigest, private val hr: IHashRepository) : IFileComparator {
 
     override fun compare(file: File, jobId: String): Try<Boolean> {
         if (jobId.isNullOrEmpty())

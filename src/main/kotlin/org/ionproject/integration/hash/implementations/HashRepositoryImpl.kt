@@ -1,13 +1,13 @@
 package org.ionproject.integration.hash.implementations
 
 import javax.sql.DataSource
-import org.ionproject.integration.hash.interfaces.HashRepository
+import org.ionproject.integration.hash.interfaces.IHashRepository
 import org.ionproject.integration.utils.Try
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 
 @Repository
-class HashRepositoryImpl(private val ds: DataSource) : HashRepository {
+class HashRepositoryImpl(private val ds: DataSource) : IHashRepository {
 
     override fun fetchHash(jobId: String): ByteArray? {
         val query = "SELECT hash from filehashes where jobId = ?"

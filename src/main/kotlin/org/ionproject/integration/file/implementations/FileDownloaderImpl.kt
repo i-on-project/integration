@@ -8,13 +8,13 @@ import java.net.http.HttpResponse
 import java.nio.file.Path
 import java.nio.file.Paths
 import org.ionproject.integration.file.exceptions.ServerErrorException
-import org.ionproject.integration.file.interfaces.BytesFormatChecker
-import org.ionproject.integration.file.interfaces.FileDownloader
+import org.ionproject.integration.file.interfaces.IBytesFormatChecker
+import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.model.internal.Response
 import org.ionproject.integration.utils.Try
 
-class FileDownloaderImpl(private val checker: BytesFormatChecker) :
-    FileDownloader {
+class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
+    IFileDownloader {
     private val EMPTY_PATH = Paths.get("")
 
     override fun download(uri: URI, localDestination: Path): Try<Path> {
@@ -37,9 +37,7 @@ class FileDownloaderImpl(private val checker: BytesFormatChecker) :
         val file = response.map { r -> checker.checkFormat(r.body) }
             .map { localDestination.toFile() }
 
-        Try.map(file, response) { f, r -> f.writeBytes(r.body) }
-
-        return file.map { f -> f.toPath() }
+        return Try.map(file, response) { f, r -> f.writeBytes(r.body); f.toPath() }
     }
 
     private fun validateResponseCode(response: Response): Try<Response> {

@@ -38,7 +38,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         "spring.datasource.password = ",
         "ion.core-base-url = test",
         "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
+        "ion.core-request-timeout-seconds = 1",
+        "ion.resources-folder=src/test/resources/"
     ]
 )
 @SpringBatchTest
@@ -103,7 +104,8 @@ internal class FormatVerifierStepTestSuccessful {
         "spring.datasource.password = ",
         "ion.core-base-url = test",
         "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
+        "ion.core-request-timeout-seconds = 1",
+        "ion.resources-folder=src/test/resources/"
     ]
 )
 @SpringBatchTest
@@ -159,7 +161,8 @@ internal class FormatVerifierStepTestUnexistingFile {
         "spring.datasource.password = ",
         "ion.core-base-url = test",
         "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
+        "ion.core-request-timeout-seconds = 1",
+        "ion.resources-folder=src/test/resources/"
     ]
 )
 @SpringBatchTest
@@ -211,7 +214,8 @@ internal class FormatVerifierStepTestInvalidFormat {
         "spring.datasource.password = ",
         "ion.core-base-url = test",
         "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1"
+        "ion.core-request-timeout-seconds = 1",
+        "ion.resources-folder=src/test/resources/"
     ]
 )
 @SpringBatchTest
@@ -246,8 +250,6 @@ internal class FormatVerifierStepTestEmptyPath {
 
 private fun initJobParameters(): JobParameters {
     return JobParametersBuilder()
-        .addString("pdfKey", "pdf-path")
-        .addString("hashKey", "file-hash")
         .addLong("timestamp", Instant.now().toEpochMilli())
         .toJobParameters()
 }

@@ -2,14 +2,14 @@ package org.ionproject.integration.format.implementations
 
 import com.squareup.moshi.Types
 import org.ionproject.integration.format.exceptions.FormatCheckException
-import org.ionproject.integration.format.interfaces.RawDataFormatChecker
+import org.ionproject.integration.format.interfaces.IRawDataFormatChecker
 import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.utils.Try
 import org.springframework.stereotype.Component
 
 @Component
-class ISELTimetableFormatChecker : RawDataFormatChecker {
+class ISELTimetableFormatChecker : IRawDataFormatChecker {
 
     private val jsonRootType = Types.newParameterizedType(List::class.java, Table::class.java)
 
