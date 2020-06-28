@@ -1,18 +1,26 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import com.icegreen.greenmail.util.DummySSLSocketFactory
+import com.icegreen.greenmail.util.GreenMail
+import com.icegreen.greenmail.util.GreenMailUtil
+import com.icegreen.greenmail.util.ServerSetupTest
 import java.io.File
 import java.lang.reflect.UndeclaredThrowableException
+import java.security.Security
 import java.time.Instant
+import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.utils.CompositeException
 import org.junit.FixMethodOrder
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runners.MethodSorters
@@ -42,7 +50,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         "ion.core-base-url = test",
         "ion.core-token = test",
         "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
+        "ion.resources-folder=src/test/resources/",
+
+        "email.sender =alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false"
+
     ]
 )
 @SpringBatchTest
@@ -55,8 +74,23 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 
     val utils = SpringBatchTestUtils()
 
+    private lateinit var testSmtp: GreenMail
+
+    @BeforeEach
+    fun testSmtpInit() {
+        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
+        testSmtp = GreenMail(ServerSetupTest.SMTP)
+        testSmtp.start()
+    }
+
+    @AfterEach
+    fun stopMailServer() {
+        testSmtp.stop()
+    }
+
     @Test
-    fun whenTaskletIsSuccessful_ThenAssertPathIsInContextAndFileExists() {
+    fun whenTaskletIsUnsuccessful_ThenAssertPathIsInContextAndFileExists() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val pathKey = "pdf-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters("1")
@@ -73,9 +107,11 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
             file.delete()
         }
     }
+
     @Test
     @Sql("insert-timetable-pdf-hash.sql")
     fun whenHashIsSameAsRecorded_ThenExitStatusIsStopped() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val pathKey = "pdf-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters("2")
@@ -92,10 +128,36 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
             file.delete()
         }
     }
+    @Test
+    @Sql("insert-timetable-pdf-hash-2.sql")
+    fun whenTaskletIsSuccessful_ThenAssertMailWasSent() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+        val pathKey = "pdf-path"
+        val ec = utils.createExecutionContext()
+        val jp = initJobParameters("3")
+        val file = File("src/test/resources/LEIC_0310.pdf")
+        val expectedPath = file.toPath()
+        try {
+
+            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+
+            assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
+            assertEquals(expectedPath, je.executionContext[pathKey])
+            assertTrue(file.exists())
+
+            val messages: Array<MimeMessage> = testSmtp.receivedMessages
+            assertEquals(1, messages.size)
+            assertEquals("i-on integration Alert - Job Failed", messages[0].subject)
+            assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job failed with message: File Is equal to last successfully parsed for file LEIC_0310.pdf"))
+        } finally {
+            file.delete()
+        }
+    }
 
     private fun initJobParameters(jobId: String): JobParameters {
         return JobParametersBuilder()
             .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
+            .addString("alertRecipient", "client@domain.com")
             .addLong("timestamp", Instant.now().toEpochMilli())
             .addString("jobId", jobId)
             .toJobParameters()
@@ -115,7 +177,17 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         "ion.core-base-url = test",
         "ion.core-token = test",
         "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
+        "ion.resources-folder=src/test/resources/",
+
+        "email.sender =alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false"
     ]
 )
 @SpringBatchTest
@@ -126,8 +198,23 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
     val utils = SpringBatchTestUtils()
 
+    private lateinit var testSmtp: GreenMail
+
+    @BeforeEach
+    fun testSmtpInit() {
+        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
+        testSmtp = GreenMail(ServerSetupTest.SMTP)
+        testSmtp.start()
+    }
+
+    @AfterEach
+    fun stopMailServer() {
+        testSmtp.stop()
+    }
+
     @Test
     fun whenUrlIsNotDefined_ThenReturnsIllegalArgumentExceptionAndPathIsNotIncludedInContext() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val localFileDestination = "src/test/resources/TIMETABLE.pdf"
         val pathKey = "pdf-path"
         val file = File(localFileDestination)
@@ -164,7 +251,17 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
         "ion.core-base-url = test",
         "ion.core-token = test",
         "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
+        "ion.resources-folder=src/test/resources/",
+
+        "email.sender =alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false"
     ]
 )
 @SpringBatchTest
@@ -175,8 +272,23 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
 
     val utils = SpringBatchTestUtils()
 
+    private lateinit var testSmtp: GreenMail
+
+    @BeforeEach
+    fun testSmtpInit() {
+        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
+        testSmtp = GreenMail(ServerSetupTest.SMTP)
+        testSmtp.start()
+    }
+
+    @AfterEach
+    fun stopMailServer() {
+        testSmtp.stop()
+    }
+
     @Test
     fun whenUrlIsNotPdf_ThenAssertExceptionIsInvalidFormatAndPathIsNotIncludedInContext() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val localFileDestination = "src/test/resources"
         val pathKey = "pdf-path"
         val ec = utils.createExecutionContext()
@@ -213,7 +325,17 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
         "ion.core-base-url = test",
         "ion.core-token = test",
         "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
+        "ion.resources-folder=src/test/resources/",
+
+        "email.sender =alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false"
     ]
 )
 @SpringBatchTest
@@ -224,8 +346,22 @@ internal class DownloadAndCompareTaskletServerErrorTest {
 
     val utils = SpringBatchTestUtils()
 
+    private lateinit var testSmtp: GreenMail
+
+    @BeforeEach
+    fun testSmtpInit() {
+        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
+        testSmtp = GreenMail(ServerSetupTest.SMTP)
+        testSmtp.start()
+    }
+
+    @AfterEach
+    fun stopMailServer() {
+        testSmtp.stop()
+    }
     @Test
     fun whenServerResponds5xx_ThenAssertExceptionIsServerErrorAndPathIsNotInContext() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val localFileDestination = "src/test/resources/SERVER_DOWN.pdf"
         val pathKey = "pdf-path"
         val ec = utils.createExecutionContext()
@@ -233,6 +369,7 @@ internal class DownloadAndCompareTaskletServerErrorTest {
         val file = File(localFileDestination)
         try {
             val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+
             val actualPath = je.executionContext.get(pathKey)
             assertNull(actualPath)
             val ute = je.allFailureExceptions[0] as UndeclaredThrowableException
@@ -244,11 +381,30 @@ internal class DownloadAndCompareTaskletServerErrorTest {
             file.deleteOnExit()
         }
     }
+    @Test
+    fun whenServerResponds5xx_ThenAssertAlertWasSent() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+        val localFileDestination = "src/test/resources/SERVER_DOWN.pdf"
+        val ec = utils.createExecutionContext()
+        val jp = initJobParameters()
+        val file = File(localFileDestination)
+        try {
+            jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+
+            val messages: Array<MimeMessage> = testSmtp.receivedMessages
+            assertEquals(1, messages.size)
+            assertEquals("i-on integration Alert - Job Failed", messages[0].subject)
+            assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job failed with message: Server responded with error code 500 for file 500"))
+        } finally {
+            file.deleteOnExit()
+        }
+    }
 
     private fun initJobParameters(): JobParameters {
         return JobParametersBuilder()
             .addString("pdfRemoteLocation", "http://httpstat.us/500")
             .addLong("timestamp", Instant.now().toEpochMilli())
+            .addString("alertRecipient", "client@domain.com")
             .toJobParameters()
     }
 }

@@ -4,6 +4,7 @@ import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.sql.DataSource
+import org.ionproject.integration.alert.implementations.IOnIntegrationEmailAlertService
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.file.implementations.FileComparatorImpl
 import org.ionproject.integration.file.implementations.FileDigestImpl
@@ -11,7 +12,7 @@ import org.ionproject.integration.file.implementations.FileDownloaderImpl
 import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.utils.CompositeException
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.StepContribution
@@ -23,6 +24,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.stereotype.Component
 
 @Component("DownloadAndCompareTasklet")
@@ -37,8 +39,14 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
     @Value("#{jobParameters['jobId']}")
     private lateinit var jobId: String
 
+    @Value("#{jobParameters['alertRecipient']}")
+    private lateinit var alertRecipient: String
+
     @Autowired
     private lateinit var appProperties: AppProperties
+
+    @Autowired
+    private lateinit var sender: JavaMailSenderImpl
 
     @Autowired
     private lateinit var ds: DataSource
@@ -46,7 +54,8 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
     private var fileIsEqualToLast: Boolean = false
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
-        val localFileDestination: Path = Paths.get(appProperties.resourcesFolder, parseFileName(pdfRemoteLocation))
+        val fileName = parseFileName(pdfRemoteLocation)
+        val localFileDestination: Path = Paths.get(appProperties.resourcesFolder, fileName)
 
         val pdfChecker = PDFBytesFormatChecker()
         val downloader = FileDownloaderImpl(pdfChecker)
@@ -60,7 +69,12 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
             throw DownloadAndCompareTaskletException("File already exists in $localFileDestination")
         }
 
-        val path = downloader.download(pdfRemoteLocation, localFileDestination).orThrow()
+        val path = downloader.download(pdfRemoteLocation, localFileDestination)
+            .match({ it }, {
+                file.deleteOnExit()
+                selectMessageFromExceptionAndSendEmail(it, fileName)
+                throw it
+            })
         chunkContext.stepContext.stepExecution.jobExecution.executionContext.put("pdf-path", path)
 
         fileIsEqualToLast = fileComparator.compare(file, jobId)
@@ -74,6 +88,7 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
                 },
                 {
                     path.toFile().deleteOnExit()
+                    selectMessageFromExceptionAndSendEmail(it, fileName)
                     throw it
                 })
 
@@ -85,6 +100,7 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
 
     override fun afterStep(stepExecution: StepExecution): ExitStatus {
         if (fileIsEqualToLast) {
+            sendEmail("File Is equal to last successfully parsed", parseFileName(pdfRemoteLocation))
             return ExitStatus.STOPPED
         }
         return ExitStatus.COMPLETED
@@ -92,6 +108,21 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
 
     private fun parseFileName(uri: URI): String {
         val path = uri.path
-        return path.substring(path.lastIndexOf('/'), path.length)
+        return path.substring(path.lastIndexOf('/') + 1, path.length)
+    }
+
+    private fun selectMessageFromExceptionAndSendEmail(e: Exception, asset: String) {
+        if (e is CompositeException) {
+            val msg = e.exceptions[0].message
+            sendEmail(msg!!, asset)
+        } else {
+            sendEmail(e.message!!, asset)
+        }
+        log.info("Email sent successfully")
+    }
+
+    private fun sendEmail(msg: String, asset: String) {
+        val alertService = IOnIntegrationEmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
+        alertService.sendFailureEmail(msg)
     }
 }

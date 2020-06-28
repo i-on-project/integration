@@ -23,6 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-mail:2.3.1.RELEASE")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("technology.tabula:tabula:1.0.3") {
@@ -36,6 +37,8 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("org.springframework.batch:spring-batch-test:4.2.2.RELEASE")
+    testImplementation("com.icegreen:greenmail:1.5.13")
+    testImplementation("org.apache.commons:commons-email:1.5")
 }
 
 tasks.register<Copy>("extractUberJar") {

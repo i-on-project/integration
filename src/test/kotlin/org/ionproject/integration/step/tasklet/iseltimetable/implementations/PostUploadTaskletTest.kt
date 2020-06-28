@@ -1,16 +1,24 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import com.icegreen.greenmail.util.DummySSLSocketFactory
+import com.icegreen.greenmail.util.GreenMail
+import com.icegreen.greenmail.util.GreenMailUtil
+import com.icegreen.greenmail.util.ServerSetupTest
+import java.security.Security
 import java.time.Instant
+import javax.mail.internet.MimeMessage
 import javax.sql.DataSource
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.batch.core.ExitStatus
@@ -38,7 +46,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         "ion.core-base-url = test",
         "ion.core-token = test",
         "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
+        "ion.resources-folder=src/test/resources/",
+
+        "email.sender=alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false"
     ]
 )
 @SpringBatchTest
@@ -53,8 +71,22 @@ internal class PostUploadTaskletTest {
 
     val utils = SpringBatchTestUtils()
 
+    private lateinit var testSmtp: GreenMail
+
+    @BeforeEach
+    fun testSmtpInit() {
+        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
+        testSmtp = GreenMail(ServerSetupTest.SMTP)
+        testSmtp.start()
+    }
+
+    @AfterEach
+    fun stopMailServer() {
+        testSmtp.stop()
+    }
     @Test
     fun whenHashIsSuccessFullyInserted_theAssertStatusCompletedAndRecordedHashIsEqualToExpectedHash() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val hr = HashRepositoryImpl(ds)
         val jobId = "PostUploadTest"
         val expectedHash = byteArrayOf(1, 2, 3)
@@ -72,6 +104,7 @@ internal class PostUploadTaskletTest {
 
     @Test
     fun whenNoHashIsOnContext_thenThrowTypeCasExceptionAndAssertNoHashInDb() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val hr = HashRepositoryImpl(ds)
         val jobId = "PostUploadTest2"
         val jp = initJobParameters(jobId)
@@ -89,6 +122,7 @@ internal class PostUploadTaskletTest {
     @Test
     @Sql("insert-hash-post-upload-test.sql")
     fun whenThereIsAlreadyAnHash_ThenMakeSureItWasReplaced() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val hr = HashRepositoryImpl(ds)
         val jobId = "PostUploadTest3"
         val hashBefore = hr.fetchHash(jobId)
@@ -107,11 +141,30 @@ internal class PostUploadTaskletTest {
         assertNotEquals(hashBefore, recordedHash)
     }
 
+    @Test
+    fun whenTaskletSucceeds_thenAssertEmailWasSent() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+        val jobId = "PostUploadEmailSentTest"
+        val expectedHash = byteArrayOf(1, 2, 3)
+        val jp = initJobParameters(jobId)
+        val se = utils.createStepExecution()
+        se.jobExecution.executionContext.put("file-hash", expectedHash)
+
+        jobLauncherTestUtils.launchStep("PostUpload", jp, se.jobExecution.executionContext)
+
+        val messages: Array<MimeMessage> = testSmtp.receivedMessages
+        assertEquals(1, messages.size)
+        assertEquals("i-on integration Alert - Job Completed Successfully", messages[0].subject)
+        assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job successfully completed for file: LEIC_0310.pdf"))
+    }
+
     private fun initJobParameters(jobId: String): JobParameters {
         return JobParametersBuilder()
             .addString("hashKey", "file-hash")
             .addLong("timestamp", Instant.now().toEpochMilli())
             .addString("jobId", jobId)
+            .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
+            .addString("alertRecipient", "client@domain.com")
             .toJobParameters()
     }
 }
