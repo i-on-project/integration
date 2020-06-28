@@ -6,7 +6,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl
 
 const val EMAIL_HEADER = "i-on integration Alert - Job"
 
-class IOnIntegrationEmailAlertService(
+class EmailAlertService(
     private val jobName: String,
     private val alertRecipient: String,
     private val asset: String,

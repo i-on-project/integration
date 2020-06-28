@@ -1,7 +1,7 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
 import javax.sql.DataSource
-import org.ionproject.integration.alert.implementations.IOnIntegrationEmailAlertService
+import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
@@ -48,7 +48,7 @@ class PostUploadTasklet() : Tasklet {
     private fun sendEmail() {
         val asset = pdfRemoteLocation
             .substring(pdfRemoteLocation.lastIndexOf('/') + 1, pdfRemoteLocation.length)
-        val alertService = IOnIntegrationEmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
+        val alertService = EmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
         alertService.sendSuccessEmail()
         log.info("Email sent successfully")
     }

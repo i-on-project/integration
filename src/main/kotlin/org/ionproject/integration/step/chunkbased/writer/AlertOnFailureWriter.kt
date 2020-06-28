@@ -1,7 +1,7 @@
 package org.ionproject.integration.step.chunkbased.writer
 
 import java.net.URI
-import org.ionproject.integration.alert.implementations.IOnIntegrationEmailAlertService
+import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.slf4j.LoggerFactory
@@ -41,7 +41,7 @@ class AlertOnFailureWriter() : ItemWriter<Try<Boolean>> {
     private fun sendEmail(e: Exception) {
         val filePath = pdfRemoteLocation.toString()
         val asset = filePath.substring(filePath.lastIndexOf('/') + 1, filePath.length)
-        val alertService = IOnIntegrationEmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
+        val alertService = EmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
         alertService.sendFailureEmail(e.message!!)
         log.info("Email sent successfully")
     }

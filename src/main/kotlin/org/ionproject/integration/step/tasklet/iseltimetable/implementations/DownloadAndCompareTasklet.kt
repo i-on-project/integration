@@ -4,7 +4,7 @@ import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.sql.DataSource
-import org.ionproject.integration.alert.implementations.IOnIntegrationEmailAlertService
+import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.file.implementations.FileComparatorImpl
 import org.ionproject.integration.file.implementations.FileDigestImpl
@@ -122,7 +122,7 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
     }
 
     private fun sendEmail(msg: String, asset: String) {
-        val alertService = IOnIntegrationEmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
+        val alertService = EmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
         alertService.sendFailureEmail(msg)
     }
 }
