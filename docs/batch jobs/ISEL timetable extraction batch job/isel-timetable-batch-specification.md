@@ -23,16 +23,17 @@ Example data in json format
     },
     "calendarTerm": "2019/20-Verão",
     "calendarSection": "LI11D",
+    "language": "pt-PT",
     "courses": [
         {
             "label": {
-                "acr": "ALGA[I]"
+                "acr": "ALGA"
             },
             "events": [
                 {
                     "title": "",
-                    "description": "",
-                    "type": "(T)",
+                    "description": "Aulas Teóricas de ALGA",
+                    "category": "AULA",
                     "location": [
                         "E.1.08"
                     ],
@@ -55,6 +56,7 @@ data class Timetable (
 	@JsonProperty("programme") val programme : Programme,
 	@JsonProperty("calendarTerm") val calendarTerm : String,
 	@JsonProperty("calendarSection") val calendarSection : String,
+    @JsonProperty("language") val language : String,
 	@JsonProperty("courses") val courses : List<Course>
 )
 data class School(
@@ -74,7 +76,7 @@ data class Label(
 data class Event (
 	@JsonProperty("title") val title : String,
     @JsonProperty("description") val description : String,
-    @JsonProperty("type") val type : String,
+    @JsonProperty("category") val category : String,
 	@JsonProperty("location") val location : List<String>,
 	@JsonProperty("beginTime") val beginTime : String,
 	@JsonProperty("endTime") val endTime : String,
@@ -95,10 +97,11 @@ Example data in json format
     },
     "calendarTerm": "2019/20-Verão",
     "calendarSection": "LI11D",
+    "language": "pt-PT",
     "faculty": [
         {
-            "course": "ALGA[I]",
-            "courseType": "(T)",
+            "course": "ALGA",
+            "courseType": "T",
             "teachers": [
                 {
                     "name": "Teresa Maria de Araújo Melo Quinteiro"
@@ -115,6 +118,7 @@ data class CourseTeacher (
     @JsonProperty("programme") val programme : Programme,
 	@JsonProperty("calendarTerm") val calendarTerm : String,
 	@JsonProperty("calendarSection") val calendarSection : String,
+    @JsonProperty("language") val language : String,
 	@JsonProperty("faculty") val faculty : List<Faculty>
 )
 data class School(
