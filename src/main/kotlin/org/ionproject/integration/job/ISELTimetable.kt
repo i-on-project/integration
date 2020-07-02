@@ -64,9 +64,12 @@ class ISELTimetable(
         .build(
             extractReader(),
             FormatVerifierProcessor(State, ISELTimetableFormatChecker()),
-            AlertOnFailureWriter()
+            alertOnFailureWriter()
         )
 
+    @Bean
+    @StepScope
+    fun alertOnFailureWriter() = AlertOnFailureWriter()
     @Bean
     @StepScope
     fun mappingTasklet() =

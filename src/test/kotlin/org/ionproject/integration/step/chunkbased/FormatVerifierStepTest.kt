@@ -1,15 +1,23 @@
 package org.ionproject.integration.step.chunkbased
 
+import com.icegreen.greenmail.util.DummySSLSocketFactory
+import com.icegreen.greenmail.util.GreenMail
+import com.icegreen.greenmail.util.GreenMailUtil
+import com.icegreen.greenmail.util.ServerSetupTest
 import java.io.File
 import java.lang.reflect.UndeclaredThrowableException
 import java.nio.file.Paths
+import java.security.Security
 import java.time.Instant
+import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.utils.CompositeException
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.batch.core.ExitStatus
@@ -32,6 +40,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 )
 @TestPropertySource(
     properties = [
+        "email.sender=alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false",
+
         "spring.datasource.url = jdbc:h2:mem:testdb",
         "spring.datasource.driverClassName = org.h2.Driver",
         "spring.datasource.username = sa",
@@ -56,8 +74,23 @@ internal class FormatVerifierStepTestSuccessful {
         "[{\"extraction_method\":\"lattice\",\"top\":70.61023,\"left\":56.7,\"width\":481.9666748046875,\"height\":38.750816345214844,\"right\":538.6667,\"bottom\":109.361046,\"data\":[[{\"top\":70.61023,\"left\":56.7,\"width\":240.90000915527344,\"height\":19.450233459472656,\"text\":\"Table header 1\"},{\"top\":70.61023,\"left\":297.6,\"width\":241.06668090820312,\"height\":19.450233459472656,\"text\":\"Table header 2\"}],[{\"top\":90.06046,\"left\":56.7,\"width\":240.90000915527344,\"height\":19.300582885742188,\"text\":\"1\"},{\"top\":90.06046,\"left\":297.6,\"width\":241.06668090820312,\"height\":19.300582885742188,\"text\":\"2\"}]]}]"
     private val text = listOf("Turma: LI11D Ano Letivo: 2019/20-Verão\nTable header 1 Table header 2\n1 2")
 
+    private lateinit var testSmtp: GreenMail
+
+    @BeforeEach
+    fun testSmtpInit() {
+        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
+        testSmtp = GreenMail(ServerSetupTest.SMTP)
+        testSmtp.start()
+    }
+
+    @AfterEach
+    fun stopMailServer() {
+        testSmtp.stop()
+    }
+
     @Test
     fun whenStepIsSuccessful_thenAssertFileDoesNotExistAndRawDataIsCompleteAndHashIsInContext() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         // Arrange
         val src = File("src/test/resources/formatTest.pdf")
         val temp = File("src/test/resources/formatVerifierStepTestSuccess.pdf")
@@ -98,6 +131,16 @@ internal class FormatVerifierStepTestSuccessful {
 )
 @TestPropertySource(
     properties = [
+        "email.sender=alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false",
+
         "spring.datasource.url = jdbc:h2:mem:testdb",
         "spring.datasource.driverClassName = org.h2.Driver",
         "spring.datasource.username = sa",
@@ -116,9 +159,24 @@ internal class FormatVerifierStepTestUnexistingFile {
 
     private val utils = SpringBatchTestUtils()
 
+    private lateinit var testSmtp: GreenMail
+
+    @BeforeEach
+    fun testSmtpInit() {
+        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
+        testSmtp = GreenMail(ServerSetupTest.SMTP)
+        testSmtp.start()
+    }
+
+    @AfterEach
+    fun stopMailServer() {
+        testSmtp.stop()
+    }
+
     @Test
     fun whenFileDoesntExist_thenAssertThrowsException() {
         // Arrange
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val se = utils.createStepExecution()
         se.jobExecution.executionContext.put("pdf-path", Paths.get("src/test/resources/UnexistingFile.pdf"))
 
@@ -155,6 +213,16 @@ internal class FormatVerifierStepTestUnexistingFile {
 )
 @TestPropertySource(
     properties = [
+        "email.sender=alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false",
+
         "spring.datasource.url = jdbc:h2:mem:testdb",
         "spring.datasource.driverClassName = org.h2.Driver",
         "spring.datasource.username = sa",
@@ -172,10 +240,23 @@ internal class FormatVerifierStepTestInvalidFormat {
     private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
 
     private val utils = SpringBatchTestUtils()
+    private lateinit var testSmtp: GreenMail
 
+    @BeforeEach
+    fun testSmtpInit() {
+        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
+        testSmtp = GreenMail(ServerSetupTest.SMTP)
+        testSmtp.start()
+    }
+
+    @AfterEach
+    fun stopMailServer() {
+        testSmtp.stop()
+    }
     @Test
     fun whenFileHasInvalidFormat_thenAssertThrowsException() {
         // Arrange
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val src = File("src/test/resources/test.pdf")
         val temp = File("src/test/resources/formatVerifierStepTestTemp.pdf")
         src.copyTo(temp)
@@ -192,9 +273,34 @@ internal class FormatVerifierStepTestInvalidFormat {
         )
         // Assert
         assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
-        val ex = je.allFailureExceptions[0]
-        assertEquals("FormatCheckException", ex::class.java.simpleName)
-        assertEquals("The timetable header changed its format", ex.message)
+        val ex = je.allFailureExceptions[0] as UndeclaredThrowableException
+        assertEquals("FormatCheckException", ex.undeclaredThrowable::class.java.simpleName)
+        assertEquals("The timetable header changed its format", ex.undeclaredThrowable.message)
+    }
+    @Test
+    fun whenFileHasInvalidFormat_thenAssertMailIsSent() {
+        // Arrange
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+        val src = File("src/test/resources/test.pdf")
+        val temp = File("src/test/resources/formatVerifierStepTestTemp.pdf")
+        src.copyTo(temp)
+
+        val jp = initJobParameters()
+        val se = utils.createStepExecution()
+        se.jobExecution.executionContext.put("pdf-path", Paths.get("src/test/resources/formatVerifierStepTestTemp.pdf"))
+
+        // Act
+        val je = jobLauncherTestUtils.launchStep(
+            "Verify Format",
+            jp,
+            se.jobExecution.executionContext
+        )
+        // Assert
+        assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
+        val messages: Array<MimeMessage> = testSmtp.receivedMessages
+        assertEquals(1, messages.size)
+        assertEquals("i-on integration Alert - Job Failed", messages[0].subject)
+        assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job failed with message: The timetable header changed its format for file LEIC_0310.pdf"))
     }
 }
 
@@ -208,6 +314,16 @@ internal class FormatVerifierStepTestInvalidFormat {
 )
 @TestPropertySource(
     properties = [
+        "email.sender=alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false",
+
         "spring.datasource.url = jdbc:h2:mem:testdb",
         "spring.datasource.driverClassName = org.h2.Driver",
         "spring.datasource.username = sa",
@@ -226,8 +342,22 @@ internal class FormatVerifierStepTestEmptyPath {
 
     private val utils = SpringBatchTestUtils()
 
+    private lateinit var testSmtp: GreenMail
+
+    @BeforeEach
+    fun testSmtpInit() {
+        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
+        testSmtp = GreenMail(ServerSetupTest.SMTP)
+        testSmtp.start()
+    }
+
+    @AfterEach
+    fun stopMailServer() {
+        testSmtp.stop()
+    }
     @Test
     fun whenPathIsEmpty_thenAssertThrowsException() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         // Arrange
         val jp = initJobParameters()
         val se = utils.createStepExecution()
@@ -250,6 +380,8 @@ internal class FormatVerifierStepTestEmptyPath {
 
 private fun initJobParameters(): JobParameters {
     return JobParametersBuilder()
+        .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
+        .addString("alertRecipient", "client@domain.com")
         .addLong("timestamp", Instant.now().toEpochMilli())
         .toJobParameters()
 }
