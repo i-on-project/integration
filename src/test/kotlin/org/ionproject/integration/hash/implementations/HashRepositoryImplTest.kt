@@ -13,6 +13,16 @@ import org.springframework.test.context.jdbc.Sql
 @SpringBootTest
 @TestPropertySource(
     properties = [
+        "email.sender =alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false",
+
         "spring.datasource.url = jdbc:h2:mem:testdb",
         "spring.datasource.driverClassName = org.h2.Driver",
         "spring.datasource.username = sa",
