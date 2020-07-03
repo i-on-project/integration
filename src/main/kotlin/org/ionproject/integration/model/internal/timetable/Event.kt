@@ -3,7 +3,7 @@ package org.ionproject.integration.model.internal.timetable
 data class Event(
     @Transient var title: String = "",
     var description: String = "",
-    val category: String,
+    val category: Int,
     var location: List<String>,
     val beginTime: String,
     val duration: String,

@@ -33,7 +33,7 @@ Example data in json format
                 {
                     "title": "",
                     "description": "Aulas Teóricas de ALGA",
-                    "category": "AULA",
+                    "category": 2,
                     "location": [
                         "E.1.08"
                     ],
@@ -76,7 +76,7 @@ data class Label(
 data class Event (
 	@JsonProperty("title") val title : String,
     @JsonProperty("description") val description : String,
-    @JsonProperty("category") val category : String,
+    @JsonProperty("category") val category : Integer,
 	@JsonProperty("location") val location : List<String>,
 	@JsonProperty("beginTime") val beginTime : String,
 	@JsonProperty("endTime") val endTime : String,

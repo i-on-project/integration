@@ -99,7 +99,7 @@ class IselITimetableTeachersBuilderTests {
         assertEquals(4, timetableTeacher.timetable[0].courses.count())
         assertEquals("ALGA", timetableTeacher.timetable[0].courses[0].label.acr)
         assertEquals("Aulas Teóricas de ALGA", timetableTeacher.timetable[0].courses[0].events[0].description)
-        assertEquals("AULA", timetableTeacher.timetable[0].courses[0].events[0].category)
+        assertEquals(2, timetableTeacher.timetable[0].courses[0].events[0].category)
         assertTrue(timetableTeacher.timetable[0].courses[0].events[0].location.contains("E.1.08"))
         assertEquals(12, beginTime.hour)
         assertEquals(30, beginTime.minute)

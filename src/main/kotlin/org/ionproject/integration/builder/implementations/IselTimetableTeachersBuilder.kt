@@ -13,6 +13,7 @@ import org.ionproject.integration.model.internal.timetable.Event
 import org.ionproject.integration.model.internal.timetable.EventCategory
 import org.ionproject.integration.model.internal.timetable.Faculty
 import org.ionproject.integration.model.internal.timetable.Label
+import org.ionproject.integration.model.internal.timetable.Language
 import org.ionproject.integration.model.internal.timetable.Programme
 import org.ionproject.integration.model.internal.timetable.School
 import org.ionproject.integration.model.internal.timetable.Teacher
@@ -94,13 +95,13 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
         timetable.programme = Programme(name = programme)
         timetable.calendarTerm = calendarTerm
         timetable.calendarSection = classSection
-        timetable.language = "pt-PT"
+        timetable.language = Language.PT.value
 
         courseTeacher.school = School(name = school)
         courseTeacher.programme = Programme(name = programme)
         courseTeacher.calendarTerm = calendarTerm
         courseTeacher.calendarSection = classSection
-        courseTeacher.language = "pt-PT"
+        courseTeacher.language = Language.PT.value
     }
 
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
@@ -151,7 +152,7 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
                                 label = Label(acr = acr),
                                 events = listOf(
                                     Event(description = "${getDescription(courseDetails.third.trim())}$acr",
-                                        category = EventCategory.CLASS.toString(),
+                                        category = EventCategory.LECTURE.value,
                                         location = listOf(courseDetails.second.trim()),
                                         beginTime = beginTime.toString(),
                                         duration = duration.toString(),
