@@ -1,5 +1,6 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import javax.mail.internet.MimeMessage
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.model.internal.core.CoreResult
@@ -28,6 +29,7 @@ import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.batch.test.MetaDataInstanceFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.test.context.TestPropertySource
 
 internal class UploadTaskletTestFixtures {
@@ -53,7 +55,16 @@ internal class UploadTaskletTestFixtures {
         "ion.core-token = test",
         "ion.core-request-timeout-seconds = 1",
         "ion.core-retries = 3",
-        "ion.resources-folder = src/test/resources/"
+        "ion.resources-folder = src/test/resources/",
+        "email.sender=alert-mailbox@domain.com",
+        "spring.mail.host = localhost",
+        "spring.mail.username=alert-mailbox@domain.com",
+        "spring.mail.password=changeit",
+        "spring.mail.port=3025",
+        "spring.mail.properties.mail.smtp.auth = false",
+        "spring.mail.protocol = smtp",
+        "spring.mail.properties.mail.smtp.starttls.enable = false",
+        "spring.mail.properties.mail.smtp.starttls.required = false"
     ]
 )
 class UploadTaskletTests {
@@ -66,6 +77,12 @@ class UploadTaskletTests {
     @Mock
     private lateinit var coreService: CoreService
 
+    @Mock
+    private lateinit var sender: JavaMailSenderImpl
+
+    @Mock
+    private lateinit var mimeMessage: MimeMessage
+
     private lateinit var uploadTasklet: UploadTasklet
 
     private lateinit var stepContribution: StepContribution
@@ -76,8 +93,20 @@ class UploadTaskletTests {
         stepContribution = StepContribution(StepExecution("UploadTaskletTests",
             MetaDataInstanceFactory.createJobExecution()))
         chunkContext = SpringBatchTestUtils().createChunkContext()
+
+        Mockito
+            .`when`(chunkContext.stepContext.jobParameters)
+            .thenReturn(mapOf(
+                "pdfRemoteLocation" to "https://www.isel.pt/media/uploads/LEIC_0310.pdf",
+                "alertRecipient" to "client@domain.com"
+            ))
+
+        Mockito
+            .`when`(sender.createMimeMessage())
+            .thenReturn(mimeMessage)
+
         state.timetableTeachers = UploadTaskletTestFixtures.timetableTeachers
-        uploadTasklet = UploadTasklet(coreService, appProperties, state)
+        uploadTasklet = UploadTasklet(coreService, appProperties, state, sender)
     }
 
     private fun contextContainsKey(context: ChunkContext, key: String) = context
