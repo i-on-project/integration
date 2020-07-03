@@ -2,16 +2,16 @@ package org.ionproject.integration.job
 
 import org.ionproject.integration.format.implementations.ISELTimetableFormatChecker
 import org.ionproject.integration.model.internal.timetable.TimetableTeachers
+import org.ionproject.integration.model.internal.timetable.UploadType
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.step.chunkbased.FormatVerifierStepBuilder
 import org.ionproject.integration.step.chunkbased.processor.FormatVerifierProcessor
 import org.ionproject.integration.step.chunkbased.reader.ExtractReader
 import org.ionproject.integration.step.chunkbased.writer.AlertOnFailureWriter
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.DownloadAndCompareTasklet
-import org.ionproject.integration.step.tasklet.iseltimetable.implementations.FacultyTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.MappingTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.PostUploadTasklet
-import org.ionproject.integration.step.tasklet.iseltimetable.implementations.TimetableTasklet
+import org.ionproject.integration.step.tasklet.iseltimetable.implementations.UploadTasklet
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
@@ -21,6 +21,7 @@ import org.springframework.batch.core.job.flow.Flow
 import org.springframework.batch.core.job.flow.support.SimpleFlow
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.core.step.tasklet.TaskletStep
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.task.SimpleAsyncTaskExecutor
@@ -98,17 +99,30 @@ class ISELTimetable(
         return SimpleAsyncTaskExecutor("spring_batch")
     }
 
-    @Bean
-    fun timetableStep() = taskletStep(
-        "Upload Timetable Information to I-On Core",
-        TimetableTasklet(State)
-    )
+    @Autowired
+    private lateinit var timetableTasklet: UploadTasklet
 
     @Bean
-    fun facultyStep() = taskletStep(
-        "Upload Faculty Information to I-On Core",
-        FacultyTasklet(State)
-    )
+    fun timetableStep(): TaskletStep {
+        timetableTasklet.setUploadType(UploadType.TIMETABLE)
+
+        return taskletStep(
+            "Upload Timetable Information to I-On Core",
+            timetableTasklet)
+    }
+
+    @Autowired
+    private lateinit var facultyTasklet: UploadTasklet
+
+    @Bean
+    fun facultyStep(): TaskletStep {
+        facultyTasklet.setUploadType(UploadType.TEACHERS)
+
+        return taskletStep(
+            "Upload Faculty Information to I-On Core",
+            facultyTasklet
+        )
+    }
 
     @Bean
     @StepScope
