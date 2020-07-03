@@ -5,5 +5,6 @@ data class CourseTeacher(
     var programme: Programme = Programme(),
     var calendarTerm: String = "",
     var calendarSection: String = "",
+    var language: String = "",
     var faculty: List<Faculty> = listOf()
 )

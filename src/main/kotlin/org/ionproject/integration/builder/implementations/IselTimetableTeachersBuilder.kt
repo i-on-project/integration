@@ -10,8 +10,10 @@ import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.Course
 import org.ionproject.integration.model.internal.timetable.CourseTeacher
 import org.ionproject.integration.model.internal.timetable.Event
+import org.ionproject.integration.model.internal.timetable.EventCategory
 import org.ionproject.integration.model.internal.timetable.Faculty
 import org.ionproject.integration.model.internal.timetable.Label
+import org.ionproject.integration.model.internal.timetable.Language
 import org.ionproject.integration.model.internal.timetable.Programme
 import org.ionproject.integration.model.internal.timetable.School
 import org.ionproject.integration.model.internal.timetable.Teacher
@@ -27,8 +29,8 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
     companion object {
         private val SCHOOL_REGEX = "\\A.*"
         private val PROGRAMME_REGEX = "^(Licenciatura|Mestrado).*$"
-        private val CLASS_SECTION_REGEX = "\\bTurma\\b: [LM][A-Z+]\\d{1,2}[DN]"
-        private val CALENDAR_TERM_REGEX = "\\bAno Letivo\\b: \\d{4}/\\d{2}-\\b(Verão|Inverno)\\b"
+        private val CLASS_SECTION_REGEX = "\\bTurma\\b: [LM][A-Z+]+\\d{1,2}[DN]"
+        private val CALENDAR_TERM_REGEX = "\\bAno Letivo\\b: .+?(\\r|\\R)"
         private val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).(0|3)0"
         private val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 47
         private val HEIGHT_HALF_HOUR_THRESHOLD = 17
@@ -93,11 +95,13 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
         timetable.programme = Programme(name = programme)
         timetable.calendarTerm = calendarTerm
         timetable.calendarSection = classSection
+        timetable.language = Language.PT.value
 
         courseTeacher.school = School(name = school)
         courseTeacher.programme = Programme(name = programme)
         courseTeacher.calendarTerm = calendarTerm
         courseTeacher.calendarSection = classSection
+        courseTeacher.language = Language.PT.value
     }
 
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
@@ -128,7 +132,9 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
 
                 cell.text.split('\r')
                     .forEach {
-                        courseDetails = populateCourseDetails(it)
+                        val cellText = if (it.contains('[')) it else cell.text
+
+                        courseDetails = populateCourseDetails(cellText)
 
                         var duration: Duration = if (cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD) {
                             Duration.ofHours(3)
@@ -140,15 +146,17 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
 
                         if (!weekdays.contains(cell.left)) throw TimetableTeachersBuilderException("Can't find weekday")
 
+                        val acr = courseDetails.first.trim()
                         courseList.add(
                             Course(
-                                label = Label(acr = courseDetails.first.trim()),
+                                label = Label(acr = acr),
                                 events = listOf(
-                                    Event(type = courseDetails.second,
-                                    location = listOf(courseDetails.third),
-                                    beginTime = beginTime.toString(),
-                                    duration = duration.toString(),
-                                    weekday = listOf(weekdays.getOrDefault(cell.left, ""))
+                                    Event(description = "${getDescription(courseDetails.third.trim())}$acr",
+                                        category = EventCategory.LECTURE.value,
+                                        location = listOf(courseDetails.second.trim()),
+                                        beginTime = beginTime.toString(),
+                                        duration = duration.toString(),
+                                        weekday = listOf(weekdays.getOrDefault(cell.left, ""))
                                     )
                                 )
                             )
@@ -200,13 +208,20 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
 
     private fun populateCourseDetails(text: String): Triple<String, String, String> {
         val firstIndex = text.indexOf('(')
-        val secondIndex = text.indexOf(')') + 1
 
         return Triple(
-            text.substring(0, firstIndex),
-            text.substring(firstIndex, secondIndex),
-            text.substring(secondIndex)
+            text.substring(0, text.indexOf('[')),
+            text.substring(text.lastIndexOf(')') + 1),
+            text.substring(firstIndex + 1, text.indexOf(')', firstIndex))
         )
+    }
+
+    private fun getDescription(classType: String) = when (classType) {
+        "T" -> "Aulas Teóricas de "
+        "P" -> "Aulas Práticas de "
+        "L" -> "Aulas Laboratório de "
+        "T/P" -> "Aulas Teórico-práticas de "
+        else -> ""
     }
 
     private fun populateFaculty(courseText: String, teacherText: String, faculty: Faculty, facultyList: MutableList<Faculty>): Faculty {
@@ -220,7 +235,7 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
             val courseDetails = populateCourseDetails(courseText)
             f = Faculty(
                 course = courseDetails.first.trim(),
-                courseType = courseDetails.second
+                courseType = courseDetails.third
             )
 
             f.teachers = mutableListOf(
