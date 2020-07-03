@@ -86,17 +86,20 @@ class IselITimetableTeachersBuilderTests {
         assertEquals("Licenciatura em Engenharia Informática e de Computadores", timetableTeacher.timetable[0].programme.name)
         assertEquals("2019/20-Verão", timetableTeacher.timetable[0].calendarTerm)
         assertEquals("LI11D", timetableTeacher.timetable[0].calendarSection)
+        assertEquals("pt-PT", timetableTeacher.timetable[0].language)
         assertEquals("INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA", timetableTeacher.teachers[0].school.name)
         assertEquals("Licenciatura em Engenharia Informática e de Computadores", timetableTeacher.teachers[0].programme.name)
         assertEquals("2019/20-Verão", timetableTeacher.teachers[0].calendarTerm)
         assertEquals("LI11D", timetableTeacher.teachers[0].calendarSection)
+        assertEquals("pt-PT", timetableTeacher.teachers[0].language)
 
         // Timetable data
         val beginTime = LocalTime.parse(timetableTeacher.timetable[0].courses[0].events[0].beginTime)
 
         assertEquals(4, timetableTeacher.timetable[0].courses.count())
-        assertEquals("ALGA[I]", timetableTeacher.timetable[0].courses[0].label.acr)
-        assertEquals("(T)", timetableTeacher.timetable[0].courses[0].events[0].type)
+        assertEquals("ALGA", timetableTeacher.timetable[0].courses[0].label.acr)
+        assertEquals("Aulas Teóricas de ALGA", timetableTeacher.timetable[0].courses[0].events[0].description)
+        assertEquals(2, timetableTeacher.timetable[0].courses[0].events[0].category)
         assertTrue(timetableTeacher.timetable[0].courses[0].events[0].location.contains("E.1.08"))
         assertEquals(12, beginTime.hour)
         assertEquals(30, beginTime.minute)
@@ -111,18 +114,18 @@ class IselITimetableTeachersBuilderTests {
 
         // Faculty data
         assertEquals(4, timetableTeacher.teachers[0].faculty.count())
-        assertEquals("ALGA[I]", timetableTeacher.teachers[0].faculty[0].course)
-        assertEquals("(T)", timetableTeacher.teachers[0].faculty[0].courseType)
+        assertEquals("ALGA", timetableTeacher.teachers[0].faculty[0].course)
+        assertEquals("T", timetableTeacher.teachers[0].faculty[0].courseType)
         assertEquals(1, timetableTeacher.teachers[0].faculty[0].teachers.count())
         assertEquals("Teresa Maria de Araújo Melo Quinteiro", timetableTeacher.teachers[0].faculty[0].teachers[0].name)
 
-        assertEquals("GAP[I]", timetableTeacher.teachers[0].faculty[1].course)
-        assertEquals("(T)", timetableTeacher.teachers[0].faculty[1].courseType)
+        assertEquals("GAP", timetableTeacher.teachers[0].faculty[1].course)
+        assertEquals("T", timetableTeacher.teachers[0].faculty[1].courseType)
         assertEquals(1, timetableTeacher.teachers[0].faculty[1].teachers.count())
         assertEquals("Cristina Inês Camus", timetableTeacher.teachers[0].faculty[1].teachers[0].name)
 
-        assertEquals("E[I]", timetableTeacher.teachers[0].faculty[2].course)
-        assertEquals("(P)", timetableTeacher.teachers[0].faculty[2].courseType)
+        assertEquals("E", timetableTeacher.teachers[0].faculty[2].course)
+        assertEquals("P", timetableTeacher.teachers[0].faculty[2].courseType)
         assertEquals(2, timetableTeacher.teachers[0].faculty[2].teachers.count())
         assertEquals("Fernando dos Santos Azevedo", timetableTeacher.teachers[0].faculty[2].teachers[0].name)
         assertEquals("João Manuel Ferreira Martins", timetableTeacher.teachers[0].faculty[2].teachers[1].name)

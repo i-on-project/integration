@@ -5,5 +5,6 @@ data class Timetable(
     var programme: Programme = Programme(),
     var calendarTerm: String = "",
     var calendarSection: String = "",
+    var language: String = "",
     var courses: List<Course> = listOf()
 )
