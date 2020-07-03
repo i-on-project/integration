@@ -32,14 +32,16 @@ class CoreService(private val httpUtils: HttpUtils, private val appProperties: A
 
     private fun sendToCore(json: Try<String>, url: URI): Try<CoreResult> {
         return json
-            .map { jsonString -> post(jsonString, url) }
-            .map { httpResponse -> validateStatusCode(httpResponse.statusCode()) }
+            .map { jsonString -> put(jsonString, url) }
+            .map { httpResponse ->
+                validateStatusCode(httpResponse.statusCode())
+            }
     }
 
-    private fun post(jsonString: String, url: URI): HttpResponse<String> {
+    private fun put(jsonString: String, url: URI): HttpResponse<String> {
         var requestBuilder = HttpRequest.newBuilder()
             .uri(url)
-            .POST(HttpRequest.BodyPublishers.ofString(jsonString))
+            .PUT(HttpRequest.BodyPublishers.ofString(jsonString))
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer ${appProperties.coreToken}")
 
