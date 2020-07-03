@@ -19,8 +19,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.StepExecution
@@ -177,6 +180,7 @@ class UploadTaskletTests {
         assertEquals(RepeatStatus.FINISHED, secondRetry)
         assertTrue(contextContainsKey(chunkContext, "CoreRetries"))
         assertEquals(0, contextGetInt(chunkContext, "CoreRetries"))
+        verify(sender, times(1)).send(any(MimeMessage::class.java))
     }
 
     @Test
@@ -199,6 +203,7 @@ class UploadTaskletTests {
         assertEquals(RepeatStatus.FINISHED, secondRetry)
         assertTrue(contextContainsKey(chunkContext, "CoreRetries"))
         assertEquals(0, contextGetInt(chunkContext, "CoreRetries"))
+        verify(sender, times(1)).send(any(MimeMessage::class.java))
     }
 
     @Test
@@ -216,6 +221,7 @@ class UploadTaskletTests {
         // Assert
         assertEquals(RepeatStatus.FINISHED, result)
         assertFalse(contextContainsKey(chunkContext, "CoreRetries"))
+        verify(sender, times(1)).send(any(MimeMessage::class.java))
     }
 
     @Test
@@ -233,5 +239,6 @@ class UploadTaskletTests {
         // Assert
         assertEquals(RepeatStatus.FINISHED, result)
         assertFalse(contextContainsKey(chunkContext, "CoreRetries"))
+        verify(sender, times(1)).send(any(MimeMessage::class.java))
     }
 }
