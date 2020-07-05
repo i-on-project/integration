@@ -44,26 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         IOnIntegrationApplication::class
     ]
 )
-
-@TestPropertySource(
-    properties = [
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/",
-
-        "email.sender =alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false"
-
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 @SpringBatchTest
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -172,24 +153,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/",
-
-        "email.sender =alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 @SpringBatchTest
 internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
@@ -246,24 +210,7 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/",
-
-        "email.sender =alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 @SpringBatchTest
 internal class DownloadAndCompareTaskletUrlNotPdfTest {
 
@@ -320,24 +267,7 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/",
-
-        "email.sender =alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 @SpringBatchTest
 internal class DownloadAndCompareTaskletServerErrorTest {
 
@@ -394,7 +324,6 @@ internal class DownloadAndCompareTaskletServerErrorTest {
             val messages: Array<MimeMessage> = testSmtp.receivedMessages
             assertEquals(1, messages.size)
             assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
-            val e = GreenMailUtil.getBody(messages[0])
             assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: 500 with message Server responded with error code 500"))
         } finally {
             file.deleteOnExit()

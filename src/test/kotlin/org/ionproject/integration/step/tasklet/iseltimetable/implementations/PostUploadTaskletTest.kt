@@ -41,24 +41,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/",
-
-        "email.sender=alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 @SpringBatchTest
 @SpringBootTest
 internal class PostUploadTaskletTest {

@@ -2,7 +2,6 @@ package org.ionproject.integration.utils
 
 import org.ionproject.integration.alert.exceptions.AlertConfigurationException
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 

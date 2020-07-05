@@ -211,28 +211,7 @@ internal class FormatVerifierStepTestUnexistingFile {
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "email.sender=alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false",
-
-        "spring.datasource.url = jdbc:h2:mem:testdb",
-        "spring.datasource.driverClassName = org.h2.Driver",
-        "spring.datasource.username = sa",
-        "spring.datasource.password = ",
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 @SpringBatchTest
 internal class FormatVerifierStepTestInvalidFormat {
 
@@ -312,28 +291,7 @@ internal class FormatVerifierStepTestInvalidFormat {
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "email.sender=alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false",
-
-        "spring.datasource.url = jdbc:h2:mem:testdb",
-        "spring.datasource.driverClassName = org.h2.Driver",
-        "spring.datasource.username = sa",
-        "spring.datasource.password = ",
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 @SpringBatchTest
 internal class FormatVerifierStepTestEmptyPath {
 
