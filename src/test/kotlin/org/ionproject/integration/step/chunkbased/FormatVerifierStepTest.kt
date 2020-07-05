@@ -299,8 +299,8 @@ internal class FormatVerifierStepTestInvalidFormat {
         assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
         val messages: Array<MimeMessage> = testSmtp.receivedMessages
         assertEquals(1, messages.size)
-        assertEquals("i-on integration Alert - Job Failed", messages[0].subject)
-        assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job failed with message: The timetable header changed its format for file LEIC_0310.pdf"))
+        assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
+        assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message The timetable header changed its format"))
     }
 }
 

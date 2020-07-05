@@ -147,8 +147,8 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 
             val messages: Array<MimeMessage> = testSmtp.receivedMessages
             assertEquals(1, messages.size)
-            assertEquals("i-on integration Alert - Job Failed", messages[0].subject)
-            assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job failed with message: File Is equal to last successfully parsed for file LEIC_0310.pdf"))
+            assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
+            assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message File Is equal to last successfully parsed"))
         } finally {
             file.delete()
         }
@@ -393,8 +393,9 @@ internal class DownloadAndCompareTaskletServerErrorTest {
 
             val messages: Array<MimeMessage> = testSmtp.receivedMessages
             assertEquals(1, messages.size)
-            assertEquals("i-on integration Alert - Job Failed", messages[0].subject)
-            assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job failed with message: Server responded with error code 500 for file 500"))
+            assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
+            val e = GreenMailUtil.getBody(messages[0])
+            assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: 500 with message Server responded with error code 500"))
         } finally {
             file.deleteOnExit()
         }
