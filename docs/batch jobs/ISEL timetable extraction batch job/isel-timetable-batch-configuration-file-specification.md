@@ -5,5 +5,5 @@ The following properties are accepted:
 
 | Property | Description |
 |----------|-------------|
-| pdfRemoteLocation | Url of the timetable pdf to be used on the job. |
+| srcRemoteLocation | Url of the timetable pdf to be used on the job. |
 | alertRecipient  | Email of the point-of-contact to notify about job outcome |

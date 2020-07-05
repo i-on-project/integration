@@ -1,6 +1,12 @@
 package org.ionproject.integration.job
 
+import javax.sql.DataSource
+import org.ionproject.integration.file.implementations.FileComparatorImpl
+import org.ionproject.integration.file.implementations.FileDigestImpl
+import org.ionproject.integration.file.implementations.FileDownloaderImpl
+import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
 import org.ionproject.integration.format.implementations.ISELTimetableFormatChecker
+import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.model.internal.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.UploadType
 import org.ionproject.integration.model.internal.timetable.isel.RawData
@@ -31,7 +37,9 @@ import org.springframework.stereotype.Component
 @Configuration
 class ISELTimetable(
     val jobBuilderFactory: JobBuilderFactory,
-    val stepBuilderFactory: StepBuilderFactory
+    val stepBuilderFactory: StepBuilderFactory,
+    @Autowired
+    val ds: DataSource
 ) {
     @Bean
     fun timetableJob() = jobBuilderFactory.get("ISEL Timetable Batch Job")
@@ -52,8 +60,12 @@ class ISELTimetable(
 
     @StepScope
     @Bean
-    fun downloadAndCompareTasklet() =
-        DownloadAndCompareTasklet()
+    fun downloadAndCompareTasklet(): DownloadAndCompareTasklet {
+        val pdfChecker = PDFBytesFormatChecker()
+        val downloader = FileDownloaderImpl(pdfChecker)
+        val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
+        return DownloadAndCompareTasklet(downloader, fileComparator)
+    }
 
     @StepScope
     @Bean
@@ -70,6 +82,7 @@ class ISELTimetable(
     @Bean
     @StepScope
     fun alertOnFailureWriter() = AlertOnFailureWriter()
+
     @Bean
     @StepScope
     fun mappingTasklet() =
@@ -108,7 +121,8 @@ class ISELTimetable(
 
         return taskletStep(
             "Upload Timetable Information to I-On Core",
-            timetableTasklet)
+            timetableTasklet
+        )
     }
 
     @Autowired

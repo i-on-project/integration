@@ -22,11 +22,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.batch.core.ExitStatus
+import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
+import org.springframework.batch.core.launch.JobLauncher
+import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.test.JobLauncherTestUtils
-import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
@@ -59,13 +62,28 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         "spring.mail.properties.mail.smtp.starttls.required = false"
     ]
 )
-@SpringBatchTest
 @SpringBootTest
 internal class PostUploadTaskletTest {
 
     @Autowired
-    lateinit var jobLauncherTestUtils: JobLauncherTestUtils
+    @Qualifier(value = "timetableJob")
+    private lateinit var job: Job
 
+    @Autowired
+    private lateinit var jobLauncher: JobLauncher
+
+    @Autowired
+    private lateinit var jobRepository: JobRepository
+
+    private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
+
+    @BeforeEach
+    private fun initializeJobLauncherTestUtils() {
+        jobLauncherTestUtils = JobLauncherTestUtils()
+        jobLauncherTestUtils.jobLauncher = jobLauncher
+        jobLauncherTestUtils.jobRepository = jobRepository
+        jobLauncherTestUtils.job = job
+    }
     @Autowired
     lateinit var ds: DataSource
 
@@ -163,7 +181,7 @@ internal class PostUploadTaskletTest {
             .addString("hashKey", "file-hash")
             .addLong("timestamp", Instant.now().toEpochMilli())
             .addString("jobId", jobId)
-            .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
+            .addString("srcRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
             .addString("alertRecipient", "client@domain.com")
             .toJobParameters()
     }

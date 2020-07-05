@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration
 import org.springframework.test.context.ContextConfiguration
@@ -32,6 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         "ion.core-token = test",
         "ion.core-request-timeout-seconds = 1",
         "ion.resources-folder=src/test/resources/",
+
         "email.sender=alert-mailbox@domain.com",
         "spring.mail.host = localhost",
         "spring.mail.username=alert-mailbox@domain.com",
@@ -43,7 +43,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         "spring.mail.properties.mail.smtp.starttls.required = false"
     ]
 )
-@SpringBatchTest
 internal class FormatVerifierProcessorTest {
 
     @Autowired

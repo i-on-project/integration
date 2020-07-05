@@ -75,9 +75,9 @@ class UploadTasklet(
 
     private fun sendEmail(coreResult: CoreResult, context: ChunkContext) {
         val alertRecipient = context.stepContext.jobParameters["alertRecipient"] as String
-        val pdfRemoteLocation = context.stepContext.jobParameters["pdfRemoteLocation"] as String
+        val srcRemoteLocation = context.stepContext.jobParameters["srcRemoteLocation"] as String
 
-        val asset = pdfRemoteLocation.substring(pdfRemoteLocation.lastIndexOf('/') + 1, pdfRemoteLocation.length)
+        val asset = srcRemoteLocation.substring(srcRemoteLocation.lastIndexOf('/') + 1, srcRemoteLocation.length)
         val alertService = EmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
 
         val message = when (coreResult) {

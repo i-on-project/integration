@@ -31,8 +31,8 @@ class PostUploadTasklet() : Tasklet {
     @Value("#{jobParameters['alertRecipient']}")
     private lateinit var alertRecipient: String
 
-    @Value("#{jobParameters['pdfRemoteLocation']}")
-    private lateinit var pdfRemoteLocation: String
+    @Value("#{jobParameters['srcRemoteLocation']}")
+    private lateinit var srcRemoteLocation: String
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         val hr = HashRepositoryImpl(ds)
@@ -46,8 +46,8 @@ class PostUploadTasklet() : Tasklet {
     }
 
     private fun sendEmail() {
-        val asset = pdfRemoteLocation
-            .substring(pdfRemoteLocation.lastIndexOf('/') + 1, pdfRemoteLocation.length)
+        val asset = srcRemoteLocation
+            .substring(srcRemoteLocation.lastIndexOf('/') + 1, srcRemoteLocation.length)
         val alertService = EmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
         alertService.sendSuccessEmail()
         log.info("Email sent successfully")

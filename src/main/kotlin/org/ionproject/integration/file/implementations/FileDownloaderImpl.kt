@@ -11,13 +11,14 @@ import org.ionproject.integration.file.exceptions.ServerErrorException
 import org.ionproject.integration.file.interfaces.IBytesFormatChecker
 import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.model.internal.Response
+import org.ionproject.integration.model.internal.generic.JobType
 import org.ionproject.integration.utils.Try
 
 class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
     IFileDownloader {
     private val EMPTY_PATH = Paths.get("")
 
-    override fun download(uri: URI, localDestination: Path): Try<Path> {
+    override fun download(uri: URI, localDestination: Path, jobType: JobType?): Try<Path> {
         if (localDestination == EMPTY_PATH) {
             return Try.ofError<IllegalArgumentException>(IllegalArgumentException("Parameters url and localDestination need not be empty"))
         }
@@ -34,7 +35,7 @@ class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
             .map { resp -> Response(resp.statusCode(), resp.body()) }
             .flatMap { resp -> validateResponseCode(resp) }
 
-        val file = response.map { r -> checker.checkFormat(r.body) }
+        val file = response.map { r -> checker.checkFormat(r.body, jobType) }
             .map { localDestination.toFile() }
 
         return Try.map(file, response) { f, r -> f.writeBytes(r.body); f.toPath() }

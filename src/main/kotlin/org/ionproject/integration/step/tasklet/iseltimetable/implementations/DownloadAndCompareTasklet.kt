@@ -6,11 +6,9 @@ import java.nio.file.Paths
 import javax.sql.DataSource
 import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.config.AppProperties
-import org.ionproject.integration.file.implementations.FileComparatorImpl
-import org.ionproject.integration.file.implementations.FileDigestImpl
-import org.ionproject.integration.file.implementations.FileDownloaderImpl
-import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
-import org.ionproject.integration.hash.implementations.HashRepositoryImpl
+import org.ionproject.integration.file.interfaces.IFileComparator
+import org.ionproject.integration.file.interfaces.IFileDownloader
+import org.ionproject.integration.model.internal.generic.JobType
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
 import org.ionproject.integration.utils.CompositeException
 import org.slf4j.LoggerFactory
@@ -29,12 +27,15 @@ import org.springframework.stereotype.Component
 
 @Component("DownloadAndCompareTasklet")
 @StepScope
-class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
+class DownloadAndCompareTasklet(
+    private val downloader: IFileDownloader,
+    private val fileComparator: IFileComparator
+) : Tasklet, StepExecutionListener {
 
     val log = LoggerFactory.getLogger(DownloadAndCompareTasklet::class.java)
 
-    @Value("#{jobParameters['pdfRemoteLocation']}")
-    private lateinit var pdfRemoteLocation: URI
+    @Value("#{jobParameters['srcRemoteLocation']}")
+    private lateinit var srcRemoteLocation: URI
 
     @Value("#{jobParameters['jobId']}")
     private lateinit var jobId: String
@@ -54,12 +55,10 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
     private var fileIsEqualToLast: Boolean = false
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
-        val fileName = parseFileName(pdfRemoteLocation)
+        val jobType = chunkContext.stepContext.jobParameters["jobType"] as String?
+        val jobTypeEnum = if (jobType != null) enumValueOf<JobType>(jobType) else null
+        val fileName = parseFileName(srcRemoteLocation)
         val localFileDestination: Path = Paths.get(appProperties.resourcesFolder, fileName)
-
-        val pdfChecker = PDFBytesFormatChecker()
-        val downloader = FileDownloaderImpl(pdfChecker)
-        val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
 
         val file = localFileDestination.toFile()
         if (file.isDirectory) {
@@ -69,25 +68,25 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
             throw DownloadAndCompareTaskletException("File already exists in $localFileDestination")
         }
 
-        val path = downloader.download(pdfRemoteLocation, localFileDestination)
+        val path = downloader.download(srcRemoteLocation, localFileDestination, jobTypeEnum)
             .match({ it }, {
-                file.deleteOnExit()
+                file.delete()
                 selectMessageFromExceptionAndSendEmail(it, fileName)
                 throw it
             })
-        chunkContext.stepContext.stepExecution.jobExecution.executionContext.put("pdf-path", path)
+        chunkContext.stepContext.stepExecution.jobExecution.executionContext.put("file-path", path)
 
         fileIsEqualToLast = fileComparator.compare(file, jobId)
             .match(
                 {
                     if (it) {
-                        path.toFile().deleteOnExit()
+                        path.toFile().delete()
                         log.warn("The job already ran successfully with this pdf file.")
                     }
                     it
                 },
                 {
-                    path.toFile().deleteOnExit()
+                    path.toFile().delete()
                     selectMessageFromExceptionAndSendEmail(it, fileName)
                     throw it
                 })
@@ -100,7 +99,7 @@ class DownloadAndCompareTasklet : Tasklet, StepExecutionListener {
 
     override fun afterStep(stepExecution: StepExecution): ExitStatus {
         if (fileIsEqualToLast) {
-            sendEmail("File Is equal to last successfully parsed", parseFileName(pdfRemoteLocation))
+            sendEmail("File Is equal to last successfully parsed", parseFileName(srcRemoteLocation))
             return ExitStatus.STOPPED
         }
         return ExitStatus.COMPLETED
