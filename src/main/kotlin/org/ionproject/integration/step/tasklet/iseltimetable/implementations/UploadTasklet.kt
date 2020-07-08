@@ -1,17 +1,17 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import org.ionproject.integration.alert.implementations.EmailAlertChannel
 import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.model.internal.core.CoreResult
 import org.ionproject.integration.model.internal.timetable.UploadType
 import org.ionproject.integration.service.implementations.CoreService
+import org.ionproject.integration.utils.EmailUtils
+import org.ionproject.integration.utils.JobResult
 import org.ionproject.integration.utils.orThrow
 import org.slf4j.LoggerFactory
-import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.StepContribution
-import org.springframework.batch.core.StepExecution
-import org.springframework.batch.core.StepExecutionListener
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
@@ -26,12 +26,11 @@ class UploadTasklet(
     private val appProperties: AppProperties,
     private val state: ISELTimetable.State,
     private val sender: JavaMailSenderImpl
-) : Tasklet, StepExecutionListener {
+) : Tasklet {
 
     private val contextKey = "CoreRetries"
     private val log = LoggerFactory.getLogger(UploadTasklet::class.java)
     private lateinit var uploadType: UploadType
-    private lateinit var coreResult: CoreResult
 
     fun setUploadType(type: UploadType) {
         uploadType = type
@@ -49,7 +48,7 @@ class UploadTasklet(
             retries = jobContext.getInt(contextKey)
         }
 
-        coreResult = uploadToCore()
+        val coreResult = uploadToCore()
         when (coreResult) {
             CoreResult.TRY_AGAIN -> {
                 retries--
@@ -72,17 +71,6 @@ class UploadTasklet(
         }
     }
 
-    override fun beforeStep(stepExecution: StepExecution) {
-    }
-
-    override fun afterStep(stepExecution: StepExecution): ExitStatus {
-        if (coreResult !== CoreResult.SUCCESS) {
-            return ExitStatus.STOPPED
-        }
-
-        return ExitStatus.COMPLETED
-    }
-
     private fun uploadToCore() = when (uploadType) {
         UploadType.TIMETABLE -> coreService.pushTimetable(state.timetableTeachers.timetable).orThrow()
         UploadType.TEACHERS -> coreService.pushCourseTeacher(state.timetableTeachers.teachers).orThrow()
@@ -93,7 +81,6 @@ class UploadTasklet(
         val pdfRemoteLocation = context.stepContext.jobParameters["pdfRemoteLocation"] as String
 
         val asset = pdfRemoteLocation.substring(pdfRemoteLocation.lastIndexOf('/') + 1, pdfRemoteLocation.length)
-        val alertService = EmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
 
         val message = when (coreResult) {
             CoreResult.TRY_AGAIN -> "I-On Core was unreachable with multiple retries"
@@ -102,6 +89,17 @@ class UploadTasklet(
             else -> "I-On Core unknown error"
         }
 
-        alertService.sendFailureEmail("$message when trying to send ${uploadType.value} data")
+        val conf =
+            EmailUtils.configure(
+                "ISEL Timetable Batch Job",
+                JobResult.FAILED,
+                alertRecipient,
+                asset,
+                message
+            )
+        val channel = EmailAlertChannel(conf, sender)
+        val alertService = EmailAlertService(channel)
+
+        alertService.sendEmail()
     }
 }
