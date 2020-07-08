@@ -1,6 +1,6 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.time.LocalDateTime
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(

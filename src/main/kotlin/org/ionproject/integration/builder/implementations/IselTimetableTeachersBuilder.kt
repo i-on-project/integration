@@ -1,12 +1,9 @@
 package org.ionproject.integration.builder.implementations
 
 import com.squareup.moshi.Types
-import java.time.Duration
-import java.time.LocalTime
+import java.time.LocalDateTime
 import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
 import org.ionproject.integration.builder.interfaces.ITimetableTeachersBuilder
-import org.ionproject.integration.model.internal.tabula.Cell
-import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.external.timetable.Course
 import org.ionproject.integration.model.external.timetable.CourseTeacher
 import org.ionproject.integration.model.external.timetable.Event
@@ -20,11 +17,12 @@ import org.ionproject.integration.model.external.timetable.Teacher
 import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.external.timetable.Weekdays
+import org.ionproject.integration.model.internal.tabula.Cell
+import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.utils.JsonUtils
 import org.ionproject.integration.utils.RegexUtils
 import org.ionproject.integration.utils.Try
-import java.time.LocalDateTime
 
 class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
     companion object {

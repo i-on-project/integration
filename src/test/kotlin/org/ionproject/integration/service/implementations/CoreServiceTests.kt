@@ -5,10 +5,10 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Duration
 import org.ionproject.integration.config.AppProperties
-import org.ionproject.integration.model.internal.core.CoreResult
 import org.ionproject.integration.model.external.timetable.CourseTeacher
 import org.ionproject.integration.model.external.timetable.School
 import org.ionproject.integration.model.external.timetable.Timetable
+import org.ionproject.integration.model.internal.core.CoreResult
 import org.ionproject.integration.utils.HttpUtils
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals

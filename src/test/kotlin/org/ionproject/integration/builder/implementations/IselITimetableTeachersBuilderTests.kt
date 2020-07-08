@@ -1,6 +1,6 @@
 package org.ionproject.integration.builder.implementations
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.isel.RawData
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.time.LocalDateTime
 
 class IselITimetableTeachersBuilderTests {
     companion object {

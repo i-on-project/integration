@@ -3,11 +3,11 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 import javax.mail.internet.MimeMessage
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.ISELTimetable
-import org.ionproject.integration.model.internal.core.CoreResult
 import org.ionproject.integration.model.external.timetable.CourseTeacher
 import org.ionproject.integration.model.external.timetable.School
 import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
+import org.ionproject.integration.model.internal.core.CoreResult
 import org.ionproject.integration.model.internal.timetable.UploadType
 import org.ionproject.integration.service.implementations.CoreService
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
