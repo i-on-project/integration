@@ -24,6 +24,7 @@ import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.utils.JsonUtils
 import org.ionproject.integration.utils.RegexUtils
 import org.ionproject.integration.utils.Try
+import java.time.LocalDateTime
 
 class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
     companion object {
@@ -123,7 +124,7 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
                 continue
             }
 
-            var beginTime = LocalTime.now()
+            var startDate = LocalDateTime.now()
 
             for (j in 0 until cells.count()) {
                 val cell = cells[j]
@@ -132,7 +133,7 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
 
                 val matches = RegexUtils.findMatches(TIME_SLOT_REGEX, cells[j].text)
                 if (matches.count() != 0) {
-                    beginTime = getBeginTime(matches)
+                    startDate = getStartDate(matches)
                     continue
                 }
 
@@ -142,12 +143,12 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
 
                         courseDetails = populateCourseDetails(cellText)
 
-                        var duration: Duration = if (cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD) {
-                            Duration.ofHours(3)
+                        var endDate: LocalDateTime = if (cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD) {
+                            startDate.plusHours(3)
                         } else if (cell.height > HEIGHT_HALF_HOUR_THRESHOLD) {
-                            Duration.ofHours(1).plusMinutes(30)
+                            startDate.plusHours(1).plusMinutes(30)
                         } else {
-                            Duration.ofMinutes(30)
+                            startDate.plusMinutes(30)
                         }
 
                         if (!weekdays.contains(cell.left)) throw TimetableTeachersBuilderException("Can't find weekday")
@@ -161,8 +162,8 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
                                         description = "${getDescription(courseDetails.third.trim())}$acr",
                                         category = EventCategory.LECTURE.value,
                                         location = listOf(courseDetails.second.trim()),
-                                        beginTime = beginTime.toString(),
-                                        duration = duration.toString(),
+                                        startDate = startDate.toString(),
+                                        endDate = endDate.toString(),
                                         weekday = listOf(weekdays.getOrDefault(cell.left, ""))
                                     )
                                 )
@@ -205,12 +206,14 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
         }
     }
 
-    private fun getBeginTime(matches: List<String>): LocalTime? {
+    private fun getStartDate(matches: List<String>): LocalDateTime? {
         val time = matches[0]
             .split('.')
 
-        return LocalTime
-            .of(time[0].toInt(), time[1].toInt())
+        return LocalDateTime
+            .now()
+            .withHour(time[0].toInt())
+            .withMinute(time[1].toInt())
     }
 
     private fun populateCourseDetails(text: String): Triple<String, String, String> {

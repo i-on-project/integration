@@ -19,7 +19,8 @@ Example data in json format
         "acr": ""
     },
     "programme": {
-        "name": "Licenciatura em Engenharia Informática e de Computadores"
+        "name": "Licenciatura em Engenharia Informática e de Computadores",
+        "acr": ""
     },
     "calendarTerm": "2019/20-Verão",
     "calendarSection": "LI11D",
@@ -37,9 +38,8 @@ Example data in json format
                     "location": [
                         "E.1.08"
                     ],
-                    "beginTime": "12:30",
-                    "endTime": "15:30",
-                    "duration": "PT3H",
+                    "startDate": "2020-01-20T12:30",
+                    "endDate": "2020-01-20T15:30",
                     "weekday": [
                         "FR"
                     ]
@@ -64,7 +64,8 @@ data class School(
     @JsonProperty("acr") val acr: String
 )
 data class Programme(
-    @JsonProperty("name") val name: String
+    @JsonProperty("name") val name: String,
+    @JsonProperty("acr") val acr: String
 )
 data class Course (
 	@JsonProperty("label") val label : Label,
@@ -78,9 +79,8 @@ data class Event (
     @JsonProperty("description") val description : String,
     @JsonProperty("category") val category : Integer,
 	@JsonProperty("location") val location : List<String>,
-	@JsonProperty("beginTime") val beginTime : String,
-	@JsonProperty("endTime") val endTime : String,
-	@JsonProperty("duration") val duration : String,
+	@JsonProperty("startDate") val beginTime : String,
+	@JsonProperty("endDate") val endTime : String,
     @JsonProperty("weekday") val weekday : List<String>
 )
 ```
@@ -93,7 +93,8 @@ Example data in json format
         "acr": ""
     },
     "programme": {
-        "name": "Licenciatura em Engenharia Informática e de Computadores"
+        "name": "Licenciatura em Engenharia Informática e de Computadores",
+        "acr": ""
     },
     "calendarTerm": "2019/20-Verão",
     "calendarSection": "LI11D",
@@ -126,7 +127,8 @@ data class School(
     @JsonProperty("acr") val acr: String
 )
 data class Programme(
-    @JsonProperty("name") val name: String
+    @JsonProperty("name") val name: String,
+    @JsonProperty("acr") val acr: String
 )
 data class Faculty (
 	@JsonProperty("course") val course : String,

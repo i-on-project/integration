@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDateTime
 
 class IselITimetableTeachersBuilderTests {
     companion object {
@@ -94,22 +95,30 @@ class IselITimetableTeachersBuilderTests {
         assertEquals("pt-PT", timetableTeacher.teachers[0].language)
 
         // Timetable data
-        val beginTime = LocalTime.parse(timetableTeacher.timetable[0].courses[0].events[0].beginTime)
+        val startDate = LocalDateTime.parse(timetableTeacher.timetable[0].courses[0].events[0].startDate)
+        var endDate = LocalDateTime.parse(timetableTeacher.timetable[0].courses[0].events[0].endDate)
 
         assertEquals(4, timetableTeacher.timetable[0].courses.count())
         assertEquals("ALGA", timetableTeacher.timetable[0].courses[0].label.acr)
         assertEquals("Aulas Teóricas de ALGA", timetableTeacher.timetable[0].courses[0].events[0].description)
         assertEquals(2, timetableTeacher.timetable[0].courses[0].events[0].category)
         assertTrue(timetableTeacher.timetable[0].courses[0].events[0].location.contains("E.1.08"))
-        assertEquals(12, beginTime.hour)
-        assertEquals(30, beginTime.minute)
-        assertEquals("PT3H", timetableTeacher.timetable[0].courses[0].events[0].duration)
+        assertEquals(12, startDate.hour)
+        assertEquals(30, startDate.minute)
+        assertEquals(15, endDate.hour)
+        assertEquals(30, endDate.minute)
         assertTrue(timetableTeacher.timetable[0].courses[0].events[0].weekday.contains("FR"))
 
-        assertEquals("PT30M", timetableTeacher.timetable[0].courses[1].events[0].duration)
+        endDate = LocalDateTime.parse(timetableTeacher.timetable[0].courses[1].events[0].endDate)
+
+        assertEquals(15, endDate.hour)
+        assertEquals(30, endDate.minute)
         assertTrue(timetableTeacher.timetable[0].courses[1].events[0].weekday.contains("TH"))
 
-        assertEquals("PT1H30M", timetableTeacher.timetable[0].courses[2].events[0].duration)
+        endDate = LocalDateTime.parse(timetableTeacher.timetable[0].courses[2].events[0].endDate)
+
+        assertEquals(17, endDate.hour)
+        assertEquals(0, endDate.minute)
         assertTrue(timetableTeacher.timetable[0].courses[2].events[0].weekday.contains("WE"))
 
         // Faculty data

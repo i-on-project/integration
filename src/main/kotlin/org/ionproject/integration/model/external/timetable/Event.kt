@@ -5,7 +5,7 @@ data class Event(
     var description: String = "",
     val category: Int,
     var location: List<String>,
-    val beginTime: String,
-    val duration: String,
+    val startDate: String,
+    val endDate: String,
     val weekday: List<String>
 )
