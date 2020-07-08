@@ -1,11 +1,14 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import org.ionproject.integration.alert.implementations.EmailAlertChannel
 import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.model.internal.core.CoreResult
 import org.ionproject.integration.model.internal.timetable.UploadType
 import org.ionproject.integration.service.implementations.CoreService
+import org.ionproject.integration.utils.EmailUtils
+import org.ionproject.integration.utils.JobResult
 import org.ionproject.integration.utils.orThrow
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
@@ -78,7 +81,6 @@ class UploadTasklet(
         val pdfRemoteLocation = context.stepContext.jobParameters["pdfRemoteLocation"] as String
 
         val asset = pdfRemoteLocation.substring(pdfRemoteLocation.lastIndexOf('/') + 1, pdfRemoteLocation.length)
-        val alertService = EmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
 
         val message = when (coreResult) {
             CoreResult.TRY_AGAIN -> "I-On Core was unreachable with multiple retries"
@@ -87,6 +89,17 @@ class UploadTasklet(
             else -> "I-On Core unknown error"
         }
 
-        alertService.sendFailureEmail(message)
+        val conf =
+            EmailUtils.configure(
+                "ISEL Timetable Batch Job",
+                JobResult.FAILED,
+                alertRecipient,
+                asset,
+                message
+            )
+        val channel = EmailAlertChannel(conf, sender)
+        val alertService = EmailAlertService(channel)
+
+        alertService.sendEmail()
     }
 }
