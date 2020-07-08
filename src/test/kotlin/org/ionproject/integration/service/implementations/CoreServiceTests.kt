@@ -26,14 +26,8 @@ import org.springframework.test.context.TestPropertySource
 
 internal class CoreServiceTestFixtures {
     companion object {
-        val timetableList = listOf(
-            Timetable(school = School(name = "timetable")),
-            Timetable(school = School(name = "timetable"))
-        )
-        val courseTeacherList = listOf(
-            CourseTeacher(school = School(name = "courseTeacher")),
-            CourseTeacher(school = School(name = "courseTeacher"))
-        )
+        val timetable = Timetable(school = School(name = "timetable"))
+        val courseTeacher = CourseTeacher(school = School(name = "courseTeacher"))
     }
 }
 
@@ -95,7 +89,7 @@ class CoreServiceTests {
             .thenReturn(200)
 
         // Act
-        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetableList)
+        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetable)
             .orThrow()
 
         // Assert
@@ -110,7 +104,7 @@ class CoreServiceTests {
             .thenReturn(200)
 
         // Act
-        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacherList)
+        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacher)
             .orThrow()
 
         // Assert
@@ -125,7 +119,7 @@ class CoreServiceTests {
             .thenReturn(404)
 
         // Act
-        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetableList)
+        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetable)
             .orThrow()
 
         // Assert
@@ -140,7 +134,7 @@ class CoreServiceTests {
             .thenReturn(404)
 
         // Act
-        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacherList)
+        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacher)
             .orThrow()
 
         // Assert
@@ -155,7 +149,7 @@ class CoreServiceTests {
             .thenReturn(500)
 
         // Act
-        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetableList)
+        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetable)
             .orThrow()
 
         // Assert
@@ -170,7 +164,7 @@ class CoreServiceTests {
             .thenReturn(500)
 
         // Act
-        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacherList)
+        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacher)
             .orThrow()
 
         // Assert
@@ -185,7 +179,7 @@ class CoreServiceTests {
             .thenReturn(401)
 
         // Act
-        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetableList)
+        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetable)
             .orThrow()
 
         // Assert
@@ -200,7 +194,7 @@ class CoreServiceTests {
             .thenReturn(401)
 
         // Act
-        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacherList)
+        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacher)
             .orThrow()
 
         // Assert
@@ -215,7 +209,7 @@ class CoreServiceTests {
             .thenReturn(301)
 
         // Act
-        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetableList)
+        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetable)
             .orThrow()
 
         // Assert
@@ -230,7 +224,7 @@ class CoreServiceTests {
             .thenReturn(301)
 
         // Act
-        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacherList)
+        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacher)
             .orThrow()
 
         // Assert
@@ -245,7 +239,7 @@ class CoreServiceTests {
             .thenReturn(400)
 
         // Act
-        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetableList)
+        val result = coreService.pushTimetable(CoreServiceTestFixtures.timetable)
             .orThrow()
 
         // Assert
@@ -260,7 +254,7 @@ class CoreServiceTests {
             .thenReturn(400)
 
         // Act
-        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacherList)
+        val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacher)
             .orThrow()
 
         // Assert

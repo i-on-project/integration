@@ -18,14 +18,14 @@ import org.springframework.stereotype.Component
 @Component
 class CoreService(private val httpUtils: HttpUtils, private val appProperties: AppProperties) : ICoreService {
 
-    override fun pushTimetable(timetableList: List<Timetable>): Try<CoreResult> {
-        var timetableJson = JsonUtils.toJson(timetableList.toTypedArray())
+    override fun pushTimetable(timetable: Timetable): Try<CoreResult> {
+        var timetableJson = JsonUtils.toJson(timetable)
 
         return sendToCore(timetableJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionEvents"))
     }
 
-    override fun pushCourseTeacher(courseTeacherList: List<CourseTeacher>): Try<CoreResult> {
-        var courseTeacherJson = JsonUtils.toJson(courseTeacherList.toTypedArray())
+    override fun pushCourseTeacher(courseTeacher: CourseTeacher): Try<CoreResult> {
+        var courseTeacherJson = JsonUtils.toJson(courseTeacher)
 
         return sendToCore(courseTeacherJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionEvents"))
     }
