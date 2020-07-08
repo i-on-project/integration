@@ -1,5 +1,6 @@
 package org.ionproject.integration.model.internal.generic
 
+import org.ionproject.integration.model.external.generic.CoreExamSchedule
 import org.ionproject.integration.model.internal.timetable.School
 
 data class ExamSchedule(
@@ -9,6 +10,6 @@ data class ExamSchedule(
     val exams: List<Exam>
 ) : IInternalModel {
     override fun toCore(): ICoreModel {
-        TODO("Not yet implemented")
+        return CoreExamSchedule()
     }
 }

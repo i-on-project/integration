@@ -9,6 +9,6 @@ data class AcademicCalendar(
     val terms: List<Term>
 ) : IInternalModel {
     override fun toCore(): ICoreModel {
-        TODO("Not yet implemented")
+        return CoreAcademicCalendar()
     }
 }
