@@ -4,10 +4,10 @@ import javax.mail.internet.MimeMessage
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.model.internal.core.CoreResult
-import org.ionproject.integration.model.internal.timetable.CourseTeacher
-import org.ionproject.integration.model.internal.timetable.School
-import org.ionproject.integration.model.internal.timetable.Timetable
-import org.ionproject.integration.model.internal.timetable.TimetableTeachers
+import org.ionproject.integration.model.external.timetable.CourseTeacher
+import org.ionproject.integration.model.external.timetable.School
+import org.ionproject.integration.model.external.timetable.Timetable
+import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.UploadType
 import org.ionproject.integration.service.implementations.CoreService
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
@@ -37,16 +37,25 @@ import org.springframework.test.context.TestPropertySource
 
 internal class UploadTaskletTestFixtures {
     companion object {
-        val timetableTeachers = TimetableTeachers(
-            timetable = listOf(
-                Timetable(school = School(name = "timetable")),
-                Timetable(school = School(name = "timetable"))
-            ),
-            teachers = listOf(
-                CourseTeacher(school = School(name = "courseTeacher")),
-                CourseTeacher(school = School(name = "courseTeacher"))
+        val timetableTeachers =
+            TimetableTeachers(
+                timetable = listOf(
+                    Timetable(school = School(name = "timetable")),
+                    Timetable(school = School(name = "timetable"))
+                ),
+                teachers = listOf(
+                    CourseTeacher(
+                        school = School(
+                            name = "courseTeacher"
+                        )
+                    ),
+                    CourseTeacher(
+                        school = School(
+                            name = "courseTeacher"
+                        )
+                    )
+                )
             )
-        )
     }
 }
 

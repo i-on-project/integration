@@ -7,19 +7,19 @@ import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderExc
 import org.ionproject.integration.builder.interfaces.ITimetableTeachersBuilder
 import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table
-import org.ionproject.integration.model.internal.timetable.Course
-import org.ionproject.integration.model.internal.timetable.CourseTeacher
-import org.ionproject.integration.model.internal.timetable.Event
-import org.ionproject.integration.model.internal.timetable.EventCategory
-import org.ionproject.integration.model.internal.timetable.Faculty
-import org.ionproject.integration.model.internal.timetable.Label
-import org.ionproject.integration.model.internal.timetable.Language
-import org.ionproject.integration.model.internal.timetable.Programme
-import org.ionproject.integration.model.internal.timetable.School
-import org.ionproject.integration.model.internal.timetable.Teacher
-import org.ionproject.integration.model.internal.timetable.Timetable
-import org.ionproject.integration.model.internal.timetable.TimetableTeachers
-import org.ionproject.integration.model.internal.timetable.Weekdays
+import org.ionproject.integration.model.external.timetable.Course
+import org.ionproject.integration.model.external.timetable.CourseTeacher
+import org.ionproject.integration.model.external.timetable.Event
+import org.ionproject.integration.model.external.timetable.EventCategory
+import org.ionproject.integration.model.external.timetable.Faculty
+import org.ionproject.integration.model.external.timetable.Label
+import org.ionproject.integration.model.external.timetable.Language
+import org.ionproject.integration.model.external.timetable.Programme
+import org.ionproject.integration.model.external.timetable.School
+import org.ionproject.integration.model.external.timetable.Teacher
+import org.ionproject.integration.model.external.timetable.Timetable
+import org.ionproject.integration.model.external.timetable.TimetableTeachers
+import org.ionproject.integration.model.external.timetable.Weekdays
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.utils.JsonUtils
 import org.ionproject.integration.utils.RegexUtils
@@ -81,7 +81,10 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
                     i += 2
                 }
 
-            TimetableTeachers(timetableList, teacherList)
+            TimetableTeachers(
+                timetableList,
+                teacherList
+            )
         }
     }
 
@@ -92,13 +95,16 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
         val classSection = RegexUtils.findMatches(CLASS_SECTION_REGEX, data, RegexOption.MULTILINE)[0].replace("Turma:", "").trim()
 
         timetable.school = School(name = school)
-        timetable.programme = Programme(name = programme)
+        timetable.programme =
+            Programme(name = programme)
         timetable.calendarTerm = calendarTerm
         timetable.calendarSection = classSection
         timetable.language = Language.PT.value
 
-        courseTeacher.school = School(name = school)
-        courseTeacher.programme = Programme(name = programme)
+        courseTeacher.school =
+            School(name = school)
+        courseTeacher.programme =
+            Programme(name = programme)
         courseTeacher.calendarTerm = calendarTerm
         courseTeacher.calendarSection = classSection
         courseTeacher.language = Language.PT.value
@@ -151,7 +157,8 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
                             Course(
                                 label = Label(acr = acr),
                                 events = listOf(
-                                    Event(description = "${getDescription(courseDetails.third.trim())}$acr",
+                                    Event(
+                                        description = "${getDescription(courseDetails.third.trim())}$acr",
                                         category = EventCategory.LECTURE.value,
                                         location = listOf(courseDetails.second.trim()),
                                         beginTime = beginTime.toString(),

@@ -2,7 +2,7 @@ package org.ionproject.integration.builder.implementations
 
 import java.time.LocalTime
 import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
-import org.ionproject.integration.model.internal.timetable.TimetableTeachers
+import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals

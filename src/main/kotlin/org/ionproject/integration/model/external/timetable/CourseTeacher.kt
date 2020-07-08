@@ -1,4 +1,4 @@
-package org.ionproject.integration.model.internal.timetable
+package org.ionproject.integration.model.external.timetable
 
 data class CourseTeacher(
     var school: School = School(),

@@ -1,4 +1,4 @@
-package org.ionproject.integration.model.internal.timetable
+package org.ionproject.integration.model.external.timetable
 
 data class Event(
     @Transient var title: String = "",

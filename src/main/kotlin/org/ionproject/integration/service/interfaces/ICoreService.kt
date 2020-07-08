@@ -1,8 +1,8 @@
 package org.ionproject.integration.service.interfaces
 
 import org.ionproject.integration.model.internal.core.CoreResult
-import org.ionproject.integration.model.internal.timetable.CourseTeacher
-import org.ionproject.integration.model.internal.timetable.Timetable
+import org.ionproject.integration.model.external.timetable.CourseTeacher
+import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.utils.Try
 
 interface ICoreService {

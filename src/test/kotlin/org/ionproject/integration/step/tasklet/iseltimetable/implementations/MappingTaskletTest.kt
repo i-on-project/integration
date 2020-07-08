@@ -3,7 +3,7 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 import java.time.LocalTime
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.ISELTimetable
-import org.ionproject.integration.model.internal.timetable.TimetableTeachers
+import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
