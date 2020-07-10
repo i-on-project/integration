@@ -1,9 +1,9 @@
 school:
-  name: Instituto Superior Engenharia Lisboa
-  acr: ISEL
-programme:
   name: School A
   acr: A
+programme:
+  name: Programme A
+  acr: PA
 academicYear: 2019/2020
 exams:
   - name: AED
