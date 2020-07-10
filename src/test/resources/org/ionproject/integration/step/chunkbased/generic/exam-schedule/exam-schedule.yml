@@ -2,8 +2,8 @@ school:
   name: Instituto Superior Engenharia Lisboa
   acr: ISEL
 programme:
-  name: Licenciatura em Engenharia Informática e de Computadores
-  acr: LEIC
+  name: School A
+  acr: A
 academicYear: 2019/2020
 exams:
   - name: AED

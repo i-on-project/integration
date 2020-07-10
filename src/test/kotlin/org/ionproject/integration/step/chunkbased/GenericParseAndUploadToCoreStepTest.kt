@@ -1,5 +1,9 @@
 package org.ionproject.integration.step.chunkbased
 
+import java.io.File
+import java.lang.reflect.UndeclaredThrowableException
+import java.nio.file.Paths
+import java.time.Instant
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.Generic
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
@@ -22,10 +26,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.io.File
-import java.lang.reflect.UndeclaredThrowableException
-import java.nio.file.Paths
-import java.time.Instant
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
@@ -87,7 +87,47 @@ internal class GenericParseAndUploadToCoreStepTest {
         assertFalse(temp.exists())
         assertTrue(expectedHash.contentEquals(actualHash))
     }
+    @Test
+    fun whenExamScheduleIsSuccessfullyParsed_thenAssertFileDoesNotExistAndHashIsInContext() {
+        val expectedHash = byteArrayOf(
+            -83, -72, 69, -118, -3, 115, 110, -19, 119, 20, 40, -55, 96, -40, 47, -38, -100,
+            15, -102, -32, 7, 33, -90, 105, 78, 49, 124, 67, 112, -10, 15, 114
+        )
+        val path = Paths.get(
+            "src/test/resources/org/ionproject/integration/step/chunkbased/generic/exam-schedule/exam-schedule.yml"
+        )
+        val temp = File("src/test/resources/school-a.yml")
+        path.toFile().copyTo(temp)
+        val jp = initJobParameters("EXAM_SCHEDULE")
+        val ec = SpringBatchTestUtils().createExecutionContext()
+        ec.put("file-path", temp.toPath())
 
+        val je = jobLauncherTestUtils.launchStep("Parse And Upload to Core Step", jp, ec)
+        val actualHash = je.executionContext["file-hash"] as ByteArray
+
+        assertFalse(temp.exists())
+        assertTrue(expectedHash.contentEquals(actualHash))
+    }
+    @Test
+    fun whenFileIsMismatchedWithJobType_thenThrowYamlException() {
+        val path = Paths.get(
+            "src/test/resources/org/ionproject/integration/step/chunkbased/generic/exam-schedule/exam-schedule.yml"
+        )
+        val temp = File("src/test/resources/school-a.yml")
+        path.toFile().copyTo(temp)
+        val jp = initJobParameters("ACADEMIC_CALENDAR")
+        val ec = SpringBatchTestUtils().createExecutionContext()
+        ec.put("file-path", temp.toPath())
+
+        val je = jobLauncherTestUtils.launchStep("Parse And Upload to Core Step", jp, ec)
+        val actualHash = je.executionContext["file-hash"]
+        val ex = je.allFailureExceptions[0] as UndeclaredThrowableException
+
+        assertNull(actualHash)
+        assertFalse(temp.exists())
+        assertEquals("YAMLException", ex.undeclaredThrowable::class.java.simpleName)
+        assertEquals("Invalid yaml", ex.undeclaredThrowable.message)
+    }
     @Test
     fun whenJobTypeDoesNotExist_thenThrowIllegaArgumentException() {
         val path = Paths.get(

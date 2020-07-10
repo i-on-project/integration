@@ -40,7 +40,6 @@ class GenericReader : ItemReader<IInternalModel> {
 
             val f = GenericFactory.getFactory(typeEnum)
 
-            // factory.parse(path)
             val imodel = f.parse(path)
 
             val fileHash = fd.digest(path.toFile())
