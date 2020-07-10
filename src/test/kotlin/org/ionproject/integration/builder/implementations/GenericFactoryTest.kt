@@ -20,6 +20,6 @@ internal class GenericFactoryTest {
     @Test
     fun whenJobTypeIsExamSchedule_thenGetExamScheduleFactory() {
         val f = GenericFactory.getFactory(JobType.EXAM_SCHEDULE)
-        assertEquals("ExamCalendarFactory", f::class.java.simpleName)
+        assertEquals("ExamScheduleFactory", f::class.java.simpleName)
     }
 }
