@@ -1,6 +1,6 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
-import java.time.LocalDateTime
+import java.time.LocalTime
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
@@ -65,48 +65,37 @@ internal class MappingTaskletTest {
         assertEquals("pt-PT", timetableTeacher.teachers[0].language)
 
         // Timetable data
-        val startDate = LocalDateTime.parse(timetableTeacher.timetable[0].courses[0].events[0].startDate)
-        var endDate = LocalDateTime.parse(timetableTeacher.timetable[0].courses[0].events[0].endDate)
+        val beginTime = LocalTime.parse(timetableTeacher.timetable[0].courses[0].events[0].beginTime)
 
         assertEquals(4, timetableTeacher.timetable[0].courses.count())
         assertEquals("ALGA", timetableTeacher.timetable[0].courses[0].label.acr)
         assertEquals("Aulas Teóricas de ALGA", timetableTeacher.timetable[0].courses[0].events[0].description)
         assertEquals(2, timetableTeacher.timetable[0].courses[0].events[0].category)
         assertTrue(timetableTeacher.timetable[0].courses[0].events[0].location.contains("E.1.08"))
-        assertEquals(12, startDate.hour)
-        assertEquals(30, startDate.minute)
-        assertEquals(15, endDate.hour)
-        assertEquals(30, endDate.minute)
+        assertEquals(12, beginTime.hour)
+        assertEquals(30, beginTime.minute)
+        assertEquals("03:00", timetableTeacher.timetable[0].courses[0].events[0].duration)
         assertTrue(timetableTeacher.timetable[0].courses[0].events[0].weekday.contains("FR"))
 
-        endDate = LocalDateTime.parse(timetableTeacher.timetable[0].courses[1].events[0].endDate)
-
-        assertEquals(15, endDate.hour)
-        assertEquals(30, endDate.minute)
+        assertEquals("00:30", timetableTeacher.timetable[0].courses[1].events[0].duration)
         assertTrue(timetableTeacher.timetable[0].courses[1].events[0].weekday.contains("TH"))
 
-        endDate = LocalDateTime.parse(timetableTeacher.timetable[0].courses[2].events[0].endDate)
-
-        assertEquals(17, endDate.hour)
-        assertEquals(0, endDate.minute)
+        assertEquals("01:30", timetableTeacher.timetable[0].courses[2].events[0].duration)
         assertTrue(timetableTeacher.timetable[0].courses[2].events[0].weekday.contains("WE"))
 
         // Faculty data
-        assertEquals(4, timetableTeacher.teachers[0].faculty.count())
-        assertEquals("ALGA", timetableTeacher.teachers[0].faculty[0].course)
-        assertEquals("T", timetableTeacher.teachers[0].faculty[0].courseType)
-        assertEquals(1, timetableTeacher.teachers[0].faculty[0].teachers.count())
-        assertEquals("Teresa Maria de Araújo Melo Quinteiro", timetableTeacher.teachers[0].faculty[0].teachers[0].name)
+        assertEquals(4, timetableTeacher.teachers[0].courses.count())
+        assertEquals("ALGA", timetableTeacher.teachers[0].courses[0].label?.acr)
+        assertEquals(1, timetableTeacher.teachers[0].courses[0].teachers.count())
+        assertEquals("Teresa Maria de Araújo Melo Quinteiro", timetableTeacher.teachers[0].courses[0].teachers[0].name)
 
-        assertEquals("GAP", timetableTeacher.teachers[0].faculty[1].course)
-        assertEquals("T", timetableTeacher.teachers[0].faculty[1].courseType)
-        assertEquals(1, timetableTeacher.teachers[0].faculty[1].teachers.count())
-        assertEquals("Cristina Inês Camus", timetableTeacher.teachers[0].faculty[1].teachers[0].name)
+        assertEquals("GAP", timetableTeacher.teachers[0].courses[1].label?.acr)
+        assertEquals(1, timetableTeacher.teachers[0].courses[1].teachers.count())
+        assertEquals("Cristina Inês Camus", timetableTeacher.teachers[0].courses[1].teachers[0].name)
 
-        assertEquals("E", timetableTeacher.teachers[0].faculty[2].course)
-        assertEquals("P", timetableTeacher.teachers[0].faculty[2].courseType)
-        assertEquals(2, timetableTeacher.teachers[0].faculty[2].teachers.count())
-        assertEquals("Fernando dos Santos Azevedo", timetableTeacher.teachers[0].faculty[2].teachers[0].name)
-        assertEquals("João Manuel Ferreira Martins", timetableTeacher.teachers[0].faculty[2].teachers[1].name)
+        assertEquals("E", timetableTeacher.teachers[0].courses[2].label?.acr)
+        assertEquals(2, timetableTeacher.teachers[0].courses[2].teachers.count())
+        assertEquals("Fernando dos Santos Azevedo", timetableTeacher.teachers[0].courses[2].teachers[0].name)
+        assertEquals("João Manuel Ferreira Martins", timetableTeacher.teachers[0].courses[2].teachers[1].name)
     }
 }
