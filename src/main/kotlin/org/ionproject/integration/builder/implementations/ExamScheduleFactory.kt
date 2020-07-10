@@ -7,7 +7,7 @@ import org.ionproject.integration.model.internal.generic.IInternalModel
 import org.ionproject.integration.utils.YamlUtils
 import org.ionproject.integration.utils.orThrow
 
-class ExamCalendarFactory : IGenericFactory {
+class ExamScheduleFactory : IGenericFactory {
     override fun parse(path: Path): IInternalModel {
         return YamlUtils
             .fromYaml(

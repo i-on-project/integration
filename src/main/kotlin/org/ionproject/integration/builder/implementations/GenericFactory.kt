@@ -8,7 +8,7 @@ object GenericFactory {
         return when (jobType) {
             JobType.TIMETABLE -> TimetableFactory()
             JobType.ACADEMIC_CALENDAR -> AcademicCalendarFactory()
-            JobType.EXAM_SCHEDULE -> ExamCalendarFactory()
+            JobType.EXAM_SCHEDULE -> ExamScheduleFactory()
         }
     }
 }
