@@ -90,8 +90,8 @@ internal class GenericParseAndUploadToCoreStepTest {
     @Test
     fun whenExamScheduleIsSuccessfullyParsed_thenAssertFileDoesNotExistAndHashIsInContext() {
         val expectedHash = byteArrayOf(
-            -83, -72, 69, -118, -3, 115, 110, -19, 119, 20, 40, -55, 96, -40, 47, -38, -100,
-            15, -102, -32, 7, 33, -90, 105, 78, 49, 124, 67, 112, -10, 15, 114
+            92, 59, 63, 87, -79, 69, -90, 11, -116, 105, 68, 93, 24, -90, 37, -126, 17, 64, -112,
+            66, -37, 7, 34, -49, -31, 96, 22, 14, 3, -25, -104, -127
         )
         val path = Paths.get(
             "src/test/resources/org/ionproject/integration/step/chunkbased/generic/exam-schedule/exam-schedule.yml"

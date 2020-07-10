@@ -1,13 +1,13 @@
 package org.ionproject.integration.builder.implementations
 
+import java.nio.file.Paths
+import java.time.Instant
+import java.util.Date
 import org.ionproject.integration.model.internal.generic.ExamSchedule
 import org.ionproject.integration.utils.YAMLException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.nio.file.Paths
-import java.time.Instant
-import java.util.Date
 
 internal class ExamScheduleFactoryTest {
     private fun dateFromString(string: String): Date {
