@@ -25,34 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@TestPropertySource(
-    properties = ["email.sender =alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false",
-
-        "spring.datasource.url = jdbc:h2:mem:testdb",
-        "spring.datasource.driverClassName = org.h2.Driver",
-        "spring.datasource.username = sa",
-        "spring.datasource.password = ",
-
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-
-        "spring.batch.job.enabled = false",
-
-        "ion.resources-folder = src/test/resources/"
-    ]
-)
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(

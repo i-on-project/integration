@@ -247,28 +247,7 @@ internal class FormatVerifierStepTestUnexistingFile {
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "email.sender=alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false",
-
-        "spring.datasource.url = jdbc:h2:mem:testdb",
-        "spring.datasource.driverClassName = org.h2.Driver",
-        "spring.datasource.username = sa",
-        "spring.datasource.password = ",
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 internal class FormatVerifierStepTestInvalidFormat {
 
     @Autowired
@@ -351,8 +330,8 @@ internal class FormatVerifierStepTestInvalidFormat {
         assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
         val messages: Array<MimeMessage> = testSmtp.receivedMessages
         assertEquals(1, messages.size)
-        assertEquals("i-on integration Alert - Job Failed", messages[0].subject)
-        assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job failed with message: The timetable header changed its format for file LEIC_0310.pdf"))
+        assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
+        assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message The timetable header changed its format"))
     }
 }
 
@@ -364,28 +343,8 @@ internal class FormatVerifierStepTestInvalidFormat {
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "email.sender=alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false",
 
-        "spring.datasource.url = jdbc:h2:mem:testdb",
-        "spring.datasource.driverClassName = org.h2.Driver",
-        "spring.datasource.username = sa",
-        "spring.datasource.password = ",
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 internal class FormatVerifierStepTestEmptyPath {
 
     @Autowired

@@ -3,7 +3,7 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
-import javax.sql.DataSource
+import org.ionproject.integration.alert.implementations.EmailAlertChannel
 import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.file.interfaces.IFileComparator
@@ -11,6 +11,8 @@ import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.model.internal.generic.JobType
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
 import org.ionproject.integration.utils.CompositeException
+import org.ionproject.integration.utils.EmailUtils
+import org.ionproject.integration.utils.JobResult
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.StepContribution
@@ -48,9 +50,6 @@ class DownloadAndCompareTasklet(
 
     @Autowired
     private lateinit var sender: JavaMailSenderImpl
-
-    @Autowired
-    private lateinit var ds: DataSource
 
     private var fileIsEqualToLast: Boolean = false
 
@@ -121,7 +120,16 @@ class DownloadAndCompareTasklet(
     }
 
     private fun sendEmail(msg: String, asset: String) {
-        val alertService = EmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
-        alertService.sendFailureEmail(msg)
+        val conf =
+            EmailUtils.configure(
+                "ISEL Timetable Batch Job",
+                JobResult.FAILED,
+                alertRecipient,
+                asset,
+                msg
+            )
+        val channel = EmailAlertChannel(conf, sender)
+        val alertService = EmailAlertService(channel)
+        alertService.sendEmail()
     }
 }

@@ -48,25 +48,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     ]
 )
 
-@TestPropertySource(
-    properties = [
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/",
-
-        "email.sender =alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false"
-
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecorded {
@@ -107,71 +89,71 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         testSmtp.stop()
     }
 
-    @Test
-    fun whenTaskletIsUnsuccessful_ThenAssertPathIsInContextAndFileExists() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-        val pathKey = "file-path"
-        val ec = utils.createExecutionContext()
-        val jp = initJobParameters("1")
-        val file = File("src/test/resources/LEIC_0310.pdf")
-        val expectedPath = file.toPath()
-        try {
+        @Test
+        fun whenTaskletIsUnsuccessful_ThenAssertPathIsInContextAndFileExists() {
+            testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+            val pathKey = "file-path"
+            val ec = utils.createExecutionContext()
+            val jp = initJobParameters("1")
+            val file = File("src/test/resources/LEIC_0310.pdf")
+            val expectedPath = file.toPath()
+            try {
 
-            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+                val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
 
-            assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)
-            assertEquals(expectedPath, je.executionContext[pathKey])
-            assertTrue(file.exists())
-        } finally {
-            file.delete()
+                assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)
+                assertEquals(expectedPath, je.executionContext[pathKey])
+                assertTrue(file.exists())
+            } finally {
+                file.delete()
+            }
         }
-    }
 
-    @Test
-    @Sql("insert-timetable-pdf-hash.sql")
-    fun whenHashIsSameAsRecorded_ThenExitStatusIsStopped() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-        val pathKey = "file-path"
-        val ec = utils.createExecutionContext()
-        val jp = initJobParameters("2")
-        val file = File("src/test/resources/LEIC_0310.pdf")
-        val expectedPath = file.toPath()
-        try {
+        @Test
+        @Sql("insert-timetable-pdf-hash.sql")
+        fun whenHashIsSameAsRecorded_ThenExitStatusIsStopped() {
+            testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+            val pathKey = "file-path"
+            val ec = utils.createExecutionContext()
+            val jp = initJobParameters("2")
+            val file = File("src/test/resources/LEIC_0310.pdf")
+            val expectedPath = file.toPath()
+            try {
 
-            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+                val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
 
-            assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
-            assertEquals(expectedPath, je.executionContext[pathKey])
-            assertFalse(file.exists())
-        } finally {
-            file.delete()
+                assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
+                assertEquals(expectedPath, je.executionContext[pathKey])
+                assertFalse(file.exists())
+            } finally {
+                file.delete()
+            }
         }
-    }
-    @Test
-    @Sql("insert-timetable-pdf-hash-2.sql")
-    fun whenTaskletIsSuccessful_ThenAssertMailWasSent() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-        val pathKey = "file-path"
-        val ec = utils.createExecutionContext()
-        val jp = initJobParameters("3")
-        val file = File("src/test/resources/LEIC_0310.pdf")
-        val expectedPath = file.toPath()
-        try {
+        @Test
+        @Sql("insert-timetable-pdf-hash-2.sql")
+        fun whenTaskletIsSuccessful_ThenAssertMailWasSent() {
+            testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+            val pathKey = "file-path"
+            val ec = utils.createExecutionContext()
+            val jp = initJobParameters("3")
+            val file = File("src/test/resources/LEIC_0310.pdf")
+            val expectedPath = file.toPath()
+            try {
 
-            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+                val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
 
-            assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
-            assertEquals(expectedPath, je.executionContext[pathKey])
-            assertFalse(file.exists())
+                assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
+                assertEquals(expectedPath, je.executionContext[pathKey])
+                assertFalse(file.exists())
 
-            val messages: Array<MimeMessage> = testSmtp.receivedMessages
-            assertEquals(1, messages.size)
-            assertEquals("i-on integration Alert - Job Failed", messages[0].subject)
-            assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job failed with message: File Is equal to last successfully parsed for file LEIC_0310.pdf"))
-        } finally {
-            file.delete()
+                val messages: Array<MimeMessage> = testSmtp.receivedMessages
+                assertEquals(1, messages.size)
+                assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
+                assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message File Is equal to last successfully parsed"))
+            } finally {
+                file.delete()
+            }
         }
-    }
 
     private fun initJobParameters(jobId: String): JobParameters {
         return JobParametersBuilder()
@@ -191,24 +173,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/",
-
-        "email.sender =alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
     @Autowired
@@ -280,24 +245,7 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/",
-
-        "email.sender =alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 internal class DownloadAndCompareTaskletUrlNotPdfTest {
 
     @Autowired
@@ -369,24 +317,7 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/",
-
-        "email.sender =alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false"
-    ]
-)
+@TestPropertySource("classpath:application.properties")
 internal class DownloadAndCompareTaskletServerErrorTest {
 
     @Autowired
@@ -457,8 +388,8 @@ internal class DownloadAndCompareTaskletServerErrorTest {
 
             val messages: Array<MimeMessage> = testSmtp.receivedMessages
             assertEquals(1, messages.size)
-            assertEquals("i-on integration Alert - Job Failed", messages[0].subject)
-            assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job failed with message: Server responded with error code 500 for file 500"))
+            assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
+            assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: 500 with message Server responded with error code 500"))
         } finally {
             file.deleteOnExit()
         }

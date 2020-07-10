@@ -1,8 +1,11 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
 import javax.sql.DataSource
+import org.ionproject.integration.alert.implementations.EmailAlertChannel
 import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
+import org.ionproject.integration.utils.EmailUtils
+import org.ionproject.integration.utils.JobResult
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -37,7 +40,8 @@ class PostUploadTasklet() : Tasklet {
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         val hr = HashRepositoryImpl(ds)
 
-        val fileHash = chunkContext.stepContext.stepExecution.jobExecution.executionContext.get("file-hash") as ByteArray
+        val fileHash =
+            chunkContext.stepContext.stepExecution.jobExecution.executionContext.get("file-hash") as ByteArray
         hr.putHash(jobId, fileHash)
 
         sendEmail()
@@ -46,10 +50,21 @@ class PostUploadTasklet() : Tasklet {
     }
 
     private fun sendEmail() {
+
         val asset = srcRemoteLocation
             .substring(srcRemoteLocation.lastIndexOf('/') + 1, srcRemoteLocation.length)
-        val alertService = EmailAlertService("ISEL Timetable Batch Job", alertRecipient, asset, sender)
-        alertService.sendSuccessEmail()
+
+        val conf = EmailUtils.configure(
+            "ISEL Timetable Batch Job",
+            JobResult.COMPLETED_SUCCESSFULLY,
+            alertRecipient,
+            asset,
+            null
+        )
+        val channel = EmailAlertChannel(conf, sender)
+        val alertService = EmailAlertService(channel)
+        alertService.sendEmail()
+
         log.info("Email sent successfully")
     }
 }
