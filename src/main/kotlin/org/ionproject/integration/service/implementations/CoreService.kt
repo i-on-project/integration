@@ -27,7 +27,7 @@ class CoreService(private val httpUtils: HttpUtils, private val appProperties: A
     override fun pushCourseTeacher(courseTeacher: CourseTeacher): Try<CoreResult> {
         var courseTeacherJson = JsonUtils.toJson(courseTeacher)
 
-        return sendToCore(courseTeacherJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionEvents"))
+        return sendToCore(courseTeacherJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionFaculty"))
     }
 
     private fun sendToCore(json: Try<String>, url: URI): Try<CoreResult> {
