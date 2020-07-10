@@ -3,11 +3,11 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 import javax.mail.internet.MimeMessage
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.ISELTimetable
+import org.ionproject.integration.model.external.timetable.CourseTeacher
+import org.ionproject.integration.model.external.timetable.School
+import org.ionproject.integration.model.external.timetable.Timetable
+import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.core.CoreResult
-import org.ionproject.integration.model.internal.timetable.CourseTeacher
-import org.ionproject.integration.model.internal.timetable.School
-import org.ionproject.integration.model.internal.timetable.Timetable
-import org.ionproject.integration.model.internal.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.UploadType
 import org.ionproject.integration.service.implementations.CoreService
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito
@@ -37,16 +36,25 @@ import org.springframework.test.context.TestPropertySource
 
 internal class UploadTaskletTestFixtures {
     companion object {
-        val timetableTeachers = TimetableTeachers(
-            timetable = listOf(
-                Timetable(school = School(name = "timetable")),
-                Timetable(school = School(name = "timetable"))
-            ),
-            teachers = listOf(
-                CourseTeacher(school = School(name = "courseTeacher")),
-                CourseTeacher(school = School(name = "courseTeacher"))
+        val timetableTeachers =
+            TimetableTeachers(
+                timetable = listOf(
+                    Timetable(school = School(name = "timetable")),
+                    Timetable(school = School(name = "timetable"))
+                ),
+                teachers = listOf(
+                    CourseTeacher(
+                        school = School(
+                            name = "courseTeacher"
+                        )
+                    ),
+                    CourseTeacher(
+                        school = School(
+                            name = "courseTeacher"
+                        )
+                    )
+                )
             )
-        )
     }
 }
 
@@ -117,9 +125,10 @@ class UploadTaskletTests {
     fun whenUploadTimetableSuccessful_thenRepeatStatusFinished_andCoreRetriesDoesntExist() {
         // Arrange
         uploadTasklet.setUploadType(UploadType.TIMETABLE)
+        val key = "CoreRetries${UploadType.TIMETABLE.value}"
 
         Mockito
-            .`when`(coreService.pushTimetable(ArgumentMatchers.anyList()))
+            .`when`(coreService.pushTimetable(Timetable(school = School(name = "timetable"))))
             .thenReturn(Try.ofValue(CoreResult.SUCCESS))
 
         // Act
@@ -127,16 +136,17 @@ class UploadTaskletTests {
 
         // Assert
         assertEquals(RepeatStatus.FINISHED, result)
-        assertFalse(contextContainsKey(chunkContext, "CoreRetries"))
+        assertFalse(contextContainsKey(chunkContext, key))
     }
 
     @Test
     fun whenUploadTeachersSuccessful_thenRepeatStatusFinished_andCoreRetriesDoesntExist() {
         // Arrange
         uploadTasklet.setUploadType(UploadType.TEACHERS)
+        val key = "CoreRetries${UploadType.TEACHERS.value}"
 
         Mockito
-            .`when`(coreService.pushCourseTeacher(ArgumentMatchers.anyList()))
+            .`when`(coreService.pushCourseTeacher(CourseTeacher(school = School(name = "courseTeacher"))))
             .thenReturn(Try.ofValue(CoreResult.SUCCESS))
 
         // Act
@@ -144,16 +154,17 @@ class UploadTaskletTests {
 
         // Assert
         assertEquals(RepeatStatus.FINISHED, result)
-        assertFalse(contextContainsKey(chunkContext, "CoreRetries"))
+        assertFalse(contextContainsKey(chunkContext, key))
     }
 
     @Test
     fun whenUploadTimetableTryAgain_thenRepeatStatusFinished_andCoreRetriesIsZero() {
         // Arrange
         uploadTasklet.setUploadType(UploadType.TIMETABLE)
+        val key = "CoreRetries${UploadType.TIMETABLE.value}"
 
         Mockito
-            .`when`(coreService.pushTimetable(ArgumentMatchers.anyList()))
+            .`when`(coreService.pushTimetable(Timetable(school = School(name = "timetable"))))
             .thenReturn(Try.ofValue(CoreResult.TRY_AGAIN))
 
         // Act
@@ -165,8 +176,8 @@ class UploadTaskletTests {
         assertEquals(RepeatStatus.CONTINUABLE, result)
         assertEquals(RepeatStatus.CONTINUABLE, firstRetry)
         assertEquals(RepeatStatus.FINISHED, secondRetry)
-        assertTrue(contextContainsKey(chunkContext, "CoreRetries"))
-        assertEquals(0, contextGetInt(chunkContext, "CoreRetries"))
+        assertTrue(contextContainsKey(chunkContext, key))
+        assertEquals(0, contextGetInt(chunkContext, key))
         verify(sender, times(1)).send(any(MimeMessage::class.java))
     }
 
@@ -174,9 +185,10 @@ class UploadTaskletTests {
     fun whenUploadTeachersTryAgain_thenRepeatStatusFinished_andCoreRetriesIsZero() {
         // Arrange
         uploadTasklet.setUploadType(UploadType.TEACHERS)
+        val key = "CoreRetries${UploadType.TEACHERS.value}"
 
         Mockito
-            .`when`(coreService.pushCourseTeacher(ArgumentMatchers.anyList()))
+            .`when`(coreService.pushCourseTeacher(CourseTeacher(school = School(name = "courseTeacher"))))
             .thenReturn(Try.ofValue(CoreResult.TRY_AGAIN))
 
         // Act
@@ -188,8 +200,8 @@ class UploadTaskletTests {
         assertEquals(RepeatStatus.CONTINUABLE, result)
         assertEquals(RepeatStatus.CONTINUABLE, firstRetry)
         assertEquals(RepeatStatus.FINISHED, secondRetry)
-        assertTrue(contextContainsKey(chunkContext, "CoreRetries"))
-        assertEquals(0, contextGetInt(chunkContext, "CoreRetries"))
+        assertTrue(contextContainsKey(chunkContext, key))
+        assertEquals(0, contextGetInt(chunkContext, key))
         verify(sender, times(1)).send(any(MimeMessage::class.java))
     }
 
@@ -197,9 +209,10 @@ class UploadTaskletTests {
     fun whenUploadTimetableUnrecoverableError_thenRepeatStatusFinished_andCoreRetriesDoesntExist() {
         // Arrange
         uploadTasklet.setUploadType(UploadType.TIMETABLE)
+        val key = "CoreRetries${UploadType.TIMETABLE.value}"
 
         Mockito
-            .`when`(coreService.pushTimetable(ArgumentMatchers.anyList()))
+            .`when`(coreService.pushTimetable(Timetable(school = School(name = "timetable"))))
             .thenReturn(Try.ofValue(CoreResult.UNRECOVERABLE_ERROR))
 
         // Act
@@ -207,7 +220,7 @@ class UploadTaskletTests {
 
         // Assert
         assertEquals(RepeatStatus.FINISHED, result)
-        assertFalse(contextContainsKey(chunkContext, "CoreRetries"))
+        assertFalse(contextContainsKey(chunkContext, key))
         verify(sender, times(1)).send(any(MimeMessage::class.java))
     }
 
@@ -215,9 +228,10 @@ class UploadTaskletTests {
     fun whenUploadTeachersUnrecoverableError_thenRepeatStatusFinished_andCoreRetriesDoesntExist() {
         // Arrange
         uploadTasklet.setUploadType(UploadType.TEACHERS)
+        val key = "CoreRetries${UploadType.TEACHERS.value}"
 
         Mockito
-            .`when`(coreService.pushCourseTeacher(ArgumentMatchers.anyList()))
+            .`when`(coreService.pushCourseTeacher(CourseTeacher(school = School(name = "courseTeacher"))))
             .thenReturn(Try.ofValue(CoreResult.UNRECOVERABLE_ERROR))
 
         // Act
@@ -225,7 +239,7 @@ class UploadTaskletTests {
 
         // Assert
         assertEquals(RepeatStatus.FINISHED, result)
-        assertFalse(contextContainsKey(chunkContext, "CoreRetries"))
+        assertFalse(contextContainsKey(chunkContext, key))
         verify(sender, times(1)).send(any(MimeMessage::class.java))
     }
 }
