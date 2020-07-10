@@ -6,7 +6,7 @@ import org.ionproject.integration.file.implementations.FileDigestImpl
 import org.ionproject.integration.file.implementations.FileDownloaderImpl
 import org.ionproject.integration.file.implementations.YmlBytesFormatChecker
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
-import org.ionproject.integration.model.internal.generic.ICoreModel
+import org.ionproject.integration.model.external.generic.ICoreModel
 import org.ionproject.integration.model.internal.generic.IInternalModel
 import org.ionproject.integration.step.chunkbased.processor.GenericProcessor
 import org.ionproject.integration.step.chunkbased.reader.GenericReader
