@@ -6,5 +6,5 @@ data class CourseTeacher(
     var calendarTerm: String = "",
     var calendarSection: String = "",
     var language: String = "",
-    var faculty: List<Faculty> = listOf()
+    var courses: List<Faculty> = listOf()
 )

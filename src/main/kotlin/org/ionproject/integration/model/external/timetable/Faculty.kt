@@ -1,7 +1,6 @@
 package org.ionproject.integration.model.external.timetable
 
 data class Faculty(
-    var course: String = "",
-    var courseType: String = "",
+    val label: Label? = null,
     var teachers: List<Teacher> = listOf()
 )
