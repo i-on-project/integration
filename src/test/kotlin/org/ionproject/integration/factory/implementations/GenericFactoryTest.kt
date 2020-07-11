@@ -1,6 +1,5 @@
-package org.ionproject.integration.builder.implementations
+package org.ionproject.integration.factory.implementations
 
-import org.ionproject.integration.factory.implementations.GenericFactory
 import org.ionproject.integration.model.internal.generic.JobType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

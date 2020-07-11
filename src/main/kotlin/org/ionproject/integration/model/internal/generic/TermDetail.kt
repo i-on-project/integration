@@ -1,9 +1,10 @@
 package org.ionproject.integration.model.internal.generic
 
-data class TermDetail(
+import java.util.Date
 
-    val name: String,
+class TermDetail(
+    name: String,
     val curricularTerm: List<CurricularTerm>,
-    val startDate: String,
-    val endDate: String
-)
+    startDate: Date,
+    endDate: Date
+) : Event(name, startDate, endDate)

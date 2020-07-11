@@ -1,8 +1,9 @@
 package org.ionproject.integration.model.internal.generic
 
-data class OtherEvent(
+import java.util.Date
 
-    val name: String,
-    val startDate: String,
-    val endDate: String
-)
+class OtherEvent(
+    name: String,
+    startDate: Date,
+    endDate: Date
+) : Event(name, startDate, endDate)

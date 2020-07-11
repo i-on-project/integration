@@ -1,8 +1,9 @@
 package org.ionproject.integration.model.internal.generic
 
-data class Evaluation(
+import java.util.Date
 
-    val name: String,
-    val startDate: String,
-    val endDate: String
-)
+class Evaluation(
+    name: String,
+    startDate: Date,
+    endDate: Date
+) : Event(name, startDate, endDate)

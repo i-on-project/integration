@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import java.util.Date
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class Exam(
-    val name: String,
-    val startDate: Date,
-    val endDate: Date,
+class Exam(
+    name: String,
+    startDate: Date,
+    endDate: Date,
     val location: String?
-)
+) : Event(name, startDate, endDate)
