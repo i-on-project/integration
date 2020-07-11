@@ -7,7 +7,7 @@ import org.ionproject.integration.file.implementations.FileDownloaderImpl
 import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
 import org.ionproject.integration.format.implementations.ISELTimetableFormatChecker
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
-import org.ionproject.integration.model.internal.timetable.TimetableTeachers
+import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.UploadType
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.step.chunkbased.FormatVerifierStepBuilder

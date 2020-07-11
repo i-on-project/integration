@@ -1,4 +1,4 @@
-package org.ionproject.integration.model.internal.timetable
+package org.ionproject.integration.model.external.timetable
 
 enum class Language(val value: String) {
     PT("pt-PT"),

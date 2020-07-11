@@ -6,9 +6,9 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Duration
 import org.ionproject.integration.config.AppProperties
+import org.ionproject.integration.model.external.timetable.CourseTeacher
+import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.model.internal.core.CoreResult
-import org.ionproject.integration.model.internal.timetable.CourseTeacher
-import org.ionproject.integration.model.internal.timetable.Timetable
 import org.ionproject.integration.service.interfaces.ICoreService
 import org.ionproject.integration.utils.HttpUtils
 import org.ionproject.integration.utils.JsonUtils
@@ -18,28 +18,30 @@ import org.springframework.stereotype.Component
 @Component
 class CoreService(private val httpUtils: HttpUtils, private val appProperties: AppProperties) : ICoreService {
 
-    override fun pushTimetable(timetableList: List<Timetable>): Try<CoreResult> {
-        var timetableJson = JsonUtils.toJson(timetableList.toTypedArray())
+    override fun pushTimetable(timetable: Timetable): Try<CoreResult> {
+        var timetableJson = JsonUtils.toJson(timetable)
 
         return sendToCore(timetableJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionEvents"))
     }
 
-    override fun pushCourseTeacher(courseTeacherList: List<CourseTeacher>): Try<CoreResult> {
-        var courseTeacherJson = JsonUtils.toJson(courseTeacherList.toTypedArray())
+    override fun pushCourseTeacher(courseTeacher: CourseTeacher): Try<CoreResult> {
+        var courseTeacherJson = JsonUtils.toJson(courseTeacher)
 
-        return sendToCore(courseTeacherJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionEvents"))
+        return sendToCore(courseTeacherJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionFaculty"))
     }
 
     private fun sendToCore(json: Try<String>, url: URI): Try<CoreResult> {
         return json
-            .map { jsonString -> post(jsonString, url) }
-            .map { httpResponse -> validateStatusCode(httpResponse.statusCode()) }
+            .map { jsonString -> put(jsonString, url) }
+            .map { httpResponse ->
+                validateStatusCode(httpResponse.statusCode())
+            }
     }
 
-    private fun post(jsonString: String, url: URI): HttpResponse<String> {
+    private fun put(jsonString: String, url: URI): HttpResponse<String> {
         var requestBuilder = HttpRequest.newBuilder()
             .uri(url)
-            .POST(HttpRequest.BodyPublishers.ofString(jsonString))
+            .PUT(HttpRequest.BodyPublishers.ofString(jsonString))
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer ${appProperties.coreToken}")
 

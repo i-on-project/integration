@@ -1,12 +1,11 @@
 package org.ionproject.integration.model.internal.generic
 
-import org.ionproject.integration.model.external.generic.CoreExamSchedule
+import java.lang.IllegalArgumentException
 import org.ionproject.integration.model.external.generic.CoreExam
 import org.ionproject.integration.model.external.generic.CoreExamEvent
 import org.ionproject.integration.model.external.generic.CoreExamLabel
+import org.ionproject.integration.model.external.generic.CoreExamSchedule
 import org.ionproject.integration.model.external.generic.ICoreModel
-import org.ionproject.integration.model.internal.timetable.School
-import java.lang.IllegalArgumentException
 
 data class ExamSchedule(
     val school: School,
@@ -16,11 +15,11 @@ data class ExamSchedule(
 ) : IInternalModel {
     override fun toCore(): ICoreModel {
         val examEvents = examsToEvents(exams)
-        return CoreExamSchedule(school, programme, academicYear,"pt-PT", examEvents)
+        return CoreExamSchedule(school, programme, academicYear, "pt-PT", examEvents)
     }
 
     private fun examsToEvents(exams: List<Exam>): List<CoreExam> {
-        val examMap = exams.groupBy{ e -> e.name }
+        val examMap = exams.groupBy { e -> e.name }
         return examMap.map { mapEntry -> toExamCore(mapEntry) }
     }
 
@@ -28,7 +27,7 @@ data class ExamSchedule(
         val courseAcr = mapEntry.key
         val exams = mapEntry.value
         val label = CoreExamLabel(null, courseAcr)
-        if(exams.size != 3){
+        if (exams.size != 3) {
             throw IllegalArgumentException("course $courseAcr has less than 3 dates")
         }
         return CoreExam(label, CoreExamEvent.fromInternalModelExam(exams))

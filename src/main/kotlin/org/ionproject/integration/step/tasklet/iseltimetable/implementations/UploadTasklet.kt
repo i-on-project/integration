@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
+import org.springframework.batch.item.ExecutionContext
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.context.annotation.Scope
 import org.springframework.mail.javamail.JavaMailSenderImpl
@@ -28,7 +29,6 @@ class UploadTasklet(
     private val sender: JavaMailSenderImpl
 ) : Tasklet {
 
-    private val contextKey = "CoreRetries"
     private val log = LoggerFactory.getLogger(UploadTasklet::class.java)
     private lateinit var uploadType: UploadType
 
@@ -38,21 +38,23 @@ class UploadTasklet(
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         var retries = appProperties.coreRetries
+        val retriesKey = "CoreRetries${uploadType.value}"
 
         val jobContext = chunkContext.stepContext
             .stepExecution
             .jobExecution
             .executionContext
 
-        if (jobContext.containsKey(contextKey)) {
-            retries = jobContext.getInt(contextKey)
+        if (jobContext.containsKey(retriesKey)) {
+            retries = jobContext.getInt(retriesKey)
         }
 
-        val coreResult = uploadToCore()
+        val coreResult = uploadToCore(jobContext)
         when (coreResult) {
             CoreResult.TRY_AGAIN -> {
                 retries--
             }
+            CoreResult.SUCCESS -> return RepeatStatus.FINISHED
             else -> {
                 log.error("I-On Core replied with $coreResult")
                 sendEmail(coreResult, chunkContext)
@@ -60,7 +62,7 @@ class UploadTasklet(
             }
         }
 
-        jobContext.putInt(contextKey, retries)
+        jobContext.putInt(retriesKey, retries)
 
         return if (retries == 0) {
             log.warn("I-On Core unreachable")
@@ -71,9 +73,33 @@ class UploadTasklet(
         }
     }
 
-    private fun uploadToCore() = when (uploadType) {
-        UploadType.TIMETABLE -> coreService.pushTimetable(state.timetableTeachers.timetable).orThrow()
-        UploadType.TEACHERS -> coreService.pushCourseTeacher(state.timetableTeachers.teachers).orThrow()
+    private fun uploadToCore(jobContext: ExecutionContext): CoreResult {
+        var index = 0
+        val indexKey = "Index${uploadType.value}"
+        var result = CoreResult.SUCCESS
+
+        if (jobContext.containsKey(indexKey)) {
+            index = jobContext.getInt(indexKey)
+        }
+
+        var size = when (uploadType) {
+            UploadType.TIMETABLE -> state.timetableTeachers.timetable.size
+            UploadType.TEACHERS -> state.timetableTeachers.teachers.size
+        }
+
+        while (index < size) {
+            result = when (uploadType) {
+                UploadType.TIMETABLE -> coreService.pushTimetable(state.timetableTeachers.timetable[index]).orThrow()
+                UploadType.TEACHERS -> coreService.pushCourseTeacher(state.timetableTeachers.teachers[index]).orThrow()
+            }
+
+            if (result !== CoreResult.SUCCESS) break
+            index++
+        }
+
+        jobContext.putInt(indexKey, index)
+
+        return result
     }
 
     private fun sendEmail(coreResult: CoreResult, context: ChunkContext) {

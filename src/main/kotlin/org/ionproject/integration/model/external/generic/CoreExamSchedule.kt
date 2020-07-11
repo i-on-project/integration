@@ -1,7 +1,7 @@
 package org.ionproject.integration.model.external.generic
 
 import org.ionproject.integration.model.internal.generic.Programme
-import org.ionproject.integration.model.internal.timetable.School
+import org.ionproject.integration.model.internal.generic.School
 
 class CoreExamSchedule(
     val school: School,

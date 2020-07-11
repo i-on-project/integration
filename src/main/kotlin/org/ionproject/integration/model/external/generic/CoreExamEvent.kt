@@ -1,8 +1,7 @@
 package org.ionproject.integration.model.external.generic
 
-import org.ionproject.integration.model.internal.generic.Exam
-import java.time.LocalDateTime
 import java.time.ZoneId
+import org.ionproject.integration.model.internal.generic.Exam
 
 data class CoreExamEvent(
     val title: String,

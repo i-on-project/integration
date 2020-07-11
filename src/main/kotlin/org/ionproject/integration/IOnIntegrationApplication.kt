@@ -25,8 +25,8 @@ class IOnIntegrationApplication
             .run(IOnIntegrationApplication::class.java, *args)
         jobLauncher = ctx.getBean(JobLauncher::class.java)
 
-        //runJob("timetableJob", "/app/config/timetable/isel")
-        //runJob("genericJob", "/app/config/generic/academic-calendar")
+        // runJob("timetableJob", "/app/config/timetable/isel")
+        // runJob("genericJob", "/app/config/generic/academic-calendar")
         runJob("genericJob", "src/main/resources/config/generic/exam-schedule")
     }
 

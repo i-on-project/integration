@@ -7,6 +7,6 @@ import java.util.Date
 data class Exam(
     val name: String,
     val startDate: Date,
-    val endDate : Date,
+    val endDate: Date,
     val location: String?
 )

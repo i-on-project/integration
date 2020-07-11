@@ -1,4 +1,4 @@
-package org.ionproject.integration.model.internal.timetable
+package org.ionproject.integration.model.external.timetable
 
 enum class EventCategory(val value: Int) {
     EXAM(1),
