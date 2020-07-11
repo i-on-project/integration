@@ -1,7 +1,7 @@
 package org.ionproject.integration.step.chunkbased.reader
 
 import java.nio.file.Path
-import org.ionproject.integration.builder.implementations.GenericFactory
+import org.ionproject.integration.factory.implementations.GenericFactory
 import org.ionproject.integration.file.implementations.FileDigestImpl
 import org.ionproject.integration.model.internal.generic.IInternalModel
 import org.ionproject.integration.model.internal.generic.JobType

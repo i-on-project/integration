@@ -1,6 +1,6 @@
-package org.ionproject.integration.builder.implementations
+package org.ionproject.integration.factory.implementations
 
-import org.ionproject.integration.builder.interfaces.IGenericFactory
+import org.ionproject.integration.factory.interfaces.IGenericFactory
 import org.ionproject.integration.model.internal.generic.JobType
 
 object GenericFactory {

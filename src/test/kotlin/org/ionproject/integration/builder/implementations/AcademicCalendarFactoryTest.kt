@@ -1,6 +1,7 @@
 package org.ionproject.integration.builder.implementations
 
 import java.nio.file.Paths
+import org.ionproject.integration.factory.implementations.AcademicCalendarFactory
 import org.ionproject.integration.model.internal.generic.AcademicCalendar
 import org.ionproject.integration.model.internal.generic.Term
 import org.ionproject.integration.utils.YAMLException
