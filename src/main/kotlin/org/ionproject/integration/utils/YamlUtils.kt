@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.io.File
+import org.ionproject.integration.utils.exceptions.YAMLException
 
 object YamlUtils {
     private val mapper = ObjectMapper(YAMLFactory())
@@ -13,7 +14,9 @@ object YamlUtils {
 
     fun <T> fromYaml(file: File, klass: Class<T>): Try<T> {
         if (!file.exists() || file.isDirectory) {
-            return Try.ofError<YAMLException>(YAMLException("File $file does not exist or is a directory."))
+            return Try.ofError<YAMLException>(
+                YAMLException("File $file does not exist or is a directory.")
+            )
         }
         return Try.of { mapper.readValue(file, klass) }
             .mapError { throw YAMLException("Invalid yaml") }
@@ -21,7 +24,9 @@ object YamlUtils {
 
     fun <T> fromYaml(yamlBytes: ByteArray, klass: Class<T>): Try<T> {
         if (yamlBytes.isEmpty()) {
-            return Try.ofError<YAMLException>(YAMLException("Empty yaml byte array."))
+            return Try.ofError<YAMLException>(
+                YAMLException("Empty yaml byte array.")
+            )
         }
         return Try.of { mapper.readValue(yamlBytes, klass) }
             .mapError { throw YAMLException("Invalid yaml") }

@@ -5,7 +5,7 @@ import java.time.Instant
 import java.util.Date
 import org.ionproject.integration.factory.implementations.ExamScheduleFactory
 import org.ionproject.integration.model.internal.generic.ExamSchedule
-import org.ionproject.integration.utils.YAMLException
+import org.ionproject.integration.utils.exceptions.YAMLException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

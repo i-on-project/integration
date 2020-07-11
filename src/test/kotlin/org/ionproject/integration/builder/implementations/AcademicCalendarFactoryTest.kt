@@ -4,7 +4,7 @@ import java.nio.file.Paths
 import org.ionproject.integration.factory.implementations.AcademicCalendarFactory
 import org.ionproject.integration.model.internal.generic.AcademicCalendar
 import org.ionproject.integration.model.internal.generic.Term
-import org.ionproject.integration.utils.YAMLException
+import org.ionproject.integration.utils.exceptions.YAMLException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
