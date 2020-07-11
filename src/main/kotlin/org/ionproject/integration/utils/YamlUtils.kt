@@ -1,12 +1,15 @@
 package org.ionproject.integration.utils
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.io.File
 
 object YamlUtils {
-    private val mapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
+    private val mapper = ObjectMapper(YAMLFactory())
+        .registerModule(KotlinModule())
+        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
 
     fun <T> fromYaml(file: File, klass: Class<T>): Try<T> {
         if (!file.exists() || file.isDirectory) {

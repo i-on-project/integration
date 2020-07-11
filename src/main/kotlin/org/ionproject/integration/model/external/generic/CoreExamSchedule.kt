@@ -1,3 +1,12 @@
 package org.ionproject.integration.model.external.generic
 
-class CoreExamSchedule() : ICoreModel
+import org.ionproject.integration.model.internal.generic.Programme
+import org.ionproject.integration.model.internal.timetable.School
+
+class CoreExamSchedule(
+    val school: School,
+    val programme: Programme,
+    val academicYear: String,
+    val language: String,
+    val exams: List<CoreExam>
+) : ICoreModel
