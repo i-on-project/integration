@@ -1,6 +1,5 @@
 package org.ionproject.integration.step.chunkbased
 
-import com.icegreen.greenmail.util.GreenMail
 import java.io.File
 import java.lang.reflect.UndeclaredThrowableException
 import java.nio.file.Paths
@@ -28,7 +27,6 @@ import org.springframework.batch.test.JobLauncherTestUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -59,8 +57,6 @@ internal class GenericParseAndUploadToCoreStepTest {
     @Qualifier("GenericCoreWriter")
     private lateinit var writer: GenericCoreWriter
 
-    @Autowired
-    private lateinit var sender: JavaMailSenderImpl
     @BeforeEach
     private fun initializeJobLauncherTestUtils() {
         jobLauncherTestUtils = JobLauncherTestUtils()
@@ -68,8 +64,6 @@ internal class GenericParseAndUploadToCoreStepTest {
         jobLauncherTestUtils.jobRepository = jobRepository
         jobLauncherTestUtils.job = job
     }
-
-    private lateinit var testSmtp: GreenMail
 
     private fun initJobParameters(jobType: String): JobParameters {
         return JobParametersBuilder()
