@@ -137,7 +137,7 @@ internal class AcademicCalendarTest {
         assertEquals(convertDate(evaluationBeginDate), cac.terms[0].intervals[2].startDate)
         assertEquals(convertDate(evaluationEndDate), cac.terms[0].intervals[2].endDate)
         assertNull(cac.terms[0].intervals[2].excludes)
-        assertTrue(arrayOf(1,2).contentEquals(cac.terms[0].intervals[2].types?.toTypedArray()!!))
+        assertTrue(arrayOf(1, 2).contentEquals(cac.terms[0].intervals[2].types?.toTypedArray()!!))
 
         assertEquals(termDetailName, cac.terms[0].intervals[3].name)
         assertEquals(convertDate(detailStartDate), cac.terms[0].intervals[3].startDate)
