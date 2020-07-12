@@ -28,22 +28,19 @@ internal class AcademicCalendarFactoryTest {
 
     private fun assertions(ac: AcademicCalendar) {
         val school = ac.school
-        val academicYear = ac.academicYear
         val terms = ac.terms
         assertEquals("A", school.acr)
         assertEquals("Escola A", school.name)
-        assertEquals("2019/2020", academicYear)
         assertEquals(1, terms.size)
         termAssertions(terms[0])
     }
 
     private fun termAssertions(term: Term) {
-        val name = term.name
+        term.calendarTerm
         val interruptions = term.interruptions
         val evaluations = term.evaluations
         val td = term.details
         val others = term.otherEvents
-        assertEquals("Semestre de Inverno", name)
         assertEquals(1, interruptions.size)
         assertEquals("Férias de Natal", interruptions[0].name)
         assertEquals(dateFromString("2019-12-23T00:00:00.000Z"), interruptions[0].startDate)

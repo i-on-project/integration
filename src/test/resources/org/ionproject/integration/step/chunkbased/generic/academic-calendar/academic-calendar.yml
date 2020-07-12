@@ -1,9 +1,8 @@
 school:
   name: Escola A
   acr: A
-academicYear: 2019/2020
 terms:
-  - name: Semestre de Inverno
+  - calendarTerm: 1920i
     interruptions:
       - name: Férias de Natal
         startDate: 2019-12-23
@@ -12,12 +11,15 @@ terms:
       - name: Exames época normal
         startDate: 2020-01-13
         endDate: 2020-02-01
+        duringLectures: false
       - name: Exames época recurso
         startDate: 2020-02-03
         endDate: 2020-02-15
+        duringLectures: false
       - name: Exames época especial
         startDate: 2020-02-26
         endDate: 2020-03-07
+        duringLectures: false
     details:
       - name: Turmas 1º Semestre
         curricularTerm:

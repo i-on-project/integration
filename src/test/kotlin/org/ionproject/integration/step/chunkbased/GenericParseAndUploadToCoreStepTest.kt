@@ -68,8 +68,8 @@ internal class GenericParseAndUploadToCoreStepTest {
     @Test
     fun whenAcademicCalendarIsSuccessfullyParsed_thenAssertFileDoesNotExistAndHashIsInContext() {
         val expectedHash = byteArrayOf(
-            -76, -54, 99, -47, 18, 12, -70, 35, -26, -50, -91, 124, 62, 40, 41,
-            -81, 49, -82, -4, 81, 69, -103, -6, 98, 27, 114, -77, 84, -112, -117, 39, 61
+            96, 69, -9, 111, -77, 28, 84, 84, -5, -51, 32, 2, -29, -125, 107, -91, 10,
+            10, 101, -96, -99, -115, 35, 114, -88, 108, 111, 123, 27, 85, -47, 38
         )
         val path = Paths.get(
             "src/test/resources/org/ionproject/integration/step/chunkbased" +
