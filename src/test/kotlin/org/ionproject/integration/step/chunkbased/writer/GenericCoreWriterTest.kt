@@ -70,8 +70,18 @@ internal class GenericCoreWriterTest {
         "test2",
         listOf()
     )
+    val termNotSent = CoreTerm(
+        school,
+        "test2",
+        "test2",
+        "test2",
+        "test2",
+        listOf()
+    )
     val examScheduleItems = mutableListOf(schedule)
-    val couldNotSend = mutableListOf(scheduleDidntSend)
+    val couldNotSendExamSchedule = mutableListOf(scheduleDidntSend)
+    val couldNotSendAcademicCalendar = mutableListOf(CoreAcademicCalendar(listOf(termNotSent)))
+
     private lateinit var testSmtp: GreenMail
 
     @BeforeEach
@@ -100,6 +110,7 @@ internal class GenericCoreWriterTest {
         Mockito.`when`(coreService.pushCoreTerm(term)).thenReturn(Try.ofValue(CoreResult.SUCCESS))
         Mockito.`when`(coreService.pushExamSchedule(schedule)).thenReturn(Try.ofValue(CoreResult.SUCCESS))
         Mockito.`when`(coreService.pushExamSchedule(scheduleDidntSend)).thenReturn(Try.ofValue(CoreResult.TRY_AGAIN))
+        Mockito.`when`(coreService.pushCoreTerm(termNotSent)).thenReturn(Try.ofValue(CoreResult.TRY_AGAIN))
     }
 
     @Test
@@ -159,16 +170,41 @@ internal class GenericCoreWriterTest {
         )
 
         writer.beforeStep(se)
-        writer.write(couldNotSend)
+        writer.write(couldNotSendExamSchedule)
 
         Mockito.verify(coreService, times(3)).pushExamSchedule(scheduleDidntSend)
-
         val messages: Array<MimeMessage> = testSmtp.receivedMessages
         assertEquals(1, messages.size)
         assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
         assertTrue(
             GreenMailUtil.getBody(messages[0])
                 .contains("ISEL Timetable Batch Job FAILED for file: exam_schedule.yml with message I-On Core was unreachable with multiple retries")
+        )
+    }
+    @Test
+    fun whenCouldNotSendAcademicCalendarToCore_thenSendMail() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+        val se = SpringBatchTestUtils().createStepExecution()
+        val writer = GenericCoreWriter(
+            coreService,
+            props,
+            sender,
+            "ACADEMIC_CALENDAR",
+            "alert-mailbox@domain.com",
+            "https://raw.githubusercontent.com/i-on-project/" +
+                "integration-sources/master/sources/calendar/isel/calendar.yml"
+        )
+
+        writer.beforeStep(se)
+        writer.write(couldNotSendAcademicCalendar)
+
+        Mockito.verify(coreService, times(3)).pushCoreTerm(termNotSent)
+        val messages: Array<MimeMessage> = testSmtp.receivedMessages
+        assertEquals(1, messages.size)
+        assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
+        assertTrue(
+            GreenMailUtil.getBody(messages[0])
+                .contains("ISEL Timetable Batch Job FAILED for file: calendar.yml with message I-On Core was unreachable with multiple retries")
         )
     }
 }
