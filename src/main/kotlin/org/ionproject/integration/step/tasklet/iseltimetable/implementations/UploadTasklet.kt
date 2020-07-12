@@ -1,5 +1,6 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import java.lang.IllegalArgumentException
 import org.ionproject.integration.alert.implementations.EmailAlertChannel
 import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.config.AppProperties
@@ -85,12 +86,14 @@ class UploadTasklet(
         var size = when (uploadType) {
             UploadType.TIMETABLE -> state.timetableTeachers.timetable.size
             UploadType.TEACHERS -> state.timetableTeachers.teachers.size
+            else -> throw IllegalArgumentException("Upload type $uploadType not supported")
         }
 
         while (index < size) {
             result = when (uploadType) {
                 UploadType.TIMETABLE -> coreService.pushTimetable(state.timetableTeachers.timetable[index]).orThrow()
                 UploadType.TEACHERS -> coreService.pushCourseTeacher(state.timetableTeachers.teachers[index]).orThrow()
+                else -> throw IllegalArgumentException("Upload type $uploadType not supported")
             }
 
             if (result !== CoreResult.SUCCESS) break

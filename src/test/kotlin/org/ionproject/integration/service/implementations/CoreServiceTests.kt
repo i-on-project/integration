@@ -7,6 +7,7 @@ import java.time.Duration
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.model.external.generic.CoreAcademicCalendar
 import org.ionproject.integration.model.external.generic.CoreExamSchedule
+import org.ionproject.integration.model.external.generic.CoreTerm
 import org.ionproject.integration.model.external.timetable.CourseTeacher
 import org.ionproject.integration.model.external.timetable.School
 import org.ionproject.integration.model.external.timetable.Timetable
@@ -31,7 +32,7 @@ internal class CoreServiceTestFixtures {
     companion object {
         val timetable = Timetable(school = School(name = "timetable"))
         val courseTeacher = CourseTeacher(school = School(name = "courseTeacher"))
-        val coreAcademicCalendar = CoreAcademicCalendar(terms = listOf())
+        val coreAcademicCalendar = CoreAcademicCalendar(terms = listOf(CoreTerm(School(name = "testSchool"), "test", "test", "test", "test", intervals = listOf())))
         val coreExamSchedule = CoreExamSchedule(
             school = org.ionproject.integration.model.internal.generic.School("test", acr = "test"),
             programme = Programme("test", acr = "test"),
@@ -130,7 +131,7 @@ class CoreServiceTests {
             .thenReturn(200)
 
         // Act
-        val result = coreService.pushAcademicCalendar(CoreServiceTestFixtures.coreAcademicCalendar)
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
             .orThrow()
 
         // Assert
@@ -190,7 +191,7 @@ class CoreServiceTests {
             .thenReturn(404)
 
         // Act
-        val result = coreService.pushAcademicCalendar(CoreServiceTestFixtures.coreAcademicCalendar)
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
             .orThrow()
 
         // Assert
@@ -250,7 +251,7 @@ class CoreServiceTests {
             .thenReturn(500)
 
         // Act
-        val result = coreService.pushAcademicCalendar(CoreServiceTestFixtures.coreAcademicCalendar)
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
             .orThrow()
 
         // Assert
@@ -310,7 +311,7 @@ class CoreServiceTests {
             .thenReturn(401)
 
         // Act
-        val result = coreService.pushAcademicCalendar(CoreServiceTestFixtures.coreAcademicCalendar)
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
             .orThrow()
 
         // Assert
@@ -370,7 +371,7 @@ class CoreServiceTests {
             .thenReturn(301)
 
         // Act
-        val result = coreService.pushAcademicCalendar(CoreServiceTestFixtures.coreAcademicCalendar)
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
             .orThrow()
 
         // Assert
@@ -430,7 +431,7 @@ class CoreServiceTests {
             .thenReturn(400)
 
         // Act
-        val result = coreService.pushAcademicCalendar(CoreServiceTestFixtures.coreAcademicCalendar)
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
             .orThrow()
 
         // Assert

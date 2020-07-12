@@ -6,8 +6,8 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Duration
 import org.ionproject.integration.config.AppProperties
-import org.ionproject.integration.model.external.generic.CoreAcademicCalendar
 import org.ionproject.integration.model.external.generic.CoreExamSchedule
+import org.ionproject.integration.model.external.generic.CoreTerm
 import org.ionproject.integration.model.external.timetable.CourseTeacher
 import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.model.internal.core.CoreResult
@@ -32,8 +32,8 @@ class CoreService(private val httpUtils: HttpUtils, private val appProperties: A
         return sendToCore(courseTeacherJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionFaculty"))
     }
 
-    override fun pushAcademicCalendar(coreAcademicCalendar: CoreAcademicCalendar): Try<CoreResult> {
-        var academicCalendarJson = JsonUtils.toJson(coreAcademicCalendar)
+    override fun pushCoreTerm(coreTerm: CoreTerm): Try<CoreResult> {
+        var academicCalendarJson = JsonUtils.toJson(coreTerm)
 
         return sendToCore(academicCalendarJson, URI.create("${appProperties.coreBaseUrl}/v0/insertCalendarTerm"))
     }
@@ -41,7 +41,7 @@ class CoreService(private val httpUtils: HttpUtils, private val appProperties: A
     override fun pushExamSchedule(coreExamSchedule: CoreExamSchedule): Try<CoreResult> {
         var coreExamScheduleJson = JsonUtils.toJson(coreExamSchedule)
 
-        return sendToCore(coreExamScheduleJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionFaculty"))
+        return sendToCore(coreExamScheduleJson, URI.create("${appProperties.coreBaseUrl}/v0/insertExamSchedule"))
     }
 
     private fun sendToCore(json: Try<String>, url: URI): Try<CoreResult> {

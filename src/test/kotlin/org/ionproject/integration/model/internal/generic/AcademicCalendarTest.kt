@@ -125,7 +125,7 @@ internal class AcademicCalendarTest {
         assertNull(cac.terms[0].intervals[0].curricularTerm)
         assertEquals(1, cac.terms[0].intervals[0].excludes?.size)
         assertEquals(2, cac.terms[0].intervals[0].excludes?.get(0))
-        assertNull(cac.terms[0].intervals[0].types)
+        assertNull(cac.terms[0].intervals[0].categories)
 
         assertEquals(evaluationName, cac.terms[0].intervals[1].name)
         assertEquals(convertDate(evaluationBeginDate), cac.terms[0].intervals[1].startDate)
@@ -137,20 +137,20 @@ internal class AcademicCalendarTest {
         assertEquals(convertDate(evaluationBeginDate), cac.terms[0].intervals[2].startDate)
         assertEquals(convertDate(evaluationEndDate), cac.terms[0].intervals[2].endDate)
         assertNull(cac.terms[0].intervals[2].excludes)
-        assertTrue(arrayOf(1, 2).contentEquals(cac.terms[0].intervals[2].types?.toTypedArray()!!))
+        assertTrue(arrayOf(1, 2).contentEquals(cac.terms[0].intervals[2].categories?.toTypedArray()!!))
 
         assertEquals(termDetailName, cac.terms[0].intervals[3].name)
         assertEquals(convertDate(detailStartDate), cac.terms[0].intervals[3].startDate)
         assertEquals(convertDate(detailEndDate), cac.terms[0].intervals[3].endDate)
-        assertEquals(curricularTerms, cac.terms[0].intervals[3].curricularTerm)
-        assertEquals(2, cac.terms[0].intervals[3].types?.get(0))
+        assertEquals(listOf(1, 2, 3), cac.terms[0].intervals[3].curricularTerm)
+        assertEquals(2, cac.terms[0].intervals[3].categories?.get(0))
         assertNull(cac.terms[0].intervals[3].excludes)
 
         assertEquals(otherEventName, cac.terms[0].intervals[4].name)
         assertEquals(convertDate(otherEventStartDate), cac.terms[0].intervals[4].startDate)
         assertEquals(convertDate(otherEventEndDate), cac.terms[0].intervals[4].endDate)
         assertNull(cac.terms[0].intervals[4].excludes)
-        assertNull(cac.terms[0].intervals[4].types)
+        assertNull(cac.terms[0].intervals[4].categories)
         assertNull(cac.terms[0].intervals[4].curricularTerm)
     }
 }

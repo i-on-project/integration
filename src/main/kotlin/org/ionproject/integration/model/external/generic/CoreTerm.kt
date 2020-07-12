@@ -109,7 +109,7 @@ data class CoreTerm(
                     convertDateToLocalDateString(detail.startDate),
                     convertDateToLocalDateString(detail.endDate),
                     detail.name,
-                    detail.curricularTerm,
+                    detail.curricularTerm.map { c -> c.id },
                     listOf(2),
                     null
                 )

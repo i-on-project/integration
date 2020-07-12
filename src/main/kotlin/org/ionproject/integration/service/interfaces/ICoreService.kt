@@ -1,7 +1,7 @@
 package org.ionproject.integration.service.interfaces
 
-import org.ionproject.integration.model.external.generic.CoreAcademicCalendar
 import org.ionproject.integration.model.external.generic.CoreExamSchedule
+import org.ionproject.integration.model.external.generic.CoreTerm
 import org.ionproject.integration.model.external.timetable.CourseTeacher
 import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.model.internal.core.CoreResult
@@ -21,7 +21,7 @@ interface ICoreService {
     /**
      * Push Academic Calendar data to I-on Core
      */
-    fun pushAcademicCalendar(coreAcademicCalendar: CoreAcademicCalendar): Try<CoreResult>
+    fun pushCoreTerm(coreTerm: CoreTerm): Try<CoreResult>
 
     /**
      * Push Exam Schedule data to I-on Core

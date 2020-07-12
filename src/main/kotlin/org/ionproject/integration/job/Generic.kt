@@ -42,7 +42,7 @@ class Generic(
             .chunk<IInternalModel, ICoreModel>(1)
             .reader(genericReader())
             .processor(genericProcessor())
-            .writer(genericCoreWriter())
+            .writer(genericCoreWriter)
             .build()
     }
 
@@ -61,15 +61,19 @@ class Generic(
             .tasklet(tasklet)
             .build()
     }
+
     @StepScope
     @Bean
     fun genericReader() = GenericReader()
+
     @StepScope
     @Bean
     fun genericProcessor() = GenericProcessor()
+
+    @Autowired
     @StepScope
-    @Bean
-    fun genericCoreWriter() = GenericCoreWriter()
+    private lateinit var genericCoreWriter: GenericCoreWriter
+
     @StepScope
     @Bean("genericPostUpload")
     fun postUploadStep() = PostUploadTasklet()
