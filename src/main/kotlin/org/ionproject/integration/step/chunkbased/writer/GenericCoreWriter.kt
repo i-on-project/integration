@@ -14,7 +14,11 @@ import org.ionproject.integration.utils.EmailUtils
 import org.ionproject.integration.utils.JobResult
 import org.ionproject.integration.utils.orThrow
 import org.slf4j.LoggerFactory
+import org.springframework.batch.core.ExitStatus
+import org.springframework.batch.core.JobExecutionListener
 import org.springframework.batch.core.StepExecution
+import org.springframework.batch.core.StepExecutionListener
+import org.springframework.batch.core.annotation.BeforeStep
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.ExecutionContext
 import org.springframework.batch.item.ItemWriter
@@ -35,7 +39,8 @@ class GenericCoreWriter(
     @Value("#{jobParameters['srcRemoteLocation']}")
     private val srcRemoteLocation: String
 ) :
-    ItemWriter<ICoreModel> {
+    ItemWriter<ICoreModel> , StepExecutionListener{
+
 
     private val log = LoggerFactory.getLogger(GenericCoreWriter::class.java)
 
@@ -65,14 +70,9 @@ class GenericCoreWriter(
 
         coreResult = uploadToCore(jobContext, items[0], uploadType)
 
-        jobContext.putInt(retriesKey, retries)
-        stepExecution
-            .jobExecution
-            .executionContext
-
         when (coreResult) {
             CoreResult.TRY_AGAIN -> {
-                retries--
+                jobContext.putInt(retriesKey, --retries)
             }
             CoreResult.SUCCESS -> return false
             else -> {
@@ -157,5 +157,13 @@ class GenericCoreWriter(
         val alertService = EmailAlertService(channel)
 
         alertService.sendEmail()
+    }
+
+    override fun beforeStep(stepExecution: StepExecution) {
+        this.stepExecution = stepExecution
+    }
+
+    override fun afterStep(stepExecution: StepExecution): ExitStatus? {
+        return ExitStatus.COMPLETED
     }
 }

@@ -75,7 +75,6 @@ internal class GenericParseAndUploadToCoreStepTest {
 
     @Test
     fun whenAcademicCalendarIsSuccessfullyParsed_thenAssertFileDoesNotExistAndHashIsInContext() {
-        Mockito.`when`(writer.write(mutableListOf()))
         val expectedHash = byteArrayOf(
             96, 69, -9, 111, -77, 28, 84, 84, -5, -51, 32, 2, -29, -125, 107, -91, 10,
             10, 101, -96, -99, -115, 35, 114, -88, 108, 111, 123, 27, 85, -47, 38
