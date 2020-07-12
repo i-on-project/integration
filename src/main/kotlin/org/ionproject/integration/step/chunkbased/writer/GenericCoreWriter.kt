@@ -16,7 +16,6 @@ import org.ionproject.integration.utils.orThrow
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.StepExecution
-import org.springframework.batch.core.annotation.BeforeStep
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.ExecutionContext
 import org.springframework.batch.item.ItemWriter
@@ -45,11 +44,6 @@ class GenericCoreWriter(
 
     @Value("#{jobParameters['srcRemoteLocation']}")
     private lateinit var srcRemoteLocation: String
-
-    @BeforeStep
-    fun saveStepExecution(stepExecution: StepExecution) {
-        this.stepExecution = stepExecution
-    }
 
     private lateinit var stepExecution: StepExecution
 

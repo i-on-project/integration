@@ -1,11 +1,13 @@
 package org.ionproject.integration.step.chunkbased
 
+import com.icegreen.greenmail.util.GreenMail
 import java.io.File
 import java.lang.reflect.UndeclaredThrowableException
 import java.nio.file.Paths
 import java.time.Instant
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.Generic
+import org.ionproject.integration.step.chunkbased.writer.GenericCoreWriter
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -14,6 +16,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Mockito
+import org.mockito.Mockito.times
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters
@@ -23,6 +27,8 @@ import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.test.JobLauncherTestUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -49,6 +55,12 @@ internal class GenericParseAndUploadToCoreStepTest {
 
     private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
 
+    @MockBean
+    @Qualifier("GenericCoreWriter")
+    private lateinit var writer: GenericCoreWriter
+
+    @Autowired
+    private lateinit var sender: JavaMailSenderImpl
     @BeforeEach
     private fun initializeJobLauncherTestUtils() {
         jobLauncherTestUtils = JobLauncherTestUtils()
@@ -56,6 +68,8 @@ internal class GenericParseAndUploadToCoreStepTest {
         jobLauncherTestUtils.jobRepository = jobRepository
         jobLauncherTestUtils.job = job
     }
+
+    private lateinit var testSmtp: GreenMail
 
     private fun initJobParameters(jobType: String): JobParameters {
         return JobParametersBuilder()
@@ -67,6 +81,7 @@ internal class GenericParseAndUploadToCoreStepTest {
 
     @Test
     fun whenAcademicCalendarIsSuccessfullyParsed_thenAssertFileDoesNotExistAndHashIsInContext() {
+        Mockito.`when`(writer.write(mutableListOf()))
         val expectedHash = byteArrayOf(
             96, 69, -9, 111, -77, 28, 84, 84, -5, -51, 32, 2, -29, -125, 107, -91, 10,
             10, 101, -96, -99, -115, 35, 114, -88, 108, 111, 123, 27, 85, -47, 38
@@ -86,12 +101,13 @@ internal class GenericParseAndUploadToCoreStepTest {
 
         assertFalse(temp.exists())
         assertTrue(expectedHash.contentEquals(actualHash))
+        Mockito.verify(writer, times(1)).write(Mockito.anyList())
     }
     @Test
     fun whenExamScheduleIsSuccessfullyParsed_thenAssertFileDoesNotExistAndHashIsInContext() {
         val expectedHash = byteArrayOf(
-            -117, 20, -72, -67, -36, -111, -88, -85, 37, 33, -14, -122, 42, -47, -41, -124,
-            -5, -108, -50, 35, 56, -19, -51, -123, 105, 17, -28, 75, 77, 42, 94, 126
+            -55, -84, 127, -43, 94, -70, -94, 86, -116, -32, -95, 75, -109, -111, 82, 93,
+            98, 113, -10, 37, -30, -117, 64, 2, -2, 40, 107, -121, 126, 53, -55, 81
         )
         val path = Paths.get(
             "src/test/resources/org/ionproject/integration/step/chunkbased/generic/exam-schedule/exam-schedule.yml"
@@ -107,6 +123,7 @@ internal class GenericParseAndUploadToCoreStepTest {
 
         assertFalse(temp.exists())
         assertTrue(expectedHash.contentEquals(actualHash))
+        Mockito.verify(writer, times(1)).write(Mockito.anyList())
     }
     @Test
     fun whenFileIsMismatchedWithJobType_thenThrowYamlException() {
@@ -127,6 +144,7 @@ internal class GenericParseAndUploadToCoreStepTest {
         assertFalse(temp.exists())
         assertEquals("YAMLException", ex.undeclaredThrowable::class.java.simpleName)
         assertEquals("Invalid yaml", ex.undeclaredThrowable.message)
+        Mockito.verify(writer, times(0)).write(Mockito.anyList())
     }
     @Test
     fun whenJobTypeDoesNotExist_thenThrowIllegaArgumentException() {
@@ -151,6 +169,7 @@ internal class GenericParseAndUploadToCoreStepTest {
         )
         assertFalse(temp.exists())
         assertNull(je.executionContext["file-hash"])
+        Mockito.verify(writer, times(0)).write(Mockito.anyList())
     }
 
     @Test
@@ -171,5 +190,6 @@ internal class GenericParseAndUploadToCoreStepTest {
         )
         assertFalse(temp.exists())
         assertNull(je.executionContext["file-hash"])
+        Mockito.verify(writer, times(0)).write(Mockito.anyList())
     }
 }
