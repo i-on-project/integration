@@ -33,9 +33,10 @@ class Generic(
     @Bean
     fun genericJob() = jobBuilderFactory.get("Generic Batch Job")
         .start(taskletStep("Download Yaml", downloadAndCompareTasklet()))
+        .on("STOPPED").end()
         .next(genericParseAndUploadToCoreStep())
         .next(taskletStep("PostUploadStep", postUploadStep()))
-        .build()
+        .build().build()
 
     private fun genericParseAndUploadToCoreStep(): Step {
         return stepBuilderFactory.get("Parse And Upload to Core Step")

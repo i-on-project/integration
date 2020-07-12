@@ -27,22 +27,19 @@ import org.springframework.stereotype.Component
 class GenericCoreWriter(
     private val coreService: CoreService,
     private val appProperties: AppProperties,
-    private val sender: JavaMailSenderImpl
+    private val sender: JavaMailSenderImpl,
+    @Value("#{jobParameters['jobType']}")
+    private val jobType: String,
+    @Value("#{jobParameters['alertRecipient']}")
+    private val alertRecipient: String,
+    @Value("#{jobParameters['srcRemoteLocation']}")
+    private val srcRemoteLocation: String
 ) :
     ItemWriter<ICoreModel> {
 
     private val log = LoggerFactory.getLogger(GenericCoreWriter::class.java)
 
     private val EXAM_SCHEDULE_LENGTH: Int = 1
-
-    @Value("#{jobParameters['jobType']}")
-    private lateinit var jobType: String
-
-    @Value("#{jobParameters['alertRecipient']}")
-    private lateinit var alertRecipient: String
-
-    @Value("#{jobParameters['srcRemoteLocation']}")
-    private lateinit var srcRemoteLocation: String
 
     private lateinit var stepExecution: StepExecution
 
