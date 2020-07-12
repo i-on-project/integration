@@ -17,7 +17,7 @@ internal class AcademicCalendarTest {
         return date
             .toInstant()
             .atZone(ZoneId.of("GMT"))
-            .toLocalDateTime()
+            .toLocalDate()
             .toString()
     }
 
@@ -26,6 +26,7 @@ internal class AcademicCalendarTest {
     val school = School(schoolAName, schoolAAcr)
     val interruptionName = "interruption1"
     val evaluationName = "evaluation1"
+    val evaluationName2 = "evaluation2"
     val termDetailName = "detail1"
     val otherEventName = "other1"
     val beginInstant = Instant.now()
@@ -43,7 +44,8 @@ internal class AcademicCalendarTest {
     val otherEventStartDate = Date.from(beginInstant)
     val otherEventEndDate = Date.from(beginInstant.plusSeconds(7200))
     val interruptions = listOf(Interruption(interruptionName, interruptionBeginDate, interruptionEndDate))
-    val evaluations = listOf(Evaluation(evaluationName, evaluationBeginDate, evaluationEndDate, false))
+    val evaluations = listOf(Evaluation(evaluationName, evaluationBeginDate, evaluationEndDate, false),
+        Evaluation(evaluationName2, evaluationBeginDate, evaluationEndDate, true))
     val details = listOf(TermDetail(termDetailName, curricularTerms, detailStartDate, detailEndDate))
     val otherEvents = listOf(OtherEvent(otherEventName, otherEventStartDate, otherEventEndDate))
 
@@ -131,18 +133,24 @@ internal class AcademicCalendarTest {
         assertEquals(1, cac.terms[0].intervals[1].excludes?.size)
         assertEquals(2, cac.terms[0].intervals[1].excludes?.get(0))
 
-        assertEquals(termDetailName, cac.terms[0].intervals[2].name)
-        assertEquals(convertDate(detailStartDate), cac.terms[0].intervals[2].startDate)
-        assertEquals(convertDate(detailEndDate), cac.terms[0].intervals[2].endDate)
-        assertEquals(curricularTerms, cac.terms[0].intervals[2].curricularTerm)
-        assertEquals(2, cac.terms[0].intervals[2].types?.get(0))
+        assertEquals(evaluationName2, cac.terms[0].intervals[2].name)
+        assertEquals(convertDate(evaluationBeginDate), cac.terms[0].intervals[2].startDate)
+        assertEquals(convertDate(evaluationEndDate), cac.terms[0].intervals[2].endDate)
         assertNull(cac.terms[0].intervals[2].excludes)
+        assertTrue(arrayOf(1,2).contentEquals(cac.terms[0].intervals[2].types?.toTypedArray()!!))
 
-        assertEquals(otherEventName, cac.terms[0].intervals[3].name)
-        assertEquals(convertDate(otherEventStartDate), cac.terms[0].intervals[3].startDate)
-        assertEquals(convertDate(otherEventEndDate), cac.terms[0].intervals[3].endDate)
+        assertEquals(termDetailName, cac.terms[0].intervals[3].name)
+        assertEquals(convertDate(detailStartDate), cac.terms[0].intervals[3].startDate)
+        assertEquals(convertDate(detailEndDate), cac.terms[0].intervals[3].endDate)
+        assertEquals(curricularTerms, cac.terms[0].intervals[3].curricularTerm)
+        assertEquals(2, cac.terms[0].intervals[3].types?.get(0))
         assertNull(cac.terms[0].intervals[3].excludes)
-        assertNull(cac.terms[0].intervals[3].types)
-        assertNull(cac.terms[0].intervals[3].curricularTerm)
+
+        assertEquals(otherEventName, cac.terms[0].intervals[4].name)
+        assertEquals(convertDate(otherEventStartDate), cac.terms[0].intervals[4].startDate)
+        assertEquals(convertDate(otherEventEndDate), cac.terms[0].intervals[4].endDate)
+        assertNull(cac.terms[0].intervals[4].excludes)
+        assertNull(cac.terms[0].intervals[4].types)
+        assertNull(cac.terms[0].intervals[4].curricularTerm)
     }
 }

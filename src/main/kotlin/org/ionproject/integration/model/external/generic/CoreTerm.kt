@@ -92,8 +92,8 @@ data class CoreTerm(
                     convertDateToLocalDateString(evaluation.endDate),
                     evaluation.name,
                     null,
-                    if (evaluation.duringLectures) listOf(2) else null,
-                    if (evaluation.duringLectures) null else listOf(2)
+                    if (evaluation.duringLectures) listOf(1, 2) else listOf(1),
+                    if (!evaluation.duringLectures) listOf(2) else null
                 )
             }
         }
@@ -140,7 +140,7 @@ data class CoreTerm(
             return date
                 .toInstant()
                 .atZone(ZoneId.of("GMT"))
-                .toLocalDateTime()
+                .toLocalDate()
                 .toString()
         }
     }
