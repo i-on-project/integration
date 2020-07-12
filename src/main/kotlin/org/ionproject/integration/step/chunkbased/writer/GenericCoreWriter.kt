@@ -15,10 +15,8 @@ import org.ionproject.integration.utils.JobResult
 import org.ionproject.integration.utils.orThrow
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.ExitStatus
-import org.springframework.batch.core.JobExecutionListener
 import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.StepExecutionListener
-import org.springframework.batch.core.annotation.BeforeStep
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.ExecutionContext
 import org.springframework.batch.item.ItemWriter
@@ -39,8 +37,7 @@ class GenericCoreWriter(
     @Value("#{jobParameters['srcRemoteLocation']}")
     private val srcRemoteLocation: String
 ) :
-    ItemWriter<ICoreModel> , StepExecutionListener{
-
+    ItemWriter<ICoreModel>, StepExecutionListener {
 
     private val log = LoggerFactory.getLogger(GenericCoreWriter::class.java)
 

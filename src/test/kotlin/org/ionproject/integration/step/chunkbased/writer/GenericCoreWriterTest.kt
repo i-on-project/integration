@@ -4,6 +4,8 @@ import com.icegreen.greenmail.util.DummySSLSocketFactory
 import com.icegreen.greenmail.util.GreenMail
 import com.icegreen.greenmail.util.GreenMailUtil
 import com.icegreen.greenmail.util.ServerSetupTest
+import java.security.Security
+import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.Generic
@@ -30,8 +32,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.security.Security
-import javax.mail.internet.MimeMessage
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
