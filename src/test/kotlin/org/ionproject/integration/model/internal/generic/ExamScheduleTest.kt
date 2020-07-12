@@ -52,7 +52,7 @@ internal class ExamScheduleTest {
         assertEquals(schoolAAcr, ces.school.acr)
         assertEquals(programmeName, ces.programme.name)
         assertEquals(programmeAcr, ces.programme.acr)
-        assertEquals(academicYear, ces.academicYear)
+        assertEquals(academicYear, ces.calendarTerm)
         assertEquals(exam1Name, ces.exams[0].label.acr)
         assertNull(ces.exams[0].label.name)
         assertEquals(convertDate(exam1StartDate), ces.exams[0].events[0].startDate)

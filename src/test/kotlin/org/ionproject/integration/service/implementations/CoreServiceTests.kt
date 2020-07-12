@@ -36,7 +36,7 @@ internal class CoreServiceTestFixtures {
         val coreExamSchedule = CoreExamSchedule(
             school = org.ionproject.integration.model.internal.generic.School("test", acr = "test"),
             programme = Programme("test", acr = "test"),
-            academicYear = "test",
+            calendarTerm = "test",
             language = "test",
             exams = listOf()
         )

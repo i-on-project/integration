@@ -26,13 +26,13 @@ internal class ExamScheduleFactoryTest {
     }
 
     private fun assertions(ec: ExamSchedule) {
-        val ay = ec.academicYear
+        val ct = ec.calendarTerm
         val school = ec.school
         val p = ec.programme
         val exs = ec.exams
         assertEquals("School A", school.name)
         assertEquals("A", school.acr)
-        assertEquals("2019/2020", ay)
+        assertEquals("2019/20-Verão", ct)
         assertEquals("Programme A", p.name)
         assertEquals("PA", p.acr)
         assertEquals(6, exs.size)

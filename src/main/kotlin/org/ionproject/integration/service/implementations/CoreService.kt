@@ -41,7 +41,7 @@ class CoreService(private val httpUtils: HttpUtils, private val appProperties: A
     override fun pushExamSchedule(coreExamSchedule: CoreExamSchedule): Try<CoreResult> {
         var coreExamScheduleJson = JsonUtils.toJson(coreExamSchedule)
 
-        return sendToCore(coreExamScheduleJson, URI.create("${appProperties.coreBaseUrl}/v0/insertExamSchedule"))
+        return sendToCore(coreExamScheduleJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionEvents"))
     }
 
     private fun sendToCore(json: Try<String>, url: URI): Try<CoreResult> {
@@ -70,7 +70,7 @@ class CoreService(private val httpUtils: HttpUtils, private val appProperties: A
         return when (statusCode) {
             in HttpURLConnection.HTTP_OK..HttpURLConnection.HTTP_NO_CONTENT -> CoreResult.SUCCESS
             HttpURLConnection.HTTP_NOT_FOUND, HttpURLConnection.HTTP_INTERNAL_ERROR -> CoreResult.TRY_AGAIN
-            HttpURLConnection.HTTP_UNAUTHORIZED -> CoreResult.EXPIRED_TOKEN
+            HttpURLConnection.HTTP_UNAUTHORIZED, HttpURLConnection.HTTP_FORBIDDEN -> CoreResult.EXPIRED_TOKEN
             HttpURLConnection.HTTP_BAD_REQUEST -> CoreResult.INVALID_JSON
             else -> CoreResult.UNRECOVERABLE_ERROR
         }

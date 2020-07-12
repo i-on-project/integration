@@ -9,12 +9,12 @@ import org.ionproject.integration.model.external.generic.ICoreModel
 data class ExamSchedule(
     val school: School,
     val programme: Programme,
-    val academicYear: String,
+    val calendarTerm: String,
     val exams: List<Exam>
 ) : IInternalModel {
     override fun toCore(): ICoreModel {
         val examEvents = examsToCoreExams(exams)
-        return CoreExamSchedule(school, programme, academicYear, "pt-PT", examEvents)
+        return CoreExamSchedule(school, programme, calendarTerm, "pt-PT", examEvents)
     }
 
     private fun examsToCoreExams(exams: List<Exam>): List<CoreExam> {

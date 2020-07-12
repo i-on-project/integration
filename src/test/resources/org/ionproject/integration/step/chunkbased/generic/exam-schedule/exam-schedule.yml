@@ -4,7 +4,7 @@ school:
 programme:
   name: Programme A
   acr: PA
-academicYear: 2019/2020
+calendarTerm: 2019/20-Verão
 exams:
   - name: AED
     startDate: 2020-07-09T14:00:00.000

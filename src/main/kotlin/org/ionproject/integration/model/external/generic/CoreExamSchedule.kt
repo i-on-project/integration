@@ -6,7 +6,7 @@ import org.ionproject.integration.model.internal.generic.School
 class CoreExamSchedule(
     val school: School,
     val programme: Programme,
-    val academicYear: String,
+    val calendarTerm: String,
     val language: String,
     val exams: List<CoreExam>
 ) : ICoreModel
