@@ -14,7 +14,6 @@ import org.ionproject.integration.utils.EmailUtils
 import org.ionproject.integration.utils.JobResult
 import org.ionproject.integration.utils.orThrow
 import org.slf4j.LoggerFactory
-import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.ExecutionContext
@@ -81,13 +80,13 @@ class GenericCoreWriter(
             CoreResult.SUCCESS -> return false
             else -> {
                 log.error("I-On Core replied with $coreResult")
-                sendEmail(coreResult, stepExecution.jobParameters)
+                sendEmail(coreResult)
                 return false
             }
         }
         return if (retries == 0) {
             log.warn("I-On Core unreachable")
-            sendEmail(coreResult, stepExecution.jobParameters)
+            sendEmail(coreResult)
             false
         } else {
             return true
@@ -138,7 +137,7 @@ class GenericCoreWriter(
         return result
     }
 
-    private fun sendEmail(coreResult: CoreResult, jobParameters: JobParameters) {
+    private fun sendEmail(coreResult: CoreResult) {
 
         val asset = srcRemoteLocation.substring(srcRemoteLocation.lastIndexOf('/') + 1, srcRemoteLocation.length)
 
