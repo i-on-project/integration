@@ -34,19 +34,19 @@ class JobEngine(
 ) {
     private val log = LoggerFactory.getLogger(IOnIntegrationApplication::class.java)
 
-    @Scheduled(fixedRate = 120000)
+    @Scheduled(cron = "0 0 1 ? * SUN *")
     fun runTimetableJob() {
-        setUpAndRunJob("timetableJob", "/app/config/timetable/isel")
+        setUpAndRunJob("timetableJob", "/app/resources/config/timetable/isel")
     }
 
-    @Scheduled(fixedRate = 120000)
+    @Scheduled(cron = "0 0 2 ? * SUN *")
     fun runGenericAcademicCalendar() {
-        setUpAndRunJob("genericJob", "/app/config/generic/academic-calendar")
+        setUpAndRunJob("genericJob", "/app/resources/config/generic/academic-calendar")
     }
 
-    @Scheduled(fixedRate = 120000)
+    @Scheduled(cron = "0 0 3 ? * SUN *")
     fun runGenericExamSchedule() {
-        setUpAndRunJob("genericJob", "/app/config/generic/exam-schedule")
+        setUpAndRunJob("genericJob", "/app/resources/config/generic/exam-schedule")
     }
 
     fun setUpAndRunJob(jobName: String, configPath: String) {
