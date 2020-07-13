@@ -4,6 +4,11 @@ import com.icegreen.greenmail.util.DummySSLSocketFactory
 import com.icegreen.greenmail.util.GreenMail
 import com.icegreen.greenmail.util.GreenMailUtil
 import com.icegreen.greenmail.util.ServerSetupTest
+import java.io.File
+import java.lang.reflect.UndeclaredThrowableException
+import java.security.Security
+import java.time.Instant
+import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
@@ -33,11 +38,6 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.io.File
-import java.lang.reflect.UndeclaredThrowableException
-import java.security.Security
-import java.time.Instant
-import javax.mail.internet.MimeMessage
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
