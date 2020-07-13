@@ -56,6 +56,7 @@ class DownloadAndCompareTasklet(
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         val jobType = chunkContext.stepContext.jobParameters["jobType"] as String?
         val jobTypeEnum = if (jobType != null) enumValueOf<JobType>(jobType) else null
+        val jobName = chunkContext.stepContext.jobName
         val fileName = parseFileName(srcRemoteLocation)
         val localFileDestination: Path = Paths.get(appProperties.resourcesFolder, fileName)
 
@@ -70,7 +71,7 @@ class DownloadAndCompareTasklet(
         val path = downloader.download(srcRemoteLocation, localFileDestination, jobTypeEnum)
             .match({ it }, {
                 file.delete()
-                selectMessageFromExceptionAndSendEmail(it, fileName)
+                selectMessageFromExceptionAndSendEmail(jobName, it, fileName)
                 throw it
             })
         chunkContext.stepContext.stepExecution.jobExecution.executionContext.put("file-path", path)
@@ -86,7 +87,7 @@ class DownloadAndCompareTasklet(
                 },
                 {
                     path.toFile().delete()
-                    selectMessageFromExceptionAndSendEmail(it, fileName)
+                    selectMessageFromExceptionAndSendEmail(jobName, it, fileName)
                     throw it
                 })
 
@@ -97,11 +98,9 @@ class DownloadAndCompareTasklet(
     }
 
     override fun afterStep(stepExecution: StepExecution): ExitStatus {
-        if (fileIsEqualToLast) {
-            sendEmail("File Is equal to last successfully parsed", parseFileName(srcRemoteLocation))
-            return ExitStatus.STOPPED
-        }
-        return ExitStatus.COMPLETED
+        return if (fileIsEqualToLast)
+            ExitStatus.STOPPED
+        else ExitStatus.COMPLETED
     }
 
     private fun parseFileName(uri: URI): String {
@@ -109,20 +108,20 @@ class DownloadAndCompareTasklet(
         return path.substring(path.lastIndexOf('/') + 1, path.length)
     }
 
-    private fun selectMessageFromExceptionAndSendEmail(e: Exception, asset: String) {
+    private fun selectMessageFromExceptionAndSendEmail(jobName: String, e: Exception, asset: String) {
         if (e is CompositeException) {
             val msg = e.exceptions[0].message
-            sendEmail(msg!!, asset)
+            sendEmail(jobName, msg!!, asset)
         } else {
-            sendEmail(e.message!!, asset)
+            sendEmail(jobName, e.message!!, asset)
         }
         log.info("Email sent successfully")
     }
 
-    private fun sendEmail(msg: String, asset: String) {
+    private fun sendEmail(jobName: String, msg: String, asset: String) {
         val conf =
             EmailUtils.configure(
-                "ISEL Timetable Batch Job",
+                jobName,
                 JobResult.FAILED,
                 alertRecipient,
                 asset,

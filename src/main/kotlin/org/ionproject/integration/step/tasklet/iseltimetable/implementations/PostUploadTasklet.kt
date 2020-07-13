@@ -44,18 +44,18 @@ class PostUploadTasklet() : Tasklet {
             chunkContext.stepContext.stepExecution.jobExecution.executionContext.get("file-hash") as ByteArray
         hr.putHash(jobId, fileHash)
 
-        sendEmail()
+        sendEmail(chunkContext.stepContext.jobName)
 
         return RepeatStatus.FINISHED
     }
 
-    private fun sendEmail() {
+    private fun sendEmail(jobName: String) {
 
         val asset = srcRemoteLocation
             .substring(srcRemoteLocation.lastIndexOf('/') + 1, srcRemoteLocation.length)
 
         val conf = EmailUtils.configure(
-            "ISEL Timetable Batch Job",
+            jobName,
             JobResult.COMPLETED_SUCCESSFULLY,
             alertRecipient,
             asset,
