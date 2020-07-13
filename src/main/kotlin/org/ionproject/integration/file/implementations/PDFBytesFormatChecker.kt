@@ -2,6 +2,7 @@ package org.ionproject.integration.file.implementations
 
 import org.ionproject.integration.file.exceptions.InvalidFormatException
 import org.ionproject.integration.file.interfaces.IBytesFormatChecker
+import org.ionproject.integration.model.internal.generic.JobType
 
 class PDFBytesFormatChecker : IBytesFormatChecker {
     private val PDF_HEADER = "%PDF-1."
@@ -11,7 +12,7 @@ class PDFBytesFormatChecker : IBytesFormatChecker {
     private val HEADER_RANGE = 0..6
     private val HEADER_LENGTH = 7
 
-    override fun checkFormat(bytes: ByteArray) {
+    override fun checkFormat(bytes: ByteArray, jobType: JobType?) {
         if (bytes.size < HEADER_LENGTH)
             throw InvalidFormatException("Downloaded content was not in the PDF format.")
         val minorVersion: Char = bytes[HEADER_MIN_VERSION_POSITION].toChar()

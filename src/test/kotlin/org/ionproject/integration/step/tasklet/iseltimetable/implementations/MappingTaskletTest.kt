@@ -7,12 +7,16 @@ import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.batch.core.ExitStatus
+import org.springframework.batch.core.Job
+import org.springframework.batch.core.launch.JobLauncher
+import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.test.JobLauncherTestUtils
-import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -25,12 +29,29 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         IOnIntegrationApplication::class
     ]
 )
+
 @TestPropertySource("classpath:application.properties")
-@SpringBatchTest
 internal class MappingTaskletTest {
 
     @Autowired
-    lateinit var jobLauncherTestUtils: JobLauncherTestUtils
+    @Qualifier(value = "timetableJob")
+    private lateinit var job: Job
+
+    @Autowired
+    private lateinit var jobLauncher: JobLauncher
+
+    @Autowired
+    private lateinit var jobRepository: JobRepository
+
+    private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
+
+    @BeforeEach
+    private fun initializeJobLauncherTestUtils() {
+        jobLauncherTestUtils = JobLauncherTestUtils()
+        jobLauncherTestUtils.jobLauncher = jobLauncher
+        jobLauncherTestUtils.jobRepository = jobRepository
+        jobLauncherTestUtils.job = job
+    }
 
     @Autowired
     private lateinit var state: ISELTimetable.State

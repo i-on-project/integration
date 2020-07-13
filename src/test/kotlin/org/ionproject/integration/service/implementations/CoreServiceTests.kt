@@ -5,10 +5,14 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Duration
 import org.ionproject.integration.config.AppProperties
+import org.ionproject.integration.model.external.generic.CoreAcademicCalendar
+import org.ionproject.integration.model.external.generic.CoreExamSchedule
+import org.ionproject.integration.model.external.generic.CoreTerm
 import org.ionproject.integration.model.external.timetable.CourseTeacher
 import org.ionproject.integration.model.external.timetable.School
 import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.model.internal.core.CoreResult
+import org.ionproject.integration.model.internal.generic.Programme
 import org.ionproject.integration.utils.HttpUtils
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -28,6 +32,14 @@ internal class CoreServiceTestFixtures {
     companion object {
         val timetable = Timetable(school = School(name = "timetable"))
         val courseTeacher = CourseTeacher(school = School(name = "courseTeacher"))
+        val coreAcademicCalendar = CoreAcademicCalendar(terms = listOf(CoreTerm(School(name = "testSchool"), "test", "test", "test", "test", intervals = listOf())))
+        val coreExamSchedule = CoreExamSchedule(
+            school = org.ionproject.integration.model.internal.generic.School("test", acr = "test"),
+            programme = Programme("test", acr = "test"),
+            calendarTerm = "test",
+            language = "test",
+            exams = listOf()
+        )
     }
 }
 
@@ -112,6 +124,36 @@ class CoreServiceTests {
     }
 
     @Test
+    fun whenPushAcademicCalendar_thenReturnsSuccess() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(200)
+
+        // Act
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.SUCCESS, result)
+    }
+
+    @Test
+    fun whenPushExamSchedule_thenReturnsSuccess() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(200)
+
+        // Act
+        val result = coreService.pushExamSchedule(CoreServiceTestFixtures.coreExamSchedule)
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.SUCCESS, result)
+    }
+
+    @Test
     fun whenPushTimetable_HttpNotFound_thenReturnsTryAgain() {
         // Arrange
         Mockito
@@ -135,6 +177,36 @@ class CoreServiceTests {
 
         // Act
         val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacher)
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.TRY_AGAIN, result)
+    }
+
+    @Test
+    fun whenPushAcademicCalendar_HttpNotFound_thenReturnsTryAgain() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(404)
+
+        // Act
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.TRY_AGAIN, result)
+    }
+
+    @Test
+    fun whenPushExamSchedule_HttpNotFound_thenReturnsTryAgain() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(404)
+
+        // Act
+        val result = coreService.pushExamSchedule(CoreServiceTestFixtures.coreExamSchedule)
             .orThrow()
 
         // Assert
@@ -172,6 +244,36 @@ class CoreServiceTests {
     }
 
     @Test
+    fun whenPushAcademicCalendar_InternalServerError_thenReturnsTryAgain() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(500)
+
+        // Act
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.TRY_AGAIN, result)
+    }
+
+    @Test
+    fun whenPushExamSchedule_InternalServerError_thenReturnsTryAgain() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(500)
+
+        // Act
+        val result = coreService.pushExamSchedule(CoreServiceTestFixtures.coreExamSchedule)
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.TRY_AGAIN, result)
+    }
+
+    @Test
     fun whenPushTimetable_NotAuthorized_thenReturnsExpiredToken() {
         // Arrange
         Mockito
@@ -195,6 +297,36 @@ class CoreServiceTests {
 
         // Act
         val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacher)
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.EXPIRED_TOKEN, result)
+    }
+
+    @Test
+    fun whenPushAcademicCalendar_NotAuthorized_thenReturnsExpiredToken() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(401)
+
+        // Act
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.EXPIRED_TOKEN, result)
+    }
+
+    @Test
+    fun whenPushExamSchedule_NotAuthorized_thenReturnsExpiredToken() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(401)
+
+        // Act
+        val result = coreService.pushExamSchedule(CoreServiceTestFixtures.coreExamSchedule)
             .orThrow()
 
         // Assert
@@ -232,6 +364,36 @@ class CoreServiceTests {
     }
 
     @Test
+    fun whenPushAcademicCalendar_MovedPermanently_thenReturnsUnrecoverableError() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(301)
+
+        // Act
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.UNRECOVERABLE_ERROR, result)
+    }
+
+    @Test
+    fun whenPushExamSchedule_MovedPermanently_thenReturnsUnrecoverableError() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(301)
+
+        // Act
+        val result = coreService.pushExamSchedule(CoreServiceTestFixtures.coreExamSchedule)
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.UNRECOVERABLE_ERROR, result)
+    }
+
+    @Test
     fun whenPushTimetable_BadRequest_thenReturnsInvalidJson() {
         // Arrange
         Mockito
@@ -255,6 +417,36 @@ class CoreServiceTests {
 
         // Act
         val result = coreService.pushCourseTeacher(CoreServiceTestFixtures.courseTeacher)
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.INVALID_JSON, result)
+    }
+
+    @Test
+    fun whenPushAcademicCalendar_BadRequest_thenReturnsInvalidJson() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(400)
+
+        // Act
+        val result = coreService.pushCoreTerm(CoreServiceTestFixtures.coreAcademicCalendar.terms[0])
+            .orThrow()
+
+        // Assert
+        assertEquals(CoreResult.INVALID_JSON, result)
+    }
+
+    @Test
+    fun whenPushExamSchedule_BadRequest_thenReturnsInvalidJson() {
+        // Arrange
+        Mockito
+            .`when`(httpResponse.statusCode())
+            .thenReturn(400)
+
+        // Act
+        val result = coreService.pushExamSchedule(CoreServiceTestFixtures.coreExamSchedule)
             .orThrow()
 
         // Assert

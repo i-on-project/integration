@@ -29,7 +29,7 @@ class ExtractReader : ItemReader<RawData> {
     override fun read(): RawData? {
         if (nItems > 0)
             return null
-        val path = stepExecution.jobExecution.executionContext.get("pdf-path") as Path
+        val path = stepExecution.jobExecution.executionContext.get("file-path") as Path
         try {
             val itext = ITextPdfExtractor()
             val tabula = TabulaPdfExtractor()
@@ -38,13 +38,13 @@ class ExtractReader : ItemReader<RawData> {
             val headerText = itext.extract(path.toString())
             val tabularText = tabula.extract(path.toString())
 
-            path.toFile().deleteOnExit()
             val rawData = Try.map(headerText, tabularText) { txt, tab -> RawData(tab.first(), txt) }
                 .orThrow()
 
             val fileHash = fd.digest(path.toFile())
             stepExecution.jobExecution.executionContext.put("file-hash", fileHash)
 
+            path.toFile().delete()
             nItems += 1
 
             return rawData

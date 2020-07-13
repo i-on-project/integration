@@ -27,8 +27,8 @@ class AlertOnFailureWriter() : ItemWriter<Try<Boolean>> {
     @Value("#{jobParameters['alertRecipient']}")
     private lateinit var alertRecipient: String
 
-    @Value("#{jobParameters['pdfRemoteLocation']}")
-    private lateinit var pdfRemoteLocation: URI
+    @Value("#{jobParameters['srcRemoteLocation']}")
+    private lateinit var srcRemoteLocation: URI
 
     override fun write(items: MutableList<out Try<Boolean>>) {
         val item = items.first()
@@ -42,7 +42,7 @@ class AlertOnFailureWriter() : ItemWriter<Try<Boolean>> {
         item.orThrow()
     }
     private fun sendEmail(e: Exception) {
-        val filePath = pdfRemoteLocation.toString()
+        val filePath = srcRemoteLocation.toString()
         val asset = filePath.substring(filePath.lastIndexOf('/') + 1, filePath.length)
 
         val conf = EmailUtils.configure(

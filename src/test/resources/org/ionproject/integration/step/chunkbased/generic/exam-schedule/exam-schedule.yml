@@ -1,0 +1,32 @@
+school:
+  name: School A
+  acr: A
+programme:
+  name: Programme A
+  acr: PA
+calendarTerm: 2019/20-Verão
+exams:
+  - name: AED
+    startDate: 2020-07-09T14:00:00.000
+    endDate: 2020-07-09T17:00:00.000
+    location:
+  - name: AED
+    startDate: 2020-09-03T19:00:00.000
+    endDate: 2020-09-03T22:00:00.000
+    location:
+  - name: AED
+    startDate: 2020-09-17T19:00:00.000
+    endDate: 2020-09-17T22:00:00.000
+    location:
+  - name: ALGA
+    startDate: 2020-07-22T14:00:00.000
+    endDate: 2020-07-22T17:00:00.000
+    location:
+  - name: ALGA
+    startDate: 2020-09-12T10:00:00.000
+    endDate: 2020-09-12T13:00:00.000
+    location:
+  - name: ALGA
+    startDate: 2020-09-24T19:00:00.000
+    endDate: 2020-09-24T22:00:00.000
+    location:

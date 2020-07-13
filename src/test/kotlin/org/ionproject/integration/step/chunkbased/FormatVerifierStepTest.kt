@@ -21,11 +21,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.batch.core.ExitStatus
+import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
+import org.springframework.batch.core.launch.JobLauncher
+import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.test.JobLauncherTestUtils
-import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -38,33 +41,28 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "email.sender=alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false",
-
-        "spring.datasource.url = jdbc:h2:mem:testdb",
-        "spring.datasource.driverClassName = org.h2.Driver",
-        "spring.datasource.username = sa",
-        "spring.datasource.password = ",
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
-    ]
-)
-@SpringBatchTest
+@TestPropertySource("classpath:application.properties")
 internal class FormatVerifierStepTestSuccessful {
 
     @Autowired
+    @Qualifier(value = "timetableJob")
+    private lateinit var job: Job
+
+    @Autowired
+    private lateinit var jobLauncher: JobLauncher
+
+    @Autowired
+    private lateinit var jobRepository: JobRepository
+
     private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
+
+    @BeforeEach
+    private fun initializeJobLauncherTestUtils() {
+        jobLauncherTestUtils = JobLauncherTestUtils()
+        jobLauncherTestUtils.jobLauncher = jobLauncher
+        jobLauncherTestUtils.jobRepository = jobRepository
+        jobLauncherTestUtils.job = job
+    }
 
     @Autowired
     private lateinit var state: ISELTimetable.State
@@ -103,7 +101,7 @@ internal class FormatVerifierStepTestSuccessful {
         )
         val jp = initJobParameters()
         val se = utils.createStepExecution()
-        se.jobExecution.executionContext.put("pdf-path", temp.toPath())
+        se.jobExecution.executionContext.put("file-path", temp.toPath())
         val ec = se.jobExecution.executionContext
 
         // Act
@@ -129,33 +127,28 @@ internal class FormatVerifierStepTestSuccessful {
         IOnIntegrationApplication::class
     ]
 )
-@TestPropertySource(
-    properties = [
-        "email.sender=alert-mailbox@domain.com",
-        "spring.mail.host = localhost",
-        "spring.mail.username=alert-mailbox@domain.com",
-        "spring.mail.password=changeit",
-        "spring.mail.port=3025",
-        "spring.mail.properties.mail.smtp.auth = false",
-        "spring.mail.protocol = smtp",
-        "spring.mail.properties.mail.smtp.starttls.enable = false",
-        "spring.mail.properties.mail.smtp.starttls.required = false",
-
-        "spring.datasource.url = jdbc:h2:mem:testdb",
-        "spring.datasource.driverClassName = org.h2.Driver",
-        "spring.datasource.username = sa",
-        "spring.datasource.password = ",
-        "ion.core-base-url = test",
-        "ion.core-token = test",
-        "ion.core-request-timeout-seconds = 1",
-        "ion.resources-folder=src/test/resources/"
-    ]
-)
-@SpringBatchTest
+@TestPropertySource("classpath:application.properties")
 internal class FormatVerifierStepTestUnexistingFile {
 
     @Autowired
+    @Qualifier(value = "timetableJob")
+    private lateinit var job: Job
+
+    @Autowired
+    private lateinit var jobLauncher: JobLauncher
+
+    @Autowired
+    private lateinit var jobRepository: JobRepository
+
     private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
+
+    @BeforeEach
+    private fun initializeJobLauncherTestUtils() {
+        jobLauncherTestUtils = JobLauncherTestUtils()
+        jobLauncherTestUtils.jobLauncher = jobLauncher
+        jobLauncherTestUtils.jobRepository = jobRepository
+        jobLauncherTestUtils.job = job
+    }
 
     private val utils = SpringBatchTestUtils()
 
@@ -178,7 +171,7 @@ internal class FormatVerifierStepTestUnexistingFile {
         // Arrange
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val se = utils.createStepExecution()
-        se.jobExecution.executionContext.put("pdf-path", Paths.get("src/test/resources/UnexistingFile.pdf"))
+        se.jobExecution.executionContext.put("file-path", Paths.get("src/test/resources/UnexistingFile.pdf"))
 
         // Act
         val jp = initJobParameters()
@@ -212,11 +205,27 @@ internal class FormatVerifierStepTestUnexistingFile {
     ]
 )
 @TestPropertySource("classpath:application.properties")
-@SpringBatchTest
 internal class FormatVerifierStepTestInvalidFormat {
 
     @Autowired
+    @Qualifier(value = "timetableJob")
+    private lateinit var job: Job
+
+    @Autowired
+    private lateinit var jobLauncher: JobLauncher
+
+    @Autowired
+    private lateinit var jobRepository: JobRepository
+
     private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
+
+    @BeforeEach
+    private fun initializeJobLauncherTestUtils() {
+        jobLauncherTestUtils = JobLauncherTestUtils()
+        jobLauncherTestUtils.jobLauncher = jobLauncher
+        jobLauncherTestUtils.jobRepository = jobRepository
+        jobLauncherTestUtils.job = job
+    }
 
     private val utils = SpringBatchTestUtils()
     private lateinit var testSmtp: GreenMail
@@ -242,7 +251,7 @@ internal class FormatVerifierStepTestInvalidFormat {
 
         val jp = initJobParameters()
         val se = utils.createStepExecution()
-        se.jobExecution.executionContext.put("pdf-path", Paths.get("src/test/resources/formatVerifierStepTestTemp.pdf"))
+        se.jobExecution.executionContext.put("file-path", Paths.get("src/test/resources/formatVerifierStepTestTemp.pdf"))
 
         // Act
         val je = jobLauncherTestUtils.launchStep(
@@ -266,7 +275,7 @@ internal class FormatVerifierStepTestInvalidFormat {
 
         val jp = initJobParameters()
         val se = utils.createStepExecution()
-        se.jobExecution.executionContext.put("pdf-path", Paths.get("src/test/resources/formatVerifierStepTestTemp.pdf"))
+        se.jobExecution.executionContext.put("file-path", Paths.get("src/test/resources/formatVerifierStepTestTemp.pdf"))
 
         // Act
         val je = jobLauncherTestUtils.launchStep(
@@ -291,12 +300,29 @@ internal class FormatVerifierStepTestInvalidFormat {
         IOnIntegrationApplication::class
     ]
 )
+
 @TestPropertySource("classpath:application.properties")
-@SpringBatchTest
 internal class FormatVerifierStepTestEmptyPath {
 
     @Autowired
+    @Qualifier(value = "timetableJob")
+    private lateinit var job: Job
+
+    @Autowired
+    private lateinit var jobLauncher: JobLauncher
+
+    @Autowired
+    private lateinit var jobRepository: JobRepository
+
     private lateinit var jobLauncherTestUtils: JobLauncherTestUtils
+
+    @BeforeEach
+    private fun initializeJobLauncherTestUtils() {
+        jobLauncherTestUtils = JobLauncherTestUtils()
+        jobLauncherTestUtils.jobLauncher = jobLauncher
+        jobLauncherTestUtils.jobRepository = jobRepository
+        jobLauncherTestUtils.job = job
+    }
 
     private val utils = SpringBatchTestUtils()
 
@@ -319,7 +345,7 @@ internal class FormatVerifierStepTestEmptyPath {
         // Arrange
         val jp = initJobParameters()
         val se = utils.createStepExecution()
-        se.jobExecution.executionContext.put("pdf-path", Paths.get(""))
+        se.jobExecution.executionContext.put("file-path", Paths.get(""))
 
         // Act
         val je = jobLauncherTestUtils.launchStep(
@@ -338,7 +364,7 @@ internal class FormatVerifierStepTestEmptyPath {
 
 private fun initJobParameters(): JobParameters {
     return JobParametersBuilder()
-        .addString("pdfRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
+        .addString("srcRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
         .addString("alertRecipient", "client@domain.com")
         .addLong("timestamp", Instant.now().toEpochMilli())
         .toJobParameters()

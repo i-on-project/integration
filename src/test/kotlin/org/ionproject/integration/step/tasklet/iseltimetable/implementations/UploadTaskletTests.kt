@@ -95,7 +95,7 @@ class UploadTaskletTests {
         Mockito
             .`when`(chunkContext.stepContext.jobParameters)
             .thenReturn(mapOf(
-                "pdfRemoteLocation" to "https://www.isel.pt/media/uploads/LEIC_0310.pdf",
+                "srcRemoteLocation" to "https://www.isel.pt/media/uploads/LEIC_0310.pdf",
                 "alertRecipient" to "client@domain.com"
             ))
 

@@ -1,0 +1,41 @@
+school:
+  name: Escola A
+  acr: A
+terms:
+  - calendarTerm: 1920i
+    interruptions:
+      - name: Férias de Natal
+        startDate: 2019-12-23
+        endDate: 2020-01-04
+    evaluations:
+      - name: Exames época normal
+        startDate: 2020-01-13
+        endDate: 2020-02-01
+        duringLectures: false
+      - name: Exames época recurso
+        startDate: 2020-02-03
+        endDate: 2020-02-15
+        duringLectures: false
+      - name: Exames época especial
+        startDate: 2020-02-26
+        endDate: 2020-03-07
+        duringLectures: false
+    details:
+      - name: Turmas 1º Semestre
+        curricularTerm:
+          - id: 1
+        startDate: 2019-09-16
+        endDate: 2020-01-11
+      - name: Turmas excepto 1º Semestre
+        curricularTerm:
+          - id: 2
+          - id: 3
+          - id: 4
+          - id: 5
+          - id: 6
+        startDate: 2019-09-09
+        endDate: 2020-12-21
+    otherEvents:
+      - name: Divulgação de horários
+        startDate: 2019-07-22
+        endDate: 2019-07-22
