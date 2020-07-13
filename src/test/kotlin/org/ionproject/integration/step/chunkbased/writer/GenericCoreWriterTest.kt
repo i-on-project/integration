@@ -178,7 +178,7 @@ internal class GenericCoreWriterTest {
         assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
         assertTrue(
             GreenMailUtil.getBody(messages[0])
-                .contains("ISEL Timetable Batch Job FAILED for file: exam_schedule.yml with message I-On Core was unreachable with multiple retries")
+                .contains("job FAILED for file: exam_schedule.yml with message I-On Core was unreachable with multiple retries")
         )
     }
     @Test
@@ -204,7 +204,7 @@ internal class GenericCoreWriterTest {
         assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
         assertTrue(
             GreenMailUtil.getBody(messages[0])
-                .contains("ISEL Timetable Batch Job FAILED for file: calendar.yml with message I-On Core was unreachable with multiple retries")
+                .contains("job FAILED for file: calendar.yml with message I-On Core was unreachable with multiple retries")
         )
     }
 }

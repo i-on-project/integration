@@ -47,6 +47,8 @@ class GenericCoreWriter(
 
     private var coreResult: CoreResult = CoreResult.SUCCESS
 
+    private var exitStatus = ExitStatus.COMPLETED
+
     override fun write(items: MutableList<out ICoreModel>) {
         while (tryWrite(items)) {
         }
@@ -74,13 +76,15 @@ class GenericCoreWriter(
             CoreResult.SUCCESS -> return false
             else -> {
                 log.error("I-On Core replied with $coreResult")
-                sendEmail(coreResult)
+                sendEmail(coreResult, stepExecution.jobExecution.jobInstance.jobName)
+                exitStatus = ExitStatus.FAILED
                 return false
             }
         }
         return if (retries == 0) {
             log.warn("I-On Core unreachable")
-            sendEmail(coreResult)
+            sendEmail(coreResult, stepExecution.jobExecution.jobInstance.jobName)
+            exitStatus = ExitStatus.FAILED
             false
         } else {
             return true
@@ -131,7 +135,7 @@ class GenericCoreWriter(
         return result
     }
 
-    private fun sendEmail(coreResult: CoreResult) {
+    private fun sendEmail(coreResult: CoreResult, jobName: String) {
 
         val asset = srcRemoteLocation.substring(srcRemoteLocation.lastIndexOf('/') + 1, srcRemoteLocation.length)
 
@@ -144,7 +148,7 @@ class GenericCoreWriter(
 
         val conf =
             EmailUtils.configure(
-                "ISEL Timetable Batch Job",
+                jobName,
                 JobResult.FAILED,
                 alertRecipient,
                 asset,
@@ -161,6 +165,6 @@ class GenericCoreWriter(
     }
 
     override fun afterStep(stepExecution: StepExecution): ExitStatus? {
-        return ExitStatus.COMPLETED
+        return exitStatus
     }
 }

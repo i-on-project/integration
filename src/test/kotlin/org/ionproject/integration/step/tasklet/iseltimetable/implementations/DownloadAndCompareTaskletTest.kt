@@ -89,71 +89,69 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         testSmtp.stop()
     }
 
-        @Test
-        fun whenTaskletIsUnsuccessful_ThenAssertPathIsInContextAndFileExists() {
-            testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-            val pathKey = "file-path"
-            val ec = utils.createExecutionContext()
-            val jp = initJobParameters("1")
-            val file = File("src/test/resources/LEIC_0310.pdf")
-            val expectedPath = file.toPath()
-            try {
+    @Test
+    fun whenTaskletIsUnsuccessful_ThenAssertPathIsInContextAndFileExists() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+        val pathKey = "file-path"
+        val ec = utils.createExecutionContext()
+        val jp = initJobParameters("1")
+        val file = File("src/test/resources/LEIC_0310.pdf")
+        val expectedPath = file.toPath()
+        try {
 
-                val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
 
-                assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)
-                assertEquals(expectedPath, je.executionContext[pathKey])
-                assertTrue(file.exists())
-            } finally {
-                file.delete()
-            }
+            assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)
+            assertEquals(expectedPath, je.executionContext[pathKey])
+            assertTrue(file.exists())
+        } finally {
+            file.delete()
         }
+    }
 
-        @Test
-        @Sql("insert-timetable-pdf-hash.sql")
-        fun whenHashIsSameAsRecorded_ThenExitStatusIsStopped() {
-            testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-            val pathKey = "file-path"
-            val ec = utils.createExecutionContext()
-            val jp = initJobParameters("2")
-            val file = File("src/test/resources/LEIC_0310.pdf")
-            val expectedPath = file.toPath()
-            try {
+    @Test
+    @Sql("insert-timetable-pdf-hash.sql")
+    fun whenHashIsSameAsRecorded_ThenExitStatusIsStopped() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+        val pathKey = "file-path"
+        val ec = utils.createExecutionContext()
+        val jp = initJobParameters("2")
+        val file = File("src/test/resources/LEIC_0310.pdf")
+        val expectedPath = file.toPath()
+        try {
+            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
 
-                val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
-
-                assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
-                assertEquals(expectedPath, je.executionContext[pathKey])
-                assertFalse(file.exists())
-            } finally {
-                file.delete()
-            }
+            assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
+            assertEquals(expectedPath, je.executionContext[pathKey])
+            assertFalse(file.exists())
+        } finally {
+            file.delete()
         }
-        @Test
-        @Sql("insert-timetable-pdf-hash-2.sql")
-        fun whenTaskletIsSuccessful_ThenAssertMailWasSent() {
-            testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-            val pathKey = "file-path"
-            val ec = utils.createExecutionContext()
-            val jp = initJobParameters("3")
-            val file = File("src/test/resources/LEIC_0310.pdf")
-            val expectedPath = file.toPath()
-            try {
+    }
 
-                val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
+    @Test
+    @Sql("insert-timetable-pdf-hash-2.sql")
+    fun whenTaskletIsSuccessful_ThenAssertMailWasSent() {
+        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+        val pathKey = "file-path"
+        val ec = utils.createExecutionContext()
+        val jp = initJobParameters("3")
+        val file = File("src/test/resources/LEIC_0310.pdf")
+        val expectedPath = file.toPath()
+        try {
 
-                assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
-                assertEquals(expectedPath, je.executionContext[pathKey])
-                assertFalse(file.exists())
+            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
 
-                val messages: Array<MimeMessage> = testSmtp.receivedMessages
-                assertEquals(1, messages.size)
-                assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
-                assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message File Is equal to last successfully parsed"))
-            } finally {
-                file.delete()
-            }
+            assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
+            assertEquals(expectedPath, je.executionContext[pathKey])
+            assertFalse(file.exists())
+
+            val messages: Array<MimeMessage> = testSmtp.receivedMessages
+            assertEquals(0, messages.size)
+        } finally {
+            file.delete()
         }
+    }
 
     private fun initJobParameters(jobId: String): JobParameters {
         return JobParametersBuilder()
@@ -195,6 +193,7 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
         jobLauncherTestUtils.jobRepository = jobRepository
         jobLauncherTestUtils.job = job
     }
+
     val utils = SpringBatchTestUtils()
 
     private lateinit var testSmtp: GreenMail
@@ -267,6 +266,7 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
         jobLauncherTestUtils.jobRepository = jobRepository
         jobLauncherTestUtils.job = job
     }
+
     val utils = SpringBatchTestUtils()
 
     private lateinit var testSmtp: GreenMail
@@ -339,6 +339,7 @@ internal class DownloadAndCompareTaskletServerErrorTest {
         jobLauncherTestUtils.jobRepository = jobRepository
         jobLauncherTestUtils.job = job
     }
+
     val utils = SpringBatchTestUtils()
 
     private lateinit var testSmtp: GreenMail
@@ -354,6 +355,7 @@ internal class DownloadAndCompareTaskletServerErrorTest {
     fun stopMailServer() {
         testSmtp.stop()
     }
+
     @Test
     fun whenServerResponds5xx_ThenAssertExceptionIsServerErrorAndPathIsNotInContext() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
@@ -376,6 +378,7 @@ internal class DownloadAndCompareTaskletServerErrorTest {
             file.deleteOnExit()
         }
     }
+
     @Test
     fun whenServerResponds5xx_ThenAssertAlertWasSent() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
@@ -389,7 +392,10 @@ internal class DownloadAndCompareTaskletServerErrorTest {
             val messages: Array<MimeMessage> = testSmtp.receivedMessages
             assertEquals(1, messages.size)
             assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
-            assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: 500 with message Server responded with error code 500"))
+            assertTrue(
+                GreenMailUtil.getBody(messages[0])
+                    .contains("TestJob FAILED for file: 500 with message Server responded with error code 500")
+            )
         } finally {
             file.deleteOnExit()
         }

@@ -10,27 +10,46 @@ import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.support.PropertiesLoaderUtils
+import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.scheduling.annotation.Scheduled
 
 @SpringBootApplication
 @EnableBatchProcessing
 class IOnIntegrationApplication
 
-    lateinit var ctx: ConfigurableApplicationContext
-    lateinit var jobLauncher: JobLauncher
-    private val log = LoggerFactory.getLogger(IOnIntegrationApplication::class.java)
     fun main(args: Array<String>) {
-        ctx = SpringApplication
-            .run(IOnIntegrationApplication::class.java, *args)
-        jobLauncher = ctx.getBean(JobLauncher::class.java)
-
-        runJob("timetableJob", "/app/config/timetable/isel")
-        runJob("genericJob", "/app/config/generic/academic-calendar")
-        runJob("genericJob", "/app/config/generic/exam-schedule")
+        SpringApplication.run(IOnIntegrationApplication::class.java, *args)
     }
 
-    fun runJob(jobName: String, configPath: String) {
+@Profile("!test")
+@Configuration
+@EnableScheduling
+class JobEngine(
+    val jobLauncher: JobLauncher,
+    val ctx: ConfigurableApplicationContext
+) {
+    private val log = LoggerFactory.getLogger(IOnIntegrationApplication::class.java)
+
+    @Scheduled(fixedRate = 120000)
+    fun runTimetableJob() {
+        setUpAndRunJob("timetableJob", "src/main/resources/config/timetable/isel")
+    }
+
+    @Scheduled(fixedRate = 120000)
+    fun runGenericAcademicCalendar() {
+        setUpAndRunJob("genericJob", "src/main/resources/config/generic/academic-calendar")
+    }
+
+    @Scheduled(fixedRate = 120000)
+    fun runGenericExamSchedule() {
+        setUpAndRunJob("genericJob", "src/main/resources/config/generic/exam-schedule")
+    }
+
+    fun setUpAndRunJob(jobName: String, configPath: String) {
         val props = File(configPath)
             .listFiles()
             ?.map {
@@ -65,3 +84,4 @@ class IOnIntegrationApplication
                 }
         }
     }
+}
