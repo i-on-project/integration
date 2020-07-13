@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.support.PropertiesLoaderUtils
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -24,6 +25,7 @@ class IOnIntegrationApplication
         SpringApplication.run(IOnIntegrationApplication::class.java, *args)
     }
 
+@Profile("!test")
 @Configuration
 @EnableScheduling
 class JobEngine(

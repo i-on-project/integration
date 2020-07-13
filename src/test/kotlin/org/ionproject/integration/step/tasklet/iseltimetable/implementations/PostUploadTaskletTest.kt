@@ -157,7 +157,8 @@ internal class PostUploadTaskletTest {
         val messages: Array<MimeMessage> = testSmtp.receivedMessages
         assertEquals(1, messages.size)
         assertEquals("i-on integration Alert - Job COMPLETED_SUCCESSFULLY", messages[0].subject)
-        assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job COMPLETED_SUCCESSFULLY for file: LEIC_0310.pdf"))
+        val e = GreenMailUtil.getBody(messages[0])
+        assertTrue(GreenMailUtil.getBody(messages[0]).contains("TestJob COMPLETED_SUCCESSFULLY for file: LEIC_0310.pdf"))
     }
 
     private fun initJobParameters(jobId: String): JobParameters {
