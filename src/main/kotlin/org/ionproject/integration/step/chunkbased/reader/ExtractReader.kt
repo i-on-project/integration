@@ -44,7 +44,6 @@ class ExtractReader : ItemReader<RawData> {
             val fileHash = fd.digest(path.toFile())
             stepExecution.jobExecution.executionContext.put("file-hash", fileHash)
 
-            path.toFile().delete()
             nItems += 1
 
             return rawData
