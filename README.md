@@ -8,11 +8,12 @@
 
 [![GitHub contributors](https://img.shields.io/github/contributors/i-on-project/integration)](https://github.com/i-on-project/integration/graphs/contributors/)
 
-[I-On](https://github.com/i-on-project) is an academic information aggregation and distribution system, composed of 3 projects:
+I-On Integration has the responsibility of collecting relevant academic information from external sources and uploading it to I-On Core, which is the I-On system central repository.
+
+[I-On](https://github.com/i-on-project) is an academic information aggregation and distribution system, from which I-On Integration is part of with 2 additional projects:
 
 * [I-On Core](https://github.com/i-on-project/core) the repository of academic information
 * [I-On Android](https://github.com/i-on-project/android) the mobile application
-* [I-On Integration](https://github.com/i-on-project/integration) a batch processing application
 
 ## Requirements
 
