@@ -19,13 +19,15 @@
 * Linux/macOS/Windows (on Windows some tests may fail)
 * [Docker](https://www.docker.com/)
 * [I-On Core](https://github.com/i-on-project/core/blob/master/README.md#running) running
-* [PostgreSQL](https://www.postgresql.org/) instance running with database **spring_batch** created. With Docker installed just use `docker run --name postgres -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=spring_batch -p 5432:5432 -d postgres`
+* [PostgreSQL](https://www.postgresql.org/) instance running with database **spring_batch** created. 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;With Docker installed just use `docker run --name postgres -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=spring_batch -p 5432:5432 -d postgres`
 
 #### Application.properties
 
 Before running some variables have to be updated, such as `spring.datasource.url`, `spring.datasource.username` and `spring.datasource.password`
 
-If the previous docker command was used, these values to use would be:
+If the previous docker command was used, the values to use would be:
 ```
 spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/spring_batch
 spring.datasource.username=postgres
