@@ -4,6 +4,7 @@ import com.icegreen.greenmail.util.DummySSLSocketFactory
 import com.icegreen.greenmail.util.GreenMail
 import com.icegreen.greenmail.util.GreenMailUtil
 import com.icegreen.greenmail.util.ServerSetupTest
+import java.io.File
 import java.lang.reflect.UndeclaredThrowableException
 import java.nio.file.Paths
 import java.security.Security
@@ -31,7 +32,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.io.File
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(

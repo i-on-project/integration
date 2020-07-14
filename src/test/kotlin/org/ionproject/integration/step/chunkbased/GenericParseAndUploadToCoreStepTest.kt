@@ -1,10 +1,17 @@
 package org.ionproject.integration.step.chunkbased
 
+import java.io.File
+import java.lang.reflect.UndeclaredThrowableException
+import java.nio.file.Paths
+import java.time.Instant
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.Generic
 import org.ionproject.integration.step.chunkbased.writer.GenericCoreWriter
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -23,10 +30,6 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.io.File
-import java.lang.reflect.UndeclaredThrowableException
-import java.nio.file.Paths
-import java.time.Instant
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
