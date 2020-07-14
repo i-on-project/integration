@@ -286,7 +286,7 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
     @Test
     fun whenUrlIsNotPdf_ThenAssertExceptionIsInvalidFormatAndPathIsNotIncludedInContext() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-        val localFileDestination = "src/test/resources"
+        val localFileDestination = "src" + File.separator + "test" + File.separator + "resources"
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters()
