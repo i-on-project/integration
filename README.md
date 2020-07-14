@@ -56,6 +56,6 @@ When running via IDE first you need to update:
 * `ion.resources-folder` on application.properties to **src/main/resources**
 * On IOnIntegrationApplication.kt all config path should point to **src/main/resources/config...**
 
-You can also running with Docker
+You can also run with Docker (no need to update paths)
 
     $ docker run -it --network=host i-on-integration-image
