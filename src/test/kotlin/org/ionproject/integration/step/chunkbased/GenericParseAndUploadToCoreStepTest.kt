@@ -103,13 +103,12 @@ internal class GenericParseAndUploadToCoreStepTest {
         Mockito.verify(writer, times(1)).write(Mockito.anyList())
     }
 
-
     /* Calculating file hashes in windows yields a different result than in unix/linux
     *  because of line termination, so two values are provided for the hash, one for each OS.
     * */
     @Test
     fun whenExamScheduleIsSuccessfullyParsed_thenAssertFileDoesNotExistAndHashIsInContext() {
-        val expectedHashUnix= byteArrayOf(
+        val expectedHashUnix = byteArrayOf(
                 -55, -84, 127, -43, 94, -70, -94, 86, -116, -32, -95, 75, -109, -111, 82, 93,
                 98, 113, -10, 37, -30, -117, 64, 2, -2, 40, 107, -121, 126, 53, -55, 81
         )
