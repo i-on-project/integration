@@ -17,7 +17,7 @@ I-On Integration has the responsibility of collecting relevant academic informat
 
 ## Requirements
 
-* Linux/macOS/Windows (on Windows some tests may fail)
+* Linux/macOS/Windows
 * [Docker](https://www.docker.com/)
 * [I-On Core](https://github.com/i-on-project/core/blob/master/README.md#running) running
 * [PostgreSQL](https://www.postgresql.org/) instance running with database **spring_batch** created. 
@@ -49,7 +49,11 @@ You can build via command line
     $ ./gradlew build
     
 Or using an IDE with gradle support such as [IntelliJ IDEA](https://www.jetbrains.com/idea/) or [Eclipse](https://www.eclipse.org/ide/)
-    
+
+Or build the docker image
+
+    $ ./gradlew buildDockerImage      
+
 ## Running
 
 When running via IDE first you need to update:
