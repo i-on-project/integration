@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/github/license/i-on-project/integration)](https://github.com/i-on-project/integration/blob/master/LICENSE)
 [![GitHub build](https://img.shields.io/github/workflow/status/i-on-project/integration/I-On%20Integration%20Staging)](https://github.com/i-on-project/integration/actions?query=branch%3Amaster)
 [![GitHub commits](https://img.shields.io/github/last-commit/i-on-project/integration)](https://github.com/i-on-project/integration/commits/master)
-[![GitHub pull-requests](https://img.shields.io/github/issues-pr/i-on-project/integration)](https://github.com/i-on-project/integration/pull/)
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/i-on-project/integration)](https://github.com/i-on-project/integration/pulls/)
 [![GitHub issues](https://img.shields.io/github/issues/i-on-project/integration)](https://github.com/i-on-project/integration/issues/)
 
 [![GitHub contributors](https://img.shields.io/github/contributors/i-on-project/integration)](https://github.com/i-on-project/integration/graphs/contributors/)
@@ -60,3 +60,7 @@ When running via IDE first you need to update:
 You can also run with Docker (no need to update paths)
 
     $ docker run -it --network=host i-on-integration-image
+    
+## Documentation
+
+[Check wiki for additional information](https://github.com/i-on-project/integration/wiki)
