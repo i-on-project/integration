@@ -73,17 +73,17 @@ internal class GenericParseAndUploadToCoreStepTest {
                 .toJobParameters()
     }
 
-    /* Calculating file hashes in windows yields a different result than in unix/linux.
-    * the value for expected hash in windows is:
-    *  byteArrayOf(-112, -126, -94, 59, -4, -97, 89, 44, 107, -8, 21,
-                -34, -57, -3, -117, 25, 84, -2, 107, -89, -6, -8, -23, -64, 61, 89, 7, -76, -124, -92, -44, 58)
+    /* Calculating file hashes in windows yields a different result than in unix/linux
+    *  because of line termination, so two values are provided for the hash, one for each OS.
     * */
     @Test
     fun whenAcademicCalendarIsSuccessfullyParsed_thenAssertFileDoesNotExistAndHashIsInContext() {
-        val expectedHash = byteArrayOf(
+        val expectedHashUnix = byteArrayOf(
                 96, 69, -9, 111, -77, 28, 84, 84, -5, -51, 32, 2, -29, -125, 107, -91, 10,
                 10, 101, -96, -99, -115, 35, 114, -88, 108, 111, 123, 27, 85, -47, 38
         )
+        val expectedHashWindows = byteArrayOf(-112, -126, -94, 59, -4, -97, 89, 44, 107, -8, 21,
+                -34, -57, -3, -117, 25, 84, -2, 107, -89, -6, -8, -23, -64, 61, 89, 7, -76, -124, -92, -44, 58)
 
         val path = Paths.get(
                 "src/test/resources/org/ionproject/integration/step/chunkbased" +
@@ -99,22 +99,22 @@ internal class GenericParseAndUploadToCoreStepTest {
         val actualHash = je.executionContext["file-hash"] as ByteArray
 
         assertFalse(temp.exists())
-        actualHash.forEach { print("$it, ") }
-        assertTrue(expectedHash.contentEquals(actualHash))
+        assertTrue(expectedHashUnix.contentEquals(actualHash) || expectedHashWindows.contentEquals(actualHash))
         Mockito.verify(writer, times(1)).write(Mockito.anyList())
     }
 
-    /*Calculating file hashes in windows yields a different result than in unix/linux.
-    * the value for expected hash in windows is:
-    * byteArrayOf(85, 47, 92, -18, -57, 124, -33, 31, 83, 31, 122, 4, 103, 21, -113, -61, -89,
-                -92, -94, -24, -22, 105, -120, 121, -28, -103, -3, 81, -48, -61, -79, -10)
-     */
+    /* Calculating file hashes in windows yields a different result than in unix/linux
+    *  because of line termination, so two values are provided for the hash, one for each OS.
+    * */
     @Test
     fun whenExamScheduleIsSuccessfullyParsed_thenAssertFileDoesNotExistAndHashIsInContext() {
-        val expectedHash = byteArrayOf(
+        val expectedHashUnix = byteArrayOf(
                 -55, -84, 127, -43, 94, -70, -94, 86, -116, -32, -95, 75, -109, -111, 82, 93,
                 98, 113, -10, 37, -30, -117, 64, 2, -2, 40, 107, -121, 126, 53, -55, 81
         )
+
+        val expectedHashWindows = byteArrayOf(85, 47, 92, -18, -57, 124, -33, 31, 83, 31, 122, 4, 103, 21, -113, -61, -89,
+                -92, -94, -24, -22, 105, -120, 121, -28, -103, -3, 81, -48, -61, -79, -10)
 
         val path = Paths.get(
                 "src/test/resources/org/ionproject/integration/step/chunkbased/generic/exam-schedule/exam-schedule.yml".replace("/", File.separator)
@@ -129,8 +129,7 @@ internal class GenericParseAndUploadToCoreStepTest {
         val actualHash = je.executionContext["file-hash"] as ByteArray
 
         assertFalse(temp.exists())
-        actualHash.forEach { print("$it, ") }
-        assertTrue(expectedHash.contentEquals(actualHash))
+        assertTrue(expectedHashUnix.contentEquals(actualHash) || expectedHashWindows.contentEquals(actualHash))
         Mockito.verify(writer, times(1)).write(Mockito.anyList())
     }
 
