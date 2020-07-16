@@ -26,7 +26,7 @@ The generic batch job is configurable through a file with the extension .propert
 
 | Property | Description |
 |----------|-------------|
-| srcRemoteLocation | Url of the timetable pdf to be used on the job. |
+| srcRemoteLocation | Url of the yaml file to be used on the job. |
 | alertRecipient  | Email of the point-of-contact to notify about job outcome |
 | jobType  | Category of information to be exported: EXAM_SCHEDULE, ACADEMIC_CALENDAR or TIMETABLE (Currently not supported)|
 
