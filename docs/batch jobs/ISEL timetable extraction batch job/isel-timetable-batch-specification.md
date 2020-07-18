@@ -88,28 +88,29 @@ data class Event (
 Example data in json format
 ```json
 {
-    "school": {
-        "name": "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
-        "acr": ""
-    },
-    "programme": {
-        "name": "Licenciatura em Engenharia Informática e de Computadores",
-        "acr": ""
-    },
-    "calendarTerm": "2019/20-Verão",
-    "calendarSection": "LI11D",
-    "language": "pt-PT",
-    "faculty": [
-        {
-            "course": "ALGA",
-            "courseType": "T",
-            "teachers": [
-                {
-                    "name": "Teresa Maria de Araújo Melo Quinteiro"
-                }
-            ]
-        }
-    ]
+	"school": {
+		"name": "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
+		"acr": ""
+	},
+	"programme": {
+		"name": "Licenciatura em Engenharia Informática e de Computadores",
+		"acr": ""
+	},
+	"calendarTerm": "2019/20-Verão",
+	"calendarSection": "LI11D",
+	"language": "pt-PT",
+	"courses": [
+		{
+			"label": {
+				"acr": "ALGA"
+			},
+			"teachers": [
+				{
+					"name": "Teresa Maria de Araújo Melo Quinteiro"
+				}
+			]
+		}
+	]
 }
 ```
 And the kotlin data classes that generate it
@@ -120,7 +121,7 @@ data class CourseTeacher (
 	@JsonProperty("calendarTerm") val calendarTerm : String,
 	@JsonProperty("calendarSection") val calendarSection : String,
     @JsonProperty("language") val language : String,
-	@JsonProperty("faculty") val faculty : List<Faculty>
+	@JsonProperty("courses") val courses : List<Faculty>
 )
 data class School(
     @JsonProperty("name") val name: String,
@@ -131,8 +132,7 @@ data class Programme(
     @JsonProperty("acr") val acr: String
 )
 data class Faculty (
-	@JsonProperty("course") val course : String,
-	@JsonProperty("courseType") val course_type : String,
+	@JsonProperty("label") val label : Label,
 	@JsonProperty("teachers") val teachers : List<Teacher>
 )
 data class Teacher (
