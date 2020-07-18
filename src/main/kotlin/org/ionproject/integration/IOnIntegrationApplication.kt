@@ -36,17 +36,17 @@ class JobEngine(
 
     @Scheduled(cron = "0 0 1 * * SAT")
     fun runTimetableJob() {
-        setUpAndRunJob("timetableJob", "/app/resources/config/timetable/isel")
+        setUpAndRunJob("timetableJob", "/app/config/timetable/isel")
     }
 
     @Scheduled(cron = "0 0 2 * * SAT")
     fun runGenericAcademicCalendar() {
-        setUpAndRunJob("genericJob", "/app/resources/config/generic/academic-calendar")
+        setUpAndRunJob("genericJob", "/app/config/generic/academic-calendar")
     }
 
     @Scheduled(cron = "0 0 3 * * SAT")
     fun runGenericExamSchedule() {
-        setUpAndRunJob("genericJob", "/app/resources/config/generic/exam-schedule")
+        setUpAndRunJob("genericJob", "/app/config/generic/exam-schedule")
     }
 
     fun setUpAndRunJob(jobName: String, configPath: String) {
