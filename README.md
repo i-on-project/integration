@@ -1,7 +1,7 @@
 [![ionproject.org](https://raw.githubusercontent.com/i-on-project/integration/master/img/i-on_logo.png)](https://www.ionproject.org)
 
 [![License](https://img.shields.io/github/license/i-on-project/integration)](https://github.com/i-on-project/integration/blob/master/LICENSE)
-[![GitHub release](https://img.shields.io/github/v/release/i-on-project/integration)](https://github.com/i-on-project/integration/releases)
+[![GitHub tags](https://img.shields.io/github/v/tag/i-on-project/integration)](https://github.com/i-on-project/integration/tags)
 [![GitHub build](https://img.shields.io/github/workflow/status/i-on-project/integration/I-On%20Integration%20Staging)](https://github.com/i-on-project/integration/actions?query=branch%3Amaster)
 [![GitHub commits](https://img.shields.io/github/last-commit/i-on-project/integration)](https://github.com/i-on-project/integration/commits/master)
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/i-on-project/integration)](https://github.com/i-on-project/integration/pulls/)
