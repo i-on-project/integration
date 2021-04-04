@@ -11,16 +11,6 @@ import org.springframework.validation.annotation.Validated
 @ConfigurationProperties(prefix = "ion")
 @Validated
 class AppProperties {
-    @NotEmpty
-    lateinit var coreBaseUrl: String
-
-    @NotEmpty
-    lateinit var coreToken: String
-
-    @Max(5)
-    @Min(1)
-    var coreRequestTimeoutSeconds: Int = 0
-
     @Max(5)
     @Min(0)
     var coreRetries: Int = 0
