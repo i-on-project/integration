@@ -12,7 +12,6 @@ group = "org.ionproject"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
-val imageId = "gcr.io/${System.getenv()["GCLOUD_PROJECT_ID"]}/i-on-project/integration/i-on-integration"
 val tempDockerTag: String = "i-on-integration-image"
 
 repositories {
@@ -55,44 +54,8 @@ tasks.register<Exec>("buildDockerImage") {
     if (project.properties["onlyBuild"].toString().toBoolean()) {
         commandLine("docker", "build", ".")
     } else {
-        commandLine("docker", "build", ".", "--tag", "$tempDockerTag")
+        commandLine("docker", "build", ".", "--tag", tempDockerTag)
     }
-}
-
-tasks.register("tagPushDockerImage") {
-    val githubRef = project.properties["githubRef"]
-    val finalDockerTag = githubRef?.toString()?.removePrefix("refs/tags/v") ?: "latest"
-
-    doLast {
-
-        exec {
-            commandLine("docker", "tag", "$tempDockerTag", "$imageId:$finalDockerTag")
-        }
-        exec {
-            commandLine("docker", "push", "$imageId:$finalDockerTag")
-        }
-    }
-}
-
-tasks.register<Exec>("deploy") {
-    val githubRef = project.properties["githubRef"]
-    val finalDockerTag = githubRef?.toString()?.removePrefix("refs/tags/v") ?: "latest"
-    val containerName = if (githubRef == null) {
-        "i-on-integration-staging"
-    } else {
-        "i-on-integration-production"
-    }
-
-    commandLine(
-        "gcloud",
-        "compute",
-        "instances",
-        "update-container",
-        "$containerName",
-        "--zone",
-        "us-east1-b",
-        "--container-image=$imageId:$finalDockerTag"
-    )
 }
 
 tasks.withType<Test> {
