@@ -4,3 +4,4 @@
 .github/*
 .gradle/*
 build/
+!build/reports/tests/test
