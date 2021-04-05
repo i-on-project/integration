@@ -10,7 +10,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SQL_HOST: jdbc:postgresql://localhost:5432/pipeline
+      SQL_USER: pipeline
+      SQL_PASSWORD: pipeline
 
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: env.SQL_PASSWORD
+          POSTGRES_USER: env.SQL_USER
     steps:
       - name: Checkout
         uses: actions/checkout@v2
