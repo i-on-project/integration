@@ -23,4 +23,4 @@ jobs:
         if: failure()
         with:
           name: test_logs
-          path: /src/build/reports/tests/test/
+          path: ${{ github.workspace }}
