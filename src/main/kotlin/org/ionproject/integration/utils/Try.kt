@@ -3,7 +3,7 @@ package org.ionproject.integration.utils
 class CompositeException(val exceptions: List<Exception>) : Exception() {
     init {
         exceptions.forEach {
-            println("Exception -> $it ;;; Message ${it.message}")
+            println("Exception -> $it ;;; Message ${it.message} || ${it.cause}")
         }
     }
 }
