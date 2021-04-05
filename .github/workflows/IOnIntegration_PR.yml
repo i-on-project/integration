@@ -20,6 +20,7 @@ jobs:
         run: ./gradlew buildDockerImage -PonlyBuild=true
       - name: Upload test logs
         uses: actions/upload-artifact@v2
+        if: failure()
         with:
           name: test_logs
           path: /src/build/reports/tests/test/
