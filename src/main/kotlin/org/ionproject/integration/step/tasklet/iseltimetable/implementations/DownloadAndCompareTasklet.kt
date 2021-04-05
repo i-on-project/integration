@@ -10,7 +10,6 @@ import org.ionproject.integration.file.interfaces.IFileComparator
 import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.model.internal.generic.JobType
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
-import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.EmailUtils
 import org.ionproject.integration.utils.JobResult
 import org.slf4j.LoggerFactory
