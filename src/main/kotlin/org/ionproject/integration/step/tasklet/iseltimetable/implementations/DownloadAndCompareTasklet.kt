@@ -109,12 +109,12 @@ class DownloadAndCompareTasklet(
     }
 
     private fun selectMessageFromExceptionAndSendEmail(jobName: String, e: Exception, asset: String) {
-//        if (e is CompositeException) {
-//            val msg = e.exceptions[0].message
-//            sendEmail(jobName, msg!!, asset)
-//        } else {
-//            sendEmail(jobName, e.message!!, asset)
-//        }
+        if (e is CompositeException) {
+            val msg = e.exceptions[0].message
+            sendEmail(jobName, msg!!, asset)
+        } else {
+            sendEmail(jobName, e.message!!, asset)
+        }
         log.info("Email sent successfully")
     }
 
