@@ -1,12 +1,6 @@
 package org.ionproject.integration.utils
 
-class CompositeException(val exceptions: List<Exception>) : Exception() {
-    init {
-        exceptions.forEach {
-            println("Exception -> $it ;;; Message ${it.message}")
-        }
-    }
-}
+class CompositeException(val exceptions: List<Exception>) : Exception()
 
 private fun merge(e1: Exception, e2: Exception) =
     when (e1) {
