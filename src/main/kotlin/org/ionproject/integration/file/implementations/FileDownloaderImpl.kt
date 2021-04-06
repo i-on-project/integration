@@ -38,8 +38,7 @@ class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
         val file = response.map { r -> checker.checkFormat(r.body, jobType) }
             .map { localDestination.toFile() }
 
-        println("File path: ${localDestination.toFile().absolutePath}")
-        println("Working dir: ${System.getProperty("user.dir")}")
+        println("File path: $localDestination")
 
         return Try.map(file, response) { f, r -> f.writeBytes(r.body); f.toPath() }
     }
