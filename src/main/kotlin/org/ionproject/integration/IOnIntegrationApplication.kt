@@ -1,7 +1,5 @@
 package org.ionproject.integration
 
-import java.io.File
-import java.time.Instant
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
@@ -16,6 +14,8 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.support.PropertiesLoaderUtils
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
+import java.io.File
+import java.time.Instant
 
 @SpringBootApplication
 @EnableBatchProcessing
@@ -34,7 +34,7 @@ class JobEngine(
 ) {
     private val log = LoggerFactory.getLogger(IOnIntegrationApplication::class.java)
 
-    @Scheduled(cron = "0 0 1 * * SAT")
+    @Scheduled(cron = "*/5 * * * * *")
     fun runTimetableJob() {
         setUpAndRunJob("timetableJob", "/app/config/timetable/isel")
     }
