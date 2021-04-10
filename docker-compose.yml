@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-    ion-integration:
+    app:
         build: . # Build the app from the local Dockerfile
         environment:
             - SQL_USER=${SQL_USER}
