@@ -1,5 +1,6 @@
 package org.ionproject.integration.utils
 
+import org.ionproject.integration.utils.Try.Companion.ofValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -79,7 +80,7 @@ class TryTests {
     @Test
     fun whenOfValue_thenValueInstance() {
         // Act
-        val result = Try.ofValue(1)
+        val result = ofValue(1)
 
         // Assert
         assertEquals(1, result.orThrow())
@@ -146,5 +147,36 @@ class TryTests {
         assertEquals(2, e.exceptions.count())
         assertEquals(true, e.exceptions[0] is ArithmeticException)
         assertEquals(true, e.exceptions[1] is NullPointerException)
+    }
+
+    @Test
+    fun `map using multiple int arguments and return result`() {
+        val result = Try.map(ofValue(1), ofValue(3), ofValue(2)) { it.sum() }
+            .orElse { it.javaClass.simpleName }
+
+        assertEquals(6, result)
+    }
+
+    @Test
+    fun `map using multiple string arguments and return result`() {
+        val result = Try.map(
+            ofValue("foo"),
+            ofValue("bar"),
+            ofValue("baz"),
+            ofValue("!")
+        ) { it.joinToString(separator = " ") }
+            .orElse { it.javaClass.simpleName }
+
+        assertEquals("foo bar baz !", result)
+    }
+
+    @Test
+    fun `map using multiple int arguments and throwing arithmetic exception when dividing by zero`() {
+        val result =
+            Try.map(oper(1, 1), oper(122, 0), oper(3, 0), oper(-1, 0)) { it.sum() }
+
+        val e = assertThrows<CompositeException> { result.orThrow() }
+        assertEquals(3, e.exceptions.count())
+        assertTrue { e.exceptions.all { it is ArithmeticException } }
     }
 }

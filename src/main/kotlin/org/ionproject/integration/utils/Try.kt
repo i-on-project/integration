@@ -64,6 +64,23 @@ sealed class Try<out T> {
                     is Error -> Error(merge(a.e, b.e))
                 }
             }
+
+        fun <T, R> map(vararg values: Try<T>, f: (List<T>) -> R): Try<R> {
+            data class Holder(val list: MutableList<T> = mutableListOf(), var error: Error? = null)
+
+            val data = values.fold(Holder()) { holder, item ->
+                holder.apply {
+                    when (item) {
+                        is Value -> list += item.value
+                        is Error -> {
+                            val exception = error?.let { merge(it.e, item.e) } ?: item.e
+                            error = Error(exception)
+                        }
+                    }
+                }
+            }
+            return data.error ?: of { f(data.list) }
+        }
     }
 }
 
