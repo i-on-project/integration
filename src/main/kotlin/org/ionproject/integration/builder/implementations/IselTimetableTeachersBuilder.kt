@@ -25,23 +25,28 @@ import org.ionproject.integration.model.internal.timetable.isel.RawData
 import org.ionproject.integration.utils.JsonUtils
 import org.ionproject.integration.utils.RegexUtils
 import org.ionproject.integration.utils.Try
+import org.ionproject.integration.utils.orThrow
 
-class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
+class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
     companion object {
-        private val SCHOOL_REGEX = "\\A.*"
-        private val PROGRAMME_REGEX = "^(Licenciatura|Mestrado).*$"
-        private val CLASS_SECTION_REGEX = "\\bTurma\\b: [LM][A-Z+]+\\d{1,2}[DN]"
-        private val CALENDAR_TERM_REGEX = "\\bAno Letivo\\b: .+?(\\r|\\R)"
-        private val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).(0|3)0"
-        private val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 47
-        private val HEIGHT_HALF_HOUR_THRESHOLD = 17
+        private const val SCHOOL_REGEX = "\\A.*"
+        private const val PROGRAMME_REGEX = "^(Licenciatura|Mestrado).*$"
+        private const val CLASS_SECTION_REGEX = "\\sTurma\\s?:\\s?[LM][A-Z+]+\\d{1,2}\\w+"
+        private const val CALENDAR_TERM_REGEX = "(\\sAno\\sLetivo\\s?:\\s?)(.+?(\\r|\\R))"
+        private const val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).(0|3)0"
+        private const val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 47
+        private const val HEIGHT_HALF_HOUR_THRESHOLD = 17
     }
 
     private var iselTimetableTeachers = Try.of { TimetableTeachers() }
 
     override fun setTimetable(rawData: RawData) {
         iselTimetableTeachers
-            .map { timetableTeachers -> if (timetableTeachers.timetable.count() == 0 || timetableTeachers.teachers.count() == 0) rawDataToBusiness(rawData) }
+            .map { timetableTeachers ->
+                if (timetableTeachers.timetable.count() == 0 || timetableTeachers.teachers.count() == 0) rawDataToBusiness(
+                    rawData
+                )
+            }
     }
 
     override fun setTeachers(rawData: RawData) {
@@ -53,11 +58,18 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
     }
 
     private fun rawDataToBusiness(rawData: RawData) {
-        JsonUtils.fromJson<List<Table>>(rawData.jsonData, Types.newParameterizedType(List::class.java, Table::class.java))
-            .map { mapTablesToBusiness(rawData, it) }
+        val instructorJson = JsonUtils.fromJson<List<Table>>(
+            rawData.instructors,
+            Types.newParameterizedType(List::class.java, Table::class.java)
+        ).orThrow()
+        JsonUtils.fromJson<List<Table>>(
+            rawData.jsonData,
+            Types.newParameterizedType(List::class.java, Table::class.java)
+        )
+            .map { mapTablesToBusiness(rawData, it, instructorJson) }
     }
 
-    private fun mapTablesToBusiness(rawData: RawData, tableList: List<Table>) {
+    private fun mapTablesToBusiness(rawData: RawData, tableList: List<Table>, instructorList: List<Table>) {
         iselTimetableTeachers = Try.of {
             val timetableList = mutableListOf<Timetable>()
             val teacherList = mutableListOf<CourseTeacher>()
@@ -74,12 +86,12 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
                     setCommonData(data, timetable, courseTeacher)
 
                     timetable.courses = getCourseList(tableList[i].data)
-                    courseTeacher.courses = getFacultyList(tableList[i + 1].data)
+                    courseTeacher.courses = getFacultyList(instructorList[i].data)
 
                     timetableList.add(timetable)
                     teacherList.add(courseTeacher)
 
-                    i += 2
+                    i += 1
                 }
 
             TimetableTeachers(
@@ -92,8 +104,11 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
     private fun setCommonData(data: String, timetable: Timetable, courseTeacher: CourseTeacher) {
         val school = RegexUtils.findMatches(SCHOOL_REGEX, data)[0].trimEnd()
         val programme = RegexUtils.findMatches(PROGRAMME_REGEX, data, RegexOption.MULTILINE)[0].trimEnd()
-        val calendarTerm = RegexUtils.findMatches(CALENDAR_TERM_REGEX, data, RegexOption.MULTILINE)[0].replace("Ano Letivo:", "").trim()
-        val classSection = RegexUtils.findMatches(CLASS_SECTION_REGEX, data, RegexOption.MULTILINE)[0].replace("Turma:", "").trim()
+        val calendarTerm =
+            RegexUtils.findMatches(CALENDAR_TERM_REGEX, data, RegexOption.MULTILINE)[0].replace("Ano Letivo :", "")
+                .trim()
+        val classSection =
+            RegexUtils.findMatches(CLASS_SECTION_REGEX, data, RegexOption.MULTILINE)[0].replace("Turma :", "").trim()
         val schoolAcr = "ISEL"
         val programmeArc = ProgrammeMap.map[programme].toString()
 
@@ -128,7 +143,7 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
             for (j in 0 until cells.count()) {
                 val cell = cells[j]
 
-                if (cell.text.isNullOrEmpty()) continue
+                if (cell.text.isEmpty()) continue
 
                 val matches = RegexUtils.findMatches(TIME_SLOT_REGEX, cells[j].text)
                 if (matches.count() != 0) {
@@ -167,7 +182,11 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
                                         category = EventCategory.LECTURE.value,
                                         location = listOf(courseDetails.second.trim()),
                                         beginTime = beginTime.toString(),
-                                        duration = String.format("%02d:%02d", duration.toHoursPart(), duration.toMinutesPart()),
+                                        duration = String.format(
+                                            "%02d:%02d",
+                                            duration.toHoursPart(),
+                                            duration.toMinutesPart()
+                                        ),
                                         weekday = listOf(weekdays.getOrDefault(cell.left, ""))
                                     )
                                 )
@@ -190,11 +209,13 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
 
             val leftCourseText = cells[0].text
             val leftTeacherText = cells[1].text
-            val rightCourseText = cells[2].text
-            val rightTeacherText = cells[3].text
-
             leftFaculty = populateFaculty(leftCourseText, leftTeacherText, leftFaculty, facultyList)
-            rightFaculty = populateFaculty(rightCourseText, rightTeacherText, rightFaculty, facultyList)
+
+            if (cells.size > 2) {
+                val rightCourseText = cells[2].text
+                val rightTeacherText = cells[3].text
+                rightFaculty = populateFaculty(rightCourseText, rightTeacherText, rightFaculty, facultyList)
+            }
         }
 
         if (leftFaculty.label !== null) facultyList.add(leftFaculty)
@@ -205,8 +226,9 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
 
     private fun populateWeekdays(cells: Array<Cell>, weekdays: MutableMap<Double, String>) {
         for (i in 0 until cells.count()) {
-            if (cells[i].width == 0.0 || cells[i].height == 0.0 || cells[i].text.isNullOrEmpty()) continue
-            weekdays[cells[i].left] = Weekdays.values().first { it.toPortuguese() == cells[i].text.toUpperCase() }.toShortString()
+            if (cells[i].width == 0.0 || cells[i].height == 0.0 || cells[i].text.isEmpty()) continue
+            weekdays[cells[i].left] =
+                Weekdays.values().first { it.toPortuguese() == cells[i].text.toUpperCase() }.toShortString()
         }
     }
 
@@ -236,10 +258,15 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
         else -> ""
     }
 
-    private fun populateFaculty(courseText: String, teacherText: String, faculty: Faculty, facultyList: MutableList<Faculty>): Faculty {
+    private fun populateFaculty(
+        courseText: String,
+        teacherText: String,
+        faculty: Faculty,
+        facultyList: MutableList<Faculty>
+    ): Faculty {
         var f = faculty
 
-        if (!courseText.isNullOrEmpty()) {
+        if (courseText.isNotEmpty()) {
             if (f.label !== null) {
                 facultyList.add(f)
             }
@@ -255,8 +282,8 @@ class IselTimetableTeachersBuilder() : ITimetableTeachersBuilder<RawData> {
                 )
             )
         } else {
-            if (!teacherText.isNullOrEmpty()) {
-                var teacherList = f.teachers.toMutableList()
+            if (!teacherText.isEmpty()) {
+                val teacherList = f.teachers.toMutableList()
                 teacherList.add(
                     Teacher(
                         teacherText

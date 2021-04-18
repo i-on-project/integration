@@ -13,21 +13,28 @@ class ISELTimetableFormatChecker : IRawDataFormatChecker {
 
     private val jsonRootType = Types.newParameterizedType(List::class.java, Table::class.java)
 
-    private val regexPattern = "\\bTurma\\b: [LM][A-Z+]+\\d{1,2}[DN] \\bAno Letivo\\b: .+?(\\r|\\R)"
+    private val regexPattern = "Turma\\s?:\\s[LM][A-Za-z]+\\d{1,2}\\w+\\s+Ano Letivo\\s?:\\s?.+"
 
     override fun checkFormat(rawData: RawData): Try<Boolean> {
 
         val jsonChecker = JsonFormatChecker<List<Table>>(jsonRootType)
         val stringChecker = StringFormatChecker(regexPattern)
 
-        val isJsonValid = Try.of { jsonChecker.checkFormat(rawData.jsonData) }
+        val isTimetableJsonValid = Try.of { jsonChecker.checkFormat(rawData.jsonData) }
             .flatMap { res -> mapToErrorOnFalseResult(res, "The timetable table changed its format") }
+
+        val isInstructorsJsonValid = Try.of { jsonChecker.checkFormat(rawData.instructors) }
+            .flatMap { res -> mapToErrorOnFalseResult(res, "TODO: Instructors format error") }
 
         // It is assumed that if the data from the first page respects format, then all pages do
         val isStringValid = Try.of { stringChecker.checkFormat(rawData.textData.first()) }
             .flatMap { res -> mapToErrorOnFalseResult(res, "The timetable header changed its format") }
 
-        return Try.map(isJsonValid, isStringValid) { j, s -> j.and(s) }
+        return Try.map(
+            isTimetableJsonValid,
+            isStringValid,
+            isInstructorsJsonValid
+        ) { validations -> validations.all { it } }
     }
 
     private fun mapToErrorOnFalseResult(res: Boolean, errorMessage: String): Try<Boolean> {
