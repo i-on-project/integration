@@ -110,13 +110,15 @@ internal class FormatVerifierStepTestSuccessful {
             jp,
             ec
         )
+
+        temp.delete()
+
         // Assert
         val hash = je.executionContext["file-hash"] as ByteArray
         assertEquals(text, state.rawData.textData)
         assertEquals(json, state.rawData.jsonData)
         assertEquals(ExitStatus.COMPLETED, je.exitStatus)
         assertTrue(expectedHash.contentEquals(hash))
-        temp.delete()
     }
 }
 
@@ -242,6 +244,7 @@ internal class FormatVerifierStepTestInvalidFormat {
     fun stopMailServer() {
         testSmtp.stop()
     }
+
     @Test
     fun whenFileHasInvalidFormat_thenAssertThrowsException() {
         // Arrange
@@ -260,13 +263,15 @@ internal class FormatVerifierStepTestInvalidFormat {
             jp,
             se.jobExecution.executionContext
         )
+        temp.delete()
+
         // Assert
         assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
         val ex = je.allFailureExceptions[0] as UndeclaredThrowableException
         assertEquals("FormatCheckException", ex.undeclaredThrowable::class.java.simpleName)
         assertEquals("The timetable header changed its format", ex.undeclaredThrowable.message)
-        temp.delete()
     }
+
     @Test
     fun whenFileHasInvalidFormat_thenAssertMailIsSent() {
         // Arrange
@@ -277,7 +282,10 @@ internal class FormatVerifierStepTestInvalidFormat {
 
         val jp = initJobParameters()
         val se = utils.createStepExecution()
-        se.jobExecution.executionContext.put("file-path", Paths.get("src/test/resources/formatVerifierStepTestTemp2.pdf"))
+        se.jobExecution.executionContext.put(
+            "file-path",
+            Paths.get("src/test/resources/formatVerifierStepTestTemp2.pdf")
+        )
 
         // Act
         val je = jobLauncherTestUtils.launchStep(
@@ -285,13 +293,18 @@ internal class FormatVerifierStepTestInvalidFormat {
             jp,
             se.jobExecution.executionContext
         )
+
+        temp.delete()
+
         // Assert
         assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
         val messages: Array<MimeMessage> = testSmtp.receivedMessages
         assertEquals(1, messages.size)
         assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
-        assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message The timetable header changed its format"))
-        temp.delete()
+        assertTrue(
+            GreenMailUtil.getBody(messages[0])
+                .contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message The timetable header changed its format")
+        )
     }
 }
 
@@ -342,6 +355,7 @@ internal class FormatVerifierStepTestEmptyPath {
     fun stopMailServer() {
         testSmtp.stop()
     }
+
     @Test
     fun whenPathIsEmpty_thenAssertThrowsException() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
