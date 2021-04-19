@@ -1,5 +1,7 @@
 package org.ionproject.integration
 
+import java.io.File
+import java.time.Instant
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
@@ -14,16 +16,14 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.support.PropertiesLoaderUtils
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
-import java.io.File
-import java.time.Instant
 
 @SpringBootApplication
 @EnableBatchProcessing
 class IOnIntegrationApplication
 
-    fun main(args: Array<String>) {
-        SpringApplication.run(IOnIntegrationApplication::class.java, *args)
-    }
+fun main(args: Array<String>) {
+    SpringApplication.run(IOnIntegrationApplication::class.java, *args)
+}
 
 @Profile("!test")
 @Configuration
