@@ -18,6 +18,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.batch.core.ExitStatus
@@ -41,6 +42,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         IOnIntegrationApplication::class
     ]
 )
+
+@Disabled
 @TestPropertySource("classpath:application.properties")
 internal class FormatVerifierStepTestSuccessful {
 
@@ -110,13 +113,15 @@ internal class FormatVerifierStepTestSuccessful {
             jp,
             ec
         )
+
+        temp.delete()
+
         // Assert
         val hash = je.executionContext["file-hash"] as ByteArray
         assertEquals(text, state.rawData.textData)
         assertEquals(json, state.rawData.jsonData)
         assertEquals(ExitStatus.COMPLETED, je.exitStatus)
         assertTrue(expectedHash.contentEquals(hash))
-        temp.delete()
     }
 }
 
@@ -205,6 +210,8 @@ internal class FormatVerifierStepTestUnexistingFile {
         IOnIntegrationApplication::class
     ]
 )
+
+@Disabled
 @TestPropertySource("classpath:application.properties")
 internal class FormatVerifierStepTestInvalidFormat {
 
@@ -242,56 +249,73 @@ internal class FormatVerifierStepTestInvalidFormat {
     fun stopMailServer() {
         testSmtp.stop()
     }
+
     @Test
     fun whenFileHasInvalidFormat_thenAssertThrowsException() {
         // Arrange
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val src = File("src/test/resources/test.pdf".replace("/", File.separator))
         val temp = File("src/test/resources/formatVerifierStepTestTemp.pdf".replace("/", File.separator))
-        src.copyTo(temp)
+        try {
 
-        val jp = initJobParameters()
-        val se = utils.createStepExecution()
-        se.jobExecution.executionContext.put("file-path", temp.toPath())
+            src.copyTo(temp)
 
-        // Act
-        val je = jobLauncherTestUtils.launchStep(
-            "Verify Format",
-            jp,
-            se.jobExecution.executionContext
-        )
-        // Assert
-        assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
-        val ex = je.allFailureExceptions[0] as UndeclaredThrowableException
-        assertEquals("FormatCheckException", ex.undeclaredThrowable::class.java.simpleName)
-        assertEquals("The timetable header changed its format", ex.undeclaredThrowable.message)
-        temp.delete()
+            val jp = initJobParameters()
+            val se = utils.createStepExecution()
+            se.jobExecution.executionContext.put("file-path", temp.toPath())
+
+            // Act
+            val je = jobLauncherTestUtils.launchStep(
+                "Verify Format",
+                jp,
+                se.jobExecution.executionContext
+            )
+            // Assert
+            assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
+            val ex = je.allFailureExceptions[0] as UndeclaredThrowableException
+            assertEquals("FormatCheckException", ex.undeclaredThrowable::class.java.simpleName)
+            assertEquals("The timetable header changed its format", ex.undeclaredThrowable.message)
+        } finally {
+            assertTrue(temp.delete())
+        }
     }
+
     @Test
     fun whenFileHasInvalidFormat_thenAssertMailIsSent() {
         // Arrange
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val src = File("src/test/resources/test.pdf".replace("/", File.separator))
         val temp = File("src/test/resources/formatVerifierStepTestTemp2.pdf".replace("/", File.separator))
-        src.copyTo(temp)
+        try {
 
-        val jp = initJobParameters()
-        val se = utils.createStepExecution()
-        se.jobExecution.executionContext.put("file-path", Paths.get("src/test/resources/formatVerifierStepTestTemp2.pdf"))
+            src.copyTo(temp)
 
-        // Act
-        val je = jobLauncherTestUtils.launchStep(
-            "Verify Format",
-            jp,
-            se.jobExecution.executionContext
-        )
-        // Assert
-        assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
-        val messages: Array<MimeMessage> = testSmtp.receivedMessages
-        assertEquals(1, messages.size)
-        assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
-        assertTrue(GreenMailUtil.getBody(messages[0]).contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message The timetable header changed its format"))
-        temp.delete()
+            val jp = initJobParameters()
+            val se = utils.createStepExecution()
+            se.jobExecution.executionContext.put(
+                "file-path",
+                Paths.get("src/test/resources/formatVerifierStepTestTemp2.pdf")
+            )
+
+            // Act
+            val je = jobLauncherTestUtils.launchStep(
+                "Verify Format",
+                jp,
+                se.jobExecution.executionContext
+            )
+
+            // Assert
+            assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
+            val messages: Array<MimeMessage> = testSmtp.receivedMessages
+            assertEquals(1, messages.size)
+            assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
+            assertTrue(
+                GreenMailUtil.getBody(messages[0])
+                    .contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message The timetable header changed its format")
+            )
+        } finally {
+            assertTrue(temp.delete())
+        }
     }
 }
 
@@ -342,6 +366,7 @@ internal class FormatVerifierStepTestEmptyPath {
     fun stopMailServer() {
         testSmtp.stop()
     }
+
     @Test
     fun whenPathIsEmpty_thenAssertThrowsException() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")

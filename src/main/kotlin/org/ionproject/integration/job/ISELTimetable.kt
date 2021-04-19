@@ -17,7 +17,7 @@ import org.ionproject.integration.step.chunkbased.writer.AlertOnFailureWriter
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.DownloadAndCompareTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.MappingTasklet
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.PostUploadTasklet
-import org.ionproject.integration.step.tasklet.iseltimetable.implementations.UploadTasklet
+import org.ionproject.integration.step.tasklet.iseltimetable.implementations.WriteFileTasklet
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
@@ -47,7 +47,7 @@ class ISELTimetable(
         .on("STOPPED").end()
         .next(formatVerifierStep())
         .next(taskletStep("RawData to Business Object", mappingTasklet()))
-        .next(uploadStep())
+        .next(writeLocalStep())
         .next(taskletStep("PostUpload", postUploadTasklet()))
         .build().build()
 
@@ -88,19 +88,6 @@ class ISELTimetable(
     fun mappingTasklet() =
         MappingTasklet(State)
 
-    @Bean
-    fun uploadStep(): Step {
-        val uploadFlow = FlowBuilder<SimpleFlow>("Upload to I-On Core")
-            .split(taskExecutor())
-            .add(
-                flow("Upload Faculty", facultyStep()),
-                flow("Upload Timetable", timetableStep())
-            ).build()
-
-        return stepBuilderFactory.get("Upload to I-On Core").flow(uploadFlow)
-            .build()
-    }
-
     fun flow(name: String, step: Step): Flow {
         return FlowBuilder<SimpleFlow>(name)
             .from(step)
@@ -112,29 +99,42 @@ class ISELTimetable(
         return SimpleAsyncTaskExecutor("spring_batch")
     }
 
+    @Bean
+    fun writeLocalStep(): Step {
+        val writeLocalFlow = FlowBuilder<SimpleFlow>("Write Local Files")
+            .split(taskExecutor())
+            .add(
+                flow("Write Faculty", writeFacultyStep()),
+                flow("Write Timetable", writeTimetableStep())
+            ).build()
+
+        return stepBuilderFactory.get("Write Local Files").flow(writeLocalFlow)
+            .build()
+    }
+
     @Autowired
-    private lateinit var timetableTasklet: UploadTasklet
+    private lateinit var timetableWriteTasklet: WriteFileTasklet
 
     @Bean
-    fun timetableStep(): TaskletStep {
-        timetableTasklet.setUploadType(UploadType.TIMETABLE)
+    fun writeTimetableStep(): TaskletStep {
+        timetableWriteTasklet.setUploadType(UploadType.TIMETABLE)
 
         return taskletStep(
-            "Upload Timetable Information to I-On Core",
-            timetableTasklet
+            "Write Timetable Information to Local Folder",
+            timetableWriteTasklet
         )
     }
 
     @Autowired
-    private lateinit var facultyTasklet: UploadTasklet
+    private lateinit var facultyWriteTasklet: WriteFileTasklet
 
     @Bean
-    fun facultyStep(): TaskletStep {
-        facultyTasklet.setUploadType(UploadType.TEACHERS)
+    fun writeFacultyStep(): TaskletStep {
+        facultyWriteTasklet.setUploadType(UploadType.TEACHERS)
 
         return taskletStep(
-            "Upload Faculty Information to I-On Core",
-            facultyTasklet
+            "Write Faculty Information to Local Folder",
+            facultyWriteTasklet
         )
     }
 

@@ -23,7 +23,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         ISELTimetable::class,
         FormatVerifierProcessor::class,
         BatchAutoConfiguration::class,
-        IOnIntegrationApplication::class]
+        IOnIntegrationApplication::class
+    ]
 )
 @TestPropertySource("classpath:application.properties")
 internal class FormatVerifierProcessorTest {

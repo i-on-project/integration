@@ -27,4 +27,7 @@ class AppProperties {
 
     @NotEmpty
     lateinit var resourcesFolder: String
+
+    @NotEmpty
+    lateinit var localFileOutputFolder: String
 }

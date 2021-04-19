@@ -1,5 +1,6 @@
 package org.ionproject.integration.service.implementations
 
+import java.io.File
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.http.HttpRequest
@@ -15,6 +16,7 @@ import org.ionproject.integration.service.interfaces.ICoreService
 import org.ionproject.integration.utils.HttpUtils
 import org.ionproject.integration.utils.JsonUtils
 import org.ionproject.integration.utils.Try
+import org.ionproject.integration.utils.orThrow
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,13 +25,15 @@ class CoreService(private val httpUtils: HttpUtils, private val appProperties: A
     override fun pushTimetable(timetable: Timetable): Try<CoreResult> {
         var timetableJson = JsonUtils.toJson(timetable)
 
-        return sendToCore(timetableJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionEvents"))
+        File("/home/spring/timetable.json").writeText(timetableJson.orThrow())
+        return Try.of { CoreResult.SUCCESS }
     }
 
     override fun pushCourseTeacher(courseTeacher: CourseTeacher): Try<CoreResult> {
         var courseTeacherJson = JsonUtils.toJson(courseTeacher)
 
-        return sendToCore(courseTeacherJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionFaculty"))
+        File("/home/spring/courseteacher.json").writeText(courseTeacherJson.orThrow())
+        return Try.of { CoreResult.SUCCESS }
     }
 
     override fun pushCoreTerm(coreTerm: CoreTerm): Try<CoreResult> {

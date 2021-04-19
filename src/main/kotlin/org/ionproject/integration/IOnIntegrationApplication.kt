@@ -21,9 +21,9 @@ import org.springframework.scheduling.annotation.Scheduled
 @EnableBatchProcessing
 class IOnIntegrationApplication
 
-    fun main(args: Array<String>) {
-        SpringApplication.run(IOnIntegrationApplication::class.java, *args)
-    }
+fun main(args: Array<String>) {
+    SpringApplication.run(IOnIntegrationApplication::class.java, *args)
+}
 
 @Profile("!test")
 @Configuration
@@ -34,7 +34,7 @@ class JobEngine(
 ) {
     private val log = LoggerFactory.getLogger(IOnIntegrationApplication::class.java)
 
-    @Scheduled(cron = "0 0 1 * * SAT")
+    @Scheduled(cron = "*/5 * * * * *")
     fun runTimetableJob() {
         setUpAndRunJob("timetableJob", "/app/config/timetable/isel")
     }
