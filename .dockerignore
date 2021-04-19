@@ -4,3 +4,5 @@
 .github/*
 .gradle/*
 build/
+dev/
+git-server/

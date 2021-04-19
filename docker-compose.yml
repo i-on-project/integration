@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+    app:
+        build: . # Build the app from the local Dockerfile
+        environment:
+            - SQL_USER=${SQL_USER}
+            - SQL_HOST=${SQL_HOST}
+            - SQL_PASSWORD=${SQL_PASSWORD}
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        depends_on:
+            - ion-db
+            - git-server
+    ion-db:
+        image: postgres:13.2-alpine
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_USER=${SQL_USER}
+            - POSTGRES_PASSWORD=${SQL_PASSWORD}
+    git-server:
+        image: gitbucket/gitbucket:4.35.3
+        ports:
+            - "8080:8080"
+        volumes:
+            - "./git-server:/gitbucket"
+volumes:
+    db-data:
