@@ -84,18 +84,14 @@ class WriteFileTasklet(
     }
 
     fun pushTimetable(timetable: Timetable): Try<CoreResult> {
-        // var timetableJson = JsonUtils.toJson(timetable)
-
         File("${appProperties.localFileOutputFolder}/timetable.json").writeText(JsonUtils.toJson(timetable).orThrow())
         return Try.of { CoreResult.SUCCESS }
     }
 
     fun pushCourseTeacher(courseTeacher: CourseTeacher): Try<CoreResult> {
-        // var courseTeacherJson = JsonUtils.toJson(courseTeacher)
-
-        File("${appProperties.localFileOutputFolder}/courseteacher.json").writeText(JsonUtils.toJson(courseTeacher).orThrow())
+        File("${appProperties.localFileOutputFolder}/courseteacher.json").writeText(
+            JsonUtils.toJson(courseTeacher).orThrow()
+        )
         return Try.of { CoreResult.SUCCESS }
     }
-
-    // TODO write tests
 }

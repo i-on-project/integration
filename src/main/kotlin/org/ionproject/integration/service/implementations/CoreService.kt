@@ -25,7 +25,6 @@ class CoreService(private val httpUtils: HttpUtils, private val appProperties: A
     override fun pushTimetable(timetable: Timetable): Try<CoreResult> {
         var timetableJson = JsonUtils.toJson(timetable)
 
-        // return sendToCore(timetableJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionEvents"))
         File("/home/spring/timetable.json").writeText(timetableJson.orThrow())
         return Try.of { CoreResult.SUCCESS }
     }
@@ -33,7 +32,6 @@ class CoreService(private val httpUtils: HttpUtils, private val appProperties: A
     override fun pushCourseTeacher(courseTeacher: CourseTeacher): Try<CoreResult> {
         var courseTeacherJson = JsonUtils.toJson(courseTeacher)
 
-        // return sendToCore(courseTeacherJson, URI.create("${appProperties.coreBaseUrl}/v0/insertClassSectionFaculty"))
         File("/home/spring/courseteacher.json").writeText(courseTeacherJson.orThrow())
         return Try.of { CoreResult.SUCCESS }
     }
