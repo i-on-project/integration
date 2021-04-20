@@ -201,27 +201,41 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
 
     private fun getFacultyList(data: Array<Array<Cell>>): List<Faculty> {
         val facultyList = mutableListOf<Faculty>()
-        var leftFaculty = Faculty()
-        var rightFaculty = Faculty()
 
-        for (i in 0 until data.count()) {
-            val cells = data[i]
+        var faculty = getLeftSideFaculty(data, facultyList)
+        faculty = getRightSideFaculty(data, facultyList, faculty)
 
-            val leftCourseText = cells[0].text
-            val leftTeacherText = cells[1].text
-            leftFaculty = populateFaculty(leftCourseText, leftTeacherText, leftFaculty, facultyList)
-
-            if (cells.size > 2) {
-                val rightCourseText = cells[2].text
-                val rightTeacherText = cells[3].text
-                rightFaculty = populateFaculty(rightCourseText, rightTeacherText, rightFaculty, facultyList)
-            }
-        }
-
-        if (leftFaculty.label !== null) facultyList.add(leftFaculty)
-        if (rightFaculty.label !== null) facultyList.add(rightFaculty)
+        if (faculty.label !== null)
+            facultyList.add(faculty)
 
         return facultyList
+    }
+
+    private fun getLeftSideFaculty(data: Array<Array<Cell>>, facultyList: MutableList<Faculty>): Faculty {
+        var faculty = Faculty()
+        data.forEach { cells ->
+            val courseText = cells[0].text
+            val instructorText = cells[1].text
+            faculty = populateFaculty(courseText, instructorText, faculty, facultyList)
+        }
+
+        return faculty
+    }
+
+    private fun getRightSideFaculty(
+        data: Array<Array<Cell>>,
+        facultyList: MutableList<Faculty>,
+        faculty: Faculty
+    ): Faculty {
+        var newFaculty = faculty
+        data.filter { it.size > 2 }
+            .forEach { cells ->
+                val courseText = cells[2].text
+                val teacherText = cells[3].text
+                newFaculty = populateFaculty(courseText, teacherText, newFaculty, facultyList)
+            }
+
+        return newFaculty
     }
 
     private fun populateWeekdays(cells: Array<Cell>, weekdays: MutableMap<Double, String>) {
