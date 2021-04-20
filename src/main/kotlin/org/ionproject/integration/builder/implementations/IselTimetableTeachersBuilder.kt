@@ -34,8 +34,8 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
         private const val CLASS_SECTION_REGEX = "\\sTurma\\s?:\\s?[LM][A-Z+]+\\d{1,2}\\w+"
         private const val CALENDAR_TERM_REGEX = "(\\sAno\\sLetivo\\s?:\\s?)(.+?(\\r|\\R))"
         private const val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).(0|3)0"
-        private const val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 47
-        private const val HEIGHT_HALF_HOUR_THRESHOLD = 17
+        private const val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 58
+        private const val HEIGHT_HALF_HOUR_THRESHOLD = 20
     }
 
     private var iselTimetableTeachers = Try.of { TimetableTeachers() }
@@ -282,7 +282,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
                 )
             )
         } else {
-            if (!teacherText.isEmpty()) {
+            if (teacherText.isNotEmpty()) {
                 val teacherList = f.teachers.toMutableList()
                 teacherList.add(
                     Teacher(
