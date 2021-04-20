@@ -24,7 +24,7 @@ class ISELTimetableFormatChecker : IRawDataFormatChecker {
             .flatMap { res -> mapToErrorOnFalseResult(res, "The timetable table changed its format") }
 
         val isInstructorsJsonValid = Try.of { jsonChecker.checkFormat(rawData.instructors) }
-            .flatMap { res -> mapToErrorOnFalseResult(res, "TODO: Instructors format error") }
+            .flatMap { res -> mapToErrorOnFalseResult(res, "TODO: Instructors format error") } // TODO
 
         // It is assumed that if the data from the first page respects format, then all pages do
         val isStringValid = Try.of { stringChecker.checkFormat(rawData.textData.first()) }
