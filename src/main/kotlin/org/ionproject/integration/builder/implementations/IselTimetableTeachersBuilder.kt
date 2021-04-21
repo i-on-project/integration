@@ -14,7 +14,7 @@ import org.ionproject.integration.model.external.timetable.Language
 import org.ionproject.integration.model.external.timetable.Programme
 import org.ionproject.integration.model.external.timetable.RecurrentEvent
 import org.ionproject.integration.model.external.timetable.School
-import org.ionproject.integration.model.external.timetable.Teacher
+import org.ionproject.integration.model.external.timetable.Instructor
 import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.external.timetable.Weekdays
@@ -41,12 +41,10 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
     private var iselTimetableTeachers = Try.of { TimetableTeachers() }
 
     override fun setTimetable(rawData: RawData) {
-        iselTimetableTeachers
-            .map { timetableTeachers ->
-                if (timetableTeachers.timetable.count() == 0 || timetableTeachers.teachers.count() == 0) rawDataToBusiness(
-                    rawData
-                )
-            }
+        iselTimetableTeachers.map {
+            if (it.timetable.count() == 0 || it.teachers.count() == 0)
+                rawDataToBusiness(rawData)
+        }
     }
 
     override fun setTeachers(rawData: RawData) {
@@ -74,25 +72,18 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
             val timetableList = mutableListOf<Timetable>()
             val teacherList = mutableListOf<CourseTeacher>()
 
-            var i = 0
-            rawData
-                .textData
-                .forEach { data ->
-                    var timetable =
-                        Timetable()
-                    var courseTeacher =
-                        CourseTeacher()
+            rawData.textData.forEachIndexed { i, data ->
+                val timetable = Timetable()
+                val courseTeacher = CourseTeacher()
 
-                    setCommonData(data, timetable, courseTeacher)
+                setCommonData(data, timetable, courseTeacher)
 
-                    timetable.courses = getCourseList(tableList[i].data)
-                    courseTeacher.courses = getFacultyList(instructorList[i].data)
+                timetable.courses = getCourseList(tableList[i].data)
+                courseTeacher.courses = getFacultyList(instructorList[i].data)
 
-                    timetableList.add(timetable)
-                    teacherList.add(courseTeacher)
-
-                    i += 1
-                }
+                timetableList.add(timetable)
+                teacherList.add(courseTeacher)
+            }
 
             TimetableTeachers(
                 timetableList,
@@ -128,7 +119,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
         var courseList = mutableListOf<Course>()
         var weekdays = mutableMapOf<Double, String>()
-        var courseDetails: Triple<String, String, String>
+        var courseDetails: ClassDetail
 
         for (i in 0 until data.count()) {
             val cells = data[i]
@@ -155,7 +146,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
                     .forEach {
                         val cellText = if (it.contains('[')) it else cell.text
 
-                        courseDetails = populateCourseDetails(cellText)
+                        courseDetails = ClassDetail.from(cellText)
 
                         var duration: Duration = when {
                             cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD -> {
@@ -171,16 +162,16 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
 
                         if (!weekdays.contains(cell.left)) throw TimetableTeachersBuilderException("Can't find weekday")
 
-                        val acr = courseDetails.first.trim()
+                        val acr = courseDetails.acronym
                         courseList.add(
                             Course(
                                 label = Label(acr = acr),
                                 events = listOf(
                                     RecurrentEvent(
                                         title = null,
-                                        description = "${getDescription(courseDetails.third.trim())}$acr",
+                                        description = "${getDescription(courseDetails.type)}$acr",
                                         category = EventCategory.LECTURE.value,
-                                        location = listOf(courseDetails.second.trim()),
+                                        location = listOf(courseDetails.location),
                                         beginTime = beginTime.toString(),
                                         duration = String.format(
                                             "%02d:%02d",
@@ -199,43 +190,43 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
         return courseList
     }
 
-    private fun getFacultyList(data: Array<Array<Cell>>): List<Faculty> {
-        val facultyList = mutableListOf<Faculty>()
+    private fun getFacultyList(data: Array<Array<Cell>>): List<Faculty> =
+        getRawFacultyList(data).map { rawData ->
+            val classDetail = ClassDetail.from(rawData.courseText)
+            val instructor = Instructor(rawData.instructorText)
 
-        var faculty = getLeftSideFaculty(data, facultyList)
-        faculty = getRightSideFaculty(data, facultyList, faculty)
+            return@map classDetail to instructor
+        }.groupBy(keySelector = { it.first }, valueTransform = { it.second })
+            .map { Faculty(it.key, it.value) }
 
-        if (faculty.label !== null)
-            facultyList.add(faculty)
+    /*
+        Course text may be empty when multiple consecutive instructors teach the same course.
+        Only the first will have course text, it will be empty for subsequent instructors.
+        This function hides this detail by filling in empty course text with the correct value.
+    */
+    private fun getRawFacultyList(data: Array<Array<Cell>>): List<FacultyRawData> {
+        require(data.all { it.size >= 2 }) // Always expect at least two cells (course + instructor)
+        require(data.first().first().text.isNotBlank()) // First cell of first row must have course text
 
-        return facultyList
-    }
+        var prevCourse = ""
+        val left = data.map { cell ->
+            val courseText = cell.first().text.ifEmpty { prevCourse }
+            val instructorText = cell[1].text
+            prevCourse = courseText
 
-    private fun getLeftSideFaculty(data: Array<Array<Cell>>, facultyList: MutableList<Faculty>): Faculty {
-        var faculty = Faculty()
-        data.forEach { cells ->
-            val courseText = cells[0].text
-            val instructorText = cells[1].text
-            faculty = populateFaculty(courseText, instructorText, faculty, facultyList)
+            FacultyRawData(courseText, instructorText)
         }
 
-        return faculty
-    }
+        val right = data.filter { it.size == 4 } // Filter out rows that have no right-hand side cells
+            .map { cell ->
+                val courseText = cell[2].text.ifEmpty { prevCourse }
+                val instructorText = cell[3].text
+                prevCourse = courseText
 
-    private fun getRightSideFaculty(
-        data: Array<Array<Cell>>,
-        facultyList: MutableList<Faculty>,
-        faculty: Faculty
-    ): Faculty {
-        var newFaculty = faculty
-        data.filter { it.size > 2 }
-            .forEach { cells ->
-                val courseText = cells[2].text
-                val teacherText = cells[3].text
-                newFaculty = populateFaculty(courseText, teacherText, newFaculty, facultyList)
+                FacultyRawData(courseText, instructorText)
             }
 
-        return newFaculty
+        return left + right
     }
 
     private fun populateWeekdays(cells: Array<Cell>, weekdays: MutableMap<Double, String>) {
@@ -254,65 +245,11 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
             .of(time[0].toInt(), time[1].toInt())
     }
 
-    private fun populateCourseDetails(text: String): Triple<String, String, String> {
-        val firstIndex = text.indexOf('(')
-
-        return Triple(
-            text.substring(0, text.indexOf('[')),
-            text.substring(text.lastIndexOf(')') + 1),
-            text.substring(firstIndex + 1, text.indexOf(')', firstIndex))
-        )
-    }
-
     private fun getDescription(classType: String) = when (classType) {
         "T" -> "Aulas Teóricas de "
         "P" -> "Aulas Práticas de "
         "L" -> "Aulas Laboratório de "
         "T/P" -> "Aulas Teórico-práticas de "
         else -> ""
-    }
-
-    private fun populateFaculty(
-        courseText: String,
-        teacherText: String,
-        faculty: Faculty,
-        facultyList: MutableList<Faculty>
-    ): Faculty {
-        var f = faculty
-
-        if (courseText.isNotEmpty()) {
-            if (f.label !== null) {
-                facultyList.add(f)
-            }
-
-            val courseDetails = populateCourseDetails(courseText)
-            f = Faculty(
-                label = Label(acr = courseDetails.first.trim())
-            )
-
-            f.teachers = mutableListOf(
-                Teacher(
-                    teacherText
-                )
-            )
-        } else {
-            if (teacherText.isNotEmpty()) {
-                val teacherList = f.teachers.toMutableList()
-                teacherList.add(
-                    Teacher(
-                        teacherText
-                    )
-                )
-
-                f.teachers = teacherList
-            } else {
-                if (f.label !== null) {
-                    facultyList.add(f)
-                    f = Faculty()
-                }
-            }
-        }
-
-        return f
     }
 }
