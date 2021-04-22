@@ -53,10 +53,16 @@ This mode will run all the application containers and bind **their output to you
 docker-compose up -d
 ```
 
-The **first time you build the images may take a while** but you'll notice following runs are much faster due to the way Docker caches its image layers.
+The **first time you run the app will take longer than usual** as Docker downloads all required images from the remote repository. These are then **cached** locally and will be available for following builds, making them faster.
 
-#### Customizing the containers
-While the environment works out of the box for most setups you may run into **port binding issues** if you're already using any of the ports we configured **Docker** to use (**8080** for the local git server and **5432** for the Postgres database).
+By **default** the app containers will be accessible via the following ports:
+- **Git server**: Port **8080**
+- **PostgreSQL Database**: Port **5432**
+
+If you wish to change these values please refer to the [Customizing Containers](#customizing-containers) section.
+
+#### Customizing containers
+While the environment works out of the box for most setups you may run into **port binding issues** if you're already using any of the default ports described in the [Running with Docker Compose section](#running-with-docker-compose).
 
 These ports are configured from **Docker environment variables** and their preset values can be viewed by running the `docker-compose config` command or by reading the [.env](.env) file (which is a simple list of key-value pairs). Simply edit the **.env** file with the port values you wish to use and you're good to go.
 
