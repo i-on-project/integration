@@ -83,7 +83,7 @@ Or, if you're using a client that supports PostgreSQL Drivers (like [DBeaver](ht
 - **Password**: (SQL_PASSWORD in .env file)
 
 ### Stopping and removing the environment
-If you are running in **attached** mode (without the `-d` flag) you can use `Ctrl + C` to stop all containers **gracefully** or, if you're in a hurry (or a container is not stopping on its own) you can press `Ctrl + C` to **force shutdown**.
+If you are running in **attached** mode (without the `-d` flag) you can use `Ctrl + C` to stop all containers **gracefully** or, if you're in a hurry (or a container is not stopping on its own) you can press `Ctrl + C` a **second time** to **force shutdown**.
 
 In **dettached mode** you can stop all containers with the `docker-compose stop` command.
 
