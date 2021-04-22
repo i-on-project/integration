@@ -20,7 +20,7 @@ Academic information such as class schedules or academic calendars is often scat
 
 ### Architecture
 
-![I-On Integration Architecture](ion_integration_architecture.png)
+![I-On Integration Architecture](img/ion_integration_architecture.png)
 
 **I-On Integration** uses *batch processing* techniques to acquire and process all unstructured data and write it to the common **File Repository** (a Git repo whose sole purpose is to host this data).
 
