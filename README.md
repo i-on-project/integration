@@ -20,7 +20,7 @@ Academic information such as class schedules or academic calendars is often scat
 
 ### Architecture
 
-![I-On Integration Architecture](https://raw.githubusercontent.com/i-on-project/integration/master/img/ion_integration_architecture.png)
+![I-On Integration Architecture](ion_integration_architecture.png)
 
 **I-On Integration** uses *batch processing* techniques to acquire and process all unstructured data and write it to the common **File Repository** (a Git repo whose sole purpose is to host this data).
 
@@ -58,7 +58,7 @@ The **first time you build the images may take a while** but you'll notice follo
 #### Customizing the containers
 While the environment works out of the box for most setups you may run into **port binding issues** if you're already using any of the ports we configured **Docker** to use (**8080** for the local git server and **5432** for the Postgres database).
 
-These ports are configured from **Docker environment variables** and their preset values can be viewed by running the `docker-compose config` command or by reading the [.env](https://github.com/i-on-project/integration/blob/master/.env) file (which is a simple list of key-value pairs). Simply edit the **.env** file with the port values you wish to use and you're good to go.
+These ports are configured from **Docker environment variables** and their preset values can be viewed by running the `docker-compose config` command or by reading the [.env](.env) file (which is a simple list of key-value pairs). Simply edit the **.env** file with the port values you wish to use and you're good to go.
 
 **Note**: All port binding commands in docker use the `HOST:CONTAINER` format so, for example, the binding `1337:80` would bind the **1337 port** on the **host** machine to the **80 port** inside the **container**.
 
