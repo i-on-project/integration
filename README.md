@@ -9,63 +9,93 @@
 
 [![GitHub contributors](https://img.shields.io/github/contributors/i-on-project/integration)](https://github.com/i-on-project/integration/graphs/contributors/)
 
-I-On Integration has the responsibility of collecting relevant academic information from external sources and uploading it to I-On Core, which is the I-On system central repository.
+## About the project
+[I-On](https://github.com/i-on-project) is an open source academic information aggregation and distribution system. 
 
-[I-On](https://github.com/i-on-project) is an academic information aggregation and distribution system, from which I-On Integration is part of with 2 additional projects:
+Academic information such as class schedules or academic calendars is often scattered throughout each institution's webpage, departmental sections or its Learning Management System and can often times make it hard for students to navigate and find what they need.
 
-* [I-On Core](https://github.com/i-on-project/core) the repository of academic information
-* [I-On Android](https://github.com/i-on-project/android) the mobile application
+**I-On**'s purpose is to collect and present this data in a simple and meaningful way and provide a set of **functionalities to make students' lives easier**, such as **building course schedules** or **keeping track of tests and exams**.
 
-## Requirements
+**I-On _Integration_**'s purpose is to **obtain and process** all of this **unstructured data**, normalize and present it in a **consistent and structured format** that is institution agnostic so it can be used by other project components.
 
-* Linux/macOS/Windows
+### Architecture
+
+![I-On Integration Architecture](https://raw.githubusercontent.com/i-on-project/integration/master/img/ion_integration_architecture.png)
+
+**I-On Integration** uses *batch processing* techniques to acquire and process all unstructured data and write it to the common **File Repository** (a Git repo whose sole purpose is to host this data).
+
+The **Scheduler** component, as the name suggests, is responsible for periodically triggering job executions through Integration's Web API (not yet available).
+
+### Built With
+Presently I-On integration is built using the following main frameworks and technologies:
+- [Spring Batch](https://spring.io/projects/spring-batch) for **batch processing** and job maintenance
+- [Spring Boot Starter Web](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web) for it's **Web API** (not yet available)
+- **Github** for **version control**, **CI/CD** pipelines and to host the **File Repository** in a separate [Github Repo](https://github.com/i-on-project/integration-data)
+- [Kotlin](https://kotlinlang.org/) as the main programming language
+- [Docker](https://www.docker.com/) for **containerization** of deployed artifacts
+
+## Getting Started
+Getting your own copy of **I-On Integration** running locally while not difficult can be tedious if done manually so we've provided a simple **Docker Compose** script to simplify it.
+
+### Requirements
+
 * [Docker](https://www.docker.com/)
-* [I-On Core](https://github.com/i-on-project/core/blob/master/README.md#running) running
-* [PostgreSQL](https://www.postgresql.org/) instance running with database **spring_batch** created. 
+* [Docker Compose](https://docs.docker.com/compose/install/) (**Note**: Already included in **Docker Desktop for Windows**)
+* [Git](https://git-scm.com/) (Optional) to clone the repository, although you can also **download it as a zip file** from the top of this page
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;With Docker installed just use `docker run --name postgres -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=spring_batch -p 5432:5432 -d postgres`
-
-#### Application.properties
-
-Before running some variables have to be updated, such as `spring.datasource.url`, `spring.datasource.username` and `spring.datasource.password`
-
-If the previous docker command was used, the values to use would be:
+### Running with Docker Compose
+Navigate to the **directory** in your local file system where you've chosen to place the source code in and, using your favorite **terminal**, run the following command: 
 ```
-spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/spring_batch
-spring.datasource.username=postgres
-spring.datasource.password=1234 
+docker-compose up
+```
+This mode will run all the application containers and bind **their output to your standard output**. If you want to run them in the **background** simply add the **detach** flag to the command:
+```
+docker-compose up -d
 ```
 
-There is also the need to update `ion.core-base-url` and `ion.core-token`. Check [I-On Core documentation](https://github.com/i-on-project/core/blob/master/README.md)
+The **first time you build the images may take a while** but you'll notice following runs are much faster due to the way Docker caches its image layers.
 
-Finally `spring.mail.username`, `spring.mail.password` and `email.sender` for the email user that will send the alert emails.
+#### Customizing the containers
+While the environment works out of the box for most setups you may run into **port binding issues** if you're already using any of the ports we configured **Docker** to use (**8080** for the local git server and **5432** for the Postgres database).
 
-## Build
+These ports are configured from **Docker environment variables** and their preset values can be viewed by running the `docker-compose config` command or by reading the [.env](https://github.com/i-on-project/integration/blob/master/.env) file (which is a simple list of key-value pairs). Simply edit the **.env** file with the port values you wish to use and you're good to go.
 
-    $ git clone git@github.com:i-on-project/integration.git
-    $ cd integration
-    
-You can build via command line
+**Note**: All port binding commands in docker use the `HOST:CONTAINER` format so, for example, the binding `1337:80` would bind the **1337 port** on the **host** machine to the **80 port** inside the **container**.
 
-    $ ./gradlew build
-    
-Or using an IDE with gradle support such as [IntelliJ IDEA](https://www.jetbrains.com/idea/) or [Eclipse](https://www.eclipse.org/ide/)
+The default database, username and password are also customizable through the **.env** file.
 
-Or build the docker image
+#### Accessing the containerized database
+While the Integration app will be able to connect to the database out of the box without any human intervention you might also be interested in connecting directly to run your own queries.
 
-    $ ./gradlew buildDockerImage      
+You can use your favorite **SQL client** to connect to the containerized database just as you would for any other database server.
 
-## Running
+The **default** JDBC connection string is:
+```
+jdbc:postgresql://ion-db:5432/ion_integration
+```
 
-When running via IDE first you need to update:
+Or, if you're using a client that supports PostgreSQL Drivers (like [DBeaver](https://dbeaver.io/)) you can simply connect to a PostgreSQL destination with the following parameters:
+- **Host**: localhost
+- **Port**: (SQL_PORT in .env file)
+- **Database**: (SQL_DATABASE in .env file)
+- **Authentication**: Database Native
+- **Username**: (SQL_USER in .env file)
+- **Password**: (SQL_PASSWORD in .env file)
 
-* `ion.resources-folder` on application.properties to **src/main/resources**
-* On IOnIntegrationApplication.kt all config path should point to **src/main/resources/config...**
+### Stopping and removing the environment
+If you are running in **attached** mode (without the `-d` flag) you can use `Ctrl + C` to stop all containers **gracefully** or, if you're in a hurry (or a container is not stopping on its own) you can press `Ctrl + C` to **force shutdown**.
 
-You can also run with Docker (no need to update paths)
+In **dettached mode** you can stop all containers with the `docker-compose stop` command.
 
-    $ docker run -it --network=host i-on-integration-image
-    
+Note that this will only **stop** the containers.
+
+If you wish to **remove** all the containers you have to use the `docker-compose down` command. This will **not** remove images or volumes.
+
+To also **remove all images** you can use `docker-compose down -rmi all`.
+
+To **remove created volumes** (which are used to persist data across different containers) you can use the `docker-compose down -v`. This might be **useful if you wish to reset the database** as it relies on a volume to persist its data.
+
+
 ## Documentation
 
 [Check wiki for additional information](https://github.com/i-on-project/integration/wiki)
