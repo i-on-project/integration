@@ -1,10 +1,10 @@
 package org.ionproject.integration.config
 
+import java.sql.Connection
+import javax.sql.DataSource
 import org.springframework.jdbc.datasource.AbstractDataSource
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
-import java.sql.Connection
-import javax.sql.DataSource
 
 class RetryableDatasource(
     val dataSource: DataSource
