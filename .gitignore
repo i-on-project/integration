@@ -207,3 +207,6 @@ nbdist/
 
 ### Tabula-Java (https://github.com/tabulapdf/tabula-java) ###
 !tabula-*
+
+### Ignore Local git server DB
+git-server/data.mv.db
