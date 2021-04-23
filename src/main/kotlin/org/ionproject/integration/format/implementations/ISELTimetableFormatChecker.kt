@@ -4,7 +4,7 @@ import com.squareup.moshi.Types
 import org.ionproject.integration.format.exceptions.FormatCheckException
 import org.ionproject.integration.format.interfaces.IRawDataFormatChecker
 import org.ionproject.integration.model.internal.tabula.Table
-import org.ionproject.integration.model.internal.timetable.isel.RawData
+import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
 import org.ionproject.integration.utils.Try
 import org.springframework.stereotype.Component
 
@@ -15,19 +15,19 @@ class ISELTimetableFormatChecker : IRawDataFormatChecker {
 
     private val regexPattern = "Turma\\s?:\\s[LM][A-Za-z]+\\d{1,2}\\w+\\s+Ano Letivo\\s?:\\s?.+"
 
-    override fun checkFormat(rawData: RawData): Try<Boolean> {
+    override fun checkFormat(rawTimetableData: RawTimetableData): Try<Boolean> {
 
         val jsonChecker = JsonFormatChecker<List<Table>>(jsonRootType)
         val stringChecker = StringFormatChecker(regexPattern)
 
-        val isTimetableJsonValid = Try.of { jsonChecker.checkFormat(rawData.jsonData) }
+        val isTimetableJsonValid = Try.of { jsonChecker.checkFormat(rawTimetableData.scheduleData) }
             .flatMap { res -> mapToErrorOnFalseResult(res, "The timetable table changed its format") }
 
-        val isInstructorsJsonValid = Try.of { jsonChecker.checkFormat(rawData.instructors) }
+        val isInstructorsJsonValid = Try.of { jsonChecker.checkFormat(rawTimetableData.instructorData) }
             .flatMap { res -> mapToErrorOnFalseResult(res, "TODO: Instructors format error") } // TODO
 
         // It is assumed that if the data from the first page respects format, then all pages do
-        val isStringValid = Try.of { stringChecker.checkFormat(rawData.textData.first()) }
+        val isStringValid = Try.of { stringChecker.checkFormat(rawTimetableData.textData.first()) }
             .flatMap { res -> mapToErrorOnFalseResult(res, "The timetable header changed its format") }
 
         return Try.map(
