@@ -9,7 +9,7 @@ import org.ionproject.integration.format.implementations.ISELTimetableFormatChec
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.internal.timetable.UploadType
-import org.ionproject.integration.model.internal.timetable.isel.RawData
+import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
 import org.ionproject.integration.step.chunkbased.FormatVerifierStepBuilder
 import org.ionproject.integration.step.chunkbased.processor.FormatVerifierProcessor
 import org.ionproject.integration.step.chunkbased.reader.ExtractReader
@@ -145,7 +145,7 @@ class ISELTimetable(
 
     @Component
     object State {
-        lateinit var rawData: RawData
+        lateinit var rawTimetableData: RawTimetableData
         lateinit var timetableTeachers: TimetableTeachers
     }
 }
