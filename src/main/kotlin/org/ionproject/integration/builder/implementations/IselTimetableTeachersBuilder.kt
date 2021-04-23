@@ -14,20 +14,19 @@ import org.ionproject.integration.model.external.timetable.Language
 import org.ionproject.integration.model.external.timetable.Programme
 import org.ionproject.integration.model.external.timetable.RecurrentEvent
 import org.ionproject.integration.model.external.timetable.School
-import org.ionproject.integration.model.external.timetable.Instructor
 import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.external.timetable.Weekdays
 import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.isel.ProgrammeMap
-import org.ionproject.integration.model.internal.timetable.isel.RawData
+import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
 import org.ionproject.integration.utils.JsonUtils
 import org.ionproject.integration.utils.RegexUtils
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 
-class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
+class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData> {
     companion object {
         private const val SCHOOL_REGEX = "\\A.*"
         private const val PROGRAMME_REGEX = "^(Licenciatura|Mestrado).*$"
@@ -40,14 +39,14 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
 
     private var iselTimetableTeachers = Try.of { TimetableTeachers() }
 
-    override fun setTimetable(rawData: RawData) {
+    override fun setTimetable(rawData: RawTimetableData) {
         iselTimetableTeachers.map {
             if (it.timetable.count() == 0 || it.teachers.count() == 0)
                 rawDataToBusiness(rawData)
         }
     }
 
-    override fun setTeachers(rawData: RawData) {
+    override fun setTeachers(rawData: RawTimetableData) {
         setTimetable(rawData)
     }
 
@@ -55,24 +54,20 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
         return iselTimetableTeachers.map { it.copy() }
     }
 
-    private fun rawDataToBusiness(rawData: RawData) {
-        val instructorJson = JsonUtils.fromJson<List<Table>>(
-            rawData.instructors,
-            Types.newParameterizedType(List::class.java, Table::class.java)
-        ).orThrow()
-        JsonUtils.fromJson<List<Table>>(
-            rawData.jsonData,
-            Types.newParameterizedType(List::class.java, Table::class.java)
-        )
-            .map { mapTablesToBusiness(rawData, it, instructorJson) }
+    private fun rawDataToBusiness(rawTimetableData: RawTimetableData) {
+        fun String.toTableList(): Try<List<Table>> =
+            JsonUtils.fromJson(this, Types.newParameterizedType(List::class.java, Table::class.java))
+
+        val instructorJson = rawTimetableData.instructorData.toTableList().orThrow()
+        rawTimetableData.scheduleData.toTableList().map { mapTablesToBusiness(rawTimetableData, it, instructorJson) }
     }
 
-    private fun mapTablesToBusiness(rawData: RawData, tableList: List<Table>, instructorList: List<Table>) {
+    private fun mapTablesToBusiness(rawTimetableData: RawTimetableData, tableList: List<Table>, instructorList: List<Table>) {
         iselTimetableTeachers = Try.of {
             val timetableList = mutableListOf<Timetable>()
             val teacherList = mutableListOf<CourseTeacher>()
 
-            rawData.textData.forEachIndexed { i, data ->
+            rawTimetableData.textData.forEachIndexed { i, data ->
                 val timetable = Timetable()
                 val courseTeacher = CourseTeacher()
 
@@ -117,8 +112,8 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
     }
 
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
-        var courseList = mutableListOf<Course>()
-        var weekdays = mutableMapOf<Double, String>()
+        val courseList = mutableListOf<Course>()
+        val weekdays = mutableMapOf<Double, String>()
         var courseDetails: ClassDetail
 
         for (i in 0 until data.count()) {
@@ -148,7 +143,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
 
                         courseDetails = ClassDetail.from(cellText)
 
-                        var duration: Duration = when {
+                        val duration: Duration = when {
                             cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD -> {
                                 Duration.ofHours(3)
                             }
@@ -191,12 +186,10 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawData> {
     }
 
     private fun getFacultyList(data: Array<Array<Cell>>): List<Faculty> =
-        getRawFacultyList(data).map { rawData ->
-            val classDetail = ClassDetail.from(rawData.courseText)
-            val instructor = Instructor(rawData.instructorText)
-
-            return@map classDetail to instructor
-        }.groupBy(keySelector = { it.first }, valueTransform = { it.second })
+        getRawFacultyList(data)
+            .map(FacultyRawData::toDto)
+            .filter(FacultyDTO::isValid)
+            .groupBy(keySelector = FacultyDTO::classDetail, valueTransform = FacultyDTO::instructor)
             .map { Faculty(it.key, it.value) }
 
     /*
