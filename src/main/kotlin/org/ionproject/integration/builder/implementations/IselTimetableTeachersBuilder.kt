@@ -67,14 +67,14 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
             val timetableList = mutableListOf<Timetable>()
             val teacherList = mutableListOf<CourseTeacher>()
 
-            rawTimetableData.textData.forEachIndexed { i, data ->
+            rawTimetableData.textData.forEachIndexed { idx, data ->
                 val timetable = Timetable()
                 val courseTeacher = CourseTeacher()
 
                 setCommonData(data, timetable, courseTeacher)
 
-                timetable.courses = getCourseList(tableList[i].data)
-                courseTeacher.courses = getFacultyList(instructorList[i].data)
+                timetable.courses = getCourseList(tableList[idx].data)
+                courseTeacher.courses = getFacultyList(instructorList[idx].data)
 
                 timetableList.add(timetable)
                 teacherList.add(courseTeacher)
@@ -165,7 +165,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
                                     RecurrentEvent(
                                         title = null,
                                         description = "${getDescription(courseDetails.type)}$acr",
-                                        category = EventCategory.LECTURE.value,
+                                        category = EventCategory.LECTURE,
                                         location = listOf(courseDetails.location),
                                         beginTime = beginTime.toString(),
                                         duration = String.format(
