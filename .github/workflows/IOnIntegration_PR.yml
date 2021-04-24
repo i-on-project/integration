@@ -7,7 +7,6 @@ on:
     paths-ignore:
       - 'docs/**'
       - '**/README.md'
-      - 'img/**'
 
 jobs:
   build:
