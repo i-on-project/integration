@@ -14,10 +14,9 @@ class TabulaPdfExtractorTests {
     fun whenPdfPathIsEmpty_thenReturnExtractionFailed() {
         // Arrange
         val pdfPath = ""
-        val tabulaPdfExtractor = TimetableExtractor()
 
         // Act
-        val result = tabulaPdfExtractor.extract(pdfPath)
+        val result = TimetableExtractor.ClassSchedule.extract(pdfPath)
 
         // Assert
         val e = assertThrows<PdfExtractorException> { result.orThrow() }
@@ -28,10 +27,9 @@ class TabulaPdfExtractorTests {
     fun whenFileDoesntExist_thenReturnExtractionFailed() {
         // Arrange
         val pdfPath = "/invalidpath"
-        val tabulaPdfExtractor = TimetableExtractor()
 
         // Act
-        val result = tabulaPdfExtractor.extract(pdfPath)
+        val result = TimetableExtractor.ClassSchedule.extract(pdfPath)
 
         // Assert
         val e = assertThrows<PdfExtractorException> { result.orThrow() }
@@ -43,10 +41,9 @@ class TabulaPdfExtractorTests {
         // Arrange
         val file = File.createTempFile("test", ".txt")
         val pdfPath = file.path
-        val tabulaPdfExtractor = TimetableExtractor()
 
         // Act
-        val result = tabulaPdfExtractor.extract(pdfPath)
+        val result = TimetableExtractor.ClassSchedule.extract(pdfPath)
         file.deleteOnExit()
 
         // Assert
@@ -60,11 +57,9 @@ class TabulaPdfExtractorTests {
     fun whenValidFileFormat_thenReturnExtractionSuccessAndJsonData() {
         // Arrange
         val pdfPath = "src/test/resources/test.pdf"
-        val tabulaPdfExtractor = TimetableExtractor()
 
         // Act
-        val result = tabulaPdfExtractor.extract(pdfPath)
-            .orThrow()
+        val result = TimetableExtractor.ClassSchedule.extract(pdfPath).orThrow()
 
         // Assert
         assertEquals(1, result.count())
