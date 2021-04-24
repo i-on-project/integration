@@ -4,10 +4,6 @@ import com.icegreen.greenmail.util.DummySSLSocketFactory
 import com.icegreen.greenmail.util.GreenMail
 import com.icegreen.greenmail.util.GreenMailUtil
 import com.icegreen.greenmail.util.ServerSetupTest
-import java.io.File
-import java.security.Security
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
 import org.apache.commons.mail.util.MimeMessageParser
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.alert.exceptions.AlertConfigurationException
@@ -26,6 +22,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.io.File
+import java.security.Security
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeMessage
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
@@ -137,7 +137,8 @@ internal class EmailAlertChannelTest {
         assertEquals("MailAuthenticationException", ex.exceptions[0]::class.java.simpleName)
         assertEquals(
             "Authentication failed; nested exception is javax.mail.AuthenticationFailedException: " +
-                "535 5.7.8  Authentication credentials invalid\n", ex.exceptions[0].message
+                "535 5.7.8  Authentication credentials invalid\n",
+            ex.exceptions[0].message
         )
         assertEquals("AlertChannelException", ex.exceptions[1]::class.java.simpleName)
         assertEquals("E-mail alert could not be sent", ex.exceptions[1].message)

@@ -1,11 +1,5 @@
 package org.ionproject.integration.file.implementations
 
-import java.io.File
-import java.net.URI
-import java.nio.file.FileSystems
-import java.nio.file.Path
-import java.nio.file.PathMatcher
-import java.nio.file.Paths
 import org.ionproject.integration.file.exceptions.InvalidFormatException
 import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.utils.CompositeException
@@ -17,16 +11,24 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import java.io.File
+import java.net.URI
+import java.nio.file.FileSystems
+import java.nio.file.Path
+import java.nio.file.PathMatcher
+import java.nio.file.Paths
 
 internal class PDFFileDownloaderImplTest {
     companion object {
         private val checker = PDFBytesFormatChecker()
         private val pdfDownloader: IFileDownloader = FileDownloaderImpl(checker)
         inline fun <reified T : Throwable> downloadAndAssertThrows(uri: URI, dstFile: Path): T {
-            return assertThrows<T> { downloadPdf(
-                uri,
-                dstFile
-            ).orThrow() }
+            return assertThrows<T> {
+                downloadPdf(
+                    uri,
+                    dstFile
+                ).orThrow()
+            }
         }
 
         fun downloadPdf(uri: URI, dstFile: Path): Try<Path> {
@@ -49,10 +51,12 @@ internal class PDFFileDownloaderImplTest {
         val fileDst = File("dummy.pdf").toPath()
         val matcher: PathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.pdf")
         try {
-            val path = assertDoesNotThrow { downloadPdf(
-                uri,
-                fileDst
-            ).orThrow() }
+            val path = assertDoesNotThrow {
+                downloadPdf(
+                    uri,
+                    fileDst
+                ).orThrow()
+            }
             assertTrue(matcher.matches(path))
             assertEquals(String(path.toFile().readBytes().slice(0..6).toByteArray()), "%PDF-1.")
         } finally {
