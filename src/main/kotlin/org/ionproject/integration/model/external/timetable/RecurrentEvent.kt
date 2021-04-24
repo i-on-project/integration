@@ -3,7 +3,7 @@ package org.ionproject.integration.model.external.timetable
 class RecurrentEvent(
     title: String?,
     description: String = "",
-    category: Int,
+    category: EventCategory,
     location: List<String>,
     val beginTime: String,
     val duration: String,
