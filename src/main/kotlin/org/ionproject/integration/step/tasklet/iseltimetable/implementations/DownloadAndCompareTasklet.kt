@@ -1,8 +1,5 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
-import java.net.URI
-import java.nio.file.Path
-import java.nio.file.Paths
 import org.ionproject.integration.alert.implementations.EmailAlertChannel
 import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.config.AppProperties
@@ -26,6 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.stereotype.Component
+import java.net.URI
+import java.nio.file.Path
+import java.nio.file.Paths
 
 @Component("DownloadAndCompareTasklet")
 @StepScope
@@ -69,11 +69,14 @@ class DownloadAndCompareTasklet(
         }
 
         val path = downloader.download(srcRemoteLocation, localFileDestination, jobTypeEnum)
-            .match({ it }, {
-                file.delete()
-                selectMessageFromExceptionAndSendEmail(jobName, it, fileName)
-                throw it
-            })
+            .match(
+                { it },
+                {
+                    file.delete()
+                    selectMessageFromExceptionAndSendEmail(jobName, it, fileName)
+                    throw it
+                }
+            )
         chunkContext.stepContext.stepExecution.jobExecution.executionContext.put("file-path", path)
 
         fileIsEqualToLast = fileComparator.compare(file, jobId)
@@ -89,7 +92,8 @@ class DownloadAndCompareTasklet(
                     path.toFile().delete()
                     selectMessageFromExceptionAndSendEmail(jobName, it, fileName)
                     throw it
-                })
+                }
+            )
 
         return RepeatStatus.FINISHED
     }
