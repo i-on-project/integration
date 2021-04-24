@@ -115,7 +115,7 @@ internal class PostUploadTaskletTest {
         var je = jobLauncherTestUtils.launchStep("PostUpload", jp, se.jobExecution.executionContext)
 
         val ex = je.allFailureExceptions[0]
-        assertEquals("TypeCastException", ex::class.java.simpleName)
+        assertEquals("NullPointerException", ex::class.java.simpleName)
         assertEquals("null cannot be cast to non-null type kotlin.ByteArray", ex.message)
         assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
         val recordedHash = hr.fetchHash(jobId)
