@@ -42,8 +42,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         IOnIntegrationApplication::class
     ]
 )
-
-@Disabled
 @TestPropertySource("classpath:application.properties")
 internal class FormatVerifierStepTestSuccessful {
 
@@ -118,8 +116,8 @@ internal class FormatVerifierStepTestSuccessful {
 
         // Assert
         val hash = je.executionContext["file-hash"] as ByteArray
-        assertEquals(text, state.rawData.textData)
-        assertEquals(json, state.rawData.jsonData)
+        assertEquals(text, state.rawTimetableData.textData)
+        assertEquals(json, state.rawTimetableData.scheduleData)
         assertEquals(ExitStatus.COMPLETED, je.exitStatus)
         assertTrue(expectedHash.contentEquals(hash))
     }
@@ -210,8 +208,6 @@ internal class FormatVerifierStepTestUnexistingFile {
         IOnIntegrationApplication::class
     ]
 )
-
-@Disabled
 @TestPropertySource("classpath:application.properties")
 internal class FormatVerifierStepTestInvalidFormat {
 

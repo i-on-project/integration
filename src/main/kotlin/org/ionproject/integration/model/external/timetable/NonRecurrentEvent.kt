@@ -3,7 +3,7 @@ package org.ionproject.integration.model.external.timetable
 class NonRecurrentEvent(
     title: String?,
     description: String = "",
-    category: Int,
+    category: EventCategory,
     location: List<String>,
     val startDate: String,
     val endDate: String
