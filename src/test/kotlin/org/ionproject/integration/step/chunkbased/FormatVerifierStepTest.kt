@@ -17,6 +17,7 @@ import org.ionproject.integration.utils.CompositeException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -276,7 +277,7 @@ internal class FormatVerifierStepTestInvalidFormat {
     }
 
     @Test
-    fun whenFileHasInvalidFormat_thenAssertMailIsSent() {
+    fun `when File has invalid format then assert mail is sent`() {
         // Arrange
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val src = File("src/test/resources/test.pdf".replace("/", File.separator))
@@ -309,7 +310,7 @@ internal class FormatVerifierStepTestInvalidFormat {
                     .contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message The timetable header changed its format")
             )
         } finally {
-            assertTrue(temp.delete())
+            assertFalse(temp.delete())
         }
     }
 }
