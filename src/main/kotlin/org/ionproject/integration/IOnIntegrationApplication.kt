@@ -39,16 +39,6 @@ class JobEngine(
         setUpAndRunJob("timetableJob", "/app/config/timetable/isel")
     }
 
-    @Scheduled(cron = "0 0 2 * * SAT")
-    fun runGenericAcademicCalendar() {
-        setUpAndRunJob("genericJob", "/app/config/generic/academic-calendar")
-    }
-
-    @Scheduled(cron = "0 0 3 * * SAT")
-    fun runGenericExamSchedule() {
-        setUpAndRunJob("genericJob", "/app/config/generic/exam-schedule")
-    }
-
     fun setUpAndRunJob(jobName: String, configPath: String) {
         val props = File(configPath)
             .listFiles()
