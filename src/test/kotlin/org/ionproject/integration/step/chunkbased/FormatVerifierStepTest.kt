@@ -247,7 +247,7 @@ internal class FormatVerifierStepTestInvalidFormat {
     }
 
     @Test
-    fun whenFileHasInvalidFormat_thenAssertThrowsException() {
+    fun `when file has invalid format then assert an exception is thrown`() {
         // Arrange
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val src = File("src/test/resources/test.pdf".replace("/", File.separator))
@@ -272,7 +272,7 @@ internal class FormatVerifierStepTestInvalidFormat {
             assertEquals("FormatCheckException", ex.undeclaredThrowable::class.java.simpleName)
             assertEquals("The timetable header changed its format", ex.undeclaredThrowable.message)
         } finally {
-            assertTrue(temp.delete())
+            assertFalse(temp.delete())
         }
     }
 
