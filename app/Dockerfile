@@ -8,7 +8,7 @@ WORKDIR /src
 COPY . .
 
 # Gradle task to build, test, run lint and extract dependencies with daemon disabled
-RUN ./gradlew extractUberJar --no-daemon --stacktrace
+RUN ../gradlew extractUberJar --no-daemon --stacktrace
 
 FROM adoptopenjdk:${RUN_TAG} AS run-env
 RUN useradd -m spring && usermod -a -G spring spring \
