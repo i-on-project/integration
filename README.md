@@ -61,16 +61,11 @@ By **default** the app containers will be accessible via the following ports:
 
 If you wish to change these values please refer to the [Customizing Containers](#customizing-containers) section.
 
-#### Customizing containers
-While the environment works out of the box for most setups you may run into **port binding issues** if you're already using any of the default ports described in the [Running with Docker Compose section](#running-with-docker-compose).
+On Windows 10 you may see a **warning** about poor performance due to filesharing to a WSL container. This is due to the fact that we make use of [Docker Bind Mounts](https://docs.docker.com/storage/bind-mounts/) to share the necessary server files.
 
-These ports are configured from **Docker environment variables** and their preset values can be viewed by running the `docker-compose config` command or by reading the [.env](.env) file (which is a simple list of key-value pairs). Simply edit the **.env** file with the port values you wish to use and you're good to go.
+![Warning](img/bindmountwarning.jpg)
 
-**Note**: All port binding commands in docker use the `HOST:CONTAINER` format so, for example, the binding `1337:80` would bind the **1337 port** on the **host** machine to the **80 port** inside the **container**.
-
-The default database, username and password are also customizable through the **.env** file.
-
-#### Accessing the containerized database
+#### Using the containerized database
 While the Integration app will be able to connect to the database out of the box without any human intervention you might also be interested in connecting directly to run your own queries.
 
 You can use your favorite **SQL client** to connect to the containerized database just as you would for any other database server.
@@ -87,6 +82,23 @@ Or, if you're using a client that supports PostgreSQL Drivers (like [DBeaver](ht
 - **Authentication**: Database Native
 - **Username**: (SQL_USER in .env file)
 - **Password**: (SQL_PASSWORD in .env file)
+
+#### Using the containerized Git Server
+The Git server currently deployed for local development is based on the [GitBucket](https://github.com/gitbucket/gitbucket) image which should be pretty familiar and intuitive to anyone with experience using **GitHub**.
+
+It's Web front-end can be accessed by pointing your browser to localhost:8080 (default port, see the [Customizing Containers section](#customizing-containers) if you need to use a different port value).
+
+##### Git Credentials
+The server is deployed with a single **account** that can be accessed by entering `root` for both username and password fields.
+
+#### Customizing containers
+While the environment works out of the box for most setups you may run into **port binding issues** if you're already using any of the default ports described in the [Running with Docker Compose section](#running-with-docker-compose).
+
+These ports are configured from **Docker environment variables** and their preset values can be viewed by running the `docker-compose config` command or by reading the [.env](.env) file (which is a simple list of key-value pairs). Simply edit the **.env** file with the port values you wish to use and you're good to go.
+
+**Note**: All port binding commands in docker use the `HOST:CONTAINER` format so, for example, the binding `1337:80` would bind the **1337 port** on the **host** machine to the **80 port** inside the **container**.
+
+The default database, username and password are also customizable through the **.env** file.
 
 ### Stopping and removing the environment
 If you are running in **attached** mode (without the `-d` flag) you can use `Ctrl + C` to stop all containers **gracefully** or, if you're in a hurry (or a container is not stopping on its own) you can press `Ctrl + C` a **second time** to **force shutdown**.
