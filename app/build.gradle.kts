@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.3.10.RELEASE"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.4.32"
-    kotlin("plugin.spring") version "1.4.32"
+    kotlin("jvm")
+    kotlin("plugin.spring")
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
 }
 
@@ -53,9 +53,9 @@ tasks.register<Copy>("extractUberJar") {
 
 tasks.register<Exec>("buildDockerImage") {
     if (project.properties["onlyBuild"].toString().toBoolean()) {
-        commandLine("docker", "build", ".")
+        commandLine("docker", "build", "../.")
     } else {
-        commandLine("docker", "build", ".", "--tag", tempDockerTag)
+        commandLine("docker", "build", "../.", "--tag", tempDockerTag)
     }
 }
 
