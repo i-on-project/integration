@@ -18,4 +18,4 @@ jobs:
 
       - name: Build image
         id: integration_build_image
-        run: gradle buildDockerImage
+        run: ./gradlew buildDockerImage

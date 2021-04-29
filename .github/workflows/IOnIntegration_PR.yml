@@ -18,4 +18,4 @@ jobs:
 
       - name: Build Docker image
         id: build_image
-        run: gradle buildDockerImage -PonlyBuild=true
+        run: ./gradlew buildDockerImage -PonlyBuild=true
