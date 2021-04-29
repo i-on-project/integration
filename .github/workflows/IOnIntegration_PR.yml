@@ -18,10 +18,4 @@ jobs:
 
       - name: Build Docker image
         id: build_image
-        uses: eskatos/gradle-command-action@v1
-        with:
-          arguments: buildDockerImage -PonlyBuild=true
-          gradle-version: 7.0
-          wrapper-cache-enabled: true
-          dependencies-cache-enabled: true
-          configuration-cache-enabled: true
+        run: gradle buildDockerImage -PonlyBuild=true
