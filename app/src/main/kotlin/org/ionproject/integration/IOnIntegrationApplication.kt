@@ -1,5 +1,6 @@
 package org.ionproject.integration
 
+import StubFileRepository
 import java.io.File
 import java.time.Instant
 import org.slf4j.LoggerFactory
@@ -36,6 +37,8 @@ class JobEngine(
 
     @Scheduled(cron = "*/5 * * * * *")
     fun runTimetableJob() {
+        val fileRepo = StubFileRepository()
+        fileRepo.submit(File("Dockerfile"))
         setUpAndRunJob("timetableJob", "/app/config/timetable/isel")
     }
 

@@ -1,8 +1,10 @@
 .dockerignore
 .git
+.gitattributes
 .gitignore
 .github/*
 .gradle/*
 build/
 dev/
-git-server/
+git-server/*
+.env
