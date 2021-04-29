@@ -16,4 +16,4 @@ jobs:
 
       - name: Build image
         id: production_build_image
-        run: gradle buildDockerImage
+        run: ./gradlew buildDockerImage
