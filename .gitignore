@@ -1,4 +1,3 @@
-
 ### Eclipse ###
 .metadata
 bin/
@@ -210,3 +209,4 @@ nbdist/
 
 ### Ignore Local git server DB
 git-server/data.mv.db
+**/data.mv.db
