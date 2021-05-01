@@ -208,5 +208,4 @@ nbdist/
 !tabula-*
 
 ### Ignore Local git server DB
-git-server/data.mv.db
-**/data.mv.db
+git-server/*
