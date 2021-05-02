@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
@@ -8,16 +6,18 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
 }
 
+tasks.bootJar { enabled = false }
+
+tasks.withType<Jar> {
+    enabled = true
+}
+
 group = "org.ionproject"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 java.targetCompatibility = JavaVersion.VERSION_11
 
 val tempDockerTag: String = "i-on-integration-image"
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -55,16 +55,5 @@ tasks.register<Exec>("buildDockerImage") {
         commandLine("docker", "build", "../.")
     } else {
         commandLine("docker", "build", "../.", "--tag", tempDockerTag)
-    }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "11"
     }
 }
