@@ -13,6 +13,9 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(project(":app"))
     implementation("org.springframework.boot:spring-boot-starter")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
