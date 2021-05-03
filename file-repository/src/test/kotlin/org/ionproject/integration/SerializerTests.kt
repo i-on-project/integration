@@ -1,3 +1,5 @@
+package org.ionproject.integration
+
 import org.ionproject.integration.filerepository.serializer.ISerializer
 import org.ionproject.integration.filerepository.serializer.SerializerImpl
 import org.ionproject.integration.model.OutputFormat
