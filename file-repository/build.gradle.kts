@@ -13,7 +13,6 @@ tasks.withType<Jar> {
     enabled = true
 }
 dependencies {
-    compile(project(":app"))
     implementation(project(":app"))
     implementation(kotlin("stdlib"))
     implementation("org.springframework.boot:spring-boot-starter")
