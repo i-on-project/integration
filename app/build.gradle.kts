@@ -3,21 +3,30 @@ plugins {
     id("io.spring.dependency-management")
     kotlin("jvm")
     kotlin("plugin.spring")
-    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
+    id("org.jlleitschuh.gradle.ktlint")
 }
-
-tasks.bootJar { enabled = false }
-
-tasks.withType<Jar> {
-    enabled = true
-}
+val tempDockerTag: String = "i-on-integration-image"
 
 group = "org.ionproject"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 java.targetCompatibility = JavaVersion.VERSION_11
 
-val tempDockerTag: String = "i-on-integration-image"
+tasks.register<Copy>("extractUberJar") {
+    dependsOn("build")
+    dependsOn("test")
+    dependsOn("ktlintCheck")
+    from(zipTree("$buildDir/libs/${project.name}-$version.jar"))
+    into("$buildDir/dependency")
+}
+
+tasks.register<Exec>("buildDockerImage") {
+    if (project.properties["onlyBuild"].toString().toBoolean()) {
+        commandLine("docker", "build", "../.")
+    } else {
+        commandLine("docker", "build", "../.", "--tag", tempDockerTag)
+    }
+}
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -40,20 +49,4 @@ dependencies {
     testImplementation("org.springframework.batch:spring-batch-test:4.2.6.RELEASE")
     testImplementation("com.icegreen:greenmail:1.6.3")
     testImplementation("org.apache.commons:commons-email:1.5")
-}
-
-tasks.register<Copy>("extractUberJar") {
-    dependsOn("build")
-    dependsOn("test")
-    dependsOn("ktlintCheck")
-    from(zipTree("$buildDir/libs/${project.name}-$version.jar"))
-    into("$buildDir/dependency")
-}
-
-tasks.register<Exec>("buildDockerImage") {
-    if (project.properties["onlyBuild"].toString().toBoolean()) {
-        commandLine("docker", "build", "../.")
-    } else {
-        commandLine("docker", "build", "../.", "--tag", tempDockerTag)
-    }
 }
