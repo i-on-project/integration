@@ -12,8 +12,8 @@ import java.lang.IllegalArgumentException
 class PathBuilderTests {
     @Test
     fun `when given a relative path then success`() {
-        val dirA = "testing"
-        val dirB = "pathBuilder"
+        val dirA = "test1ng"
+        val dirB = "path_Builder"
         val dirC = "ok"
 
         val path = PathBuilder(dirA)
