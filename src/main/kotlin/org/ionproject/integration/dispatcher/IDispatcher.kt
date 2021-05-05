@@ -10,11 +10,11 @@ import org.ionproject.integration.model.external.timetable.TimetableDto
 /**
  * Interface definitions
  */
-interface IDispatcher<T : ParsedData> {
+sealed interface IDispatcher<T : ParsedData> {
     fun dispatch(data: T, format: OutputFormat): DispatchResult
 }
 
-interface ITimetableDispatcher<TimetableData>
+interface ITimetableDispatcher : IDispatcher<TimetableData>
 
 /**
  * ParsedData will be used to "transport" the final data along with the required metadata.
@@ -35,7 +35,7 @@ data class InstitutionMetadata(
 )
 
 data class ProgrammeMetadata(
-    val institutionMetadata: InstitutionMetadata,
+    val institution: InstitutionMetadata,
     val name: String,
     val acronym: String
 )
@@ -43,7 +43,9 @@ data class ProgrammeMetadata(
 data class CalendarTerm(
     val startYear: Int,
     val term: Term
-)
+) {
+    override fun toString(): String = "$startYear-${startYear + 1}-${term.number}"
+}
 
 enum class OutputFormat {
     YAML,
