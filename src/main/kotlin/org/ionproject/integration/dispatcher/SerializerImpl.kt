@@ -3,7 +3,9 @@ package org.ionproject.integration.dispatcher
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.springframework.stereotype.Component
 
+@Component
 class SerializerImpl : ISerializer {
     private val jsonMapper by lazy { jacksonObjectMapper() }
     private val yamlMapper by lazy { ObjectMapper(YAMLFactory()) }

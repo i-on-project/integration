@@ -1,8 +1,5 @@
 package org.ionproject.integration.dispatcher
 
-import org.ionproject.integration.model.external.timetable.ProgrammeDto
-import org.ionproject.integration.model.external.timetable.SchoolDto
-import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -10,6 +7,7 @@ import java.io.File
 import java.lang.IllegalArgumentException
 
 class PathBuilderTests {
+
     @Test
     fun `when given a relative path then success`() {
         val dirA = "test1ng"
@@ -142,18 +140,3 @@ class PathBuilderTests {
         }
     }
 }
-
-private val timetable = TimetableDto(
-    "20210421T204916Z",
-    "20210421T204916Z",
-    SchoolDto(
-        "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
-        "ISEL"
-    ),
-    ProgrammeDto(
-        "Licenciatura em Engenharia Informática e de Computadores",
-        "LEIC"
-    ),
-    "2020-2021-2",
-    emptyList()
-)
