@@ -47,9 +47,9 @@ data class CalendarTerm(
     override fun toString(): String = "$startYear-${startYear + 1}-${term.number}"
 }
 
-enum class OutputFormat {
-    YAML,
-    JSON
+enum class OutputFormat(val extension: String) {
+    YAML(".yml"),
+    JSON(".json")
 }
 
 enum class DispatchResult {
