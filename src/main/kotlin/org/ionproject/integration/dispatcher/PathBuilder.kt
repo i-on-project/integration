@@ -23,9 +23,9 @@ class PathBuilder(root: String) {
     private var caseType: CaseType = CaseType.UNCHANGED
 
     fun add(segment: String): PathBuilder =
-            this.apply {
-                segments += sanitizeInput(segment)
-            }
+        this.apply {
+            segments += sanitizeInput(segment)
+        }
 
     fun setPathType(pathType: PathType): PathBuilder = this.apply { this.pathType = pathType }
     fun setCaseType(caseType: CaseType): PathBuilder = this.apply { this.caseType = caseType }
@@ -56,12 +56,12 @@ class PathBuilder(root: String) {
     }
 
     private fun sanitizeInput(input: String): String =
-            input.trim().also { src ->
-                require(src.isNotBlank()) {
-                    EMPTY_SEGMENT_MSG
-                }
-                require(ILLEGAL_CHARACTERS.none { src.contains(it) }) {
-                    INVALID_PATH_MSG(input)
-                }
+        input.trim().also { src ->
+            require(src.isNotBlank()) {
+                EMPTY_SEGMENT_MSG
             }
+            require(ILLEGAL_CHARACTERS.none { src.contains(it) }) {
+                INVALID_PATH_MSG(input)
+            }
+        }
 }
