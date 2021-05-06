@@ -8,23 +8,24 @@ private const val TIMETABLE_FILENAME = "timetable"
 
 @Component
 class TimetableFileWriter(private val serializer: ISerializer) {
-    fun write(data: TimetableData, format: OutputFormat): File {
-        val dir = PathBuilder(STAGING_ROOT)
-            .setCaseType(PathBuilder.CaseType.LOWER)
-            .add(data.programme.institution.domain)
-            .add("programmes")
-            .add(data.programme.acronym)
-            .add(data.term.toString())
-            .build()
+    fun write(timetable: TimetableData, format: OutputFormat): File {
 
+        val dir = getDirectory(timetable)
         if (!dir.exists())
             dir.mkdirs()
 
+        val serializedData = serializer.serialize(timetable.data, format)
+
         val finalPath = "${dir.path}${File.separator}$TIMETABLE_FILENAME${format.extension}"
-        val file = File(finalPath)
-
-        file.writeText(serializer.serialize(data.data, format))
-
-        return file
+        return File(finalPath).apply { writeText(serializedData) }
     }
+
+    private fun getDirectory(timetable: TimetableData): File =
+        PathBuilder(STAGING_ROOT)
+            .setCaseType(PathBuilder.CaseType.LOWER)
+            .add(timetable.programme.institution.domain)
+            .add("programmes")
+            .add(timetable.programme.acronym)
+            .add(timetable.term.toString())
+            .build()
 }
