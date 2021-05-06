@@ -226,7 +226,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         for (i in 0 until cells.count()) {
             if (cells[i].width == 0.0 || cells[i].height == 0.0 || cells[i].text.isEmpty()) continue
             weekdays[cells[i].left] =
-                Weekdays.values().first { it.toPortuguese() == cells[i].text.toUpperCase() }.toShortString()
+                Weekdays.values().first { it.toPortuguese() == cells[i].text.uppercase() }.toShortString()
         }
     }
 
