@@ -15,7 +15,7 @@ class PDFBytesFormatChecker : IBytesFormatChecker {
     override fun checkFormat(bytes: ByteArray, jobType: JobType?) {
         if (bytes.size < HEADER_LENGTH)
             throw InvalidFormatException("Downloaded content was not in the PDF format.")
-        val minorVersion: Char = bytes[HEADER_MIN_VERSION_POSITION].toChar()
+        val minorVersion: Char = bytes[HEADER_MIN_VERSION_POSITION].toInt().toChar()
         val headerBytes: ByteArray = bytes.slice(HEADER_RANGE).toByteArray()
         val header = String(headerBytes, Charsets.UTF_8)
         val result = header == PDF_HEADER && minorVersion in MINIMUM_PDF_VERSION..MAXIMUM_PDF_VERSION
