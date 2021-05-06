@@ -191,7 +191,6 @@ gradle-app.setting
 **/nbproject/private/
 **/nbproject/Makefile-*.mk
 **/nbproject/Package-*.bash
-build/
 nbbuild/
 dist/
 nbdist/
@@ -209,3 +208,6 @@ nbdist/
 
 ### Ignore Local git server DB
 git-server/*
+
+### Ignore stating directory
+staging/*
