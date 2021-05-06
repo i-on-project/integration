@@ -21,19 +21,24 @@ class TimetableFileWriterTests {
     @Test
     fun `when given a timetable DTO then write the file to JSON`() {
         val file = writer.write(meta, OutputFormat.JSON)
-
-        assert(file.exists())
-        assertEquals(expectedJSON, file.readText())
-        assert(file.delete())
+        try {
+            assert(file.exists())
+            assertEquals(expectedJSON, file.readText())
+        } finally {
+            file.delete()
+        }
     }
 
     @Test
     fun `when given a timetable DTO then write the file to YAML`() {
         val file = writer.write(meta, OutputFormat.YAML)
 
-        assert(file.exists())
-        assertEquals(expectedYAML, file.readText())
-        assert(file.delete())
+        try {
+            assert(file.exists())
+            assertEquals(expectedYAML, file.readText())
+        } finally {
+            file.delete()
+        }
     }
 }
 
