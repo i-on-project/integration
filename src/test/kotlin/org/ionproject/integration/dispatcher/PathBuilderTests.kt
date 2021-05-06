@@ -15,9 +15,9 @@ class PathBuilderTests {
         val dirC = "ok"
 
         val path = PathBuilder(dirA)
-            .add(dirB)
-            .add(dirC)
-            .build()
+                .add(dirB)
+                .add(dirC)
+                .build()
 
         val expected = File(listOf(dirA, dirB, dirC).joinToString(File.separator))
         assertEquals(expected, path)
@@ -30,10 +30,10 @@ class PathBuilderTests {
         val dirC = "ok"
 
         val path = PathBuilder(dirA)
-            .setPathType(PathBuilder.PathType.ABSOLUTE)
-            .add(dirB)
-            .add(dirC)
-            .build()
+                .setPathType(PathBuilder.PathType.ABSOLUTE)
+                .add(dirB)
+                .add(dirC)
+                .build()
 
         val expected = File(listOf(dirA, dirB, dirC).joinToString(File.separator, prefix = File.separator))
         assertEquals(expected, path)
@@ -46,10 +46,10 @@ class PathBuilderTests {
         val dirC = "ok"
 
         val actual = PathBuilder(dirA)
-            .setCaseType(PathBuilder.CaseType.UPPER)
-            .add(dirB)
-            .add(dirC)
-            .build()
+                .setCaseType(PathBuilder.CaseType.UPPER)
+                .add(dirB)
+                .add(dirC)
+                .build()
 
         val segments = listOf(dirA, dirB, dirC).map(String::uppercase)
         val expected = File(segments.joinToString(File.separator))
@@ -63,10 +63,10 @@ class PathBuilderTests {
         val dirC = "ok"
 
         val path = PathBuilder(dirA)
-            .setCaseType(PathBuilder.CaseType.LOWER)
-            .add(dirB)
-            .add(dirC)
-            .build()
+                .setCaseType(PathBuilder.CaseType.LOWER)
+                .add(dirB)
+                .add(dirC)
+                .build()
 
         val segments = listOf(dirA, dirB, dirC).map(String::lowercase)
         val expected = File(segments.joinToString(File.separator))
@@ -80,10 +80,10 @@ class PathBuilderTests {
         val dirC = "ok  "
 
         val path = PathBuilder(dirA)
-            .add(dirB)
-            .add(dirC)
-            .setCaseType(PathBuilder.CaseType.LOWER)
-            .build()
+                .add(dirB)
+                .add(dirC)
+                .setCaseType(PathBuilder.CaseType.LOWER)
+                .build()
 
         val segments = listOf(dirA, dirB, dirC).map(String::lowercase).map(String::trim)
         val expected = File(segments.joinToString(File.separator))
@@ -93,14 +93,14 @@ class PathBuilderTests {
     @Test
     fun `when given segments with leading space then trim and success`() {
         val dirA = "   testing"
-        val dirB = "pathBuilder   "
+        val dirB = "pathBuilder\n\r"
         val dirC = "     ok "
 
         val path = PathBuilder(dirA)
-            .add(dirB)
-            .setPathType(PathBuilder.PathType.ABSOLUTE)
-            .add(dirC)
-            .build()
+                .add(dirB)
+                .setPathType(PathBuilder.PathType.ABSOLUTE)
+                .add(dirC)
+                .build()
 
         val segments = listOf(dirA, dirB, dirC).map(String::trim)
         val expected = File(segments.joinToString(File.separator, prefix = File.separator))
@@ -114,11 +114,11 @@ class PathBuilderTests {
         val dirC = "ok"
 
         val path = PathBuilder(dirA)
-            .setPathType(PathBuilder.PathType.ABSOLUTE)
-            .add(dirB)
-            .add(dirC)
-            .setCaseType(PathBuilder.CaseType.UPPER)
-            .build()
+                .setPathType(PathBuilder.PathType.ABSOLUTE)
+                .add(dirB)
+                .add(dirC)
+                .setCaseType(PathBuilder.CaseType.UPPER)
+                .build()
 
         val segments = listOf(dirA, dirB, dirC).map(String::uppercase)
         val expected = File(segments.joinToString(File.separator, prefix = File.separator))
@@ -133,10 +133,55 @@ class PathBuilderTests {
 
         assertThrows<IllegalArgumentException> {
             PathBuilder(dirA)
-                .setPathType(PathBuilder.PathType.ABSOLUTE)
-                .add(dirB)
-                .add(dirC)
-                .build()
+                    .setPathType(PathBuilder.PathType.ABSOLUTE)
+                    .add(dirB)
+                    .add(dirC)
+                    .build()
+        }
+    }
+
+    @Test
+    fun `when given an empty root path then fail`() {
+        val dirA = ""
+        val dirB = "pathBuilder"
+        val dirC = "ok"
+
+        assertThrows<IllegalArgumentException> {
+            PathBuilder(dirA)
+                    .setPathType(PathBuilder.PathType.ABSOLUTE)
+                    .add(dirB)
+                    .add(dirC)
+                    .build()
+        }
+    }
+
+    @Test
+    fun `when given an invalid path with newline then fail`() {
+        val dirA = "aaa"
+        val dirB = "path\nBuilder"
+        val dirC = "ok"
+
+        assertThrows<IllegalArgumentException> {
+            PathBuilder(dirA)
+                    .setPathType(PathBuilder.PathType.ABSOLUTE)
+                    .add(dirB)
+                    .add(dirC)
+                    .build()
+        }
+    }
+
+    @Test
+    fun `when given an invalid path with illegal characters then fail`() {
+        val dirA = "aa<a"
+        val dirB = "pathBuilder"
+        val dirC = "ok"
+
+        assertThrows<IllegalArgumentException> {
+            PathBuilder(dirA)
+                    .setPathType(PathBuilder.PathType.ABSOLUTE)
+                    .add(dirB)
+                    .add(dirC)
+                    .build()
         }
     }
 }
