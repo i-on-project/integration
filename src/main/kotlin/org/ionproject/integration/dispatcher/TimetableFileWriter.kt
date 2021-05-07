@@ -13,16 +13,18 @@ class TimetableFileWriter(private val serializer: ISerializer) {
     fun write(timetable: TimetableData, format: OutputFormat): File {
 
         val dir = getDirectory(timetable)
-        if (!dir.exists())
-            dir.mkdirs()
+        with(dir.asFile) {
+            if (!exists())
+                mkdirs()
+        }
 
         val serializedData = serializer.serialize(timetable.data, format)
 
-        val finalPath = "${dir.path}${File.separator}$TIMETABLE_FILENAME${format.extension}"
-        return File(finalPath).apply { writeText(serializedData) }
+        val file = dir + (TIMETABLE_FILENAME + format.extension)
+        return file.asFile.apply { writeText(serializedData) }
     }
 
-    private fun getDirectory(timetable: TimetableData): File {
+    private fun getDirectory(timetable: TimetableData): Filepath {
         val segments = listOf(
             STAGING_ROOT,
             REPOSITORY_ROOT,
@@ -32,6 +34,6 @@ class TimetableFileWriter(private val serializer: ISerializer) {
             timetable.term.toString()
         )
 
-        return Filepath(segments, caseType = Filepath.CaseType.LOWER).asFile
+        return Filepath(segments, caseType = Filepath.CaseType.LOWER)
     }
 }

@@ -11,7 +11,7 @@ private val ILLEGAL_CHARACTERS = listOf('/', '\n', '\r', '\t', '`', '?', '*', '\
  */
 class Filepath(
     segments: List<String>,
-    pathType: PathType = PathType.RELATIVE,
+    private val pathType: PathType = PathType.RELATIVE,
     private val caseType: CaseType = CaseType.UNCHANGED,
 ) {
     val pathSegments = segments.map(this::sanitizeInput)
@@ -56,4 +56,11 @@ class Filepath(
                 INVALID_PATH_MSG(input)
             }
         }
+
+    operator fun plus(path: String): Filepath =
+        Filepath(
+            segments = pathSegments + path,
+            caseType = caseType,
+            pathType = pathType
+        )
 }
