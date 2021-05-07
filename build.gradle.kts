@@ -32,6 +32,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:5.11.0.202103091610-r")
     runtimeOnly("org.postgresql:postgresql")
     testRuntimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
