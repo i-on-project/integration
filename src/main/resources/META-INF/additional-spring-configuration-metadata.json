@@ -1,0 +1,38 @@
+{
+  "properties": [
+    {
+      "name": "ion.resources-folder",
+      "type": "java.lang.String",
+      "description": "File path where app files will be stored."
+    },
+    {
+      "name": "ion.local-file-output-folder",
+      "type": "java.lang.String",
+      "description": "Temp location. To be deleted."
+    },
+    {
+      "name": "ion.staging-dir",
+      "type": "java.lang.String",
+      "description": "Folder where temp files will be stored."
+    },
+    {
+      "name": "ion.git-server",
+      "type": "java.lang.String",
+      "description": "Git server address."
+    },
+    {
+      "name": "ion.git-repository",
+      "type": "java.lang.String",
+      "description": "Git repository name."
+    },
+    {
+      "name": "ion.git-user",
+      "type": "java.lang.String",
+      "description": "Git user."
+    },
+    {
+      "name": "ion.git-password",
+      "type": "java.lang.String",
+      "description": "Git password."
+    }
+  ] }
