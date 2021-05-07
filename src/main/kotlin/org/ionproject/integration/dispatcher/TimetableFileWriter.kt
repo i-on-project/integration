@@ -6,6 +6,7 @@ import java.io.File
 const val STAGING_ROOT = "staging"
 const val REPOSITORY_ROOT = "integration-data"
 private const val TIMETABLE_FILENAME = "timetable"
+private const val PROGRAMMES = "programmes"
 
 @Component
 class TimetableFileWriter(private val serializer: ISerializer) {
@@ -21,13 +22,16 @@ class TimetableFileWriter(private val serializer: ISerializer) {
         return File(finalPath).apply { writeText(serializedData) }
     }
 
-    private fun getDirectory(timetable: TimetableData): File =
-        PathBuilder(STAGING_ROOT)
-            .setCaseType(PathBuilder.CaseType.LOWER)
-            .add(REPOSITORY_ROOT)
-            .add(timetable.programme.institution.domain)
-            .add("programmes")
-            .add(timetable.programme.acronym)
-            .add(timetable.term.toString())
-            .build()
+    private fun getDirectory(timetable: TimetableData): File {
+        val segments = listOf(
+            STAGING_ROOT,
+            REPOSITORY_ROOT,
+            timetable.programme.institution.domain,
+            PROGRAMMES,
+            timetable.programme.acronym,
+            timetable.term.toString()
+        )
+
+        return Filepath(segments, caseType = Filepath.CaseType.LOWER).asFile
+    }
 }
