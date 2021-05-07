@@ -114,6 +114,34 @@ class FilepathTests {
     }
 
     @Test
+    fun `when adding a Filepath to a string then success`() {
+        val dirA = "test1ng"
+        val dirB = "path_Builder"
+        val dirC = "ok"
+        val segments = listOf(dirA, dirB, dirC)
+
+        val someFile = "file.txt"
+        val actual = Filepath(segments) + someFile
+
+        val allSegments = segments + someFile
+        val expected = File(allSegments.joinToString(File.separator))
+
+        assertEquals(expected, actual.asFile)
+    }
+
+    @Test
+    fun `when adding a Filepath to an empty string then fail`() {
+        val dirA = "test1ng"
+        val dirB = "path_Builder"
+        val dirC = "ok"
+        val segments = listOf(dirA, dirB, dirC)
+
+        assertThrows<IllegalArgumentException> {
+            Filepath(segments) + ""
+        }
+    }
+
+    @Test
     fun `when given an empty segment path then fail`() {
         val dirA = "testing"
         val dirB = "pathBuilder"
