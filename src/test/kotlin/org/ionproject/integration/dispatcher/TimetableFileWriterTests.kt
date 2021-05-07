@@ -106,4 +106,4 @@ private val timetable = TimetableDto(
 
 private val institution = InstitutionMetadata("Instituto Superior de Engenharia de Lisboa", "ISEL", "pt.ipl.isel")
 private val programmeMetadata = ProgrammeMetadata(institution, "Eng. Informática e de Computadores", "LEIC")
-private val meta = TimetableData(programmeMetadata, CalendarTerm(2020, Term.SPRING), timetable)
+val meta = TimetableData(programmeMetadata, CalendarTerm(2020, Term.SPRING), timetable)
