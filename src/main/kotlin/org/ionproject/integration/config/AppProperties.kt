@@ -14,4 +14,19 @@ class AppProperties {
 
     @NotEmpty
     lateinit var localFileOutputFolder: String
+
+    @NotEmpty
+    lateinit var stagingDir: String
+
+    @NotEmpty
+    lateinit var gitServer: String
+
+    @NotEmpty
+    lateinit var gitRepository: String
+
+    @NotEmpty
+    lateinit var gitUser: String
+
+    @NotEmpty
+    lateinit var gitPassword: String
 }
