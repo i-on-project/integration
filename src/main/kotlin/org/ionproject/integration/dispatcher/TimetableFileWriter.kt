@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component
 import java.io.File
 
 const val STAGING_ROOT = "staging"
+const val REPOSITORY_ROOT = "integration-data"
 private const val TIMETABLE_FILENAME = "timetable"
 
 @Component
@@ -23,6 +24,7 @@ class TimetableFileWriter(private val serializer: ISerializer) {
     private fun getDirectory(timetable: TimetableData): File =
         PathBuilder(STAGING_ROOT)
             .setCaseType(PathBuilder.CaseType.LOWER)
+            .add(REPOSITORY_ROOT)
             .add(timetable.programme.institution.domain)
             .add("programmes")
             .add(timetable.programme.acronym)
