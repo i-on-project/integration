@@ -30,46 +30,20 @@ data class TimetableDto(
             for (timetable in timetableTeachers.timetable)
                 for (course in timetable.courses) {
 
-                    val tempEventList = mutableListOf<EventDto>()
-                    for (event in course.events) {
-                        for (weekday in event.weekday)
-                            tempEventList.add(
-                                EventDto(
-                                    event.category.name,
-                                    event.location.ifEmpty { null },
-                                    event.beginTime,
-                                    event.duration,
-                                    weekday
-                                )
-                            )
-                    }
-
-                    val tempInstructorList = mutableListOf<InstructorDto>()
-
-                    for (
-                        faculty in timetableTeachers.teachers.filter { it.calendarSection == timetable.calendarSection }
-                            .flatMap { it.courses }.filter { it.classDetail.acronym == course.label.acr }.toList()
-                    ) {
-                        for (instructor in faculty.instructors)
-                            tempInstructorList.add(
-                                InstructorDto(
-                                    instructor.name,
-                                    faculty.classDetail.type.name
-                                )
-                            )
-                    }
+                    val tempEventList = course.events.flatMap(EventDto.Factory::from)
+                    val instructors = getInstructors(timetableTeachers.teachers, course, timetable.calendarSection)
 
                     if (courseMap[course.label.acr] != null)
                         courseMap[course.label.acr]?.add(
                             SectionDto(
                                 timetable.calendarSection,
                                 tempEventList,
-                                tempInstructorList
+                                instructors
                             )
                         )
                     else {
                         courseMap[course.label.acr] =
-                            mutableListOf(SectionDto(timetable.calendarSection, tempEventList, tempInstructorList))
+                            mutableListOf(SectionDto(timetable.calendarSection, tempEventList, instructors))
                     }
                 }
 
@@ -85,6 +59,18 @@ data class TimetableDto(
             )
         }
     }
+}
+
+fun getInstructors(courseTeacherList: List<CourseTeacher>, course: Course, section: String): List<InstructorDto> {
+    return courseTeacherList
+        .filter { it.calendarSection == section }
+        .flatMap { it.courses }
+        .filter { it.classDetail.acronym == course.label.acr }
+        .flatMap { faculty ->
+            faculty.instructors.map {
+                InstructorDto.from(it, faculty.classDetail.type)
+            }
+        }
 }
 
 data class SchoolDto(
@@ -115,9 +101,27 @@ data class EventDto(
     val beginTime: String, // Format HH:MM
     val duration: String, // Format HH:MM
     val weekdays: String
-)
+) {
+    companion object Factory {
+        fun from(event: RecurrentEvent): List<EventDto> = event.weekday.map { weekday ->
+            EventDto(
+                event.category.name,
+                event.location.ifEmpty { null },
+                event.beginTime,
+                event.duration,
+                weekday
+            )
+        }
+    }
+}
 
 data class InstructorDto(
     val name: String,
     val category: String
-)
+) {
+    companion object Factory {
+        fun from(instructor: Instructor, eventCategory: EventCategory): InstructorDto {
+            return InstructorDto(instructor.name, eventCategory.name)
+        }
+    }
+}
