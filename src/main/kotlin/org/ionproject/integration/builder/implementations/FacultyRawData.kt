@@ -4,6 +4,7 @@ import org.ionproject.integration.model.external.timetable.Instructor
 
 data class FacultyRawData(val courseText: String, val instructorText: String)
 
+// TODO change this, the DTO is defined elsewhere
 data class FacultyDTO(val classDetail: ClassDetail, val instructor: Instructor) {
     fun isValid(): Boolean = instructor.name.isNotBlank()
 }

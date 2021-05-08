@@ -83,18 +83,15 @@ internal class MappingTaskletTest {
         val programme = "Licenciatura em Engenharia Eletrónica e Telecomunicações e de Computadores"
         val term = "2020/21-Verão"
         val section = "LT11Da"
-        val language = "pt-PT"
         // Common data
         assertEquals(school, timetableTeacher.timetable[0].school.name)
         assertEquals(programme, timetableTeacher.timetable[0].programme.name)
         assertEquals(term, timetableTeacher.timetable[0].calendarTerm)
         assertEquals(section, timetableTeacher.timetable[0].calendarSection)
-        assertEquals(language, timetableTeacher.timetable[0].language)
         assertEquals(school, timetableTeacher.teachers[0].school.name)
         assertEquals(programme, timetableTeacher.teachers[0].programme.name)
         assertEquals(term, timetableTeacher.teachers[0].calendarTerm)
         assertEquals(section, timetableTeacher.teachers[0].calendarSection)
-        assertEquals(language, timetableTeacher.teachers[0].language)
 
         // Timetable data
         val beginTime = LocalTime.parse(timetableTeacher.timetable[0].courses[0].events[0].beginTime)
