@@ -1,8 +1,6 @@
 package org.ionproject.integration.builder.implementations
 
 import com.squareup.moshi.Types
-import java.time.Duration
-import java.time.LocalTime
 import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
 import org.ionproject.integration.builder.interfaces.ITimetableTeachersBuilder
 import org.ionproject.integration.model.external.timetable.Course
@@ -10,7 +8,6 @@ import org.ionproject.integration.model.external.timetable.CourseTeacher
 import org.ionproject.integration.model.external.timetable.EventCategory
 import org.ionproject.integration.model.external.timetable.Faculty
 import org.ionproject.integration.model.external.timetable.Label
-import org.ionproject.integration.model.external.timetable.Language
 import org.ionproject.integration.model.external.timetable.Programme
 import org.ionproject.integration.model.external.timetable.RecurrentEvent
 import org.ionproject.integration.model.external.timetable.School
@@ -25,6 +22,8 @@ import org.ionproject.integration.utils.JsonUtils
 import org.ionproject.integration.utils.RegexUtils
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
+import java.time.Duration
+import java.time.LocalTime
 
 class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData> {
     companion object {
@@ -62,7 +61,11 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         rawTimetableData.scheduleData.toTableList().map { mapTablesToBusiness(rawTimetableData, it, instructorJson) }
     }
 
-    private fun mapTablesToBusiness(rawTimetableData: RawTimetableData, tableList: List<Table>, instructorList: List<Table>) {
+    private fun mapTablesToBusiness(
+        rawTimetableData: RawTimetableData,
+        tableList: List<Table>,
+        instructorList: List<Table>
+    ) {
         iselTimetableTeachers = Try.of {
             val timetableList = mutableListOf<Timetable>()
             val teacherList = mutableListOf<CourseTeacher>()
@@ -102,13 +105,11 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         timetable.programme = Programme(name = programme, acr = programmeArc)
         timetable.calendarTerm = calendarTerm
         timetable.calendarSection = classSection
-        timetable.language = Language.PT.value
 
         courseTeacher.school = School(name = school, acr = schoolAcr)
         courseTeacher.programme = Programme(name = programme, acr = programmeArc)
         courseTeacher.calendarTerm = calendarTerm
         courseTeacher.calendarSection = classSection
-        courseTeacher.language = Language.PT.value
     }
 
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
@@ -238,11 +239,12 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
             .of(time[0].toInt(), time[1].toInt())
     }
 
-    private fun getDescription(classType: String) = when (classType) {
-        "T" -> "Aulas Teóricas de "
-        "P" -> "Aulas Práticas de "
-        "L" -> "Aulas Laboratório de "
-        "T/P" -> "Aulas Teórico-práticas de "
+    // TODO the description is no longer necessary under this new data model. To confirm with team
+    private fun getDescription(classType: EventCategory) = when (classType) {
+        EventCategory.LECTURE -> "Aulas Teóricas de "
+        EventCategory.PRACTICE -> "Aulas Práticas de "
+        EventCategory.LAB -> "Aulas Laboratório de "
+        EventCategory.LECTURE_PRACTICE -> "Aulas Teórico-práticas de "
         else -> ""
     }
 }

@@ -19,7 +19,7 @@ data class ClassDetail(
                 "T" -> EventCategory.LECTURE
                 "T/P" -> EventCategory.LECTURE_PRACTICE
                 "P" -> EventCategory.PRACTICE
-                else -> EventCategory.LECTURE // TODO throw exception?
+                else -> EventCategory.LECTURE // TODO throw exception or arrange an empty EventCategory?
             }
 
             return ClassDetail(acronym, location, type)
