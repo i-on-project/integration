@@ -1,7 +1,6 @@
 package org.ionproject.integration.builder.implementations
 
 import org.ionproject.integration.model.external.timetable.EventCategory
-import org.ionproject.integration.utils.Try
 import java.lang.Integer.max
 
 data class ClassDetail(
