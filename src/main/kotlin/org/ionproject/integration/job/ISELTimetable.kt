@@ -1,6 +1,5 @@
 package org.ionproject.integration.job
 
-import javax.sql.DataSource
 import org.ionproject.integration.file.implementations.FileComparatorImpl
 import org.ionproject.integration.file.implementations.FileDigestImpl
 import org.ionproject.integration.file.implementations.FileDownloaderImpl
@@ -8,7 +7,6 @@ import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
 import org.ionproject.integration.format.implementations.ISELTimetableFormatChecker
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
-import org.ionproject.integration.model.internal.timetable.UploadType
 import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
 import org.ionproject.integration.step.chunkbased.FormatVerifierStepBuilder
 import org.ionproject.integration.step.chunkbased.processor.FormatVerifierProcessor
@@ -33,6 +31,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.task.SimpleAsyncTaskExecutor
 import org.springframework.core.task.TaskExecutor
 import org.springframework.stereotype.Component
+import javax.sql.DataSource
 
 @Configuration
 class ISELTimetable(
@@ -104,7 +103,6 @@ class ISELTimetable(
         val writeLocalFlow = FlowBuilder<SimpleFlow>("Write Local Files")
             .split(taskExecutor())
             .add(
-                flow("Write Faculty", writeFacultyStep()),
                 flow("Write Timetable", writeTimetableStep())
             ).build()
 
@@ -117,24 +115,10 @@ class ISELTimetable(
 
     @Bean
     fun writeTimetableStep(): TaskletStep {
-        timetableWriteTasklet.setUploadType(UploadType.TIMETABLE)
 
         return taskletStep(
             "Write Timetable Information to Local Folder",
             timetableWriteTasklet
-        )
-    }
-
-    @Autowired
-    private lateinit var facultyWriteTasklet: WriteFileTasklet
-
-    @Bean
-    fun writeFacultyStep(): TaskletStep {
-        facultyWriteTasklet.setUploadType(UploadType.TEACHERS)
-
-        return taskletStep(
-            "Write Faculty Information to Local Folder",
-            facultyWriteTasklet
         )
     }
 
