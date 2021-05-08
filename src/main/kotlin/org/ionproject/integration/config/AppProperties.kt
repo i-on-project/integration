@@ -29,4 +29,6 @@ class AppProperties {
 
     @NotEmpty
     lateinit var gitPassword: String
+
+    val gitRepoUrl by lazy { "$gitServer$gitRepository.git" }
 }
