@@ -245,6 +245,5 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         EventCategory.PRACTICE -> "Aulas Práticas de "
         EventCategory.LAB -> "Aulas Laboratório de "
         EventCategory.LECTURE_PRACTICE -> "Aulas Teórico-práticas de "
-        else -> ""
     }
 }
