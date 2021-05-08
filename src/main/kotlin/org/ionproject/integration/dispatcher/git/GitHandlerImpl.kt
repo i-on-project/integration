@@ -1,6 +1,7 @@
 package org.ionproject.integration.dispatcher.git
 
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.transport.CredentialsProvider
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -10,9 +11,9 @@ private val LOGGER = LoggerFactory.getLogger(GitHandlerImpl::class.java)
 
 @Service
 class GitHandlerImpl : IGitHandler {
-
     private lateinit var repositoryMetadata: GitRepoData
     private lateinit var git: Git
+    private lateinit var credentials: CredentialsProvider
 
     @Service
     companion object Factory : IGitHandlerFactory {
@@ -22,14 +23,17 @@ class GitHandlerImpl : IGitHandler {
             cleanStagingArea(repoDirectory)
             LOGGER.info("Cloning Git repository from ${repoData.url}")
 
+            val credentialProvider = UsernamePasswordCredentialsProvider(repoData.user, repoData.password)
+
             val repo = Git.cloneRepository()
                 .setURI(repoData.url)
                 .setDirectory(repoDirectory)
-                .setCredentialsProvider(UsernamePasswordCredentialsProvider(repoData.user, repoData.password))
+                .setCredentialsProvider(credentialProvider)
                 .call()
             return GitHandlerImpl().apply {
                 repositoryMetadata = repoData
                 git = repo
+                credentials = credentialProvider
             }
         }
 
@@ -39,34 +43,27 @@ class GitHandlerImpl : IGitHandler {
     }
 
     override fun commit(message: String) {
-        git.add()
-            .addFilepattern(".")
-            .call()
-
         git.commit()
             .setMessage(message)
             .call()
     }
 
+    override fun add(input: String) {
+        val toAdd = if (input == "*") "." else input
+        git.add()
+            .addFilepattern(toAdd)
+            .call()
+    }
+
     override fun push() {
         git.push()
-            .setCredentialsProvider(
-                UsernamePasswordCredentialsProvider(
-                    repositoryMetadata.user,
-                    repositoryMetadata.password
-                )
-            )
+            .setCredentialsProvider(credentials)
             .call()
     }
 
     override fun update(): GitOutcome {
         val result = git.pull()
-            .setCredentialsProvider(
-                UsernamePasswordCredentialsProvider(
-                    repositoryMetadata.user,
-                    repositoryMetadata.password
-                )
-            )
+            .setCredentialsProvider(credentials)
             .call()
             .mergeResult
             .mergeStatus

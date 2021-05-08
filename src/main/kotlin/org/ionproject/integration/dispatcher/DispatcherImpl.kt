@@ -30,7 +30,8 @@ class DispatcherImpl(
         runCatching {
             git.update()
 
-            timetableFileWriter.write(data, OutputFormat.JSON)
+            timetableFileWriter.write(data, format)
+            git.add()
             git.commit(generateCommitMessage(data))
 
             git.push()
