@@ -1,6 +1,7 @@
 package org.ionproject.integration.builder.implementations
 
 import org.ionproject.integration.model.external.timetable.EventCategory
+import org.ionproject.integration.utils.Try
 import java.lang.Integer.max
 
 data class ClassDetail(
@@ -19,7 +20,7 @@ data class ClassDetail(
                 "T" -> EventCategory.LECTURE
                 "T/P" -> EventCategory.LECTURE_PRACTICE
                 "P" -> EventCategory.PRACTICE
-                else -> EventCategory.LECTURE // TODO throw exception or arrange an empty EventCategory?
+                else -> throw IllegalArgumentException("Unknown Event Category")
             }
 
             return ClassDetail(acronym, location, type)
