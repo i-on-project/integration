@@ -30,20 +30,20 @@ data class TimetableDto(
             for (timetable in timetableTeachers.timetable)
                 for (course in timetable.courses) {
 
-                    val tempEventList = course.events.flatMap(EventDto.Factory::from)
+                    val events = course.events.flatMap(EventDto.Factory::from)
                     val instructors = getInstructors(timetableTeachers.teachers, course, timetable.calendarSection)
 
                     if (courseMap[course.label.acr] != null)
                         courseMap[course.label.acr]?.add(
                             SectionDto(
                                 timetable.calendarSection,
-                                tempEventList,
+                                events,
                                 instructors
                             )
                         )
                     else {
                         courseMap[course.label.acr] =
-                            mutableListOf(SectionDto(timetable.calendarSection, tempEventList, instructors))
+                            mutableListOf(SectionDto(timetable.calendarSection, events, instructors))
                     }
                 }
 
@@ -61,7 +61,7 @@ data class TimetableDto(
     }
 }
 
-fun getInstructors(courseTeacherList: List<CourseTeacher>, course: Course, section: String): List<InstructorDto> {
+private fun getInstructors(courseTeacherList: List<CourseTeacher>, course: Course, section: String): List<InstructorDto> {
     return courseTeacherList
         .filter { it.calendarSection == section }
         .flatMap { it.courses }
