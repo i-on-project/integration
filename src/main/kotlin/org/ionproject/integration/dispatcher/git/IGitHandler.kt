@@ -3,6 +3,8 @@ package org.ionproject.integration.dispatcher.git
 sealed interface IGitHandler {
     fun commit(message: String)
 
+    fun add(input: String = "*")
+
     fun push()
 
     fun update(): GitOutcome
