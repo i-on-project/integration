@@ -7,6 +7,11 @@ services:
             - SQL_USER=${SQL_USER}
             - SQL_HOST=jdbc:postgresql://ion-db:5432/${SQL_DATABASE}
             - SQL_PASSWORD=${SQL_PASSWORD}
+            - STAGING_DIR=${STAGING_DIR}
+            - GIT_SERVER_ADDRESS=${GIT_SERVER_ADDRESS}
+            - GIT_REPOSITORY_NAME=${GIT_REPOSITORY_NAME}
+            - GIT_USER=${GIT_USER}
+            - GIT_PASSWORD=${GIT_PASSWORD}
         volumes:
             - db-data:/var/lib/postgresql/data
         depends_on:
