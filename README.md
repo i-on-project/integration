@@ -100,6 +100,8 @@ These ports are configured from **Docker environment variables** and their prese
 
 The default database, username and password are also customizable through the **.env** file.
 
+**Note**: If **changing the default port** (8080) for the local Git Server you **must also update the `GIT_SERVER_ADDRESS`** variable in the [.env](.env) file to the new port value.
+
 ### Stopping and removing the environment
 If you are running in **attached** mode (without the `-d` flag) you can use `Ctrl + C` to stop all containers **gracefully** or, if you're in a hurry (or a container is not stopping on its own) you can press `Ctrl + C` a **second time** to **force shutdown**.
 
