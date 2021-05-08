@@ -1,57 +1,45 @@
 package org.ionproject.integration.dispatcher
 
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.ionproject.integration.config.AppProperties
-import org.slf4j.LoggerFactory
+import org.ionproject.integration.dispatcher.git.GitRepoData
+import org.ionproject.integration.dispatcher.git.IGitHandlerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-private val LOGGER = LoggerFactory.getLogger(DispatcherImpl::class.java)
-
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-class DispatcherImpl(val timetableFileWriter: TimetableFileWriter) : ITimetableDispatcher {
+class DispatcherImpl(
+    val timetableFileWriter: TimetableFileWriter,
+    gitFactory: IGitHandlerFactory
+) : ITimetableDispatcher {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
     @Autowired
     private lateinit var props: AppProperties
 
-    private val repository by lazy {
-        val repoDirectory = File("${props.stagingDir}${File.separator}${props.gitRepository}")
-        repoDirectory.deleteRecursively()
-
-        LOGGER.info("Cloning Git repository from ${props.gitRepoUrl}")
-
-        Git.cloneRepository()
-            .setURI(props.gitRepoUrl)
-            .setDirectory(repoDirectory)
-            .setCredentialsProvider(UsernamePasswordCredentialsProvider(props.gitUser, props.gitPassword))
-            .call()
+    private val git by lazy {
+        val data = GitRepoData(props.gitRepository, props.gitRepoUrl, props.gitUser, props.gitPassword)
+        gitFactory.checkout(props.stagingDir, data)
     }
 
-    override fun dispatch(data: TimetableData, format: OutputFormat): DispatchResult {
+    override fun dispatch(data: TimetableData, format: OutputFormat): DispatchResult =
+        runCatching {
+            git.update()
 
-        val mergeResult = repository.pull()
-            .setCredentialsProvider(UsernamePasswordCredentialsProvider(props.gitUser, props.gitPassword))
-            .call()
-            .mergeResult
+            timetableFileWriter.write(data, OutputFormat.JSON)
+            git.commit(generateCommitMessage(data))
 
-        LOGGER.info("Merge result: ${mergeResult.mergeStatus}")
-
-        timetableFileWriter.write(data, OutputFormat.JSON)
-        repository.add().addFilepattern(".").call()
-
-        repository.commit().setMessage(generateCommitMessage(data)).call()
-        repository.push().setCredentialsProvider(UsernamePasswordCredentialsProvider(props.gitUser, props.gitPassword))
-            .call()
-        return DispatchResult.SUCCESS
-    }
+            git.push()
+        }.run {
+            if (isSuccess)
+                DispatchResult.SUCCESS
+            else
+                DispatchResult.FAILURE
+        }
 
     private fun generateCommitMessage(timetableData: TimetableData): String {
         val now = LocalDateTime.now().format(formatter)
