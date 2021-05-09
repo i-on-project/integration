@@ -15,7 +15,9 @@ RUN useradd -m spring && usermod -a -G spring spring \
     && mkdir -p /app/resources \
     && chown spring /app/resources \
     && mkdir -p /app/resources/output \
-    && chown spring /app/resources/output
+    && chown spring /app/resources/output \
+    && mkdir -p /app/staging \
+    && chown spring /app/staging
 
 USER spring:spring
 
