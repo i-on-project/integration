@@ -81,7 +81,7 @@ internal class MappingTaskletTest {
 
         val school = "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA"
         val programme = "Licenciatura em Engenharia Eletrónica e Telecomunicações e de Computadores"
-        val term = "2020/21-Verão"
+        val term = "2020-2021-2"
         val section = "LT11Da"
         // Common data
         assertEquals(school, timetableTeacher.timetable[0].school.name)

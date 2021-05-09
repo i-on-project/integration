@@ -120,8 +120,8 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         val termType = raw.substringAfter('-')
 
         val termNumber = when (termType) {
-            "Verão" -> 1
-            "Inverno" -> 2
+            "Inverno" -> 1
+            "Verão" -> 2
             else -> throw IllegalArgumentException("Invalid term description: $termType")
         }
 
