@@ -93,9 +93,12 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
     private fun setCommonData(data: String, timetable: Timetable, courseTeacher: CourseTeacher) {
         val school = RegexUtils.findMatches(SCHOOL_REGEX, data)[0].trimEnd()
         val programme = RegexUtils.findMatches(PROGRAMME_REGEX, data, RegexOption.MULTILINE)[0].trimEnd()
-        val calendarTerm =
-            RegexUtils.findMatches(CALENDAR_TERM_REGEX, data, RegexOption.MULTILINE)[0].replace("Ano Letivo :", "")
-                .trim()
+        val calendarTerm = RegexUtils.findMatches(CALENDAR_TERM_REGEX, data, RegexOption.MULTILINE)[0]
+            .replace("Ano Letivo :", "")
+            .trim()
+            .let {
+                normalizeTerm(it)
+            }
         val classSection =
             RegexUtils.findMatches(CLASS_SECTION_REGEX, data, RegexOption.MULTILINE)[0].replace("Turma :", "").trim()
         val schoolAcr = "ISEL"
@@ -110,6 +113,19 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         courseTeacher.programme = Programme(name = programme, acr = programmeArc)
         courseTeacher.calendarTerm = calendarTerm
         courseTeacher.calendarSection = classSection
+    }
+
+    private fun normalizeTerm(raw: String): String {
+        val startYear = raw.take(4).toInt()
+        val termType = raw.substringAfter('-')
+
+        val termNumber = when (termType) {
+            "Verão" -> 1
+            "Inverno" -> 2
+            else -> throw IllegalArgumentException("Invalid term description: $termType")
+        }
+
+        return "$startYear-${startYear + 1}-$termNumber"
     }
 
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
