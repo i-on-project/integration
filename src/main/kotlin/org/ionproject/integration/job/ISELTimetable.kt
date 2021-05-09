@@ -100,13 +100,12 @@ class ISELTimetable(
 
     @Bean
     fun writeLocalStep(): Step {
-        val writeLocalFlow = FlowBuilder<SimpleFlow>("Write Local Files")
+        val writeLocalFlow = FlowBuilder<SimpleFlow>("Write to Git")
             .split(taskExecutor())
-            .add(
-                flow("Write Timetable", writeTimetableStep())
-            ).build()
+            .add(flow("Write Timetable", writeTimetableStep()))
+            .build()
 
-        return stepBuilderFactory.get("Write Local Files").flow(writeLocalFlow)
+        return stepBuilderFactory.get("Write to Git").flow(writeLocalFlow)
             .build()
     }
 
@@ -117,7 +116,7 @@ class ISELTimetable(
     fun writeTimetableStep(): TaskletStep {
 
         return taskletStep(
-            "Write Timetable Information to Local Folder",
+            "Submit Timetable data to Git",
             timetableWriteTasklet
         )
     }

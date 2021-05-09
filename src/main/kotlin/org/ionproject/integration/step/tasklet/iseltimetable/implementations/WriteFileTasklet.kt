@@ -57,7 +57,7 @@ class WriteFileTasklet(
                 timetableDto.programme.acr
             ),
             CalendarTerm(
-                timetableDto.calendarTerm.substring(0, 3).toInt(),
+                timetableDto.calendarTerm.take(4).toInt(),
                 when (timetableDto.calendarTerm.takeLast(1).toInt()) {
                     1 -> Term.FALL
                     2 -> Term.SPRING
