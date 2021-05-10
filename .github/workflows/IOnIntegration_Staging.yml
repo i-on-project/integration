@@ -21,3 +21,4 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "ion-integration-staging"
           heroku_email: "org.ionproject.integration@gmail.com"
+          usedocker: true
