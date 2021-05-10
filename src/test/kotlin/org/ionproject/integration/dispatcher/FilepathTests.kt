@@ -24,7 +24,7 @@ class FilepathTests {
     fun `when given an absolute path then success`() {
         val dirA = "testing"
         val dirB = "pathBuilder"
-        val dirC = "ok?"
+        val dirC = "ok"
         val segments = listOf(dirA, dirB, dirC)
 
         val actual = Filepath(segments, Filepath.PathType.ABSOLUTE).asFile
