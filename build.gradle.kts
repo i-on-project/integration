@@ -53,6 +53,7 @@ tasks.register("prebuild") {
 }
 
 tasks.register<Copy>("extractUberJar") {
+    dependsOn("prebuild")
     from(zipTree("$buildDir/libs/${rootProject.name}-$version.jar"))
     into("$buildDir/dependency")
 }
