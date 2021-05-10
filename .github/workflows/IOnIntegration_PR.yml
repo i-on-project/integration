@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        
+      - name: Run Linter and Unit Tests
+        run: ./gradlew prebuild
 
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
