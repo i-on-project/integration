@@ -25,3 +25,4 @@ jobs:
           heroku_app_name: "ion-integration-staging"
           heroku_email: "org.ionproject.integration@gmail.com"
           usedocker: true
+          docker_heroku_process_type: worker
