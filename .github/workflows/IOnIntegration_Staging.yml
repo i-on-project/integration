@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths-ignore:
-      - 'docs/**'
+      - "docs/**"
 
 jobs:
   push_integration:
@@ -16,6 +16,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build image
-        id: integration_build_image
-        run: ./gradlew buildDockerImage
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "ion-integration-staging"
+          heroku_email: "org.ionproject.integration@gmail.com"
