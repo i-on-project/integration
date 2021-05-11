@@ -23,3 +23,5 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           usedocker: true
           docker_heroku_process_type: web
+        env:
+          SQL_HOST: ${{secrets.HEROKU_SQL_HOST}}/${{secrets.HEROKU_SQL_DATABASE}}?sslmode=require&user=${{secrets.HEROKU_SQL_USER}}&password=${{secrets.HEROKU_SQL_PASSWORD}}
