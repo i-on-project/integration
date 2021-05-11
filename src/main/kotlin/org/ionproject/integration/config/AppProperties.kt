@@ -30,5 +30,8 @@ class AppProperties {
     @NotEmpty
     lateinit var gitPassword: String
 
+    @NotEmpty
+    lateinit var gitBranchName: String
+
     val gitRepoUrl by lazy { "$gitServer$gitRepository.git" }
 }

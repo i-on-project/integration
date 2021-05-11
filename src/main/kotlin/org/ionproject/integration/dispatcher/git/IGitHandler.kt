@@ -18,7 +18,8 @@ data class GitRepoData(
     val name: String,
     val url: String,
     val user: String,
-    val password: String
+    val password: String,
+    val branch: String
 )
 
 enum class GitOutcome {

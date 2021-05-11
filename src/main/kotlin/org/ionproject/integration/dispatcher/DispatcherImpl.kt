@@ -22,7 +22,13 @@ class DispatcherImpl(
     private lateinit var props: AppProperties
 
     private val git by lazy {
-        val data = GitRepoData(props.gitRepository, props.gitRepoUrl, props.gitUser, props.gitPassword)
+        val data = GitRepoData(
+            name = props.gitRepository,
+            url = props.gitRepoUrl,
+            user = props.gitUser,
+            password = props.gitPassword,
+            branch = props.gitBranchName
+        )
         gitFactory.checkout(props.stagingDir, data)
     }
 
