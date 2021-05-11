@@ -21,7 +21,7 @@ class GitHandlerImpl : IGitHandler {
         override fun checkout(stagingDir: String, repoData: GitRepoData): IGitHandler {
             val repoDirectory = File("$stagingDir${File.separator}${repoData.name}")
             cleanStagingArea(repoDirectory)
-            LOGGER.info("Cloning Git repository from ${repoData.url}")
+            LOGGER.info("Cloning Git repository from ${repoData.url}. Tracking remote branch: ${repoData.branch}.")
 
             val credentialProvider = UsernamePasswordCredentialsProvider(repoData.user, repoData.password)
 
@@ -29,6 +29,8 @@ class GitHandlerImpl : IGitHandler {
                 .setURI(repoData.url)
                 .setDirectory(repoDirectory)
                 .setCredentialsProvider(credentialProvider)
+                .setBranchesToClone(listOf("refs/heads/${repoData.branch}"))
+                .setBranch(repoData.branch)
                 .call()
             return GitHandlerImpl().apply {
                 repositoryMetadata = repoData
@@ -64,6 +66,7 @@ class GitHandlerImpl : IGitHandler {
     override fun update(): GitOutcome {
         val result = git.pull()
             .setCredentialsProvider(credentials)
+            .setRemoteBranchName(repositoryMetadata.branch)
             .call()
             .mergeResult
             .mergeStatus

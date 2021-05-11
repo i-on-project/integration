@@ -12,6 +12,7 @@ services:
             - GIT_REPOSITORY_NAME=${GIT_REPOSITORY_NAME}
             - GIT_USER=${GIT_USER}
             - GIT_PASSWORD=${GIT_PASSWORD}
+            - GIT_BRANCH=${GIT_BRANCH}
         volumes:
             - db-data:/var/lib/postgresql/data
         depends_on:
