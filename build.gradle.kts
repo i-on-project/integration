@@ -44,15 +44,9 @@ dependencies {
     testImplementation("org.apache.commons:commons-email:1.5")
 }
 
-tasks.register("prebuild") {
+tasks.register<Copy>("extractUberJar") {
     dependsOn("build")
     dependsOn("ktlintCheck")
-    doLast {
-        println("Tests and Linter check OK!")
-    }
-}
-
-tasks.register<Copy>("extractUberJar") {
     from(zipTree("$buildDir/libs/${rootProject.name}-$version.jar"))
     into("$buildDir/dependency")
 }
