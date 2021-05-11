@@ -23,5 +23,8 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           usedocker: true
           docker_heroku_process_type: web
+          healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
+       -id: databaseUrl
+        run: echo "::set-output name=url::$(heroku config:get DATABASE_URL -a ${{secrets.HEROKU_APP_NAME}})"
         env:
-          SQL_HOST: ${{secrets.HEROKU_SQL_HOST}}/${{secrets.HEROKU_SQL_DATABASE}}?sslmode=require&user=${{secrets.HEROKU_SQL_USER}}&password=${{secrets.HEROKU_SQL_PASSWORD}}
+          HEROKU_DB_URL: ${{steps.databaseUrl.outputs.url}}
