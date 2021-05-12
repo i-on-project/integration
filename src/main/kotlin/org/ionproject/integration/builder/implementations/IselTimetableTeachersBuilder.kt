@@ -8,6 +8,7 @@ import org.ionproject.integration.model.external.timetable.CourseTeacher
 import org.ionproject.integration.model.external.timetable.EventCategory
 import org.ionproject.integration.model.external.timetable.Faculty
 import org.ionproject.integration.model.external.timetable.Label
+import org.ionproject.integration.model.external.timetable.Language
 import org.ionproject.integration.model.external.timetable.Programme
 import org.ionproject.integration.model.external.timetable.RecurrentEvent
 import org.ionproject.integration.model.external.timetable.School
@@ -18,9 +19,11 @@ import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.isel.ProgrammeMap
 import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
+import org.ionproject.integration.utils.IgnoredWords
 import org.ionproject.integration.utils.JsonUtils
 import org.ionproject.integration.utils.RegexUtils
 import org.ionproject.integration.utils.Try
+import org.ionproject.integration.utils.generateAcronym
 import org.ionproject.integration.utils.orThrow
 import java.time.Duration
 import java.time.LocalTime
@@ -101,7 +104,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
             }
         val classSection =
             RegexUtils.findMatches(CLASS_SECTION_REGEX, data, RegexOption.MULTILINE)[0].replace("Turma :", "").trim()
-        val schoolAcr = "ISEL"
+        val schoolAcr = generateAcronym(school, IgnoredWords.of(Language.PT))
         val programmeArc = ProgrammeMap.map[programme].toString()
 
         timetable.school = School(name = school, acr = schoolAcr)
