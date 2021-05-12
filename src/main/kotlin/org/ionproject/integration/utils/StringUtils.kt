@@ -3,7 +3,8 @@ package org.ionproject.integration.utils
 import org.ionproject.integration.model.external.timetable.Language
 
 object IgnoredWords {
-    private val portugueseWords = listOf("de", "do", "da", "e", "o", "a", "para", "dos", "das")
+    private val portugueseWords =
+        listOf("de", "do", "da", "e", "o", "a", "para", "dos", "das", "dr", "dr.", "dra", "dra.")
     private val englishWords = listOf("from", "to", "by", "as", "of")
 
     fun of(language: Language): List<String> =
@@ -13,10 +14,12 @@ object IgnoredWords {
         }
 }
 
+fun List<String>.containsCaseInsensitive(string: String): Boolean = any { it.equals(string, ignoreCase = true) }
+
 fun generateAcronym(text: String, ignoredWords: List<String> = emptyList()): String =
     text.split("""[\s_\-,]""".toRegex())
         .filter(String::isNotEmpty)
-        .filterNot(ignoredWords::contains)
+        .filterNot(ignoredWords::containsCaseInsensitive)
         .map(String::first)
         .joinToString("")
         .uppercase()

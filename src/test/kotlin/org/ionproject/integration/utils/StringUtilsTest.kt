@@ -100,6 +100,13 @@ class StringUtilsTest {
         "CMU",
         IgnoredWords.of(Language.EN_US)
     )
+
+    @Test
+    fun `when text has ignored portuguese words in a different case then success`() = assertAcronymEquals(
+        "Escola Superior de Saúde DR. Lopes Dias",
+        "ESSLD",
+        IgnoredWords.of(Language.PT)
+    )
 }
 
 private fun assertAcronymEquals(origin: String, acronym: String, toIgnore: List<String> = emptyList()) =
