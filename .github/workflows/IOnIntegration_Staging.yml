@@ -51,8 +51,12 @@ jobs:
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           usedocker: true
-          docker_heroku_process_type: web
+          docker_heroku_process_type: worker
           healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
+      - run: |
+          echo "::add-mask::$HD_SQL_HOST"
+          echo "::add-mask::$HD_SQL_USER"
+          echo "::add-mask::$HD_SQL_PASSWORD"
         env:
           HD_SQL_HOST: jdbc:postgresql://${{ steps.split1.outputs._1}}
           HD_SQL_USER: ${{ steps.split3.outputs._2}}
