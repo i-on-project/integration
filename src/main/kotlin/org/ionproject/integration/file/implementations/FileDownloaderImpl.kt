@@ -13,10 +13,13 @@ import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.model.internal.Response
 import org.ionproject.integration.model.internal.generic.JobType
 import org.ionproject.integration.utils.Try
+import org.slf4j.LoggerFactory
 
 class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
     IFileDownloader {
     private val EMPTY_PATH = Paths.get("")
+
+    private val log = LoggerFactory.getLogger(FileDownloaderImpl::class.java)
 
     override fun download(uri: URI, localDestination: Path, jobType: JobType?): Try<Path> {
         if (localDestination == EMPTY_PATH) {
@@ -31,14 +34,25 @@ class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
                 .build()
         )
 
-        val response = request.map { r -> client.send(r, HttpResponse.BodyHandlers.ofByteArray()) }
+        val response = request.map { r ->
+            kotlin.runCatching {
+                client.send(r, HttpResponse.BodyHandlers.ofByteArray())
+            }.onFailure {
+                log.error("Error downloading $uri: $it -> ${it.message}")
+                throw it
+            }
+                .getOrThrow()
+        }
             .map { resp -> Response(resp.statusCode(), resp.body()) }
             .flatMap { resp -> validateResponseCode(resp) }
 
         val file = response.map { r -> checker.checkFormat(r.body, jobType) }
             .map { localDestination.toFile() }
 
-        return Try.map(file, response) { f, r -> f.writeBytes(r.body); f.toPath() }
+        return Try.map(file, response) { f, r ->
+            f.writeBytes(r.body)
+            f.toPath()
+        }
     }
 
     private fun validateResponseCode(response: Response): Try<Response> {
