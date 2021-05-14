@@ -27,7 +27,6 @@ class AppProperties {
     @NotEmpty
     lateinit var gitUser: String
 
-    @NotEmpty
     lateinit var gitPassword: String
 
     @NotEmpty
