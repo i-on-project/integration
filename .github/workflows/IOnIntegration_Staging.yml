@@ -23,6 +23,8 @@ jobs:
       - name: Retrieve Database URL
         id: databaseUrl
         run: echo "::set-output name=url::$(heroku config:get DATABASE_URL -a ${{secrets.HEROKU_APP_NAME}})"
+        env:
+          HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
 
       - uses: rishabhgupta/split-by@v1
         id: split1
