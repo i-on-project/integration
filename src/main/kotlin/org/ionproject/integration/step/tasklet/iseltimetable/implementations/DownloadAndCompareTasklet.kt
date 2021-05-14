@@ -73,7 +73,7 @@ class DownloadAndCompareTasklet(
                 { it },
                 {
                     file.delete()
-                    selectMessageFromExceptionAndSendEmail(jobName, it, fileName)
+                    log.error("Downloader Failed: ${it.message}")
                     throw it
                 }
             )
@@ -90,7 +90,7 @@ class DownloadAndCompareTasklet(
                 },
                 {
                     path.toFile().delete()
-                    selectMessageFromExceptionAndSendEmail(jobName, it, fileName)
+                    log.error("Comparator Failed: ${it.message}")
                     throw it
                 }
             )
