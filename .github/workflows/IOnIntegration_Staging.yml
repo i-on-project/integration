@@ -16,7 +16,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Setup ACT test environment
+        if: ${{ env.ACT }}
+        run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+
+      - name: Retrieve Database URL
+        id: databaseUrl
+        run: echo "::set-output name=url::$(heroku config:get DATABASE_URL -a ${{secrets.HEROKU_APP_NAME}})"
+
+      - uses: rishabhgupta/split-by@v1
+        id: split1
+        with:
+          string: ${{steps.databaseUrl.outputs.url}}
+          split-by: '@'
+
+      - uses: rishabhgupta/split-by@v1
+        id: split2
+        with:
+          string: ${{steps.split1.outputs._0}}
+          split-by: ':'
+
+      - uses: rishabhgupta/split-by@v1
+        id: split3
+        with:
+          string: ${{steps.split2.outputs._1}}
+          split-by: '/'
+
       - uses: akhileshns/heroku-deploy@v3.12.12
+        if: ${{ !env.ACT }}
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
@@ -24,7 +51,8 @@ jobs:
           usedocker: true
           docker_heroku_process_type: web
           healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
-       -id: databaseUrl
-        run: echo "::set-output name=url::$(heroku config:get DATABASE_URL -a ${{secrets.HEROKU_APP_NAME}})"
         env:
-          HEROKU_DB_URL: ${{steps.databaseUrl.outputs.url}}
+          HD_SQL_HOST: jdbc:postgresql://${{ steps.split1.outputs._1}}
+          HD_SQL_USER: ${{ steps.split3.outputs._2}}
+          HD_SQL_PASSWORD: ${{ steps.split2.outputs._2}}
+
