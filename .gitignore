@@ -211,3 +211,6 @@ git-server/*
 
 ### Ignore stating directory
 staging/*
+
+### Ignore my.secrets file for Github Actions testing tool Act ###
+my.secrets
