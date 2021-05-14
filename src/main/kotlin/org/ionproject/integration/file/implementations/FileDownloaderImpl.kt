@@ -28,38 +28,33 @@ class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
 
         val client = HttpClient.newHttpClient()
 
-        val request = Try.ofValue(
-            HttpRequest.newBuilder()
-                .uri(uri)
-                .build()
-        )
+        val request = HttpRequest.newBuilder()
+            .uri(uri)
+            .build()
 
-        val response = request.map { r ->
-            kotlin.runCatching {
-                client.send(r, HttpResponse.BodyHandlers.ofByteArray())
-            }.onFailure {
-                log.error("Error downloading $uri: $it -> ${it.message}")
-                throw it
-            }
-                .getOrThrow()
-        }
-            .map { resp -> Response(resp.statusCode(), resp.body()) }
-            .flatMap { resp -> validateResponseCode(resp) }
+        val response = kotlin.runCatching {
+            val httpResponse = client.send(request, HttpResponse.BodyHandlers.ofByteArray())
+            val response = Response(httpResponse.statusCode(), httpResponse.body())
+            validateResponseCode(response)
+        }.onFailure {
+            log.error("Error downloading $uri: $it -> ${it.message}")
+        }.getOrNull()
 
-        val file = response.map { r -> checker.checkFormat(r.body, jobType) }
-            .map { localDestination.toFile() }
+        val file = localDestination.toFile()
 
-        return Try.map(file, response) { f, r ->
-            f.writeBytes(r.body)
-            f.toPath()
+        return Try.of {
+            if (response == null) throw IllegalArgumentException("Response is null")
+
+            file.writeBytes(response.body)
+            file.toPath()
         }
     }
 
-    private fun validateResponseCode(response: Response): Try<Response> {
+    private fun validateResponseCode(response: Response): Response {
         return when (response.statusCode) {
             in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
-                return Try.ofError<ServerErrorException>(ServerErrorException("Server responded with error code ${response.statusCode}"))
-            else -> Try.ofValue(response)
+                throw ServerErrorException("Server responded with error code ${response.statusCode}")
+            else -> response
         }
     }
 }
