@@ -74,6 +74,7 @@ class DownloadAndCompareTasklet(
                 {
                     file.delete()
                     log.error("Downloader Failed: ${it.message}")
+                    log.error("Caused by: ${it.cause?.message}")
                     throw it
                 }
             )
