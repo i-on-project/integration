@@ -72,8 +72,8 @@ class DownloadAndCompareTasklet(
             .match(
                 { it },
                 {
+                    log.error("Error downloading file: $it -> ${it.message}")
                     file.delete()
-                    log.error("Downloader Failed due to ${it.message} from $srcRemoteLocation to $localFileDestination")
                     throw it
                 }
             )
@@ -90,7 +90,6 @@ class DownloadAndCompareTasklet(
                 },
                 {
                     path.toFile().delete()
-                    log.error("Comparator Failed: ${it.message}")
                     throw it
                 }
             )

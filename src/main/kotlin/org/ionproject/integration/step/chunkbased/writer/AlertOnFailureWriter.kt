@@ -54,7 +54,12 @@ class AlertOnFailureWriter() : ItemWriter<Try<Boolean>> {
         )
         val channel = EmailAlertChannel(conf, sender)
         val alertService = EmailAlertService(channel)
-        alertService.sendEmail()
+        kotlin.runCatching {
+            alertService.sendEmail()
+        }.onFailure {
+            log.error("Error sending email: ${it.message}")
+        }
+
         log.info("Email sent successfully")
     }
 }
