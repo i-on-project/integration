@@ -43,7 +43,7 @@ jobs:
           split-by: '/'
 
       - uses: akhileshns/heroku-deploy@v3.12.12
-        #if: ${{ !env.ACT }}
+        if: ${{ !env.ACT }}
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
@@ -62,7 +62,6 @@ jobs:
           HD_GIT_USER: ${{secrets.GIT_USER}}
           HD_GIT_PASSWORD: ""
           HD_GIT_BRANCH: staging
-
 
       - name: Print Environment Variables
         if: ${{ env.ACT }}
