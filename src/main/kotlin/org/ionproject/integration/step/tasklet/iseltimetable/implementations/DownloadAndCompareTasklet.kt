@@ -73,8 +73,7 @@ class DownloadAndCompareTasklet(
                 { it },
                 {
                     file.delete()
-                    log.error("Downloader Failed: ${it.message}")
-                    log.error("Caused by: ${it.cause?.message}")
+                    log.error("Downloader Failed due to ${it.message} from $srcRemoteLocation to $localFileDestination")
                     throw it
                 }
             )
