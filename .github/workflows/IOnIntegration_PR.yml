@@ -74,4 +74,3 @@ jobs:
         run: |
           echo GIT_SERVER_ADDRESS=$GIT_SERVER_ADDRESS
           echo GIT_BRANCH=$GIT_BRANCH
-          
