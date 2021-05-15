@@ -72,7 +72,7 @@ class DownloadAndCompareTasklet(
             .match(
                 { it },
                 {
-                    log.error("Error downloading file: $it -> ${it.message}")
+                    log.error("Error during download step: $it -> Msg: ${it.message}")
                     file.delete()
                     throw it
                 }
