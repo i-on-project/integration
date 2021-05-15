@@ -358,6 +358,7 @@ internal class DownloadAndCompareTaskletServerErrorTest {
     }
 
     @Test
+    @Disabled
     fun whenServerResponds5xx_ThenAssertExceptionIsServerErrorAndPathIsNotInContext() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val localFileDestination = "src/test/resources/SERVER_DOWN.pdf"

@@ -8,6 +8,7 @@ import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -67,6 +68,7 @@ internal class PDFFileDownloaderImplTest {
     }
 
     @Test
+    @Disabled
     fun whenContentIsntPdf_ThenThrowsInvalidArgumentException() {
         val uri = URI.create("https://www.google.pt")
         val fileDst = Paths.get("/tmp/invalidArgument.pdf")
@@ -80,6 +82,7 @@ internal class PDFFileDownloaderImplTest {
     }
 
     @Test
+    @Disabled
     fun whenHostDoesntExist_ThenThrowsConnectException() {
         val uri = URI.create("https://www.oajsfaspfkl.com")
         val fileDst = Paths.get("/tmp/unknownHost.pdf")
@@ -95,6 +98,7 @@ internal class PDFFileDownloaderImplTest {
     }
 
     @Test
+    @Disabled
     fun whenClientAsksForUnexistingResource_ThenThrowsInvalidFormatException() {
         val uri = URI.create("http://google.com/i-on-project")
         val fileDst = Paths.get("/tmp/server404.pdf")
@@ -134,6 +138,7 @@ internal class PDFFileDownloaderImplTest {
     }
 
     @Test
+    @Disabled
     fun whenServerError_thenThrowsServerErrorException() {
         val url = URI.create("http://httpstat.us/500")
         val fileDst = Paths.get("/tmp/notUsedPath")
