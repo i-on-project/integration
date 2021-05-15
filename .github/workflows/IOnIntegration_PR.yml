@@ -9,16 +9,12 @@ on:
       - '**/README.md'
 
 jobs:
-  push_integration:
+  PR_integration:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Setup ACT test environment
-        if: ${{ env.ACT }}
-        run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
       - name: Retrieve Database URL
         id: databaseUrl
@@ -45,7 +41,6 @@ jobs:
           split-by: '/'
 
       - uses: akhileshns/heroku-deploy@v3.12.12
-        if: ${{ !env.ACT }}
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
@@ -70,7 +65,6 @@ jobs:
           HD_GIT_BRANCH: staging
 
       - name: Print Environment Variables
-        if: ${{ env.ACT }}
         run: |
           echo GIT_SERVER_ADDRESS=$GIT_SERVER_ADDRESS
           echo GIT_BRANCH=$GIT_BRANCH
