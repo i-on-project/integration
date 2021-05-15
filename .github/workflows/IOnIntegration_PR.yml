@@ -1,12 +1,11 @@
-name: I-On Integration Pull-Request
+name: I-On Integration Staging
 
 on:
-  pull_request:
+  push:
     branches:
       - master
     paths-ignore:
       - 'docs/**'
-      - '**/README.md'
 
 jobs:
   push_integration:
