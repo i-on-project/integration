@@ -30,6 +30,7 @@ class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
 
         val request = HttpRequest.newBuilder()
             .uri(uri)
+            .expectContinue(true)
             .build()
 
         val response = kotlin.runCatching {
