@@ -11,6 +11,7 @@ on:
 jobs:
   push_integration:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.ref, 'heads')
 
     steps:
       - name: Checkout
@@ -74,3 +75,4 @@ jobs:
         run: |
           echo GIT_SERVER_ADDRESS=$GIT_SERVER_ADDRESS
           echo GIT_BRANCH=$GIT_BRANCH
+          
