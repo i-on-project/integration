@@ -28,8 +28,6 @@ class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
         val request = Try.ofValue(
             HttpRequest.newBuilder()
                 .uri(uri)
-                .GET()
-                .expectContinue(true)
                 .build()
         )
 
