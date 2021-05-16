@@ -81,6 +81,16 @@ class StringUtilsTest {
     )
 
     @Test
+    fun `when text has more ignored portuguese words then success`() {
+        assertAcronymEquals(
+            "Mestrado em Engenharia Informática e Multimédia",
+            "MEIM",
+            IgnoredWords.of(Language.PT)
+
+        )
+    }
+
+    @Test
     fun `when text has ignored portuguese words and various delimiters then success`() = assertAcronymEquals(
         "Super-sigla de Teste para Coisas",
         "SSTC",

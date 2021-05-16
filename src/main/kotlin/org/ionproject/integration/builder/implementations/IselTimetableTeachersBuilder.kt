@@ -17,7 +17,6 @@ import org.ionproject.integration.model.external.timetable.TimetableTeachers
 import org.ionproject.integration.model.external.timetable.Weekdays
 import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table
-import org.ionproject.integration.model.internal.timetable.isel.ProgrammeMap
 import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
 import org.ionproject.integration.utils.IgnoredWords
 import org.ionproject.integration.utils.JsonUtils
@@ -105,7 +104,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         val classSection =
             RegexUtils.findMatches(CLASS_SECTION_REGEX, data, RegexOption.MULTILINE)[0].replace("Turma :", "").trim()
         val schoolAcr = generateAcronym(school, IgnoredWords.of(Language.PT))
-        val programmeArc = ProgrammeMap.map[programme].toString()
+        val programmeArc = generateAcronym(programme, IgnoredWords.of(Language.PT))
 
         timetable.school = School(name = school, acr = schoolAcr)
         timetable.programme = Programme(name = programme, acr = programmeArc)

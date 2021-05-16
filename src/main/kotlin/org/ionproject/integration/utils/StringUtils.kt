@@ -4,7 +4,7 @@ import org.ionproject.integration.model.external.timetable.Language
 
 object IgnoredWords {
     private val portugueseWords =
-        listOf("de", "do", "da", "e", "o", "a", "para", "dos", "das", "dr", "dr.", "dra", "dra.")
+        listOf("de", "do", "da", "e", "o", "a", "para", "dos", "das", "dr", "dr.", "dra", "dra.", "em")
     private val englishWords = listOf("from", "to", "by", "as", "of")
 
     fun of(language: Language): List<String> =
