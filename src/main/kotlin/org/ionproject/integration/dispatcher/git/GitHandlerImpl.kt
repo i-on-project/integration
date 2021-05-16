@@ -4,18 +4,22 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.transport.CredentialsProvider
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.config.ConfigurableBeanFactory
+import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Service
 import java.io.File
 
 private val LOGGER = LoggerFactory.getLogger(GitHandlerImpl::class.java)
 
 @Service
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 class GitHandlerImpl : IGitHandler {
     private lateinit var repositoryMetadata: GitRepoData
     private lateinit var git: Git
     private lateinit var credentials: CredentialsProvider
 
     @Service
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     companion object Factory : IGitHandlerFactory {
 
         override fun checkout(stagingDir: String, repoData: GitRepoData): IGitHandler {
