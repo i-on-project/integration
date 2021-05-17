@@ -18,7 +18,13 @@ import org.ionproject.integration.model.external.timetable.Weekdays
 import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
-import org.ionproject.integration.utils.*
+import org.ionproject.integration.utils.DateFormat
+import org.ionproject.integration.utils.IgnoredWords
+import org.ionproject.integration.utils.JsonUtils
+import org.ionproject.integration.utils.RegexUtils
+import org.ionproject.integration.utils.Try
+import org.ionproject.integration.utils.generateAcronym
+import org.ionproject.integration.utils.orThrow
 import java.time.Duration
 import java.time.LocalTime
 import java.util.Date

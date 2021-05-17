@@ -69,6 +69,7 @@ class ITextPdfExtractorTests {
             .orThrow()
 
         // Assert
-        assertEquals(1, result.count())
+        assertEquals("test", result.first())
+        assertEquals(2, result.count())
     }
 }

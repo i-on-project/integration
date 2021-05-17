@@ -38,19 +38,20 @@ internal class FormatVerifierProcessorTest {
         "[ { \"extraction_method\": \"lattice\", \"top\": 113.945274, \"left\": 53.875286, \"width\": 489.77463, \"height\": 480.44003, \"right\": 543.6499, \"bottom\": 594.3853, \"data\": [ [ { \"top\": 113.945274, \"left\": 124.572914, \"width\": 69.84507, \"height\": 15.439293, \"text\": \"Segunda\" }"
     private val validHeader = listOf("Turma: LI11D Ano Letivo: 2019/20-Verão\r")
     private val incompleteHeader = listOf("Turma: LI11D ")
+    private val validUTCDate = "20210516T214838Z"
     private val instructorJson =
         "[{\"extraction_method\":\"stream\",\"top\":671.0,\"left\":36.0,\"width\":521.0,\"height\":152.0,\"right\":557.0,\"bottom\":823.0,\"data\":[[{\"top\":677.97,\"left\":40.8,\"width\":43.77017593383789,\"height\":3.7100000381469727,\"text\":\"ALGA[T] (T)\"},{\"top\":677.97,\"left\":120.48,\"width\":107.44999694824219,\"height\":3.7100000381469727,\"text\":\"Sónia Raquel Ferreira Carvalho\"}],[{\"top\":691.65,\"left\":40.8,\"width\":62.52817153930664,\"height\":3.7100000381469727,\"text\":\"ALGA[T] - 1 (T/P)\"},{\"top\":691.65,\"left\":120.48,\"width\":127.38999938964844,\"height\":3.7100000381469727,\"text\":\"Carlos Miguel Ferreira Melro Leandro\"}],[{\"top\":705.33,\"left\":40.8,\"width\":42.10811233520508,\"height\":3.7100000381469727,\"text\":\"IC[T] - 1 (P)\"},{\"top\":705.33,\"left\":120.48,\"width\":95.19999694824219,\"height\":3.7100000381469727,\"text\":\"Vítor Manuel da Silva Costa\"}],[{\"top\":719.01,\"left\":40.8,\"width\":42.38066482543945,\"height\":3.7100000381469727,\"text\":\"IC[T] - 2 (P)\"},{\"top\":719.01,\"left\":120.48,\"width\":103.88999938964844,\"height\":3.7100000381469727,\"text\":\"Dora Helena Avelar Gonçalves\"}],[{\"top\":732.69,\"left\":40.8,\"width\":30.850666046142578,\"height\":3.7100000381469727,\"text\":\"IC[T] (T)\"},{\"top\":732.69,\"left\":120.48,\"width\":95.19999694824219,\"height\":3.7100000381469727,\"text\":\"Vítor Manuel da Silva Costa\"}],[{\"top\":746.37,\"left\":40.8,\"width\":49.82218551635742,\"height\":3.7100000381469727,\"text\":\"LSD[T] - 1 (P)\"},{\"top\":746.37,\"left\":120.48,\"width\":146.5900115966797,\"height\":3.7100000381469727,\"text\":\"José David Pereira Coutinho Gomes Antão\"}],[{\"top\":760.05,\"left\":40.8,\"width\":38.00986862182617,\"height\":3.7100000381469727,\"text\":\"LSD[T] (T)\"},{\"top\":760.05,\"left\":120.48,\"width\":146.5900115966797,\"height\":3.7100000381469727,\"text\":\"José David Pereira Coutinho Gomes Antão\"}],[{\"top\":773.73,\"left\":40.8,\"width\":50.310665130615234,\"height\":3.7100000381469727,\"text\":\"PG I[T] - 1 (P)\"},{\"top\":773.73,\"left\":120.48,\"width\":96.63999938964844,\"height\":3.7100000381469727,\"text\":\"Manuel Fernandes Carvalho\"}],[{\"top\":787.41,\"left\":40.8,\"width\":38.78065872192383,\"height\":3.7100000381469727,\"text\":\"PG I[T] (T)\"},{\"top\":787.41,\"left\":120.48,\"width\":96.63999938964844,\"height\":3.7100000381469727,\"text\":\"Manuel Fernandes Carvalho\"}]]}]"
 
     @Test
     fun whenRawDataHasValidFormat_thenAssertResultIsTrue() {
-        val rd = RawTimetableData(validJson, validHeader, instructorJson)
+        val rd = RawTimetableData(validJson, validHeader, instructorJson,validUTCDate)
         val tryResult = processor.process(rd) as Try<Boolean>
         assertTrue(tryResult.orThrow())
     }
 
     @Test
     fun whenRawDataHasIncompleteHeader_thenFormatCheckExceptionIsThrown() {
-        val rd = RawTimetableData(validJson, incompleteHeader, instructorJson)
+        val rd = RawTimetableData(validJson, incompleteHeader, instructorJson, validUTCDate)
         val ex = assertThrows<FormatCheckException> { processor.process(rd)?.orThrow() }
         assertEquals("FormatCheckException", ex.javaClass.simpleName)
         assertEquals("The timetable header changed its format", ex.message)
@@ -58,7 +59,7 @@ internal class FormatVerifierProcessorTest {
 
     @Test
     fun whenRawDataHasMalformedJson_thenFormatCheckExceptionIsThrown() {
-        val rd = RawTimetableData(invalidJson, validHeader, instructorJson)
+        val rd = RawTimetableData(invalidJson, validHeader, instructorJson, validUTCDate)
         val ex = assertThrows<FormatCheckException> { processor.process(rd)?.orThrow() }
         assertEquals("FormatCheckException", ex.javaClass.simpleName)
         assertEquals("The timetable table changed its format", ex.message)
@@ -66,7 +67,7 @@ internal class FormatVerifierProcessorTest {
 
     @Test
     fun whenEmptyHeader_thenFormatCheckExceptionIsThrown() {
-        val rd = RawTimetableData(validJson, listOf(""), instructorJson)
+        val rd = RawTimetableData(validJson, listOf(""), instructorJson, validUTCDate)
         val ex = assertThrows<FormatCheckException> { processor.process(rd)?.orThrow() }
         assertEquals("FormatCheckException", ex.javaClass.simpleName)
         assertEquals("The timetable header changed its format", ex.message)
@@ -74,7 +75,7 @@ internal class FormatVerifierProcessorTest {
 
     @Test
     fun whenEmptyJson_thenFormatCheckExceptionIsThrown() {
-        val rd = RawTimetableData("", validHeader, instructorJson)
+        val rd = RawTimetableData("", validHeader, instructorJson, validUTCDate)
         val ex = assertThrows<FormatCheckException> { processor.process(rd)?.orThrow() }
         assertEquals("FormatCheckException", ex.javaClass.simpleName)
         assertEquals("The timetable table changed its format", ex.message)
