@@ -44,7 +44,7 @@ internal class FormatVerifierProcessorTest {
 
     @Test
     fun whenRawDataHasValidFormat_thenAssertResultIsTrue() {
-        val rd = RawTimetableData(validJson, validHeader, instructorJson,validUTCDate)
+        val rd = RawTimetableData(validJson, validHeader, instructorJson, validUTCDate)
         val tryResult = processor.process(rd) as Try<Boolean>
         assertTrue(tryResult.orThrow())
     }
