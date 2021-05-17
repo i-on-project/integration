@@ -42,6 +42,7 @@ dependencies {
     testImplementation("org.springframework.batch:spring-batch-test:4.2.6.RELEASE")
     testImplementation("com.icegreen:greenmail:1.6.3")
     testImplementation("org.apache.commons:commons-email:1.5")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
 }
 
 tasks.register<Copy>("extractUberJar") {
