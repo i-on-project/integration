@@ -18,17 +18,10 @@ import org.ionproject.integration.model.external.timetable.Weekdays
 import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
-import org.ionproject.integration.utils.IgnoredWords
-import org.ionproject.integration.utils.JsonUtils
-import org.ionproject.integration.utils.RegexUtils
-import org.ionproject.integration.utils.Try
-import org.ionproject.integration.utils.generateAcronym
-import org.ionproject.integration.utils.orThrow
-import java.text.SimpleDateFormat
+import org.ionproject.integration.utils.*
 import java.time.Duration
 import java.time.LocalTime
 import java.util.Date
-import java.util.TimeZone
 
 class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData> {
     companion object {
@@ -37,7 +30,6 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         private const val CLASS_SECTION_REGEX = "\\sTurma\\s?:\\s?[LM][A-Z+]+\\d{1,2}\\w+"
         private const val CALENDAR_TERM_REGEX = "(\\sAno\\sLetivo\\s?:\\s?)(.+?(\\r|\\R))"
         private const val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).(0|3)0"
-        private const val UTC_DATE_REGEX = "[0-9]{8}T[0-9]{6}Z"
         private const val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 58
         private const val HEIGHT_HALF_HOUR_THRESHOLD = 20
     }
@@ -77,7 +69,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
             val teacherList = mutableListOf<CourseTeacher>()
 
             rawTimetableData.textData.forEachIndexed { idx, data ->
-                val timetable = Timetable()
+                val timetable = Timetable(creationDateTime = rawTimetableData.creationDate)
                 val courseTeacher = CourseTeacher()
 
                 setCommonData(data, timetable, courseTeacher)
@@ -97,10 +89,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
     }
 
     private fun setCommonData(data: String, timetable: Timetable, courseTeacher: CourseTeacher) {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
-        val dateFormat = SimpleDateFormat("yyyyMMdd'T'HHmmssX")
-        val creationDateTime = RegexUtils.findMatches(UTC_DATE_REGEX, data)[0].trimEnd()
-        val retrievalDateTime = dateFormat.format(Date())
+        val retrievalDateTime = DateFormat.format(Date())
         val school = RegexUtils.findMatches(SCHOOL_REGEX, data)[0].trimEnd()
         val programme = RegexUtils.findMatches(PROGRAMME_REGEX, data, RegexOption.MULTILINE)[0].trimEnd()
         val calendarTerm = RegexUtils.findMatches(CALENDAR_TERM_REGEX, data, RegexOption.MULTILINE)[0]
@@ -115,7 +104,6 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         val programmeArc = generateAcronym(programme, IgnoredWords.of(Language.PT))
 
         timetable.retrievalDateTime = retrievalDateTime
-        timetable.creationDateTime = creationDateTime
         timetable.school = School(name = school, acr = schoolAcr)
         timetable.programme = Programme(name = programme, acr = programmeArc)
         timetable.calendarTerm = calendarTerm

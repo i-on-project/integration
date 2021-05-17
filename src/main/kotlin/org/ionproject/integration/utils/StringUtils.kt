@@ -1,6 +1,19 @@
 package org.ionproject.integration.utils
 
 import org.ionproject.integration.model.external.timetable.Language
+import java.text.SimpleDateFormat
+import java.util.*
+
+object DateFormat {
+    init {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+    }
+
+    private val format = "yyyyMMdd'T'HHmmssX"
+    private val formatter = SimpleDateFormat(format)
+
+    fun format(date: Date): String = formatter.format(date)
+}
 
 object IgnoredWords {
     private val portugueseWords =
