@@ -2,7 +2,8 @@ package org.ionproject.integration.utils
 
 import org.ionproject.integration.model.external.timetable.Language
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.TimeZone
 
 object DateFormat {
     init {

@@ -9,6 +9,7 @@ import org.ionproject.integration.extractor.exceptions.PdfExtractorException
 import org.ionproject.integration.extractor.interfaces.IPdfExtractor
 import org.ionproject.integration.utils.DateFormat.format
 import org.ionproject.integration.utils.Try
+import java.util.Calendar
 
 class ITextPdfExtractor : IPdfExtractor {
     /**
@@ -42,7 +43,8 @@ class ITextPdfExtractor : IPdfExtractor {
 
     private fun getCreationDateFromPdfDocument(pdfDocument: PdfDocument): String {
         val creationDateString = pdfDocument.documentInfo.getMoreInfo(PdfName.CreationDate.value)
-        val creationDateCalendar = PdfDate.decode(creationDateString)
+        val creationDateCalendar = PdfDate.decode(creationDateString) ?: Calendar.getInstance()
+
         return format(creationDateCalendar.time)
     }
 }

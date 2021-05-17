@@ -21,6 +21,7 @@ internal class ISELTimetableFormatCheckerTest {
     private val exactMatch = "Turma: LI11D Ano Letivo: 2019/20-Verão\r"
     private val matchingText = "$exactMatch the quick fox jumps over the lazy dog"
     private val notMatchingText = "Alice 123"
+    private val validUTCDate = "20210516T214838Z"
     private val validInstructorJson = "[{\"extraction_method\":\"stream\",\"top\":671.0,\"left\":36.0,\"width\":521.0,\"height\":152.0,\"right\":557.0,\"bottom\":823.0,\"data\":[[{\"top\":677.97,\"left\":40.8,\"width\":43.77017593383789,\"height\":3.7100000381469727,\"text\":\"ALGA[T] (T)\"},{\"top\":677.97,\"left\":120.48,\"width\":107.44999694824219,\"height\":3.7100000381469727,\"text\":\"Sónia Raquel Ferreira Carvalho\"}],[{\"top\":691.65,\"left\":40.8,\"width\":62.52817153930664,\"height\":3.7100000381469727,\"text\":\"ALGA[T] - 1 (T/P)\"},{\"top\":691.65,\"left\":120.48,\"width\":127.38999938964844,\"height\":3.7100000381469727,\"text\":\"Carlos Miguel Ferreira Melro Leandro\"}],[{\"top\":705.33,\"left\":40.8,\"width\":42.10811233520508,\"height\":3.7100000381469727,\"text\":\"IC[T] - 1 (P)\"},{\"top\":705.33,\"left\":120.48,\"width\":95.19999694824219,\"height\":3.7100000381469727,\"text\":\"Vítor Manuel da Silva Costa\"}],[{\"top\":719.01,\"left\":40.8,\"width\":42.38066482543945,\"height\":3.7100000381469727,\"text\":\"IC[T] - 2 (P)\"},{\"top\":719.01,\"left\":120.48,\"width\":103.88999938964844,\"height\":3.7100000381469727,\"text\":\"Dora Helena Avelar Gonçalves\"}],[{\"top\":732.69,\"left\":40.8,\"width\":30.850666046142578,\"height\":3.7100000381469727,\"text\":\"IC[T] (T)\"},{\"top\":732.69,\"left\":120.48,\"width\":95.19999694824219,\"height\":3.7100000381469727,\"text\":\"Vítor Manuel da Silva Costa\"}],[{\"top\":746.37,\"left\":40.8,\"width\":49.82218551635742,\"height\":3.7100000381469727,\"text\":\"LSD[T] - 1 (P)\"},{\"top\":746.37,\"left\":120.48,\"width\":146.5900115966797,\"height\":3.7100000381469727,\"text\":\"José David Pereira Coutinho Gomes Antão\"}],[{\"top\":760.05,\"left\":40.8,\"width\":38.00986862182617,\"height\":3.7100000381469727,\"text\":\"LSD[T] (T)\"},{\"top\":760.05,\"left\":120.48,\"width\":146.5900115966797,\"height\":3.7100000381469727,\"text\":\"José David Pereira Coutinho Gomes Antão\"}],[{\"top\":773.73,\"left\":40.8,\"width\":50.310665130615234,\"height\":3.7100000381469727,\"text\":\"PG I[T] - 1 (P)\"},{\"top\":773.73,\"left\":120.48,\"width\":96.63999938964844,\"height\":3.7100000381469727,\"text\":\"Manuel Fernandes Carvalho\"}],[{\"top\":787.41,\"left\":40.8,\"width\":38.78065872192383,\"height\":3.7100000381469727,\"text\":\"PG I[T] (T)\"},{\"top\":787.41,\"left\":120.48,\"width\":96.63999938964844,\"height\":3.7100000381469727,\"text\":\"Manuel Fernandes Carvalho\"}]]}]"
     private val invalidInstructorJson = "[{\"extraction_method\":\"stream\",\"top\":671.0,\"left\":36.0,\"width\":521.0,\"height\":152.0,\"right\":557.0,\"bottom\":823.0,\"data\":[[{\"top\":677.97,\"left\":40.8,\"width\":43.77017593383789,\"height\":3.7100000381469727,\"text\":\"ALGA[T] (T)\"},{\"top\":677.97,\"left\":120.48,\"width\":107.44999694824219,\"height\":3.7100000381469727,\"text\":\"Sónia Raquel Ferreira Carvalho\"}],[{\"top\":691.65,\"left\":40.8,\"width\":62.52817153930664,\"height\":3.7100000381469727,\"text\":\"ALGA[T] - 1 (T/P)\"},{\"top\":691.65,\"left\":120.48,\"width\":127.38999938964844,\"height\":3.7100000381469727,\"text\":\"Carlos Miguel Ferreira Melro Leandro\"}],[{\"top\":705.33,\"left\":40.8,\"width\":42.10811233520508,\"height\":3.7100000381469727,\"text\":\"IC[T] - 1 (P)\"},{\"top\":705.33,\"left\":120.48,\"width\":95.19999694824219,\"height\":3.7100000381469727,\"text\":\"Vítor Manuel da Silva Costa\"}],[{\"top\":719.01,\"left\":40.8,\"width\":42.38066482543945,\"height\":3.7100000381469727,\"text\":\"IC[T] - 2 (P)\"},{\"top\":719.01,\"left\":120.48,\"width\":103.88999938964844,\"height\":3.7100000381469727,\"text\":\"Dora Helena Avelar Gonçalves\"}],[{\"top\":732.69,\"left\":40.8,\"width\":30.850666046142578,\"height\":3.7100000381469727,\"text\":\"IC[T] (T)\"},{\"top\":732.69,\"left\":120.48,\"width\":95.19999694824219,\"height\":3.7100000381469727,\"text\":\"Vítor Manuel da Silva Costa\"}],[{\"top\":746.37,\"left\":40.8,\"width\":49.82218551635742,\"height\":3.7100000381469727,\"text\":\"LSD[T] - 1 (P)\"},{\"top\":746.37,\"left\":120.48,\"width\":146.5900115966797,\"height\":3.7100000381469727,\"text\":\"José David Pereira Coutinho Gomes Antão\"}],[{\"top\":760.05,\"left\":40.8,\"width\":38.00986862182617,\"height\":3.7100000381469727,\"text\":\"LSD[T] (T)\"},{\"top\":760.05,\"left\":120.48,\"width\":146.5900115966797,\"height\":3.7100000381469727,\"text\":\"José David Pereira Coutinho Gomes Antão\"}],[{\"top\":773.73,\"left\":40.8,\"width\":50.310665130615234,\"height\":3.7100000381469727,\"text\":\"PG I[T] - 1 (P)\"},{\"top\":773.73,\"left\":120.48,\"width\":96.63999938964844,\"height\":3.7100000381469727,\"text\":\"Manuel Fernandes Carvalho\"}],[{\"top\":787.41,\"left\":40.8,\"width\":38.78065872192383,\"height\":3.7100000381469727,\"text\":\"PG I[T] (T)\"},{\"top\":787.41,\"left\":120.48,\"width\":96.63999938964844,\"height\":3.7100000381469727,\"text\":\"Manuel Fernandes Carvalho\"}]]"
 
@@ -29,7 +30,8 @@ internal class ISELTimetableFormatCheckerTest {
         val dynamicObject = RawTimetableData(
             validTimeTableJson,
             listOf(exactMatch),
-            validInstructorJson
+            validInstructorJson,
+            validUTCDate
         )
         val fc = ISELTimetableFormatChecker()
         val res = fc.checkFormat(dynamicObject).orThrow()
@@ -41,7 +43,8 @@ internal class ISELTimetableFormatCheckerTest {
         val dynamicObject = RawTimetableData(
             validButNotMatchingJson,
             listOf(notMatchingText),
-            validInstructorJson
+            validInstructorJson,
+            validUTCDate
         )
         val fc = ISELTimetableFormatChecker()
         val ex = assertThrows<CompositeException> { fc.checkFormat(dynamicObject).orThrow() }
@@ -54,7 +57,8 @@ internal class ISELTimetableFormatCheckerTest {
         val dynamicObject = RawTimetableData(
             invalidTimeTableJson,
             listOf(matchingText),
-            invalidInstructorJson
+            invalidInstructorJson,
+            validUTCDate
         )
         val fc = ISELTimetableFormatChecker()
         val ex = assertThrows<CompositeException> {
@@ -69,7 +73,8 @@ internal class ISELTimetableFormatCheckerTest {
         val dynamicObject = RawTimetableData(
             validButNotMatchingJson,
             listOf(matchingText),
-            validInstructorJson
+            validInstructorJson,
+            validUTCDate
         )
         val fc = ISELTimetableFormatChecker()
         val ex = assertThrows<FormatCheckException> {
@@ -83,7 +88,8 @@ internal class ISELTimetableFormatCheckerTest {
         val dynamicObject = RawTimetableData(
             validTimeTableJson,
             listOf(matchingText),
-            validInstructorJson
+            validInstructorJson,
+            validUTCDate
         )
         val fc = ISELTimetableFormatChecker()
         val res = fc.checkFormat(dynamicObject).orThrow()
@@ -95,7 +101,8 @@ internal class ISELTimetableFormatCheckerTest {
         val dynamicObject = RawTimetableData(
             validTimeTableJson,
             listOf(""),
-            validInstructorJson
+            validInstructorJson,
+            validUTCDate
         )
         val fc = ISELTimetableFormatChecker()
         val ex = assertThrows<FormatCheckException> { fc.checkFormat(dynamicObject).orThrow() }
@@ -107,7 +114,8 @@ internal class ISELTimetableFormatCheckerTest {
         val dynamicObject = RawTimetableData(
             validTimeTableJson,
             listOf(notMatchingText),
-            validInstructorJson
+            validInstructorJson,
+            validUTCDate
         )
         val fc = ISELTimetableFormatChecker()
         val ex = assertThrows<FormatCheckException> { fc.checkFormat(dynamicObject).orThrow() }
