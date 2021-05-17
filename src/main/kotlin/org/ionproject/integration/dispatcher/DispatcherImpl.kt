@@ -1,12 +1,15 @@
 package org.ionproject.integration.dispatcher
 
 import org.ionproject.integration.config.AppProperties
+import org.ionproject.integration.dispatcher.git.GitOutcome
 import org.ionproject.integration.dispatcher.git.GitRepoData
 import org.ionproject.integration.dispatcher.git.IGitHandlerFactory
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
+import java.lang.IllegalStateException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -14,12 +17,13 @@ import java.time.format.DateTimeFormatter
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 class DispatcherImpl(
     val timetableFileWriter: TimetableFileWriter,
-    gitFactory: IGitHandlerFactory
+    val gitFactory: IGitHandlerFactory
 ) : ITimetableDispatcher {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+    private val LOGGER = LoggerFactory.getLogger(DispatcherImpl::class.java)
 
     @Autowired
-    private lateinit var props: AppProperties
+    internal lateinit var props: AppProperties
 
     private val git by lazy {
         val data = GitRepoData(
@@ -34,13 +38,16 @@ class DispatcherImpl(
 
     override fun dispatch(data: TimetableData, format: OutputFormat): DispatchResult =
         runCatching {
-            git.update()
+            if (git.update() == GitOutcome.CONFLICT)
+                throw IllegalStateException("Unresolved conflict while updating Git Repo")
 
             timetableFileWriter.write(data, format)
             git.add()
             git.commit(generateCommitMessage(data))
 
             git.push()
+        }.onFailure {
+            LOGGER.error("Error submitting to git server: ${it.message ?: it}", it)
         }.run {
             if (isSuccess)
                 DispatchResult.SUCCESS
