@@ -41,8 +41,9 @@ class ExtractReader : ItemReader<RawTimetableData> {
             val rawData = map(headerText, tabularText, instructors) { (text, tabular, instructors) ->
                 RawTimetableData(
                     tabular.first(),
-                    text,
-                    instructors.first()
+                    text.dropLast(1),
+                    instructors.first(),
+                    text.last()
                 )
             }.orThrow()
 
