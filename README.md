@@ -106,7 +106,7 @@ The default database, username and password are also customizable through the **
 You can also setup your local environment to write its output files into a remote Git Repository of your choosing. 
 
 To do this you need to configure three environment variables in the **.env** file:
-- `GIT_SERVER_ADDRESS`: The address of the repository (i.e. https://github.com/i-on-project/integration-data)
+- `GIT_SERVER_ADDRESS`: The address of the repository (i.e. `https://github.com/i-on-project/integration-data/`)
 - `GIT_BRANCH`: The branch to write to (i.e. `staging`)* 
 - `GIT_USER`: A valid Github personal access token (see [Creating a personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)).
 - `GIT_PASSWORD`: Should be left **blank** as the Token provided in the previous item will be used for authentication.
