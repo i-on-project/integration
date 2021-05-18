@@ -91,7 +91,7 @@ It's Web front-end can be accessed by pointing your browser to localhost:8080 (d
 ##### Git Credentials
 The server is deployed with a single **account** that can be accessed by entering `root` for both username and password fields.
 
-#### Customizing containers
+### Customizing containers
 While the environment works out of the box for most setups you may run into **port binding issues** if you're already using any of the default ports described in the [Running with Docker Compose section](#running-with-docker-compose).
 
 These ports are configured from **Docker environment variables** and their preset values can be viewed by running the `docker-compose config` command or by reading the [.env](.env) file (which is a simple list of key-value pairs). Simply edit the **.env** file with the port values you wish to use and you're good to go.
@@ -102,16 +102,18 @@ The default database, username and password are also customizable through the **
 
 **Note**: If **changing the default port** (8080) for the local Git Server you **must also update the `GIT_SERVER_ADDRESS`** variable in the [.env](.env) file to the new port value.
 
-##### Using a remote Github repository
+#### Using a remote Github repository
 You can also setup your local environment to write its output files into a remote Git Repository of your choosing. 
 
 To do this you need to configure three environment variables in the **.env** file:
 - `GIT_SERVER_ADDRESS`: The address of the repository (i.e. https://github.com/i-on-project/integration-data)
-- `GIT_BRANCH`: The branch to write to (i.e. `staging`). **NOTE:** The branch **must** exist in the remote repository, otherwise the app will default to the `master` branch.
+- `GIT_BRANCH`: The branch to write to (i.e. `staging`)* 
 - `GIT_USER`: A valid Github personal access token (see [Creating a personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)).
 - `GIT_PASSWORD`: Should be left **blank** as the Token provided in the previous item will be used for authentication.
 
 After configuring the **.env** file with these variables your app will be ready to commit and push to your newly configured repository after the next restart. At this point you can also bring down the local Git Server container.
+
+`*` **NOTE:** The branch **must** exist in the remote repository, otherwise the app will default to the `master` branch.
 
 ### Stopping and removing the environment
 If you are running in **attached** mode (without the `-d` flag) you can use `Ctrl + C` to stop all containers **gracefully** or, if you're in a hurry (or a container is not stopping on its own) you can press `Ctrl + C` a **second time** to **force shutdown**.
@@ -125,7 +127,6 @@ If you wish to **remove** all the containers you have to use the `docker-compose
 To also **remove all images** you can use `docker-compose down -rmi all`.
 
 To **remove created volumes** (which are used to persist data across different containers) you can use the `docker-compose down -v`. This might be **useful if you wish to reset the database** as it relies on a volume to persist its data.
-
 
 ## Documentation
 
