@@ -102,6 +102,17 @@ The default database, username and password are also customizable through the **
 
 **Note**: If **changing the default port** (8080) for the local Git Server you **must also update the `GIT_SERVER_ADDRESS`** variable in the [.env](.env) file to the new port value.
 
+##### Using a remote Github repository
+You can also setup your local environment to write its output files into a remote Git Repository of your choosing. 
+
+To do this you need to configure three environment variables in the **.env** file:
+- `GIT_SERVER_ADDRESS`: The address of the repository (i.e. https://github.com/i-on-project/integration-data)
+- `GIT_BRANCH`: The branch to write to (i.e. `staging`). **NOTE:** The branch **must** exist in the remote repository, otherwise the app will default to the `master` branch.
+- `GIT_USER`: A valid Github personal access token (see [Creating a personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)).
+- `GIT_PASSWORD`: Should be left **blank** as the Token provided in the previous item will be used for authentication.
+
+After configuring the **.env** file with these variables your app will be ready to commit and push to your newly configured repository after the next restart. At this point you can also bring down the local Git Server container.
+
 ### Stopping and removing the environment
 If you are running in **attached** mode (without the `-d` flag) you can use `Ctrl + C` to stop all containers **gracefully** or, if you're in a hurry (or a container is not stopping on its own) you can press `Ctrl + C` a **second time** to **force shutdown**.
 
