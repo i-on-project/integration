@@ -15,20 +15,17 @@ import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
 @Component
 @Scope(value = "prototype")
 class WriteFileTasklet(
-    private val state: ISELTimetable.State
+    private val state: ISELTimetable.State,
+    private val dispatcher: ITimetableDispatcher
 ) : Tasklet {
 
     private val log = LoggerFactory.getLogger(WriteFileTasklet::class.java)
-
-    @Autowired
-    private lateinit var dispatcher: ITimetableDispatcher
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         return when (val writeResult = writeToGit()) {

@@ -1,14 +1,9 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
-import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.dispatcher.DispatchResult
-import org.ionproject.integration.dispatcher.DispatcherImpl
-import org.ionproject.integration.dispatcher.TimetableFileWriter
-import org.ionproject.integration.dispatcher.git.GitOutcome
-import org.ionproject.integration.dispatcher.git.IGitHandler
-import org.ionproject.integration.dispatcher.git.IGitHandlerFactory
+import org.ionproject.integration.dispatcher.ITimetableDispatcher
 import org.ionproject.integration.job.ISELTimetable
-import org.ionproject.integration.model.external.timetable.CourseTeacher
+import org.ionproject.integration.model.external.timetable.Programme
 import org.ionproject.integration.model.external.timetable.ProgrammeDto
 import org.ionproject.integration.model.external.timetable.School
 import org.ionproject.integration.model.external.timetable.SchoolDto
@@ -28,7 +23,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.scope.context.ChunkContext
@@ -40,25 +34,26 @@ import java.io.File
 
 internal class WriteFileTaskletTestFixtures {
     companion object {
-        val timetableTeachers =
-            TimetableTeachers(
-                timetable = listOf(
-                    Timetable(school = School(name = "timetable")),
-                    Timetable(school = School(name = "timetable"))
-                ),
-                teachers = listOf(
-                    CourseTeacher(
-                        school = School(
-                            name = "courseTeacher"
-                        )
+        val timetableTeachers = TimetableTeachers(
+            listOf(
+                Timetable(
+                    "20210421T204916Z",
+                    "20210421T204916Z",
+                    School(
+                        "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
+                        "ISEL"
                     ),
-                    CourseTeacher(
-                        school = School(
-                            name = "courseTeacher"
-                        )
-                    )
+                    Programme(
+                        "Licenciatura em Engenharia Informática e de Computadores",
+                        "LEIC"
+                    ),
+                    "2020-2021-2",
+                    "LEIC11Da",
+                    listOf()
                 )
-            )
+            ),
+            listOf()
+        )
     }
 }
 
@@ -69,39 +64,21 @@ class WriteFileTaskletTests {
     @Autowired
     private lateinit var state: ISELTimetable.State
 
-    private lateinit var writeFileTasklet: WriteFileTasklet
+    private lateinit var writeFileTaskletSuccess: WriteFileTasklet
+    private lateinit var writeFileTaskletFailure: WriteFileTasklet
 
     private lateinit var stepContribution: StepContribution
     private lateinit var chunkContext: ChunkContext
 
     private lateinit var timetableDto: TimetableDto
 
-    private val mockHandlerSuccess = mock<IGitHandler> {
-        on { update() } doReturn GitOutcome.SUCCESS
+    val mockDispatcherSuccess = mock<ITimetableDispatcher> {
+        on { dispatch(any(), any()) } doReturn DispatchResult.SUCCESS
     }
 
-    private val mockHandlerFailure = mock<IGitHandler> {
-        on { update() } doReturn GitOutcome.CONFLICT
+    val mockDispatcherFailure = mock<ITimetableDispatcher> {
+        on { dispatch(any(), any()) } doReturn DispatchResult.FAILURE
     }
-
-    private fun getMockFactory(isWorking: Boolean): IGitHandlerFactory = mock {
-        on { checkout(any(), any()) } doReturn if (isWorking) mockHandlerSuccess else mockHandlerFailure
-    }
-
-    private val mockWriter = mock<TimetableFileWriter> {
-        on { write(any(), any()) } doReturn File("")
-    }
-
-    private val appProps = mock<AppProperties> {
-        on { gitBranchName } doReturn ""
-        on { gitRepository } doReturn ""
-        on { gitRepoUrl } doReturn ""
-        on { gitUser } doReturn ""
-        on { gitPassword } doReturn ""
-        on { stagingDir } doReturn ""
-    }
-
-    private val dispatcher = DispatcherImpl(mockWriter, getMockFactory(true)).apply { props = appProps }
 
     @BeforeEach
     fun setUp() {
@@ -129,7 +106,8 @@ class WriteFileTaskletTests {
         chunkContext = SpringBatchTestUtils().createChunkContext()
 
         state.timetableTeachers = WriteFileTaskletTestFixtures.timetableTeachers
-        writeFileTasklet = WriteFileTasklet(state)
+        writeFileTaskletSuccess = WriteFileTasklet(state, mockDispatcherSuccess)
+        writeFileTaskletFailure = WriteFileTasklet(state, mockDispatcherFailure)
     }
 
     @Test
@@ -148,16 +126,13 @@ class WriteFileTaskletTests {
 
     @Test
     fun `when dispatcher returns success then execute tasklet execution ends`() {
-        whenever(writeFileTasklet.writeToGit()).thenReturn(DispatchResult.SUCCESS)
 
-        assertEquals(RepeatStatus.FINISHED, writeFileTasklet.execute(stepContribution, chunkContext))
+        assertEquals(RepeatStatus.FINISHED, writeFileTaskletSuccess.execute(stepContribution, chunkContext))
     }
 
     @Test
     fun `when dispatcher returns failure then execute tasklet execution ends`() {
-        whenever(writeFileTasklet.writeToGit()).thenReturn(DispatchResult.FAILURE)
-
-        assertEquals(RepeatStatus.FINISHED, writeFileTasklet.execute(stepContribution, chunkContext))
+        assertEquals(RepeatStatus.FINISHED, writeFileTaskletFailure.execute(stepContribution, chunkContext))
     }
 
     @Test
@@ -179,7 +154,7 @@ class WriteFileTaskletTests {
         )
 
         assertThrows<IllegalArgumentException> {
-            writeFileTasklet.generateTimetableDataFromDto(badTimetableDto)
+            writeFileTaskletSuccess.generateTimetableDataFromDto(badTimetableDto)
         }
     }
 }
