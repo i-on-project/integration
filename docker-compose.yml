@@ -1,43 +1,45 @@
 version: '3.8'
 
 services:
-    app:
-        build: . # Build the app from the local Dockerfile
-        environment:
-            - SQL_USER=${SQL_USER}
-            - SQL_HOST=jdbc:postgresql://ion-db:5432/${SQL_DATABASE}
-            - SQL_PASSWORD=${SQL_PASSWORD}
-            - STAGING_DIR=${STAGING_DIR}
-            - TEMP_DIR=${TEMP_DIR}
-            - CONFIG_DIR=${CONFIG_DIR}
-            - GIT_SERVER_ADDRESS=${GIT_SERVER_ADDRESS}
-            - GIT_REPOSITORY_NAME=${GIT_REPOSITORY_NAME}
-            - GIT_USER=${GIT_USER}
-            - GIT_PASSWORD=${GIT_PASSWORD}
-            - GIT_BRANCH=${GIT_BRANCH}
-        volumes:
-            - db-data:/var/lib/postgresql/data
-        depends_on:
-            - ion-db
-            - git-server
-    ion-db:
-        image: postgres:13.2-alpine
-        ports:
-            - "${SQL_PORT}:5432"
-        environment:
-            - POSTGRES_USER=${SQL_USER}
-            - POSTGRES_PASSWORD=${SQL_PASSWORD}
-            - POSTGRES_DB=${SQL_DATABASE}
-    git-server:
-        image: gitbucket/gitbucket:4.35.3
-        ports:
-            - "${GIT_PORT}:8080"
-        volumes:
-            - "./git-server:/gitbucket"
-        healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-            interval: 30s
-            timeout: 10s
-            retries: 5
+  app:
+    build: . # Build the app from the local Dockerfile
+    environment:
+      - SQL_USER=${SQL_USER}
+      - SQL_HOST=jdbc:postgresql://ion-db:5432/${SQL_DATABASE}
+      - SQL_PASSWORD=${SQL_PASSWORD}
+      - STAGING_DIR=${STAGING_DIR}
+      - TEMP_DIR=${TEMP_DIR}
+      - CONFIG_DIR=${CONFIG_DIR}
+      - GIT_SERVER_ADDRESS=${GIT_SERVER_ADDRESS}
+      - GIT_REPOSITORY_NAME=${GIT_REPOSITORY_NAME}
+      - GIT_USER=${GIT_USER}
+      - GIT_PASSWORD=${GIT_PASSWORD}
+      - GIT_BRANCH=${GIT_BRANCH}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    depends_on:
+      ion-db:
+        condition: service_started
+      git-server:
+        condition: service_healthy
+  ion-db:
+    image: postgres:13.2-alpine
+    ports:
+      - "${SQL_PORT}:5432"
+    environment:
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
+  git-server:
+    image: gitbucket/gitbucket:4.35.3
+    ports:
+      - "${GIT_PORT}:8080"
+    volumes:
+      - "./git-server:/gitbucket"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:${GIT_PORT}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 volumes:
-    db-data:
+  db-data:
