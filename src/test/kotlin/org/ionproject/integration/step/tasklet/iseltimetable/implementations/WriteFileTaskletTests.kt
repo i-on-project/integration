@@ -3,7 +3,6 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.dispatcher.DispatchResult
 import org.ionproject.integration.dispatcher.DispatcherImpl
-import org.ionproject.integration.dispatcher.OutputFormat
 import org.ionproject.integration.dispatcher.TimetableFileWriter
 import org.ionproject.integration.dispatcher.git.GitOutcome
 import org.ionproject.integration.dispatcher.git.IGitHandler
@@ -156,15 +155,6 @@ class WriteFileTaskletTests {
 
     @Test
     fun `when dispatcher returns failure then execute tasklet execution ends`() {
-        val dispatcher = mock<DispatcherImpl> {
-            on {
-                dispatch(
-                    writeFileTasklet.generateTimetableDataFromDto(timetableDto),
-                    OutputFormat.JSON
-                )
-            } doReturn DispatchResult.FAILURE
-        }
-
         whenever(writeFileTasklet.writeToGit()).thenReturn(DispatchResult.FAILURE)
 
         assertEquals(RepeatStatus.FINISHED, writeFileTasklet.execute(stepContribution, chunkContext))
