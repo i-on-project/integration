@@ -1,8 +1,13 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.dispatcher.DispatchResult
-import org.ionproject.integration.dispatcher.ITimetableDispatcher
+import org.ionproject.integration.dispatcher.DispatcherImpl
 import org.ionproject.integration.dispatcher.OutputFormat
+import org.ionproject.integration.dispatcher.TimetableFileWriter
+import org.ionproject.integration.dispatcher.git.GitOutcome
+import org.ionproject.integration.dispatcher.git.IGitHandler
+import org.ionproject.integration.dispatcher.git.IGitHandlerFactory
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.model.external.timetable.CourseTeacher
 import org.ionproject.integration.model.external.timetable.ProgrammeDto
@@ -20,10 +25,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.scope.context.ChunkContext
@@ -31,9 +37,7 @@ import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.batch.test.MetaDataInstanceFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.mail.javamail.JavaMailSenderImpl
 import java.io.File
-import javax.mail.internet.MimeMessage
 
 internal class WriteFileTaskletTestFixtures {
     companion object {
@@ -66,17 +70,39 @@ class WriteFileTaskletTests {
     @Autowired
     private lateinit var state: ISELTimetable.State
 
-    @Mock
-    private lateinit var sender: JavaMailSenderImpl
-
-    @Mock
-    private lateinit var mimeMessage: MimeMessage
-
     private lateinit var writeFileTasklet: WriteFileTasklet
 
     private lateinit var stepContribution: StepContribution
     private lateinit var chunkContext: ChunkContext
+
     private lateinit var timetableDto: TimetableDto
+
+    private val mockHandlerSuccess = mock<IGitHandler> {
+        on { update() } doReturn GitOutcome.SUCCESS
+    }
+
+    private val mockHandlerFailure = mock<IGitHandler> {
+        on { update() } doReturn GitOutcome.CONFLICT
+    }
+
+    private fun getMockFactory(isWorking: Boolean): IGitHandlerFactory = mock {
+        on { checkout(any(), any()) } doReturn if (isWorking) mockHandlerSuccess else mockHandlerFailure
+    }
+
+    private val mockWriter = mock<TimetableFileWriter> {
+        on { write(any(), any()) } doReturn File("")
+    }
+
+    private val appProps = mock<AppProperties> {
+        on { gitBranchName } doReturn ""
+        on { gitRepository } doReturn ""
+        on { gitRepoUrl } doReturn ""
+        on { gitUser } doReturn ""
+        on { gitPassword } doReturn ""
+        on { stagingDir } doReturn ""
+    }
+
+    private val dispatcher = DispatcherImpl(mockWriter, getMockFactory(true)).apply { props = appProps }
 
     @BeforeEach
     fun setUp() {
@@ -103,19 +129,6 @@ class WriteFileTaskletTests {
         )
         chunkContext = SpringBatchTestUtils().createChunkContext()
 
-        Mockito
-            .`when`(chunkContext.stepContext.jobParameters)
-            .thenReturn(
-                mapOf(
-                    "srcRemoteLocation" to "https://www.isel.pt/media/uploads/LEIC_0310.pdf",
-                    "alertRecipient" to "client@domain.com"
-                )
-            )
-
-        Mockito
-            .`when`(sender.createMimeMessage())
-            .thenReturn(mimeMessage)
-
         state.timetableTeachers = WriteFileTaskletTestFixtures.timetableTeachers
         writeFileTasklet = WriteFileTasklet(state)
     }
@@ -136,28 +149,23 @@ class WriteFileTaskletTests {
 
     @Test
     fun `when dispatcher returns success then execute tasklet execution ends`() {
-        val dispatcher = Mockito.mock(ITimetableDispatcher::class.java)
-        Mockito
-            .`when`(dispatcher.dispatch(writeFileTasklet.generateTimetableDataFromDto(timetableDto), OutputFormat.JSON))
-            .thenReturn(DispatchResult.SUCCESS)
-
-        Mockito
-            .`when`(writeFileTasklet.writeToGit())
-            .thenReturn(DispatchResult.SUCCESS)
+        whenever(writeFileTasklet.writeToGit()).thenReturn(DispatchResult.SUCCESS)
 
         assertEquals(RepeatStatus.FINISHED, writeFileTasklet.execute(stepContribution, chunkContext))
     }
 
     @Test
     fun `when dispatcher returns failure then execute tasklet execution ends`() {
-        val dispatcher = Mockito.mock(ITimetableDispatcher::class.java)
-        Mockito
-            .`when`(dispatcher.dispatch(writeFileTasklet.generateTimetableDataFromDto(timetableDto), OutputFormat.JSON))
-            .thenReturn(DispatchResult.FAILURE)
+        val dispatcher = mock<DispatcherImpl> {
+            on {
+                dispatch(
+                    writeFileTasklet.generateTimetableDataFromDto(timetableDto),
+                    OutputFormat.JSON
+                )
+            } doReturn DispatchResult.FAILURE
+        }
 
-        Mockito
-            .`when`(writeFileTasklet.writeToGit())
-            .thenReturn(DispatchResult.FAILURE)
+        whenever(writeFileTasklet.writeToGit()).thenReturn(DispatchResult.FAILURE)
 
         assertEquals(RepeatStatus.FINISHED, writeFileTasklet.execute(stepContribution, chunkContext))
     }
