@@ -33,6 +33,7 @@ Presently I-On integration is built using the following main frameworks and tech
 - **Github** for **version control**, **CI/CD** pipelines and to host the **File Repository** in a separate [Github Repo](https://github.com/i-on-project/integration-data)
 - [Kotlin](https://kotlinlang.org/) as the main programming language
 - [Docker](https://www.docker.com/) for **containerization** of deployed artifacts
+- [Docker Compose](https://docs.docker.com/compose/) for local development
 
 ## Getting Started
 Getting your own copy of **I-On Integration** running locally while not difficult can be tedious if done manually so we've provided a simple **Docker Compose** script to simplify it.
@@ -72,7 +73,7 @@ You can use your favorite **SQL client** to connect to the containerized databas
 
 The **default** JDBC connection string is:
 ```
-jdbc:postgresql://ion-db:5432/ion_integration
+jdbc:postgresql://localhost:5432/ion_integration
 ```
 
 Or, if you're using a client that supports PostgreSQL Drivers (like [DBeaver](https://dbeaver.io/)) you can simply connect to a PostgreSQL destination with the following parameters:
@@ -86,7 +87,7 @@ Or, if you're using a client that supports PostgreSQL Drivers (like [DBeaver](ht
 #### Using the containerized Git Server
 The Git server currently deployed for local development is based on the [GitBucket](https://github.com/gitbucket/gitbucket) image which should be pretty familiar and intuitive to anyone with experience using **GitHub**.
 
-It's Web front-end can be accessed by pointing your browser to localhost:8080 (default port, see the [Customizing Containers section](#customizing-containers) if you need to use a different port value).
+It's Web front-end can be accessed by pointing your browser to `localhost:8080` (default port, see the [Customizing Containers section](#customizing-containers) if you need to use a different port value).
 
 ##### Git Credentials
 The server is deployed with a single **account** that can be accessed by entering `root` for both username and password fields.
@@ -124,10 +125,12 @@ Note that this will only **stop** the containers.
 
 If you wish to **remove** all the containers you have to use the `docker-compose down` command. This will **not** remove images or volumes.
 
-To also **remove all images** you can use `docker-compose down -rmi all`.
+To also **remove all images** you can use `docker-compose down --rmi all`.
 
 To **remove created volumes** (which are used to persist data across different containers) you can use the `docker-compose down -v`. This might be **useful if you wish to reset the database** as it relies on a volume to persist its data.
 
 ## Documentation
 
 [Check wiki for additional information](https://github.com/i-on-project/integration/wiki)
+
+
