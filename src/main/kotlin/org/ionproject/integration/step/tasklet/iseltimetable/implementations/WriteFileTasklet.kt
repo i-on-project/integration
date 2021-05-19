@@ -40,12 +40,12 @@ class WriteFileTasklet(
         }
     }
 
-    private fun writeToGit(): DispatchResult {
+    internal fun writeToGit(): DispatchResult {
         val timetable = TimetableDto.from(state.timetableTeachers)
         return dispatcher.dispatch(generateTimetableDataFromDto(timetable), OutputFormat.JSON)
     }
 
-    private fun generateTimetableDataFromDto(timetableDto: TimetableDto): TimetableData {
+    internal fun generateTimetableDataFromDto(timetableDto: TimetableDto): TimetableData {
         return TimetableData(
             ProgrammeMetadata(
                 InstitutionMetadata(

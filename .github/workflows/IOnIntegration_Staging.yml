@@ -52,7 +52,6 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           usedocker: true
           docker_heroku_process_type: worker
-          healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
       - run: |
           echo "::add-mask::$HD_SQL_HOST"
           echo "::add-mask::$HD_SQL_USER"
