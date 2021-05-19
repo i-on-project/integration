@@ -111,7 +111,7 @@ class WriteFileTaskletTests {
     }
 
     @Test
-    fun whenANew_thenWriteFileToDisk_andConfirmFileExists() {
+    fun `when write file to disk then if file exists returns success`() {
         val localFilePath = "src/test/resources/timetable.json"
         val file = File(localFilePath)
         try {
