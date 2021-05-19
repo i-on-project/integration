@@ -188,4 +188,27 @@ class FilepathTests {
             Filepath(segments)
         }
     }
+
+    @Test
+    fun `when given an empty path list then fail`() {
+        assertThrows<IllegalArgumentException> {
+            Filepath(emptyList())
+        }
+    }
+
+    @Test
+    fun `when adding a filepath to a list of strings then build new filepath`() {
+        val dirA = "aaa"
+        val dirB = "pathBuilder"
+        val dirC = "ok"
+        val segments = listOf(dirA, dirB, dirC)
+
+        val original = Filepath(segments)
+        val actual = original + listOf("more", "segments")
+
+        val expected =
+            segments.joinToString(separator = File.separator) + "${File.separator}more${File.separator}segments"
+
+        assertEquals(expected, actual.path)
+    }
 }

@@ -14,9 +14,11 @@ class Filepath(
     private val pathType: PathType = PathType.RELATIVE,
     private val caseType: CaseType = CaseType.UNCHANGED,
 ) {
-    val pathSegments = segments.map(this::sanitizeInput)
+    init {
+        require(segments.isNotEmpty())
+    }
 
-    val root = pathSegments.first()
+    val pathSegments = segments.map(this::sanitizeInput)
 
     val path by lazy {
         pathSegments.joinToString(
@@ -60,6 +62,13 @@ class Filepath(
     operator fun plus(path: String): Filepath =
         Filepath(
             segments = pathSegments + path,
+            caseType = caseType,
+            pathType = pathType
+        )
+
+    operator fun plus(segments: List<String>): Filepath =
+        Filepath(
+            segments = pathSegments + segments,
             caseType = caseType,
             pathType = pathType
         )
