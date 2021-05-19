@@ -58,7 +58,12 @@ class DownloadAndCompareTasklet(
         val jobTypeEnum = if (jobType != null) enumValueOf<JobType>(jobType) else null
         val jobName = chunkContext.stepContext.jobName
         val fileName = parseFileName(srcRemoteLocation)
-        val localFileDestination: Path = Paths.get(appProperties.resourcesFolder, fileName)
+        val outputDir = appProperties.tempFilesDir
+        val localFileDestination: Path = Paths.get(outputDir.path, fileName)
+
+        if (!outputDir.asFile.exists()) {
+            outputDir.asFile.mkdirs()
+        }
 
         val file = localFileDestination.toFile()
         if (file.isDirectory) {

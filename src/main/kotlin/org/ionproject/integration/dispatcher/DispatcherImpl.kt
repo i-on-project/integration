@@ -33,7 +33,7 @@ class DispatcherImpl(
             password = props.gitPassword,
             branch = props.gitBranchName
         )
-        gitFactory.checkout(props.stagingDir, data)
+        gitFactory.checkout(props.stagingFilesDir.path, data)
     }
 
     override fun dispatch(data: TimetableData, format: OutputFormat): DispatchResult =

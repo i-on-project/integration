@@ -30,11 +30,16 @@ class DispatcherTests {
 
     private val appProps = mock<AppProperties> {
         on { gitBranchName } doReturn ""
+        on { stagingDir } doReturn ""
+        on { tempDir } doReturn ""
+        on { configDir } doReturn ""
         on { gitRepository } doReturn ""
         on { gitRepoUrl } doReturn ""
         on { gitUser } doReturn ""
         on { gitPassword } doReturn ""
-        on { stagingDir } doReturn ""
+        on { stagingFilesDir } doReturn Filepath(listOf("mock"))
+        on { configFilesDir } doReturn Filepath(listOf("mock"))
+        on { tempFilesDir } doReturn Filepath(listOf("mock"))
     }
 
     @Test
