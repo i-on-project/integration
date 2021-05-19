@@ -8,6 +8,8 @@ services:
             - SQL_HOST=jdbc:postgresql://ion-db:5432/${SQL_DATABASE}
             - SQL_PASSWORD=${SQL_PASSWORD}
             - STAGING_DIR=${STAGING_DIR}
+            - TEMP_DIR=${TEMP_DIR}
+            - CONFIG_DIR=${CONFIG_DIR}
             - GIT_SERVER_ADDRESS=${GIT_SERVER_ADDRESS}
             - GIT_REPOSITORY_NAME=${GIT_REPOSITORY_NAME}
             - GIT_USER=${GIT_USER}
@@ -32,5 +34,10 @@ services:
             - "${GIT_PORT}:8080"
         volumes:
             - "./git-server:/gitbucket"
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+            interval: 30s
+            timeout: 10s
+            retries: 5
 volumes:
     db-data:
