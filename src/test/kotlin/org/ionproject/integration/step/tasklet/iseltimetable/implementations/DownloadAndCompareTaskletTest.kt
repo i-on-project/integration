@@ -10,6 +10,7 @@ import java.security.Security
 import java.time.Instant
 import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
+import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
@@ -55,6 +56,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecorded {
 
     @Autowired
+    private lateinit var appProperties: AppProperties
+
+    @Autowired
     @Qualifier(value = "timetableJob")
     private lateinit var job: Job
 
@@ -96,7 +100,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters("1")
-        val file = File("src/test/resources/LEIC_0310.pdf")
+        val file = (appProperties.tempFilesDir + "LEIC_0310.pdf").asFile
         val expectedPath = file.toPath()
         try {
 
@@ -117,7 +121,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters("2")
-        val file = File("src/test/resources/LEIC_0310.pdf")
+        val file = (appProperties.tempFilesDir + "LEIC_0310.pdf").asFile
         val expectedPath = file.toPath()
         try {
             val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
@@ -137,7 +141,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters("3")
-        val file = File("src/test/resources/LEIC_0310.pdf")
+        val file = (appProperties.tempFilesDir + "LEIC_0310.pdf").asFile
         val expectedPath = file.toPath()
         try {
 
@@ -253,6 +257,9 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
     private lateinit var job: Job
 
     @Autowired
+    private lateinit var appProperties: AppProperties
+
+    @Autowired
     private lateinit var jobLauncher: JobLauncher
 
     @Autowired
@@ -287,7 +294,7 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
     @Test
     fun whenUrlIsNotPdf_ThenAssertExceptionIsInvalidFormatAndPathIsNotIncludedInContext() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-        val localFileDestination = "src" + File.separator + "test" + File.separator + "resources"
+        val localFileDestination = appProperties.tempFilesDir.path
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters()

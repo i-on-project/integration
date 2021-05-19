@@ -14,7 +14,7 @@ class TimetableFileWriter(private val serializer: ISerializer) {
     @Autowired
     private lateinit var props: AppProperties
 
-    val staging by lazy { props.stagingDir }
+    val staging by lazy { props.stagingFilesDir }
     val repositoryName by lazy { props.gitRepository }
 
     fun write(timetable: TimetableData, format: OutputFormat): File {
@@ -32,15 +32,7 @@ class TimetableFileWriter(private val serializer: ISerializer) {
     }
 
     private fun getDirectory(timetable: TimetableData): Filepath {
-        val pathType = if (staging.first() == '/') Filepath.PathType.ABSOLUTE else Filepath.PathType.RELATIVE
-
-        val rootSegments = if (staging.contains('/')) {
-            staging.split('/').filter(String::isNotBlank)
-        } else {
-            listOf(staging)
-        }
-
-        val segments = rootSegments + listOf(
+        val segments = listOf(
             repositoryName,
             timetable.programme.institution.domain,
             PROGRAMMES,
@@ -48,6 +40,6 @@ class TimetableFileWriter(private val serializer: ISerializer) {
             timetable.term.toString()
         )
 
-        return Filepath(segments, pathType, Filepath.CaseType.LOWER)
+        return staging + segments
     }
 }
