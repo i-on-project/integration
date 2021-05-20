@@ -5,12 +5,16 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
 
+enum class Institution(val identifier: String) {
+    ISEL("pt.ipl.isel")
+}
+
 object DateFormat {
     init {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
     }
 
-    private val format = "yyyyMMdd'T'HHmmssX"
+    private const val format = "yyyyMMdd'T'HHmmssX"
     private val formatter = SimpleDateFormat(format)
 
     fun format(date: Date): String = formatter.format(date)
