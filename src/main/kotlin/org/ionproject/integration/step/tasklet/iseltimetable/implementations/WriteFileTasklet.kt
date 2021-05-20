@@ -10,6 +10,7 @@ import org.ionproject.integration.dispatcher.Term
 import org.ionproject.integration.dispatcher.TimetableData
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.model.external.timetable.TimetableDto
+import org.ionproject.integration.utils.Institution
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.scope.context.ChunkContext
@@ -48,7 +49,7 @@ class WriteFileTasklet(
                 InstitutionMetadata(
                     timetableDto.school.name,
                     timetableDto.school.acr,
-                    "isel.ipl.pt" // TODO to change in a future release
+                    Institution.valueOf(timetableDto.school.acr).identifier
                 ),
                 timetableDto.programme.name,
                 timetableDto.programme.acr
