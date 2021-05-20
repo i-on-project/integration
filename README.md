@@ -129,6 +129,26 @@ To also **remove all images** you can use `docker-compose down --rmi all`.
 
 To **remove created volumes** (which are used to persist data across different containers) you can use the `docker-compose down -v`. This might be **useful if you wish to reset the database** as it relies on a volume to persist its data.
 
+### Testing GitHub Actions Flows
+
+Developing GitHub Actions can be challenging. Workflows require code to be pushed to GitHub repositories in order to be triggered. This is time-consuming and discouraging.
+In order to facilitate these tests the [act](https://github.com/nektos/act) tool was created. 
+
+Act will read the GitHub Actions workflows from `.github/workflows` and run the actions, jobs and steps that compose them. It will use Docker API to retrieve the images and run the respective containers.
+
+Act has to be run on medium+ images, otherwise the workflow will fail as is. If the wrong type is chosen it can be configured by editing the `.actrc` file (or deleting it will reset act config).
+
+The staging workflow deploys i-on integration in Heroku. In order to connect to the Heroku Postgres database we need to retrieve the `DATABASE_URL` environment variable during the deployment. For that you'll need to have the `HEROKU_API_KEY` in the repository secrets.
+
+To run a specific job like `push_integration` run the following command:
+`act -j push_integration  --secret-file my.secrets`
+The file `my.secrets` is a local file that has additional environment variables relevant for the deployment like:
+* `HEROKU_APP_NAME`
+* `HEROKU_API_KEY`
+* `HEROKU_EMAIL`
+* `GITHUB_TOKEN`
+* `GIT_USER`
+
 ## Documentation
 
 [Check wiki for additional information](https://github.com/i-on-project/integration/wiki)
