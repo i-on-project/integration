@@ -6,4 +6,6 @@ data class Cell(
     val width: Double,
     val height: Double,
     val text: String
-)
+) {
+    fun isVisible(): Boolean = text.isNotBlank() && height > 0.0 && width > 0.0
+}

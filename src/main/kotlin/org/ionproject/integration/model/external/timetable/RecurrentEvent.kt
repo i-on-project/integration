@@ -7,5 +7,5 @@ class RecurrentEvent(
     location: List<String>,
     val beginTime: String,
     val duration: String,
-    val weekday: List<String>
+    val weekdays: List<Weekday>
 ) : Event(title, description, category, location)

@@ -20,6 +20,7 @@ import org.ionproject.integration.model.external.timetable.SectionDto
 import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
+import org.ionproject.integration.model.external.timetable.Weekday
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -122,7 +123,7 @@ internal class DtoFormatCheckerTest {
                                     listOf("L_H2"),
                                     "14:00",
                                     "01:30",
-                                    listOf("MO")
+                                    listOf(Weekday.MONDAY)
                                 ),
                                 RecurrentEvent(
                                     null,
@@ -131,7 +132,7 @@ internal class DtoFormatCheckerTest {
                                     listOf(),
                                     "14:00",
                                     "01:30",
-                                    listOf("WE", "TH")
+                                    listOf(Weekday.WEDNESDAY, Weekday.THURSDAY)
                                 )
                             )
 
@@ -265,7 +266,7 @@ internal class DtoFormatCheckerTest {
                                     listOf("L_H2"),
                                     "14:00",
                                     "01:30",
-                                    listOf("MO")
+                                    listOf(Weekday.MONDAY)
                                 ),
                                 RecurrentEvent(
                                     null,
@@ -274,7 +275,7 @@ internal class DtoFormatCheckerTest {
                                     listOf(),
                                     "14:00",
                                     "01:30",
-                                    listOf("WE", "TH")
+                                    listOf(Weekday.WEDNESDAY, Weekday.THURSDAY)
                                 )
                             )
 
@@ -289,7 +290,7 @@ internal class DtoFormatCheckerTest {
                                     listOf("L_H1"),
                                     "15:30",
                                     "01:30",
-                                    listOf("MO")
+                                    listOf(Weekday.MONDAY)
                                 ),
                                 RecurrentEvent(
                                     null,
@@ -298,7 +299,7 @@ internal class DtoFormatCheckerTest {
                                     listOf(),
                                     "14:00",
                                     "01:30",
-                                    listOf("TU")
+                                    listOf(Weekday.TUESDAY)
                                 ),
                                 RecurrentEvent(
                                     null,
@@ -307,7 +308,7 @@ internal class DtoFormatCheckerTest {
                                     listOf(),
                                     "15:30",
                                     "01:30",
-                                    listOf("TH")
+                                    listOf(Weekday.THURSDAY)
                                 )
                             )
                         )
@@ -337,7 +338,7 @@ internal class DtoFormatCheckerTest {
                                     listOf("L_H2"),
                                     "15:30",
                                     "01:30",
-                                    listOf("MO")
+                                    listOf(Weekday.MONDAY)
                                 ),
                                 RecurrentEvent(
                                     null,
@@ -346,7 +347,7 @@ internal class DtoFormatCheckerTest {
                                     listOf(),
                                     "14:00",
                                     "01:30",
-                                    listOf("WE", "TH")
+                                    listOf(Weekday.WEDNESDAY, Weekday.THURSDAY)
                                 )
                             )
 
@@ -361,7 +362,7 @@ internal class DtoFormatCheckerTest {
                                     listOf("L_H1"),
                                     "17:00",
                                     "01:30",
-                                    listOf("MO")
+                                    listOf(Weekday.MONDAY)
                                 ),
                                 RecurrentEvent(
                                     null,
@@ -370,7 +371,7 @@ internal class DtoFormatCheckerTest {
                                     listOf(),
                                     "14:00",
                                     "01:30",
-                                    listOf("TU")
+                                    listOf(Weekday.TUESDAY)
                                 ),
                                 RecurrentEvent(
                                     null,
@@ -379,7 +380,7 @@ internal class DtoFormatCheckerTest {
                                     listOf(),
                                     "15:30",
                                     "01:30",
-                                    listOf("TH")
+                                    listOf(Weekday.THURSDAY)
                                 )
                             )
                         )
