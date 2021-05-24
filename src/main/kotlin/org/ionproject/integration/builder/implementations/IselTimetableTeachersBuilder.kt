@@ -14,7 +14,7 @@ import org.ionproject.integration.model.external.timetable.RecurrentEvent
 import org.ionproject.integration.model.external.timetable.School
 import org.ionproject.integration.model.external.timetable.Timetable
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
-import org.ionproject.integration.model.external.timetable.Weekdays
+import org.ionproject.integration.model.external.timetable.Weekday
 import org.ionproject.integration.model.internal.tabula.Cell
 import org.ionproject.integration.model.internal.tabula.Table
 import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
@@ -140,69 +140,58 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
 
         val weekdays = populateWeekdays(data.first())
 
-        for (i in 0 until data.count()) {
-            val cells = data[i]
-
-            if (weekdays.keys.isEmpty()) {
-                populateWeekdays(cells, weekdays)
-                continue
-            }
-
+        data.drop(1).forEach { cells ->
             var beginTime = LocalTime.now()
 
-            for (j in 0 until cells.count()) {
-                val cell = cells[j]
+            cells.filter { it.isVisible() }.forEach { cell ->
 
-                if (cell.text.isEmpty()) continue
-
-                val matches = RegexUtils.findMatches(TIME_SLOT_REGEX, cells[j].text)
+                val matches = RegexUtils.findMatches(TIME_SLOT_REGEX, cell.text)
                 if (matches.count() != 0) {
                     beginTime = getBeginTime(matches)
-                    continue
+                    return@forEach
                 }
 
-                cell.text.split('\r')
-                    .forEach {
-                        val cellText = if (it.contains('[')) it else cell.text
+                cell.text.split('\r').forEach {
+                    val cellText = if (it.contains('[')) it else cell.text
 
-                        courseDetails = ClassDetail.from(cellText)
+                    courseDetails = ClassDetail.from(cellText)
 
-                        val duration: Duration = when {
-                            cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD -> {
-                                Duration.ofHours(3)
-                            }
-                            cell.height > HEIGHT_HALF_HOUR_THRESHOLD -> {
-                                Duration.ofHours(1).plusMinutes(30)
-                            }
-                            else -> {
-                                Duration.ofMinutes(30)
-                            }
+                    val duration: Duration = when {
+                        cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD -> {
+                            Duration.ofHours(3)
                         }
+                        cell.height > HEIGHT_HALF_HOUR_THRESHOLD -> {
+                            Duration.ofHours(1).plusMinutes(30)
+                        }
+                        else -> {
+                            Duration.ofMinutes(30)
+                        }
+                    }
 
-                        if (!weekdays.contains(cell.left)) throw TimetableTeachersBuilderException("Can't find weekday")
+                    if (!weekdays.contains(cell.left)) throw TimetableTeachersBuilderException("Can't find weekday")
 
-                        val acr = courseDetails.acronym
-                        courseList.add(
-                            Course(
-                                label = Label(acr = acr),
-                                events = listOf(
-                                    RecurrentEvent(
-                                        title = null,
-                                        description = "${getDescription(courseDetails.type)}$acr",
-                                        category = EventCategory.LECTURE,
-                                        location = listOf(courseDetails.location),
-                                        beginTime = beginTime.toString(),
-                                        duration = String.format(
-                                            "%02d:%02d",
-                                            duration.toHoursPart(),
-                                            duration.toMinutesPart()
-                                        ),
-                                        weekday = listOf(weekdays.getOrDefault(cell.left, ""))
-                                    )
+                    val acr = courseDetails.acronym
+                    courseList.add(
+                        Course(
+                            label = Label(acr = acr),
+                            events = listOf(
+                                RecurrentEvent(
+                                    title = null,
+                                    description = "${getDescription(courseDetails.type)}$acr",
+                                    category = EventCategory.LECTURE,
+                                    location = listOf(courseDetails.location),
+                                    beginTime = beginTime.toString(),
+                                    duration = String.format(
+                                        "%02d:%02d",
+                                        duration.toHoursPart(),
+                                        duration.toMinutesPart()
+                                    ),
+                                    weekdays = listOf(weekdays[cell.left] ?: throw IllegalArgumentException())
                                 )
                             )
                         )
-                    }
+                    )
+                }
             }
         }
 
@@ -246,13 +235,9 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         return left + right
     }
 
-    private fun populateWeekdays(cells: Array<Cell>, weekdays: MutableMap<Double, String>) {
-        for (i in 0 until cells.count()) {
-            if (cells[i].width == 0.0 || cells[i].height == 0.0 || cells[i].text.isEmpty()) continue
-            weekdays[cells[i].left] =
-                Weekdays.values().first { it.toPortuguese() == cells[i].text.uppercase() }.toShortString()
-        }
-    }
+    private fun populateWeekdays(cells: Array<Cell>): Map<Double, Weekday> =
+        cells.filter(Cell::isVisible)
+            .associateBy(Cell::left) { Weekday.fromPortuguese(it.text) }
 
     private fun getBeginTime(matches: List<String>): LocalTime? {
         val time = matches[0]
