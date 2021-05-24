@@ -4,6 +4,7 @@ import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderExc
 import org.ionproject.integration.model.external.timetable.EventCategory
 import org.ionproject.integration.model.external.timetable.Instructor
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
+import org.ionproject.integration.model.external.timetable.Weekday
 import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -117,13 +118,13 @@ class IselITimetableTeachersBuilderTests {
         assertEquals(12, beginTime.hour)
         assertEquals(30, beginTime.minute)
         assertEquals("01:30", timetableTeacher.timetable[0].courses[0].events[0].duration)
-        assertTrue(timetableTeacher.timetable[0].courses[0].events[0].weekday.contains("TU"))
+        assertTrue(timetableTeacher.timetable[0].courses[0].events[0].weekdays.contains(Weekday.TUESDAY))
 
         assertEquals("03:00", timetableTeacher.timetable[0].courses[9].events[0].duration)
-        assertTrue(timetableTeacher.timetable[0].courses[9].events[0].weekday.contains("FR"))
+        assertTrue(timetableTeacher.timetable[0].courses[9].events[0].weekdays.contains(Weekday.FRIDAY))
 
         assertEquals("01:30", timetableTeacher.timetable[0].courses[2].events[0].duration)
-        assertTrue(timetableTeacher.timetable[0].courses[4].events[0].weekday.contains("TH"))
+        assertTrue(timetableTeacher.timetable[0].courses[4].events[0].weekdays.contains(Weekday.THURSDAY))
 
         // Faculty data
         assertEquals(8, timetableTeacher.teachers[0].courses.count())

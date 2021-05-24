@@ -103,13 +103,13 @@ data class EventDto(
     val weekdays: String
 ) {
     companion object Factory {
-        fun from(event: RecurrentEvent): List<EventDto> = event.weekday.map { weekday ->
+        fun from(event: RecurrentEvent): List<EventDto> = event.weekdays.map { weekday ->
             EventDto(
                 event.category.name,
                 event.location.ifEmpty { null },
                 event.beginTime,
                 event.duration,
-                weekday
+                weekday.shortName
             )
         }
     }

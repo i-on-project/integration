@@ -136,8 +136,9 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
 
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
         val courseList = mutableListOf<Course>()
-        val weekdays = mutableMapOf<Double, String>()
         var courseDetails: ClassDetail
+
+        val weekdays = populateWeekdays(data.first())
 
         for (i in 0 until data.count()) {
             val cells = data[i]
