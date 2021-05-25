@@ -51,6 +51,6 @@ class AppProperties {
             listOf(path)
         }
 
-        return Filepath(segments, pathType)
+        return Filepath(segments, pathType, Filepath.CaseType.LOWER)
     }
 }
