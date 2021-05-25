@@ -100,7 +100,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters("1")
-        val file = (appProperties.tempFilesDir + "LEIC_0310.pdf").asFile
+        val file = File(appProperties.tempFilesDir.path + File.separator + "LEIC_0310.pdf")
         val expectedPath = file.toPath()
         try {
 
@@ -121,7 +121,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters("2")
-        val file = (appProperties.tempFilesDir + "LEIC_0310.pdf").asFile
+        val file = File(appProperties.tempFilesDir.path + File.separator + "LEIC_0310.pdf")
         val expectedPath = file.toPath()
         try {
             val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
@@ -141,7 +141,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters("3")
-        val file = (appProperties.tempFilesDir + "LEIC_0310.pdf").asFile
+        val file = File(appProperties.tempFilesDir.path + File.separator + "LEIC_0310.pdf")
         val expectedPath = file.toPath()
         try {
 
