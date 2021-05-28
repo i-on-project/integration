@@ -136,9 +136,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
 
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
         val courseList = mutableListOf<Course>()
-        var courseDetails: ClassDetail
-
-        val weekdays = populateWeekdays(data.first())
+        val weekdays: Map<Double, Weekday> = populateWeekdays(data.first())
 
         data.drop(1).forEach { cells ->
             var beginTime = LocalTime.now()
@@ -149,41 +147,45 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
                     return@forEach
                 }
 
-                cell.text.split('\r').forEach {
-                    val cellText = if (it.contains('[')) it else cell.text
-
-                    courseDetails = ClassDetail.from(cellText)
-
-                    val duration = getDuration(cell)
-
-                    if (!weekdays.contains(cell.left)) throw TimetableTeachersBuilderException("No matching weekday cell found for ${cell.left}")
-
-                    val acr = courseDetails.acronym
-                    courseList.add(
-                        Course(
-                            label = Label(acr = acr),
-                            events = listOf(
-                                RecurrentEvent(
-                                    title = null,
-                                    description = "${getDescription(courseDetails.type)}$acr",
-                                    category = courseDetails.type,
-                                    location = listOf(courseDetails.location),
-                                    beginTime = beginTime.toString(),
-                                    duration = String.format(
-                                        "%02d:%02d",
-                                        duration.toHoursPart(),
-                                        duration.toMinutesPart()
-                                    ),
-                                    weekdays = listOf(weekdays[cell.left] ?: throw IllegalArgumentException())
-                                )
-                            )
-                        )
-                    )
+                val weekday = weekdays.getOrElse(cell.left) {
+                    throw TimetableTeachersBuilderException("No matching weekday cell found for ${cell.left}")
                 }
+                val duration = EventDuration(beginTime, getDuration(cell))
+
+                courseList += cell.text.split('\r')
+                    .map {
+                        val cellText = if (it.contains('[')) it else cell.text
+                        getCourse(cellText, weekday, duration)
+                    }
             }
         }
 
         return courseList
+    }
+
+    private data class EventDuration(val beginTime: LocalTime, val duration: Duration)
+
+    private fun getCourse(text: String, weekday: Weekday, eventDuration: EventDuration): Course {
+        val courseDetails = ClassDetail.from(text)
+        val acr = courseDetails.acronym
+        return Course(
+            label = Label(acr = acr),
+            events = listOf(
+                RecurrentEvent(
+                    title = null,
+                    description = "${getDescription(courseDetails.type)}$acr",
+                    category = courseDetails.type,
+                    location = listOf(courseDetails.location),
+                    beginTime = eventDuration.beginTime.toString(),
+                    duration = String.format(
+                        "%02d:%02d",
+                        eventDuration.duration.toHoursPart(),
+                        eventDuration.duration.toMinutesPart()
+                    ),
+                    weekdays = listOf(weekday)
+                )
+            )
+        )
     }
 
     private fun isTimeslot(cell: Cell): Boolean = TIME_SLOT_REGEX.toRegex().containsMatchIn(cell.text)
