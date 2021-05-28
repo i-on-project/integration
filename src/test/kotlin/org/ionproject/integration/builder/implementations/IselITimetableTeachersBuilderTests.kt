@@ -112,7 +112,7 @@ class IselITimetableTeachersBuilderTests {
 
         assertEquals(12, timetableTeacher.timetable[0].courses.count())
         assertEquals("IC", timetableTeacher.timetable[0].courses[0].label.acr)
-        assertEquals(EventCategory.LECTURE, timetableTeacher.timetable[0].courses[0].events[0].category)
+        assertEquals(EventCategory.PRACTICE, timetableTeacher.timetable[0].courses[0].events[0].category)
         assertTrue(timetableTeacher.timetable[0].courses[0].events[0].location.contains("LH2-F"))
         assertTrue(timetableTeacher.timetable[0].courses[0].events[0].location.count() == 1)
         assertEquals(12, beginTime.hour)
