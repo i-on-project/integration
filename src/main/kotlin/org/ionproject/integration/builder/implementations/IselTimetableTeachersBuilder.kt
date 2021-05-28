@@ -35,7 +35,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         private const val PROGRAMME_REGEX = "^(Licenciatura|Mestrado).*$"
         private const val CLASS_SECTION_REGEX = "\\sTurma\\s?:\\s?[LM][A-Z+]+\\d{1,2}\\w+"
         private const val CALENDAR_TERM_REGEX = "(\\sAno\\sLetivo\\s?:\\s?)(.+?(\\r|\\R))"
-        private const val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).(0|3)0"
+        private const val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).([03])0"
         private const val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 58
         private const val HEIGHT_HALF_HOUR_THRESHOLD = 20
     }
@@ -144,10 +144,8 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
             var beginTime = LocalTime.now()
 
             cells.filter { it.isVisible() }.forEach { cell ->
-
-                val matches = RegexUtils.findMatches(TIME_SLOT_REGEX, cell.text)
-                if (matches.count() != 0) {
-                    beginTime = getBeginTime(matches)
+                if (isTimeslot(cell)) {
+                    beginTime = getBeginTime(cell)
                     return@forEach
                 }
 
@@ -156,19 +154,9 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
 
                     courseDetails = ClassDetail.from(cellText)
 
-                    val duration: Duration = when {
-                        cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD -> {
-                            Duration.ofHours(3)
-                        }
-                        cell.height > HEIGHT_HALF_HOUR_THRESHOLD -> {
-                            Duration.ofHours(1).plusMinutes(30)
-                        }
-                        else -> {
-                            Duration.ofMinutes(30)
-                        }
-                    }
+                    val duration = getDuration(cell)
 
-                    if (!weekdays.contains(cell.left)) throw TimetableTeachersBuilderException("Can't find weekday")
+                    if (!weekdays.contains(cell.left)) throw TimetableTeachersBuilderException("No matching weekday cell found for ${cell.left}")
 
                     val acr = courseDetails.acronym
                     courseList.add(
@@ -178,7 +166,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
                                 RecurrentEvent(
                                     title = null,
                                     description = "${getDescription(courseDetails.type)}$acr",
-                                    category = EventCategory.LECTURE,
+                                    category = courseDetails.type,
                                     location = listOf(courseDetails.location),
                                     beginTime = beginTime.toString(),
                                     duration = String.format(
@@ -196,6 +184,20 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         }
 
         return courseList
+    }
+
+    private fun isTimeslot(cell: Cell): Boolean = TIME_SLOT_REGEX.toRegex().containsMatchIn(cell.text)
+
+    private fun getDuration(cell: Cell): Duration = when {
+        cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD -> {
+            Duration.ofHours(3)
+        }
+        cell.height > HEIGHT_HALF_HOUR_THRESHOLD -> {
+            Duration.ofHours(1).plusMinutes(30)
+        }
+        else -> {
+            Duration.ofMinutes(30)
+        }
     }
 
     private fun getFacultyList(data: Array<Array<Cell>>): List<Faculty> =
@@ -239,12 +241,11 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         cells.filter(Cell::isVisible)
             .associateBy(Cell::left) { Weekday.fromPortuguese(it.text) }
 
-    private fun getBeginTime(matches: List<String>): LocalTime? {
-        val time = matches[0]
-            .split('.')
+    private fun getBeginTime(cell: Cell): LocalTime? {
+        val matches = RegexUtils.findMatches(TIME_SLOT_REGEX, cell.text)
+        val time = matches[0].split('.')
 
-        return LocalTime
-            .of(time[0].toInt(), time[1].toInt())
+        return LocalTime.of(time[0].toInt(), time[1].toInt())
     }
 
     // TODO the description is no longer necessary under this new data model. To confirm with team

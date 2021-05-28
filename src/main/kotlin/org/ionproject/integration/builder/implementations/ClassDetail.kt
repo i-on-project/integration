@@ -12,9 +12,9 @@ data class ClassDetail(
         fun from(text: String): ClassDetail {
             val firstIndex = text.indexOf('(')
 
-            val acronym = text.substringBefore('[').trim()
-            val location = text.substring(text.lastIndexOf(')') + 1).trim()
-            val type = when (text.substring(firstIndex + 1, max(text.indexOf(')', firstIndex), 0)).trim()) {
+            val acronym = getAcronym(text)
+            val location = getLocation(text)
+            val type = when (getClassType(text, firstIndex)) {
                 "L" -> EventCategory.LAB
                 "T" -> EventCategory.LECTURE
                 "T/P" -> EventCategory.LECTURE_PRACTICE
@@ -24,5 +24,12 @@ data class ClassDetail(
 
             return ClassDetail(acronym, location, type)
         }
+
+        private fun getClassType(text: String, firstIndex: Int): String =
+            text.substring(firstIndex + 1, max(text.indexOf(')', firstIndex), 0)).trim()
+
+        private fun getLocation(text: String): String = text.substring(text.lastIndexOf(')') + 1).trim()
+
+        private fun getAcronym(text: String): String = text.substringBefore('[').trim()
     }
 }
