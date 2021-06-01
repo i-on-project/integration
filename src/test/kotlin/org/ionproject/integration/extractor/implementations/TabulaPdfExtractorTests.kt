@@ -64,4 +64,16 @@ class TabulaPdfExtractorTests {
         // Assert
         assertEquals(1, result.count())
     }
+
+    @Test
+    fun whenValidCalendarFileFormat_thenReturnExtractionSuccessAndJsonData() {
+        // Arrange
+        val pdfPath = "src/test/resources/calendarTest.pdf"
+
+        // Act
+        val result = AcademicCalendarExtractor.winterSemester.extract(pdfPath).orThrow()
+
+        // Assert
+        assertEquals(1, result.count())
+    }
 }

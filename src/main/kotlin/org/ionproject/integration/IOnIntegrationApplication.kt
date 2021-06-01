@@ -39,9 +39,15 @@ class JobEngine(
     @Autowired
     private lateinit var props: AppProperties
 
-    @Scheduled(cron = "*/5 * * * * *")
+/*    @Scheduled(cron = "* * * * * *")
     fun runTimetableJob() {
         setUpAndRunJob("timetableJob", props.configFilesDir.path)
+    }*/
+
+    @Scheduled(cron = "*/5 * * * * *")
+    fun runCalendarJob() {
+        // setUpAndRunJob("calendarJob", props.configFilesDir.path)
+        setUpAndRunJob("calendarJob", "src\\main\\resources\\config\\calendar.isel")
     }
 
     fun setUpAndRunJob(jobName: String, configPath: String) {
