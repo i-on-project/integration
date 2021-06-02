@@ -2,7 +2,6 @@ package org.ionproject.integration.model.external.calendar
 
 import org.ionproject.integration.model.external.timetable.Language
 import org.ionproject.integration.model.external.timetable.SchoolDto
-import java.util.Date
 
 data class CalendarDto(
     val creationDateTime: String,

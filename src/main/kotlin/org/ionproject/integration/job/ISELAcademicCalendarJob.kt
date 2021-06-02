@@ -68,12 +68,14 @@ class ISELAcademicCalendarJob(
             val headerText = itext.extract(inputPdf)
             val winterSemester = AcademicCalendarExtractor.winterSemester.extract(inputPdf)
             val summerSemester = AcademicCalendarExtractor.summerSemester.extract(inputPdf)
+            val summerSemester2 = AcademicCalendarExtractor.summerSemesterPage2.extract(inputPdf)
 
             return Try.map(
                 headerText,
                 winterSemester,
-                summerSemester
-            ) { (text, winterSemester, summerSemester) ->
+                summerSemester,
+                summerSemester2
+            ) { (text, winterSemester, summerSemester, summerSemester2) ->
                 RawCalendarData(
                     text.first(),
                     text.dropLast(1),

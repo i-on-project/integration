@@ -21,7 +21,12 @@ object AcademicCalendarExtractor {
 
     val summerSemester = object : IPdfExtractor {
         override fun extract(pdfPath: String): Try<List<String>> =
-            processPdf(pdfPath, "-a 596,55,750,540", "-g", "-t", "-p", "all", "-f", "JSON")
+            processPdf(pdfPath, "-a 596,55,750,540", "-g", "-l", "-p", "all", "-f", "JSON")
+    }
+
+    val summerSemesterPage2 = object : IPdfExtractor {
+        override fun extract(pdfPath: String): Try<List<String>> =
+            processPdf(pdfPath, "-a 596,55,750,540", "-g", "-l", "-p 2", "all", "-f", "JSON")
     }
 
     private fun processPdf(path: String, vararg tabulaArguments: String): Try<List<String>> {
