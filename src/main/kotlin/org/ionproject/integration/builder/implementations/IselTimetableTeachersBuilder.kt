@@ -151,12 +151,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
                     throw TimetableTeachersBuilderException("No matching weekday cell found for ${cell.left}")
                 }
                 val duration = EventDuration(beginTime, getDuration(cell))
-
-                courseList += cell.text.split('\r')
-                    .map {
-                        val cellText = if (it.contains('[')) it else cell.text
-                        getCourse(cellText, weekday, duration)
-                    }
+                courseList += getAllCourseDataFromCell(cell, weekday, duration)
             }
         }
 
@@ -165,7 +160,14 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
 
     private data class EventDuration(val beginTime: LocalTime, val duration: Duration)
 
-    private fun getCourse(text: String, weekday: Weekday, eventDuration: EventDuration): Course {
+    private fun getAllCourseDataFromCell(cell: Cell, weekday: Weekday, duration: EventDuration): List<Course> =
+        cell.text.split('\r')
+            .map {
+                val cellText = if (it.contains('[')) it else cell.text
+                getCourseDataFromCellText(cellText, weekday, duration)
+            }
+
+    private fun getCourseDataFromCellText(text: String, weekday: Weekday, eventDuration: EventDuration): Course {
         val courseDetails = ClassDetail.from(text)
         val acr = courseDetails.acronym
         return Course(
