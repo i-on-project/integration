@@ -106,6 +106,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 
             val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
 
+            println("JOB EXIT STATUS: ${je.exitStatus}")
             assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)
             assertEquals(expectedPath, je.executionContext[pathKey])
             assertTrue(file.exists())
