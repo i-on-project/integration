@@ -84,8 +84,7 @@ class IselITimetableTeachersBuilderTests {
         val timetableTeacher = builder.getTimetableTeachers()
 
         // Assert
-        val e = assertThrows<TimetableTeachersBuilderException> { timetableTeacher.orThrow() }
-        assertEquals("Can't find weekday", e.message)
+        assertThrows<TimetableTeachersBuilderException> { timetableTeacher.orThrow() }
     }
 
     private fun assertions(timetableTeacher: TimetableTeachers) {

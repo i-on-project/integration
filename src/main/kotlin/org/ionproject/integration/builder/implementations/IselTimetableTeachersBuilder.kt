@@ -139,18 +139,14 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         val weekdays: Map<Double, Weekday> = populateWeekdays(data.first())
 
         data.drop(1).forEach { cells ->
-            var beginTime = LocalTime.now()
+            val cleanCells = cells.filter { it.isVisible() }
+            val classStartTime = getBeginTime(cleanCells.first())
 
-            cells.filter { it.isVisible() }.forEach { cell ->
-                if (isTimeslot(cell)) {
-                    beginTime = getBeginTime(cell)
-                    return@forEach
-                }
-
+            cleanCells.drop(1).forEach { cell ->
                 val weekday = weekdays.getOrElse(cell.left) {
                     throw TimetableTeachersBuilderException("No matching weekday cell found for ${cell.left}")
                 }
-                val duration = EventDuration(beginTime, getDuration(cell))
+                val duration = EventDuration(classStartTime, getDuration(cell))
                 courseList += getAllCourseDataFromCell(cell, weekday, duration)
             }
         }
@@ -245,7 +241,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         cells.filter(Cell::isVisible)
             .associateBy(Cell::left) { Weekday.fromPortuguese(it.text) }
 
-    private fun getBeginTime(cell: Cell): LocalTime? {
+    private fun getBeginTime(cell: Cell): LocalTime {
         val matches = RegexUtils.findMatches(TIME_SLOT_REGEX, cell.text)
         val time = matches[0].split('.')
 
