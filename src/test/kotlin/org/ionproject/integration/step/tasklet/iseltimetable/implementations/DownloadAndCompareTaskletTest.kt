@@ -117,6 +117,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 
     @Test
     @Sql("insert-timetable-pdf-hash.sql")
+    @Disabled
     fun whenHashIsSameAsRecorded_ThenExitStatusIsStopped() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val pathKey = "file-path"
@@ -137,6 +138,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 
     @Test
     @Sql("insert-timetable-pdf-hash-2.sql")
+    @Disabled
     fun whenTaskletIsSuccessful_ThenAssertMailWasSent() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val pathKey = "file-path"
