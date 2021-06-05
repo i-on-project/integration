@@ -1,5 +1,6 @@
 package org.ionproject.integration.job
 
+import org.ionproject.integration.builder.implementations.IselCalendarBuilder
 import org.ionproject.integration.extractor.implementations.AcademicCalendarExtractor
 import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
 import org.ionproject.integration.file.implementations.FileComparatorImpl
@@ -7,6 +8,7 @@ import org.ionproject.integration.file.implementations.FileDigestImpl
 import org.ionproject.integration.file.implementations.FileDownloaderImpl
 import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
+import org.ionproject.integration.model.external.calendar.Calendar
 import org.ionproject.integration.model.internal.calendar.isel.RawCalendarData
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.DownloadAndCompareTasklet
 import org.ionproject.integration.utils.Try
@@ -63,24 +65,17 @@ class ISELAcademicCalendarJob(
     fun extractCalendarPDF(): RawCalendarData {
         try {
             val itext = ITextPdfExtractor()
-            val fd = FileDigestImpl()
 
             val headerText = itext.extract(inputPdf)
-            val winterSemester = AcademicCalendarExtractor.winterSemester.extract(inputPdf)
-            val summerSemester = AcademicCalendarExtractor.summerSemester.extract(inputPdf)
-            val summerSemester2 = AcademicCalendarExtractor.summerSemesterPage2.extract(inputPdf)
+            val calendarTable = AcademicCalendarExtractor.calendarTable.extract(inputPdf)
 
             return Try.map(
                 headerText,
-                winterSemester,
-                summerSemester,
-                summerSemester2
-            ) { (text, winterSemester, summerSemester, summerSemester2) ->
+                calendarTable
+            ) { (text, calendarTable) ->
                 RawCalendarData(
-                    text.first(),
                     text.dropLast(1),
-                    winterSemester.first(),
-                    summerSemester.first(),
+                    calendarTable.first(),
                     text.last()
                 )
             }.orThrow()
@@ -91,7 +86,7 @@ class ISELAcademicCalendarJob(
     @Bean
     fun createCalendarPDFDTOTasklet() = stepBuilderFactory.get("Create DTO from Calendar Raw Data")
         .tasklet { _, _ ->
-            // TODO
+            Calendar.from(State.rawCalendarData)
             RepeatStatus.FINISHED
         }
         .build()
