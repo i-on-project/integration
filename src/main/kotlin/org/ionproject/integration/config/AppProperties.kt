@@ -42,8 +42,13 @@ class AppProperties {
 
     val tempFilesDir by lazy { getAsFilePath(tempDir) }
 
+    private val isRunningOnWindowsSystem by lazy { System.getProperty("os.name").startsWith("Windows") }
+
     private fun getAsFilePath(path: String): Filepath {
-        val pathType = if (path.startsWith("/")) Filepath.PathType.ABSOLUTE else Filepath.PathType.RELATIVE
+        val pathType = if (path.startsWith("/") || !isRunningOnWindowsSystem)
+            Filepath.PathType.ABSOLUTE
+        else
+            Filepath.PathType.RELATIVE
 
         val segments = if (path.contains('/')) {
             path.split('/').filter(String::isNotBlank)
