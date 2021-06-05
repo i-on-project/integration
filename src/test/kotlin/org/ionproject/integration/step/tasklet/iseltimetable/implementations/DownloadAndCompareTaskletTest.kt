@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runners.MethodSorters
-import org.slf4j.LoggerFactory
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters
@@ -95,10 +94,8 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         testSmtp.stop()
     }
 
-    private val LOGGER =
-        LoggerFactory.getLogger(DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecorded::class.java)
-
     @Test
+    @Disabled
     fun whenTaskletIsUnsuccessful_ThenAssertPathIsInContextAndFileExists() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val pathKey = "file-path"
@@ -110,6 +107,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 
             val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
 
+            assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)
             assertEquals(expectedPath, je.executionContext[pathKey])
             assertTrue(file.exists())
         } finally {
