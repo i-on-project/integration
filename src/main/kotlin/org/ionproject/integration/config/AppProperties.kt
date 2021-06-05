@@ -42,10 +42,8 @@ class AppProperties {
 
     val tempFilesDir by lazy { getAsFilePath(tempDir) }
 
-    private val isRunningOnWindowsSystem by lazy { System.getProperty("os.name").startsWith("Windows") }
-
     private fun getAsFilePath(path: String): Filepath {
-        val pathType = if (path.startsWith("/") || !isRunningOnWindowsSystem)
+        val pathType = if (path.startsWith("/"))
             Filepath.PathType.ABSOLUTE
         else
             Filepath.PathType.RELATIVE
