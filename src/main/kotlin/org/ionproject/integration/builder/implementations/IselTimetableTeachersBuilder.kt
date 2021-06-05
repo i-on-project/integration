@@ -135,26 +135,29 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
     }
 
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
-        val courseList = mutableListOf<Course>()
         val weekdays: Map<Double, Weekday> = populateWeekdays(data.first())
+        return data
+            .drop(1) // First row already read to populate weekdays
+            .flatMap { cells ->
+                val cleanCells = cells.filter { it.isVisible() }
+                val classStartTime = getBeginTime(cleanCells.first())
 
-        data.drop(1).forEach { cells ->
-            val cleanCells = cells.filter { it.isVisible() }
-            val classStartTime = getBeginTime(cleanCells.first())
-
-            cleanCells.drop(1).forEach { cell ->
-                val weekday = weekdays.getOrElse(cell.left) {
-                    throw TimetableTeachersBuilderException("No matching weekday cell found for ${cell.left}")
-                }
-                val duration = EventDuration(classStartTime, getDuration(cell))
-                courseList += getAllCourseDataFromCell(cell, weekday, duration)
+                // Drop first cell again as it was used to get class start time
+                getCourseList(cleanCells.drop(1), weekdays, classStartTime)
             }
-        }
-
-        return courseList
     }
 
     private data class EventDuration(val beginTime: LocalTime, val duration: Duration)
+
+    private fun getCourseList(cells: List<Cell>, weekdays: Map<Double, Weekday>, beginTime: LocalTime): List<Course> {
+        return cells.flatMap { cell ->
+            val weekday = weekdays.getOrElse(cell.left) {
+                throw TimetableTeachersBuilderException("No matching weekday cell found for ${cell.left}")
+            }
+            val duration = EventDuration(beginTime, getDuration(cell))
+            getAllCourseDataFromCell(cell, weekday, duration)
+        }
+    }
 
     private fun getAllCourseDataFromCell(cell: Cell, weekday: Weekday, duration: EventDuration): List<Course> =
         cell.text.split('\r')
