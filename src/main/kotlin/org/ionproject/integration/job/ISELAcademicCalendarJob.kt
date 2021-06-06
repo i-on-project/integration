@@ -1,5 +1,9 @@
 package org.ionproject.integration.job
 
+import org.ionproject.integration.dispatcher.AcademicCalendarData
+import org.ionproject.integration.dispatcher.IAcademicCalendarDispatcher
+import org.ionproject.integration.dispatcher.InstitutionMetadata
+import org.ionproject.integration.dispatcher.OutputFormat
 import org.ionproject.integration.extractor.implementations.AcademicCalendarExtractor
 import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
 import org.ionproject.integration.file.implementations.FileComparatorImpl
@@ -8,8 +12,10 @@ import org.ionproject.integration.file.implementations.FileDownloaderImpl
 import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.model.external.calendar.Calendar
+import org.ionproject.integration.model.external.calendar.CalendarDto
 import org.ionproject.integration.model.internal.calendar.isel.RawCalendarData
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.DownloadAndCompareTasklet
+import org.ionproject.integration.utils.Institution
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
@@ -32,6 +38,7 @@ class ISELAcademicCalendarJob(
 
     @Value("src/test/resources/calendarTest.pdf")
     lateinit var inputPdf: String
+    lateinit var dispatcher: IAcademicCalendarDispatcher
 
     @Bean
     fun calendarJob() = jobBuilderFactory.get("ISEL Academic Calendar Batch Job")
@@ -41,6 +48,7 @@ class ISELAcademicCalendarJob(
         .start(extractCalendarPDFTasklet())
         .next(createCalendarPDFBusinessObjectsTasklet())
         .next(createCalendarPDFDtoTasklet())
+        // .next(writeCalendarDTOToGitTasklet())
         .next(sendNotificationsForCalendarJobTasklet())
         .build() // .build()
 
@@ -87,15 +95,15 @@ class ISELAcademicCalendarJob(
     fun createCalendarPDFBusinessObjectsTasklet() =
         stepBuilderFactory.get("Create Business Objects from Calendar Raw Data")
             .tasklet { _, _ ->
-                Calendar.from(State.rawCalendarData)
+                State.academicCalendar = Calendar.from(State.rawCalendarData)
                 RepeatStatus.FINISHED
             }
             .build()
 
     @Bean
-    fun createCalendarPDFDtoTasklet() = stepBuilderFactory.get("Create DTO from Calendar Raw Data")
+    fun createCalendarPDFDtoTasklet() = stepBuilderFactory.get("Create DTO from Calendar Business Objects")
         .tasklet { _, _ ->
-            // TODO
+            State.academicCalendarDto = CalendarDto.from(State.academicCalendar)
             RepeatStatus.FINISHED
         }
         .build()
@@ -103,13 +111,25 @@ class ISELAcademicCalendarJob(
     @Bean
     fun writeCalendarDTOToGitTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
         .tasklet { _, _ ->
-            // TODO
+            dispatcher.dispatch(generateAcademicCalendarDataFromDto(State.academicCalendarDto), OutputFormat.JSON)
             RepeatStatus.FINISHED
         }
         .build()
 
+    internal fun generateAcademicCalendarDataFromDto(calendarDto: CalendarDto): AcademicCalendarData {
+        return AcademicCalendarData(
+            InstitutionMetadata(
+                calendarDto.school.name,
+                calendarDto.school.acr,
+                Institution.valueOf(calendarDto.school.acr).identifier
+            ),
+            calendarDto.terms.first().calendarTerm.take(9),
+            calendarDto
+        )
+    }
+
     @Bean
-    fun sendNotificationsForCalendarJobTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
+    fun sendNotificationsForCalendarJobTasklet() = stepBuilderFactory.get("Send Calendar Job Notifications")
         .tasklet { _, _ ->
             // TODO
             RepeatStatus.FINISHED
@@ -119,5 +139,7 @@ class ISELAcademicCalendarJob(
     @Component
     object State {
         lateinit var rawCalendarData: RawCalendarData
+        lateinit var academicCalendar: Calendar
+        lateinit var academicCalendarDto: CalendarDto
     }
 }
