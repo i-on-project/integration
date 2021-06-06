@@ -2,7 +2,6 @@ package org.ionproject.integration.job
 
 import org.ionproject.integration.dispatcher.AcademicCalendarData
 import org.ionproject.integration.dispatcher.IAcademicCalendarDispatcher
-import org.ionproject.integration.dispatcher.InstitutionMetadata
 import org.ionproject.integration.dispatcher.OutputFormat
 import org.ionproject.integration.extractor.implementations.AcademicCalendarExtractor
 import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
@@ -15,7 +14,6 @@ import org.ionproject.integration.model.external.calendar.Calendar
 import org.ionproject.integration.model.external.calendar.CalendarDto
 import org.ionproject.integration.model.internal.calendar.isel.RawCalendarData
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.DownloadAndCompareTasklet
-import org.ionproject.integration.utils.Institution
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
@@ -111,22 +109,10 @@ class ISELAcademicCalendarJob(
     @Bean
     fun writeCalendarDTOToGitTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
         .tasklet { _, _ ->
-            dispatcher.dispatch(generateAcademicCalendarDataFromDto(State.academicCalendarDto), OutputFormat.JSON)
+            dispatcher.dispatch(AcademicCalendarData.from(State.academicCalendarDto), OutputFormat.JSON)
             RepeatStatus.FINISHED
         }
         .build()
-
-    internal fun generateAcademicCalendarDataFromDto(calendarDto: CalendarDto): AcademicCalendarData {
-        return AcademicCalendarData(
-            InstitutionMetadata(
-                calendarDto.school.name,
-                calendarDto.school.acr,
-                Institution.valueOf(calendarDto.school.acr).identifier
-            ),
-            calendarDto.terms.first().calendarTerm.take(9),
-            calendarDto
-        )
-    }
 
     @Bean
     fun sendNotificationsForCalendarJobTasklet() = stepBuilderFactory.get("Send Calendar Job Notifications")
