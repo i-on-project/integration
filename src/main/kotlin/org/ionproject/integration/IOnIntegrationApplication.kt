@@ -44,7 +44,7 @@ class JobEngine(
         setUpAndRunJob("timetableJob", props.configFilesDir.path)
     }*/
 
-    @Scheduled(cron = "*/5 * * * * *")
+    @Scheduled(cron = "*/60 * * * * *")
     fun runCalendarJob() {
         // setUpAndRunJob("calendarJob", props.configFilesDir.path)
         setUpAndRunJob("calendarJob", "src\\main\\resources\\config\\calendar.isel")

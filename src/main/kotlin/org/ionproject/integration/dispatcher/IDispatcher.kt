@@ -1,5 +1,6 @@
 package org.ionproject.integration.dispatcher
 
+import org.ionproject.integration.model.external.calendar.CalendarDto
 import org.ionproject.integration.model.external.timetable.TimetableDto
 
 /**
@@ -14,6 +15,8 @@ sealed interface IDispatcher<T : ParsedData> {
     fun dispatch(data: T, format: OutputFormat): DispatchResult
 }
 
+interface IAcademicCalendarDispatcher : IDispatcher<AcademicCalendarData>
+
 interface ITimetableDispatcher : IDispatcher<TimetableData>
 
 /**
@@ -26,6 +29,12 @@ data class TimetableData(
     val programme: ProgrammeMetadata,
     val term: CalendarTerm,
     private val dto: TimetableDto
+) : ParsedData(dto)
+
+data class AcademicCalendarData(
+    val institution: InstitutionMetadata,
+    val academicYear: String,
+    private val dto: CalendarDto
 ) : ParsedData(dto)
 
 data class InstitutionMetadata(

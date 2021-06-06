@@ -1,5 +1,6 @@
 package org.ionproject.integration.model.external.calendar
 
+import org.ionproject.integration.model.external.timetable.Language
 import org.ionproject.integration.model.external.timetable.School
 import org.ionproject.integration.model.internal.calendar.isel.RawCalendarData
 import org.ionproject.integration.utils.DateFormat
@@ -11,6 +12,7 @@ data class Calendar(
     var creationDateTime: String = "",
     var retrievalDateTime: String = "",
     var school: School = School(),
+    var language: Language = Language.PT,
     var terms: List<Term> = listOf()
 ) {
     companion object {
@@ -23,6 +25,7 @@ data class Calendar(
                 creationDateTime = rawCalendarData.creationDate,
                 retrievalDateTime = DateFormat.format(Date()),
                 School(), // todo
+                Language.PT,
                 buildTerms(rawCalendarData)
             )
 
@@ -93,7 +96,11 @@ data class Calendar(
             }
 
             return Term(
-                RegexUtils.findMatches(CALENDAR_TERM_REGEX, text).first().trim().plus("-${getTermNumber(term)}"),
+                RegexUtils.findMatches(CALENDAR_TERM_REGEX, text)
+                    .first()
+                    .trim()
+                    .replace('/', '-')
+                    .plus("-${getTermNumber(term)}"),
                 interruptions.toList(),
                 evaluations.toList(),
                 details.toList(),
