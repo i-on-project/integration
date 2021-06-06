@@ -42,6 +42,8 @@ class AppProperties {
 
     val tempFilesDir by lazy { getAsFilePath(tempDir) }
 
+    val timeoutInSeconds = 60
+
     private fun getAsFilePath(path: String): Filepath {
         val pathType = if (path.startsWith("/"))
             Filepath.PathType.ABSOLUTE

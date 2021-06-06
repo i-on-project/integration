@@ -11,7 +11,7 @@ sealed interface IGitHandler {
 }
 
 sealed interface IGitHandlerFactory {
-    fun checkout(stagingDir: String, repoData: GitRepoData): IGitHandler
+    fun checkout(stagingDir: String, repoData: GitRepoData, timeout: Int): IGitHandler
 }
 
 data class GitRepoData(

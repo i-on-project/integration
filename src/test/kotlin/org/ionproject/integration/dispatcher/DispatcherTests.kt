@@ -21,7 +21,7 @@ class DispatcherTests {
     }
 
     private fun getMockFactory(isWorking: Boolean): IGitHandlerFactory = mock {
-        on { checkout(any(), any()) } doReturn if (isWorking) mockHandlerSuccess else mockHandlerFailure
+        on { checkout(any(), any(), any()) } doReturn if (isWorking) mockHandlerSuccess else mockHandlerFailure
     }
 
     private val mockWriter = mock<TimetableFileWriter> {

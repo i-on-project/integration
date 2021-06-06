@@ -17,12 +17,13 @@ class GitHandlerImpl : IGitHandler {
     private lateinit var repositoryMetadata: GitRepoData
     private lateinit var git: Git
     private lateinit var credentials: CredentialsProvider
+    private var timeoutInSeconds: Int = 30
 
     @Service
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     companion object Factory : IGitHandlerFactory {
 
-        override fun checkout(stagingDir: String, repoData: GitRepoData): IGitHandler {
+        override fun checkout(stagingDir: String, repoData: GitRepoData, timeout: Int): IGitHandler {
             val repoDirectory = File("$stagingDir${File.separator}${repoData.name}")
             cleanStagingArea(repoDirectory)
             LOGGER.info("Cloning Git repository from ${repoData.url}. Tracking remote branch: ${repoData.branch}.")
@@ -35,11 +36,13 @@ class GitHandlerImpl : IGitHandler {
                 .setCredentialsProvider(credentialProvider)
                 .setBranchesToClone(listOf("refs/heads/${repoData.branch}"))
                 .setBranch(repoData.branch)
+                .setTimeout(timeout)
                 .call()
             return GitHandlerImpl().apply {
                 repositoryMetadata = repoData
                 git = repo
                 credentials = credentialProvider
+                timeoutInSeconds = timeout
             }
         }
 
@@ -64,6 +67,7 @@ class GitHandlerImpl : IGitHandler {
     override fun push() {
         git.push()
             .setCredentialsProvider(credentials)
+            .setTimeout(timeoutInSeconds)
             .call()
     }
 
@@ -71,6 +75,7 @@ class GitHandlerImpl : IGitHandler {
         val result = git.pull()
             .setCredentialsProvider(credentials)
             .setRemoteBranchName(repositoryMetadata.branch)
+            .setTimeout(timeoutInSeconds)
             .call()
             .mergeResult
             .mergeStatus
