@@ -1,5 +1,6 @@
 package org.ionproject.integration.job
 
+import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.file.implementations.FileComparatorImpl
 import org.ionproject.integration.file.implementations.FileDigestImpl
 import org.ionproject.integration.file.implementations.FileDownloaderImpl
@@ -37,6 +38,7 @@ import javax.sql.DataSource
 class ISELTimetable(
     val jobBuilderFactory: JobBuilderFactory,
     val stepBuilderFactory: StepBuilderFactory,
+    val properties: AppProperties,
     @Autowired
     val ds: DataSource
 ) {
@@ -61,7 +63,7 @@ class ISELTimetable(
     @Bean
     fun downloadAndCompareTasklet(): DownloadAndCompareTasklet {
         val pdfChecker = PDFBytesFormatChecker()
-        val downloader = FileDownloaderImpl(pdfChecker)
+        val downloader = FileDownloaderImpl(pdfChecker, properties.timeoutInSeconds)
         val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
         return DownloadAndCompareTasklet(downloader, fileComparator)
     }
