@@ -71,7 +71,7 @@ class TabulaPdfExtractorTests {
         val pdfPath = "src/test/resources/calendarTest.pdf"
 
         // Act
-        val result = AcademicCalendarExtractor.winterSemester.extract(pdfPath).orThrow()
+        val result = AcademicCalendarExtractor.calendarTable.extract(pdfPath).orThrow()
 
         // Assert
         assertEquals(1, result.count())
