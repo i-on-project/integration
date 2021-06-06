@@ -1,6 +1,5 @@
 package org.ionproject.integration.job
 
-import org.ionproject.integration.builder.implementations.IselCalendarBuilder
 import org.ionproject.integration.extractor.implementations.AcademicCalendarExtractor
 import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
 import org.ionproject.integration.file.implementations.FileComparatorImpl
@@ -40,7 +39,8 @@ class ISELAcademicCalendarJob(
         // .on("STOPPED").end()
         // .next(extractCalendarPDFTasklet())
         .start(extractCalendarPDFTasklet())
-        .next(createCalendarPDFDTOTasklet())
+        .next(createCalendarPDFBusinessObjectsTasklet())
+        .next(createCalendarPDFDtoTasklet())
         .next(sendNotificationsForCalendarJobTasklet())
         .build() // .build()
 
@@ -75,7 +75,7 @@ class ISELAcademicCalendarJob(
             ) { (text, calendarTable) ->
                 RawCalendarData(
                     text.dropLast(1),
-                    calendarTable.first(),
+                    calendarTable.first().replace("\\r", " "),
                     text.last()
                 )
             }.orThrow()
@@ -84,9 +84,18 @@ class ISELAcademicCalendarJob(
     }
 
     @Bean
-    fun createCalendarPDFDTOTasklet() = stepBuilderFactory.get("Create DTO from Calendar Raw Data")
+    fun createCalendarPDFBusinessObjectsTasklet() =
+        stepBuilderFactory.get("Create Business Objects from Calendar Raw Data")
+            .tasklet { _, _ ->
+                Calendar.from(State.rawCalendarData)
+                RepeatStatus.FINISHED
+            }
+            .build()
+
+    @Bean
+    fun createCalendarPDFDtoTasklet() = stepBuilderFactory.get("Create DTO from Calendar Raw Data")
         .tasklet { _, _ ->
-            Calendar.from(State.rawCalendarData)
+            // TODO
             RepeatStatus.FINISHED
         }
         .build()
