@@ -24,7 +24,7 @@ import org.ionproject.integration.model.external.timetable.Weekday
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class DtoFormatCheckerTest {
+internal class TimetableDtoFormatCheckerTest {
 
     private val mapper = jacksonObjectMapper()
 

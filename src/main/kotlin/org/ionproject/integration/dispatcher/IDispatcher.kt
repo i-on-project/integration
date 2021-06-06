@@ -2,6 +2,7 @@ package org.ionproject.integration.dispatcher
 
 import org.ionproject.integration.model.external.calendar.CalendarDto
 import org.ionproject.integration.model.external.timetable.TimetableDto
+import org.ionproject.integration.utils.Institution
 
 /**
  * This file contains the interfaces that must be implemented by Dispatcher modules (i.e. FileRepository).
@@ -35,7 +36,20 @@ data class AcademicCalendarData(
     val institution: InstitutionMetadata,
     val academicYear: String,
     private val dto: CalendarDto
-) : ParsedData(dto)
+) : ParsedData(dto) {
+    companion object Factory {
+        fun from(calendarDto: CalendarDto): AcademicCalendarData =
+            AcademicCalendarData(
+                InstitutionMetadata(
+                    calendarDto.school.name,
+                    calendarDto.school.acr,
+                    Institution.valueOf(calendarDto.school.acr).identifier
+                ),
+                calendarDto.terms.first().calendarTerm.take(9),
+                calendarDto
+            )
+    }
+}
 
 data class InstitutionMetadata(
     val name: String,
