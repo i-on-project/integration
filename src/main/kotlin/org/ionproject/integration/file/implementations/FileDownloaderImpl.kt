@@ -13,8 +13,9 @@ import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.model.internal.Response
 import org.ionproject.integration.model.internal.generic.JobType
 import org.ionproject.integration.utils.Try
+import java.time.Duration
 
-class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
+class FileDownloaderImpl(private val checker: IBytesFormatChecker, private val timeoutInSeconds: Int) :
     IFileDownloader {
     private val EMPTY_PATH = Paths.get("")
 
@@ -28,6 +29,7 @@ class FileDownloaderImpl(private val checker: IBytesFormatChecker) :
         val request = Try.ofValue(
             HttpRequest.newBuilder()
                 .uri(uri)
+                .timeout(Duration.ofSeconds(timeoutInSeconds.toLong()))
                 .build()
         )
 

@@ -21,9 +21,9 @@ import java.nio.file.Paths
 internal class PDFFileDownloaderImplTest {
     companion object {
         private val checker = PDFBytesFormatChecker()
-        private val pdfDownloader: IFileDownloader = FileDownloaderImpl(checker)
+        private val pdfDownloader: IFileDownloader = FileDownloaderImpl(checker, 30)
         inline fun <reified T : Throwable> downloadAndAssertThrows(uri: URI, dstFile: Path): T {
-            return assertThrows<T> {
+            return assertThrows {
                 downloadPdf(
                     uri,
                     dstFile
