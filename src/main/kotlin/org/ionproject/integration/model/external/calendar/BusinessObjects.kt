@@ -8,7 +8,7 @@ import org.ionproject.integration.utils.DateUtils
 import org.ionproject.integration.utils.RegexUtils
 import java.util.Date
 
-data class Calendar(
+data class AcademicCalendar(
     var creationDateTime: String = "",
     var retrievalDateTime: String = "",
     var school: School = School(),
@@ -19,12 +19,18 @@ data class Calendar(
         private const val EVENT_REGEX = """(?<=text":")[^"{}]+"""
         private const val CALENDAR_TERM_REGEX = """(?<=\sCalendário\sEscolar\s).+?(?=\r|\R)"""
         private const val TABLE_DELIMITER = "extraction"
+        private const val PT_INTERRUPTION_REGEX = "\\b(?:Interrupção|Férias)\\b"
+        private const val PT_EVALUATION_REGEX = "\\b(?:Exames|Testes)\\b"
+        private const val PT_DETAILS_REGEX = "\\b(?:Turmas)\\b"
 
-        fun from(rawCalendarData: RawCalendarData): Calendar =
-            Calendar(
+        fun from(rawCalendarData: RawCalendarData): AcademicCalendar =
+            AcademicCalendar(
                 creationDateTime = rawCalendarData.creationDate,
                 retrievalDateTime = DateFormat.format(Date()),
-                School(), // todo
+                School(
+                    "Instituto Superior de Engenharia de Lisboa",
+                    "ISEL"
+                ),
                 Language.PT,
                 buildTerms(rawCalendarData)
             )
@@ -49,17 +55,18 @@ data class Calendar(
             val evaluations = mutableListOf<Evaluation>()
             val details = mutableListOf<Detail>()
             val otherEvents = mutableListOf<Event>()
+            val (descriptions, dates) = events.withIndex().partition { it.index % 2 == 0 }
 
-            for (index in events.indices step 2) {
-                val dateRange = DateUtils.getDateRange(events[index + 1])
+            descriptions.forEachIndexed { index, _ ->
+                val intervalDate = DateUtils.getDateRange(dates[index].value)
 
                 when (getEventType(events[index])) {
                     EventType.EVALUATION -> {
                         evaluations.add(
                             Evaluation(
                                 events[index],
-                                dateRange[0],
-                                dateRange[1],
+                                intervalDate.from,
+                                intervalDate.to,
                                 false
                             )
                         )
@@ -68,8 +75,8 @@ data class Calendar(
                         interruptions.add(
                             Event(
                                 events[index],
-                                dateRange[0],
-                                dateRange[1]
+                                intervalDate.from,
+                                intervalDate.to,
                             )
                         )
                     }
@@ -77,9 +84,9 @@ data class Calendar(
                         details.add(
                             Detail(
                                 events[index],
-                                listOf<Int>(),
-                                dateRange[0],
-                                dateRange[1]
+                                listOf(),
+                                intervalDate.from,
+                                intervalDate.to,
                             )
                         )
                     }
@@ -87,8 +94,8 @@ data class Calendar(
                         otherEvents.add(
                             Event(
                                 events[index],
-                                dateRange[0],
-                                dateRange[1]
+                                intervalDate.from,
+                                intervalDate.to,
                             )
                         )
                     }
@@ -101,10 +108,10 @@ data class Calendar(
                     .trim()
                     .replace('/', '-')
                     .plus("-${getTermNumber(term)}"),
-                interruptions.toList(),
-                evaluations.toList(),
-                details.toList(),
-                otherEvents.toList()
+                interruptions,
+                evaluations,
+                details,
+                otherEvents
             )
         }
 
@@ -116,9 +123,9 @@ data class Calendar(
 
         private fun getEventType(event: String): EventType {
             return when {
-                event.contains("Interrupção", true) -> EventType.INTERRUPTION
-                event.contains("Exames", true) -> EventType.EVALUATION
-                event.contains("Turmas", true) -> EventType.DETAILS
+                event.contains(PT_INTERRUPTION_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.INTERRUPTION
+                event.contains(PT_EVALUATION_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.EVALUATION
+                event.contains(PT_DETAILS_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.DETAILS
                 else -> EventType.OTHER
             }
         }

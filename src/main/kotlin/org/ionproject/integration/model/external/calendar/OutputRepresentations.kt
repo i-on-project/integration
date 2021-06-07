@@ -11,7 +11,7 @@ data class CalendarDto(
     val terms: List<TermDto>
 ) {
     companion object {
-        fun from(academicCalendar: Calendar): CalendarDto {
+        fun from(academicCalendar: AcademicCalendar): CalendarDto {
             return CalendarDto(
                 academicCalendar.creationDateTime,
                 academicCalendar.retrievalDateTime,
@@ -31,20 +31,14 @@ data class TermDto(
     val otherEvents: List<EventDto>
 ) {
     companion object {
-        fun from(terms: List<Term>): List<TermDto> {
-            val result = mutableListOf<TermDto>()
-            for (term in terms) {
-                result.add(
-                    TermDto(
-                        term.calendarTerm,
-                        EventDto.from(term.interruptions),
-                        EvaluationDto.from(term.evaluations),
-                        DetailDto.from(term.details),
-                        EventDto.from(term.otherEvents)
-                    )
-                )
-            }
-            return result.toList()
+        fun from(terms: List<Term>): List<TermDto> = terms.map {
+            TermDto(
+                it.calendarTerm,
+                EventDto.from(it.interruptions),
+                EvaluationDto.from(it.evaluations),
+                DetailDto.from(it.details),
+                EventDto.from(it.otherEvents)
+            )
         }
     }
 }
@@ -55,18 +49,12 @@ data class EventDto(
     val endDate: String
 ) {
     companion object {
-        fun from(events: List<Event>): List<EventDto> {
-            val result = mutableListOf<EventDto>()
-            for (event in events) {
-                result.add(
-                    EventDto(
-                        event.name,
-                        DateUtils.getDateRepresentation(event.startDate),
-                        DateUtils.getDateRepresentation(event.endDate)
-                    )
-                )
-            }
-            return result
+        fun from(events: List<Event>): List<EventDto> = events.map {
+            EventDto(
+                it.name,
+                DateUtils.getDateRepresentation(it.startDate),
+                DateUtils.getDateRepresentation(it.endDate)
+            )
         }
     }
 }
@@ -78,19 +66,13 @@ data class EvaluationDto(
     val duringLectures: Boolean
 ) {
     companion object {
-        fun from(evaluations: List<Evaluation>): List<EvaluationDto> {
-            val result = mutableListOf<EvaluationDto>()
-            for (evaluation in evaluations) {
-                result.add(
-                    EvaluationDto(
-                        evaluation.name,
-                        DateUtils.getDateRepresentation(evaluation.startDate),
-                        DateUtils.getDateRepresentation(evaluation.endDate),
-                        evaluation.duringLectures
-                    )
-                )
-            }
-            return result
+        fun from(evaluations: List<Evaluation>): List<EvaluationDto> = evaluations.map {
+            EvaluationDto(
+                it.name,
+                DateUtils.getDateRepresentation(it.startDate),
+                DateUtils.getDateRepresentation(it.endDate),
+                it.duringLectures
+            )
         }
     }
 }
@@ -102,19 +84,13 @@ data class DetailDto(
     val endDate: String,
 ) {
     companion object {
-        fun from(details: List<Detail>): List<DetailDto> {
-            val result = mutableListOf<DetailDto>()
-            for (detail in details) {
-                result.add(
-                    DetailDto(
-                        detail.name,
-                        detail.curricularTerm.map { IdDto(it) },
-                        DateUtils.getDateRepresentation(detail.startDate),
-                        DateUtils.getDateRepresentation(detail.endDate)
-                    )
-                )
-            }
-            return result
+        fun from(details: List<Detail>): List<DetailDto> = details.map {
+            DetailDto(
+                it.name,
+                it.curricularTerm.map { id -> IdDto(id) },
+                DateUtils.getDateRepresentation(it.startDate),
+                DateUtils.getDateRepresentation(it.endDate)
+            )
         }
     }
 }
