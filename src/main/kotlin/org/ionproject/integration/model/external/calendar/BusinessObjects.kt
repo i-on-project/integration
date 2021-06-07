@@ -50,7 +50,7 @@ data class AcademicCalendar(
         private fun parseTables(table: String): List<String> =
             RegexUtils.findMatches(EVENT_REGEX, table)
 
-        private fun buildTerm(events: List<String>, text: String, term: CalendarTerm): Term {
+        private fun buildTerm(events: List<String>, pdfRawText: String, term: CalendarTerm): Term {
             val interruptions = mutableListOf<Event>()
             val evaluations = mutableListOf<Evaluation>()
             val details = mutableListOf<Detail>()
@@ -103,7 +103,7 @@ data class AcademicCalendar(
             }
 
             return Term(
-                RegexUtils.findMatches(CALENDAR_TERM_REGEX, text)
+                RegexUtils.findMatches(CALENDAR_TERM_REGEX, pdfRawText)
                     .first()
                     .trim()
                     .replace('/', '-')
