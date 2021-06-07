@@ -14,8 +14,6 @@ object DateUtils {
     private const val CALENDAR_SIMPLE_FORMAT = "yyyy-MM-dd"
     private const val PT_DATA_RANGE_DELIMITERS_REGEX = "\\b(?:\\sa\\s|\\se\\s)\\b"
     private const val PT_DATE_DELIMITER = " de "
-    private val ptDataRangeDelimiters =
-        listOf(" a ", " e ")
 
     /**
      * Locale definition  follows IETF BCP 47 Language Tags
@@ -55,31 +53,30 @@ object DateUtils {
      * Gets a Date Range from a String based on a Range Delimiter
      * If the delimiter doesn't exist then end date is equal to begin date
      */
-    fun getDateRange(eventDateString: String): List<Date> {
-        val dates = mutableListOf<Date>()
+    fun getDateRange(eventDateString: String): IntervalDate {
+        val fromDate: Date
+        val toDate: Date
 
         if (isDateRange(eventDateString)) {
 
             val list = eventDateString.lowercase().split(PT_DATA_RANGE_DELIMITERS_REGEX.toRegex())
 
-            val endDate = getDateFrom(list[1])
+            toDate = getDateFrom(list[1])
             val calendar = Calendar.getInstance()
-            calendar.time = endDate
+            calendar.time = toDate
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
 
             // Begin date
-            dates.add(buildBeginDate(list[0], month, year))
+            fromDate = buildBeginDate(list[0], month, year)
 
             // End date
-            dates.add(endDate)
         } else {
-            val singleDate = getDateFrom(eventDateString)
-            dates.add(singleDate)
-            dates.add(singleDate)
+            fromDate = getDateFrom(eventDateString)
+            toDate = fromDate
         }
 
-        return dates.toList()
+        return IntervalDate(fromDate, toDate)
     }
 
     private fun buildBeginDate(string: String, month: Int, year: Int): Date {
@@ -100,3 +97,8 @@ object DateUtils {
         return DateFormatSymbols(locale).months[month]
     }
 }
+
+data class IntervalDate(
+    val from: Date,
+    val to: Date
+)
