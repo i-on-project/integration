@@ -1,5 +1,6 @@
 package org.ionproject.integration.job
 
+import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.dispatcher.AcademicCalendarData
 import org.ionproject.integration.dispatcher.IAcademicCalendarDispatcher
 import org.ionproject.integration.dispatcher.OutputFormat
@@ -30,6 +31,7 @@ import javax.sql.DataSource
 class ISELAcademicCalendarJob(
     val jobBuilderFactory: JobBuilderFactory,
     val stepBuilderFactory: StepBuilderFactory,
+    val properties: AppProperties,
     @Autowired
     val ds: DataSource
 ) {
@@ -54,7 +56,7 @@ class ISELAcademicCalendarJob(
     fun downloadCalendarPDFTasklet() = stepBuilderFactory.get("Download Calendar PDF")
         .tasklet { stepContribution, chunkContext ->
             val pdfChecker = PDFBytesFormatChecker()
-            val downloader = FileDownloaderImpl(pdfChecker)
+            val downloader = FileDownloaderImpl(pdfChecker, properties.timeoutInSeconds)
             val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
             DownloadAndCompareTasklet(downloader, fileComparator).execute(stepContribution, chunkContext)
         }
