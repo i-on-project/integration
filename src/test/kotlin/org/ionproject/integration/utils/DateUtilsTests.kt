@@ -85,11 +85,11 @@ class DateUtilsTests {
         val stringDateRange = "11 de maio a 17 de maio de 1982"
 
         // Act
-        val dateList = DateUtils.getDateRange(stringDateRange)
+        val intervalDate = DateUtils.getDateRange(stringDateRange)
 
         // Assert
-        assertEquals("1982-05-11", DateUtils.getDateRepresentation(dateList[0]))
-        assertEquals("1982-05-17", DateUtils.getDateRepresentation(dateList[1]))
+        assertEquals("1982-05-11", DateUtils.getDateRepresentation(intervalDate.from))
+        assertEquals("1982-05-17", DateUtils.getDateRepresentation(intervalDate.to))
     }
 
     @Test
@@ -98,11 +98,11 @@ class DateUtilsTests {
         val stringDateRange = "11 de maio de 1982 a 17 de maio de 1983"
 
         // Act
-        val dateList = DateUtils.getDateRange(stringDateRange)
+        val intervalDate = DateUtils.getDateRange(stringDateRange)
 
         // Assert
-        assertEquals("1982-05-11", DateUtils.getDateRepresentation(dateList[0]))
-        assertEquals("1983-05-17", DateUtils.getDateRepresentation(dateList[1]))
+        assertEquals("1982-05-11", DateUtils.getDateRepresentation(intervalDate.from))
+        assertEquals("1983-05-17", DateUtils.getDateRepresentation(intervalDate.to))
     }
 
     @Test
@@ -125,11 +125,11 @@ class DateUtilsTests {
         val stringDateRange = "11 de maio de 1982"
 
         // Act
-        val dateList = DateUtils.getDateRange(stringDateRange)
+        val intervalDate = DateUtils.getDateRange(stringDateRange)
 
         // Assert
-        assertEquals("1982-05-11", DateUtils.getDateRepresentation(dateList[0]))
-        assertEquals("1982-05-11", DateUtils.getDateRepresentation(dateList[1]))
+        assertEquals("1982-05-11", DateUtils.getDateRepresentation(intervalDate.from))
+        assertEquals("1982-05-11", DateUtils.getDateRepresentation(intervalDate.to))
     }
 
     @Test
@@ -138,11 +138,11 @@ class DateUtilsTests {
         val stringDateRange = "11 e 12 de maio de 1982"
 
         // Act
-        val dateList = DateUtils.getDateRange(stringDateRange)
+        val intervalDate = DateUtils.getDateRange(stringDateRange)
 
         // Assert
-        assertEquals("1982-05-11", DateUtils.getDateRepresentation(dateList[0]))
-        assertEquals("1982-05-12", DateUtils.getDateRepresentation(dateList[1]))
+        assertEquals("1982-05-11", DateUtils.getDateRepresentation(intervalDate.from))
+        assertEquals("1982-05-12", DateUtils.getDateRepresentation(intervalDate.to))
     }
 
     @Test
@@ -151,10 +151,10 @@ class DateUtilsTests {
         val stringDateRange = "11 a 17 de maio de 1982"
 
         // Act
-        val dateList = DateUtils.getDateRange(stringDateRange)
+        val intervalDate = DateUtils.getDateRange(stringDateRange)
 
         // Assert
-        assertEquals("1982-05-11", DateUtils.getDateRepresentation(dateList[0]))
-        assertEquals("1982-05-17", DateUtils.getDateRepresentation(dateList[1]))
+        assertEquals("1982-05-11", DateUtils.getDateRepresentation(intervalDate.from))
+        assertEquals("1982-05-17", DateUtils.getDateRepresentation(intervalDate.to))
     }
 }
