@@ -81,14 +81,14 @@ object DateUtils {
 
     private fun buildBeginDate(string: String, month: Int, year: Int): Date {
         if (string.length <= 2)
-            return getDateFrom(string + PT_DATE_DELIMITER + getMonth(month) + PT_DATE_DELIMITER + year)
+            return getDateFrom(string + PT_DATE_DELIMITER + getMonthName(month) + PT_DATE_DELIMITER + year)
         else if (string.trim().takeLast(4).toIntOrNull() == null)
             return getDateFrom(string + PT_DATE_DELIMITER + year)
         else
             return getDateFrom(string)
     }
 
-    private fun getMonth(month: Int): String {
+    private fun getMonthName(month: Int): String {
         val locale = Locale
             .Builder()
             .setLanguageTag("pt")
