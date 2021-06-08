@@ -38,6 +38,8 @@ data class AcademicCalendarData(
     private val dto: CalendarDto
 ) : ParsedData(dto) {
     companion object Factory {
+        private const val ACADEMIC_YEAR_LENGTH = 9
+
         fun from(calendarDto: CalendarDto): AcademicCalendarData =
             AcademicCalendarData(
                 InstitutionMetadata(
@@ -45,7 +47,7 @@ data class AcademicCalendarData(
                     calendarDto.school.acr,
                     Institution.valueOf(calendarDto.school.acr).identifier
                 ),
-                calendarDto.terms.first().calendarTerm.take(9),
+                calendarDto.terms.first().calendarTerm.take(ACADEMIC_YEAR_LENGTH),
                 calendarDto
             )
     }
