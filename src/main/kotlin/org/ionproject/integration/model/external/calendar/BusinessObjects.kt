@@ -9,11 +9,11 @@ import org.ionproject.integration.utils.RegexUtils
 import java.util.Date
 
 data class AcademicCalendar(
-    var creationDateTime: String = "",
-    var retrievalDateTime: String = "",
-    var school: School = School(),
-    var language: Language = Language.PT,
-    var terms: List<Term> = listOf()
+    val creationDateTime: String = "",
+    val retrievalDateTime: String = "",
+    val school: School = School(),
+    val language: Language = Language.PT,
+    val terms: List<Term> = listOf()
 ) {
     companion object {
         private const val EVENT_REGEX = """(?<=text":")[^"{}]+"""
