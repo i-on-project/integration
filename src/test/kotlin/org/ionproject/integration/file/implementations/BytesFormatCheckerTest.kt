@@ -23,6 +23,13 @@ class BytesFormatCheckerTest {
     }
 
     @Test
+    fun `when file is not a PDF 2 file then check returns false`() {
+        val file = File("src/test/resources/simple_2_0_pdf_file.pdf")
+        val result = checker.isValidFormat(file.readBytes())
+        assertFalse(result)
+    }
+
+    @Test
     fun `when file is not a PDF file then check returns false`() {
         val file = File("src/test/resources/not_a_pdf.txt")
         val result = checker.isValidFormat(file.readBytes())
