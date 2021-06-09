@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service
 @Service
 class PDFBytesFormatChecker : IBytesFormatChecker {
     private val PDF_HEADER = "%PDF-1."
-    private val MINIMUM_PDF_VERSION = '0'
-    private val MAXIMUM_PDF_VERSION = '7'
-    private val MAJOR_PDF_VERSION = '1'
+    private val MINIMUM_PDF_VERSION = 0
+    private val MAXIMUM_PDF_VERSION = 7
+    private val MAJOR_PDF_VERSION = 1
     private val HEADER_MIN_VERSION_POSITION = 7
     private val HEADER_MAJOR_VERSION_POSITION = 5
     private val HEADER_RANGE = 0..6
@@ -29,11 +29,11 @@ class PDFBytesFormatChecker : IBytesFormatChecker {
         return majorVersion == MAJOR_PDF_VERSION && minorVersion in MINIMUM_PDF_VERSION..MAXIMUM_PDF_VERSION
     }
 
-    private fun getMinorVersion(bytes: ByteArray): Char =
-        bytes[HEADER_MIN_VERSION_POSITION].toInt().toChar()
+    private fun getMinorVersion(bytes: ByteArray): Int =
+        bytes[HEADER_MIN_VERSION_POSITION].toInt().toChar().digitToInt()
 
-    private fun getMajorVersion(bytes: ByteArray): Char =
-        bytes[HEADER_MAJOR_VERSION_POSITION].toInt().toChar()
+    private fun getMajorVersion(bytes: ByteArray): Int =
+        bytes[HEADER_MAJOR_VERSION_POSITION].toInt().toChar().digitToInt()
 
     private fun getFileHeader(bytes: ByteArray): String {
         val headerBytes: ByteArray = bytes.slice(HEADER_RANGE).toByteArray()
