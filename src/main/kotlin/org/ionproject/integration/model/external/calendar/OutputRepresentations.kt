@@ -3,7 +3,7 @@ package org.ionproject.integration.model.external.calendar
 import org.ionproject.integration.model.external.timetable.SchoolDto
 import org.ionproject.integration.utils.DateUtils
 
-data class CalendarDto(
+data class AcademicCalendarDto(
     val creationDateTime: String,
     val retrievalDateTime: String,
     val school: SchoolDto,
@@ -11,8 +11,8 @@ data class CalendarDto(
     val terms: List<TermDto>
 ) {
     companion object {
-        fun from(academicCalendar: AcademicCalendar): CalendarDto {
-            return CalendarDto(
+        fun from(academicCalendar: AcademicCalendar): AcademicCalendarDto {
+            return AcademicCalendarDto(
                 academicCalendar.creationDateTime,
                 academicCalendar.retrievalDateTime,
                 SchoolDto(academicCalendar.school.name, academicCalendar.school.acr),

@@ -12,7 +12,7 @@ import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
 import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
-import org.ionproject.integration.model.external.calendar.CalendarDto
+import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
 import org.ionproject.integration.model.internal.calendar.isel.RawCalendarData
 import org.ionproject.integration.step.tasklet.iseltimetable.implementations.DownloadAndCompareTasklet
 import org.ionproject.integration.utils.Try
@@ -118,7 +118,7 @@ class ISELAcademicCalendarJob(
     @Bean
     fun createCalendarPDFDtoTasklet() = stepBuilderFactory.get("Create DTO from Calendar Business Objects")
         .tasklet { _, _ ->
-            State.academicCalendarDto = CalendarDto.from(State.academicCalendar)
+            State.academicCalendarDto = AcademicCalendarDto.from(State.academicCalendar)
             RepeatStatus.FINISHED
         }
         .build()
@@ -143,6 +143,6 @@ class ISELAcademicCalendarJob(
     object State {
         lateinit var rawCalendarData: RawCalendarData
         lateinit var academicCalendar: AcademicCalendar
-        lateinit var academicCalendarDto: CalendarDto
+        lateinit var academicCalendarDto: AcademicCalendarDto
     }
 }
