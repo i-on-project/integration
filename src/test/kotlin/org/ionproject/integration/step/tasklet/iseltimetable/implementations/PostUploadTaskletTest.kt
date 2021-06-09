@@ -1,18 +1,11 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
-import com.icegreen.greenmail.util.DummySSLSocketFactory
-import com.icegreen.greenmail.util.GreenMail
-import com.icegreen.greenmail.util.GreenMailUtil
-import com.icegreen.greenmail.util.ServerSetupTest
-import java.security.Security
 import java.time.Instant
-import javax.mail.internet.MimeMessage
 import javax.sql.DataSource
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.job.ISELTimetable
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -68,27 +61,14 @@ internal class PostUploadTaskletTest {
         jobLauncherTestUtils.jobRepository = jobRepository
         jobLauncherTestUtils.job = job
     }
+
     @Autowired
     lateinit var ds: DataSource
 
     val utils = SpringBatchTestUtils()
 
-    private lateinit var testSmtp: GreenMail
-
-    @BeforeEach
-    fun testSmtpInit() {
-        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
-        testSmtp = GreenMail(ServerSetupTest.SMTP)
-        testSmtp.start()
-    }
-
-    @AfterEach
-    fun stopMailServer() {
-        testSmtp.stop()
-    }
     @Test
-    fun whenHashIsSuccessFullyInserted_theAssertStatusCompletedAndRecordedHashIsEqualToExpectedHash() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+    fun `when successful then check file hash is inserted and job is completed`() {
         val hr = HashRepositoryImpl(ds)
         val jobId = "PostUploadTest"
         val expectedHash = byteArrayOf(1, 2, 3)
@@ -96,7 +76,7 @@ internal class PostUploadTaskletTest {
         val se = utils.createStepExecution()
         se.jobExecution.executionContext.put("file-hash", expectedHash)
 
-        var je = jobLauncherTestUtils.launchStep("PostUpload", jp, se.jobExecution.executionContext)
+        val je = jobLauncherTestUtils.launchStep("PostUpload", jp, se.jobExecution.executionContext)
 
         val recordedHash = hr.fetchHash(jobId)
         assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)
@@ -105,14 +85,13 @@ internal class PostUploadTaskletTest {
     }
 
     @Test
-    fun whenNoHashIsOnContext_thenThrowTypeCasExceptionAndAssertNoHashInDb() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+    fun `when file hash doesnt exist then throw exception and assert hash isn't inserted in the database`() {
         val hr = HashRepositoryImpl(ds)
         val jobId = "PostUploadTest2"
         val jp = initJobParameters(jobId)
         val se = utils.createStepExecution()
 
-        var je = jobLauncherTestUtils.launchStep("PostUpload", jp, se.jobExecution.executionContext)
+        val je = jobLauncherTestUtils.launchStep("PostUpload", jp, se.jobExecution.executionContext)
 
         val ex = je.allFailureExceptions[0]
         assertEquals("NullPointerException", ex::class.java.simpleName)
@@ -121,10 +100,10 @@ internal class PostUploadTaskletTest {
         val recordedHash = hr.fetchHash(jobId)
         assertNull(recordedHash)
     }
+
     @Test
     @Sql("insert-hash-post-upload-test.sql")
-    fun whenThereIsAlreadyAnHash_ThenMakeSureItWasReplaced() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
+    fun `when file hash already exists then it is replaced`() {
         val hr = HashRepositoryImpl(ds)
         val jobId = "PostUploadTest3"
         val hashBefore = hr.fetchHash(jobId)
@@ -134,30 +113,13 @@ internal class PostUploadTaskletTest {
         val se = utils.createStepExecution()
         se.jobExecution.executionContext.put("file-hash", expectedHash)
 
-        var je = jobLauncherTestUtils.launchStep("PostUpload", jp, se.jobExecution.executionContext)
+        val je = jobLauncherTestUtils.launchStep("PostUpload", jp, se.jobExecution.executionContext)
 
         val recordedHash = hr.fetchHash(jobId)
         assertEquals(ExitStatus.COMPLETED.exitCode, je.exitStatus.exitCode)
         assertNotNull(recordedHash)
         assertTrue(expectedHash.contentEquals(recordedHash!!))
         assertNotEquals(hashBefore, recordedHash)
-    }
-
-    @Test
-    fun whenTaskletSucceeds_thenAssertEmailWasSent() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-        val jobId = "PostUploadEmailSentTest"
-        val expectedHash = byteArrayOf(1, 2, 3)
-        val jp = initJobParameters(jobId)
-        val se = utils.createStepExecution()
-        se.jobExecution.executionContext.put("file-hash", expectedHash)
-
-        jobLauncherTestUtils.launchStep("PostUpload", jp, se.jobExecution.executionContext)
-
-        val messages: Array<MimeMessage> = testSmtp.receivedMessages
-        assertEquals(1, messages.size)
-        assertEquals("i-on integration Alert - Job COMPLETED_SUCCESSFULLY", messages[0].subject)
-        assertTrue(GreenMailUtil.getBody(messages[0]).contains("TestJob COMPLETED_SUCCESSFULLY for file: LEIC_0310.pdf"))
     }
 
     private fun initJobParameters(jobId: String): JobParameters {
