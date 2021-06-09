@@ -80,24 +80,8 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 
     val utils = SpringBatchTestUtils()
 
-    private lateinit var testSmtp: GreenMail
-
-    @BeforeEach
-    fun testSmtpInit() {
-        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
-        testSmtp = GreenMail(ServerSetupTest.SMTP)
-        testSmtp.start()
-    }
-
-    @AfterEach
-    fun stopMailServer() {
-        testSmtp.stop()
-    }
-
     @Test
-    @Disabled
     fun whenTaskletIsUnsuccessful_ThenAssertPathIsInContextAndFileExists() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters("1")
@@ -117,9 +101,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 
     @Test
     @Sql("insert-timetable-pdf-hash.sql")
-    @Disabled
     fun whenHashIsSameAsRecorded_ThenExitStatusIsStopped() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
         val jp = initJobParameters("2")
@@ -131,31 +113,6 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
             assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
             assertEquals(expectedPath, je.executionContext[pathKey])
             assertFalse(file.exists())
-        } finally {
-            file.delete()
-        }
-    }
-
-    @Test
-    @Sql("insert-timetable-pdf-hash-2.sql")
-    @Disabled
-    fun whenTaskletIsSuccessful_ThenAssertMailWasSent() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-        val pathKey = "file-path"
-        val ec = utils.createExecutionContext()
-        val jp = initJobParameters("3")
-        val file = File(appProperties.tempFilesDir.path + File.separator + "LEIC_0310.pdf")
-        val expectedPath = file.toPath()
-        try {
-
-            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
-
-            assertEquals(ExitStatus.STOPPED.exitCode, je.exitStatus.exitCode)
-            assertEquals(expectedPath, je.executionContext[pathKey])
-            assertFalse(file.exists())
-
-            val messages: Array<MimeMessage> = testSmtp.receivedMessages
-            assertEquals(0, messages.size)
         } finally {
             file.delete()
         }
@@ -204,23 +161,8 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
     val utils = SpringBatchTestUtils()
 
-    private lateinit var testSmtp: GreenMail
-
-    @BeforeEach
-    fun testSmtpInit() {
-        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
-        testSmtp = GreenMail(ServerSetupTest.SMTP)
-        testSmtp.start()
-    }
-
-    @AfterEach
-    fun stopMailServer() {
-        testSmtp.stop()
-    }
-
     @Test
     fun whenUrlIsNotDefined_ThenReturnsIllegalArgumentExceptionAndPathIsNotIncludedInContext() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val localFileDestination = "src/test/resources/TIMETABLE.pdf"
         val pathKey = "file-path"
         val file = File(localFileDestination)
@@ -368,6 +310,7 @@ internal class DownloadAndCompareTaskletServerErrorTest {
     }
 
     @Test
+    @Disabled
     fun whenServerResponds5xx_ThenAssertExceptionIsServerErrorAndPathIsNotInContext() {
         testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val localFileDestination = "src/test/resources/SERVER_DOWN.pdf"
