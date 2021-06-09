@@ -6,10 +6,12 @@ import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.file.interfaces.IBytesFormatChecker
 import org.ionproject.integration.file.interfaces.IFileComparator
 import org.ionproject.integration.file.interfaces.IFileDownloader
+import org.ionproject.integration.format.exceptions.FormatCheckException
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
 import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.EmailUtils
 import org.ionproject.integration.utils.JobResult
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.StepContribution
@@ -35,7 +37,7 @@ class DownloadAndCompareTasklet(
     private val fileComparator: IFileComparator
 ) : Tasklet, StepExecutionListener {
 
-    val log = LoggerFactory.getLogger(DownloadAndCompareTasklet::class.java)
+    val log: Logger = LoggerFactory.getLogger(DownloadAndCompareTasklet::class.java)
 
     @Value("#{jobParameters['srcRemoteLocation']}")
     private lateinit var srcRemoteLocation: URI
@@ -83,7 +85,8 @@ class DownloadAndCompareTasklet(
             )
         chunkContext.stepContext.stepExecution.jobExecution.executionContext.put("file-path", path)
 
-        formatChecker.isValidFormat(path.toFile().readBytes())
+        if (!formatChecker.isValidFormat(path.toFile().readBytes()))
+            throw FormatCheckException("${path.fileName} is not a valid PDF file")
 
         fileIsEqualToLast = fileComparator.compare(file, jobId)
             .match(

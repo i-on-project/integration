@@ -65,7 +65,6 @@ class ISELTimetable(
     @Bean
     fun downloadAndCompareTasklet(): DownloadAndCompareTasklet {
         val pdfChecker = PDFBytesFormatChecker()
-        // FileDownloaderImpl(pdfChecker, properties.timeoutInSeconds)
         val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
         return DownloadAndCompareTasklet(downloader, pdfChecker, fileComparator)
     }
