@@ -1,6 +1,6 @@
 package org.ionproject.integration.dispatcher
 
-import org.ionproject.integration.model.external.calendar.CalendarDto
+import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
 import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.ionproject.integration.utils.Institution
 
@@ -35,20 +35,20 @@ data class TimetableData(
 data class AcademicCalendarData(
     val institution: InstitutionMetadata,
     val academicYear: String,
-    private val dto: CalendarDto
+    private val dto: AcademicCalendarDto
 ) : ParsedData(dto) {
     companion object Factory {
         private const val ACADEMIC_YEAR_LENGTH = 9
 
-        fun from(calendarDto: CalendarDto): AcademicCalendarData =
+        fun from(academicCalendarDto: AcademicCalendarDto): AcademicCalendarData =
             AcademicCalendarData(
                 InstitutionMetadata(
-                    calendarDto.school.name,
-                    calendarDto.school.acr,
-                    Institution.valueOf(calendarDto.school.acr).identifier
+                    academicCalendarDto.school.name,
+                    academicCalendarDto.school.acr,
+                    Institution.valueOf(academicCalendarDto.school.acr).identifier
                 ),
-                calendarDto.terms.first().calendarTerm.take(ACADEMIC_YEAR_LENGTH),
-                calendarDto
+                academicCalendarDto.terms.first().calendarTerm.take(ACADEMIC_YEAR_LENGTH),
+                academicCalendarDto
             )
     }
 }
