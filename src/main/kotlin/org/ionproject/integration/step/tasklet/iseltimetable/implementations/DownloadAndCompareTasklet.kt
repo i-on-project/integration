@@ -3,9 +3,9 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 import org.ionproject.integration.alert.implementations.EmailAlertChannel
 import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.config.AppProperties
+import org.ionproject.integration.file.interfaces.IBytesFormatChecker
 import org.ionproject.integration.file.interfaces.IFileComparator
 import org.ionproject.integration.file.interfaces.IFileDownloader
-import org.ionproject.integration.model.internal.generic.JobType
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
 import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.EmailUtils
@@ -31,6 +31,7 @@ import java.nio.file.Paths
 @StepScope
 class DownloadAndCompareTasklet(
     private val downloader: IFileDownloader,
+    private val formatChecker: IBytesFormatChecker,
     private val fileComparator: IFileComparator
 ) : Tasklet, StepExecutionListener {
 
@@ -54,8 +55,6 @@ class DownloadAndCompareTasklet(
     private var fileIsEqualToLast: Boolean = false
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
-        val jobType = chunkContext.stepContext.jobParameters["jobType"] as String?
-        val jobTypeEnum = if (jobType != null) enumValueOf<JobType>(jobType) else null
         val jobName = chunkContext.stepContext.jobName
         val fileName = parseFileName(srcRemoteLocation)
         val outputDir = appProperties.tempFilesDir
@@ -73,7 +72,7 @@ class DownloadAndCompareTasklet(
             throw DownloadAndCompareTaskletException("File already exists in $localFileDestination")
         }
 
-        val path = downloader.download(srcRemoteLocation, localFileDestination, jobTypeEnum)
+        val path = downloader.download(srcRemoteLocation, localFileDestination)
             .match(
                 { it },
                 {
@@ -83,6 +82,8 @@ class DownloadAndCompareTasklet(
                 }
             )
         chunkContext.stepContext.stepExecution.jobExecution.executionContext.put("file-path", path)
+
+        formatChecker.isValidFormat(path.toFile().readBytes())
 
         fileIsEqualToLast = fileComparator.compare(file, jobId)
             .match(

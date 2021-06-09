@@ -3,8 +3,8 @@ package org.ionproject.integration.job
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.file.implementations.FileComparatorImpl
 import org.ionproject.integration.file.implementations.FileDigestImpl
-import org.ionproject.integration.file.implementations.FileDownloaderImpl
 import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
+import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.format.implementations.ISELTimetableFormatChecker
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
@@ -39,9 +39,11 @@ class ISELTimetable(
     val jobBuilderFactory: JobBuilderFactory,
     val stepBuilderFactory: StepBuilderFactory,
     val properties: AppProperties,
+    val downloader: IFileDownloader,
     @Autowired
     val ds: DataSource
 ) {
+
     @Bean
     fun timetableJob() = jobBuilderFactory.get("ISEL Timetable Batch Job")
         .start(taskletStep("Download And Compare", downloadAndCompareTasklet()))
@@ -63,9 +65,9 @@ class ISELTimetable(
     @Bean
     fun downloadAndCompareTasklet(): DownloadAndCompareTasklet {
         val pdfChecker = PDFBytesFormatChecker()
-        val downloader = FileDownloaderImpl(pdfChecker, properties.timeoutInSeconds)
+        // FileDownloaderImpl(pdfChecker, properties.timeoutInSeconds)
         val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
-        return DownloadAndCompareTasklet(downloader, fileComparator)
+        return DownloadAndCompareTasklet(downloader, pdfChecker, fileComparator)
     }
 
     @StepScope

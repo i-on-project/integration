@@ -1,9 +1,9 @@
 package org.ionproject.integration.file.implementations
 
-import org.ionproject.integration.file.exceptions.InvalidFormatException
 import org.ionproject.integration.file.interfaces.IBytesFormatChecker
-import org.ionproject.integration.model.internal.generic.JobType
+import org.springframework.stereotype.Service
 
+@Service
 class PDFBytesFormatChecker : IBytesFormatChecker {
     private val PDF_HEADER = "%PDF-1."
     private val MINIMUM_PDF_VERSION = '0'
@@ -12,14 +12,13 @@ class PDFBytesFormatChecker : IBytesFormatChecker {
     private val HEADER_RANGE = 0..6
     private val HEADER_LENGTH = 7
 
-    override fun checkFormat(bytes: ByteArray, jobType: JobType?) {
+    override fun isValidFormat(bytes: ByteArray): Boolean {
         if (bytes.size < HEADER_LENGTH)
-            throw InvalidFormatException("Downloaded content was not in the PDF format.")
+            return false
         val minorVersion: Char = bytes[HEADER_MIN_VERSION_POSITION].toInt().toChar()
         val headerBytes: ByteArray = bytes.slice(HEADER_RANGE).toByteArray()
         val header = String(headerBytes, Charsets.UTF_8)
-        val result = header == PDF_HEADER && minorVersion in MINIMUM_PDF_VERSION..MAXIMUM_PDF_VERSION
-        if (!result)
-            throw InvalidFormatException("Downloaded content was not in the PDF format.")
+
+        return header == PDF_HEADER && minorVersion in MINIMUM_PDF_VERSION..MAXIMUM_PDF_VERSION
     }
 }
