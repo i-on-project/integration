@@ -6,6 +6,7 @@ import org.ionproject.integration.model.internal.calendar.isel.RawCalendarData
 import org.ionproject.integration.utils.DateUtils
 import org.ionproject.integration.utils.RegexUtils
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 data class AcademicCalendar(
     val creationDateTime: String = "",
@@ -25,7 +26,7 @@ data class AcademicCalendar(
         fun from(rawCalendarData: RawCalendarData): AcademicCalendar =
             AcademicCalendar(
                 creationDateTime = rawCalendarData.creationDate,
-                retrievalDateTime = DateUtils.formatToISO8601(LocalDate.now()),
+                retrievalDateTime = DateUtils.formatToISO8601(ZonedDateTime.now()),
                 School(
                     "Instituto Superior de Engenharia de Lisboa",
                     "ISEL"
@@ -129,7 +130,11 @@ data class AcademicCalendar(
             }
         }
 
-        private fun isDuringLectures(eventDate: LocalDate, lectureBeginDate: LocalDate, lectureEndDate: LocalDate): Boolean =
+        private fun isDuringLectures(
+            eventDate: LocalDate,
+            lectureBeginDate: LocalDate,
+            lectureEndDate: LocalDate
+        ): Boolean =
             eventDate in lectureBeginDate..lectureEndDate
     }
 }

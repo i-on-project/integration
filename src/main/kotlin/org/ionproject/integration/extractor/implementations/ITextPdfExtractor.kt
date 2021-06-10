@@ -9,8 +9,8 @@ import org.ionproject.integration.extractor.exceptions.PdfExtractorException
 import org.ionproject.integration.extractor.interfaces.IPdfExtractor
 import org.ionproject.integration.utils.DateUtils
 import org.ionproject.integration.utils.Try
-import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Calendar
 
 class ITextPdfExtractor : IPdfExtractor {
@@ -47,6 +47,11 @@ class ITextPdfExtractor : IPdfExtractor {
         val creationDateString = pdfDocument.documentInfo.getMoreInfo(PdfName.CreationDate.value)
         val creationDateCalendar = PdfDate.decode(creationDateString) ?: Calendar.getInstance()
 
-        return DateUtils.formatToISO8601(LocalDate.ofInstant(creationDateCalendar.toInstant(), ZoneId.systemDefault()))
+        return DateUtils.formatToISO8601(
+            ZonedDateTime.ofInstant(
+                creationDateCalendar.toInstant(),
+                ZoneId.systemDefault()
+            )
+        )
     }
 }
