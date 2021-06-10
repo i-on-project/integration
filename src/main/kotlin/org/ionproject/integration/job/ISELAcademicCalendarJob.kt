@@ -8,8 +8,8 @@ import org.ionproject.integration.extractor.implementations.AcademicCalendarExtr
 import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
 import org.ionproject.integration.file.implementations.FileComparatorImpl
 import org.ionproject.integration.file.implementations.FileDigestImpl
-import org.ionproject.integration.file.implementations.FileDownloaderImpl
 import org.ionproject.integration.file.implementations.PDFBytesFormatChecker
+import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
 import org.ionproject.integration.model.external.calendar.CalendarDto
@@ -32,6 +32,7 @@ class ISELAcademicCalendarJob(
     val jobBuilderFactory: JobBuilderFactory,
     val stepBuilderFactory: StepBuilderFactory,
     val properties: AppProperties,
+    val downloader: IFileDownloader,
     @Autowired
     val ds: DataSource
 ) {
@@ -56,9 +57,8 @@ class ISELAcademicCalendarJob(
     fun downloadCalendarPDFTasklet() = stepBuilderFactory.get("Download Calendar PDF")
         .tasklet { stepContribution, chunkContext ->
             val pdfChecker = PDFBytesFormatChecker()
-            val downloader = FileDownloaderImpl(pdfChecker, properties.timeoutInSeconds)
             val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
-            DownloadAndCompareTasklet(downloader, fileComparator).execute(stepContribution, chunkContext)
+            DownloadAndCompareTasklet(downloader, pdfChecker, fileComparator).execute(stepContribution, chunkContext)
         }
         .build()
 
