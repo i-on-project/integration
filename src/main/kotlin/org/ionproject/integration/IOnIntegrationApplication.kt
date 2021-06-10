@@ -39,12 +39,12 @@ class JobEngine(
     @Autowired
     private lateinit var props: AppProperties
 
-    // @Scheduled(cron = "*/30 * * * * *")
-    // fun runTimetableJob() {
-    //     setUpAndRunJob("timetableJob", props.configFilesDirTimetableIsel.path)
-    // }
+    @Scheduled(cron = "* */10 * * * *")
+    fun runTimetableJob() {
+        setUpAndRunJob("timetableJob", props.configFilesDirTimetableIsel.path)
+    }
 
-    @Scheduled(cron = "*/60 * * * * *")
+    @Scheduled(cron = "* */10 * * * *")
     fun runCalendarJob() {
         setUpAndRunJob("calendarJob", props.configFilesDirCalendarIsel.path)
     }

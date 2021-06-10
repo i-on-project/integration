@@ -8,7 +8,7 @@ import org.ionproject.integration.dispatcher.OutputFormat
 import org.ionproject.integration.dispatcher.ProgrammeMetadata
 import org.ionproject.integration.dispatcher.Term
 import org.ionproject.integration.dispatcher.TimetableData
-import org.ionproject.integration.job.ISELTimetable
+import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.ionproject.integration.utils.Institution
 import org.slf4j.LoggerFactory
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component
 @Component
 @Scope(value = "prototype")
 class WriteFileTasklet(
-    private val state: ISELTimetable.State,
+    private val state: ISELTimetableJob.State,
     private val dispatcher: ITimetableDispatcher
 ) : Tasklet {
 

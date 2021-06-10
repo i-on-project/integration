@@ -4,7 +4,7 @@ import java.time.Instant
 import javax.sql.DataSource
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
-import org.ionproject.integration.job.ISELTimetable
+import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -32,7 +32,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
     classes = [
-        ISELTimetable::class,
+        ISELTimetableJob::class,
         PostUploadTasklet::class,
         IOnIntegrationApplication::class
     ]

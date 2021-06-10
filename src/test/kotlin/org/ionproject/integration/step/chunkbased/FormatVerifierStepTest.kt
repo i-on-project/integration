@@ -11,7 +11,7 @@ import java.security.Security
 import java.time.Instant
 import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
-import org.ionproject.integration.job.ISELTimetable
+import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.utils.CompositeException
 import org.junit.jupiter.api.AfterEach
@@ -37,7 +37,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
     classes = [
-        ISELTimetable::class,
+        ISELTimetableJob::class,
         FormatVerifierStepBuilder::class,
         IOnIntegrationApplication::class
     ]
@@ -66,7 +66,7 @@ internal class FormatVerifierStepTestSuccessful {
     }
 
     @Autowired
-    private lateinit var state: ISELTimetable.State
+    private lateinit var state: ISELTimetableJob.State
 
     private val utils = SpringBatchTestUtils()
     private val json =
@@ -126,7 +126,7 @@ internal class FormatVerifierStepTestSuccessful {
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
     classes = [
-        ISELTimetable::class,
+        ISELTimetableJob::class,
         FormatVerifierStepBuilder::class,
         IOnIntegrationApplication::class
     ]
@@ -203,7 +203,7 @@ internal class FormatVerifierStepTestUnexistingFile {
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
     classes = [
-        ISELTimetable::class,
+        ISELTimetableJob::class,
         FormatVerifierStepBuilder::class,
         IOnIntegrationApplication::class
     ]
@@ -318,7 +318,7 @@ internal class FormatVerifierStepTestInvalidFormat {
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
     classes = [
-        ISELTimetable::class,
+        ISELTimetableJob::class,
         FormatVerifierStepBuilder::class,
         IOnIntegrationApplication::class
     ]

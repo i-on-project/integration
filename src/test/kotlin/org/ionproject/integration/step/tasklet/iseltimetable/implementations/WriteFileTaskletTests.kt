@@ -2,7 +2,7 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
 import org.ionproject.integration.dispatcher.DispatchResult
 import org.ionproject.integration.dispatcher.ITimetableDispatcher
-import org.ionproject.integration.job.ISELTimetable
+import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.model.external.timetable.Programme
 import org.ionproject.integration.model.external.timetable.ProgrammeDto
 import org.ionproject.integration.model.external.timetable.School
@@ -62,7 +62,7 @@ internal class WriteFileTaskletTestFixtures {
 
 class WriteFileTaskletTests {
     @Autowired
-    private lateinit var state: ISELTimetable.State
+    private lateinit var state: ISELTimetableJob.State
 
     private lateinit var writeFileTaskletSuccess: WriteFileTasklet
     private lateinit var writeFileTaskletFailure: WriteFileTasklet

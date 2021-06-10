@@ -35,21 +35,21 @@ class ISELAcademicCalendarJob(
     val stepBuilderFactory: StepBuilderFactory,
     val properties: AppProperties,
     val downloader: IFileDownloader,
+    val dispatcher: IAcademicCalendarDispatcher,
     @Autowired
     val ds: DataSource
 ) {
 
-    lateinit var dispatcher: IAcademicCalendarDispatcher
+    // lateinit var dispatcher: IAcademicCalendarDispatcher
 
     @Bean
     fun calendarJob() = jobBuilderFactory.get("ISEL Academic Calendar Batch Job")
         .start(taskletStep("Download And Compare", downloadCalendarPDFAlternateTasklet()))
         .on("STOPPED").end()
         .next(extractCalendarPDFTasklet())
-        // .start(extractCalendarPDFTasklet())
         .next(createCalendarPDFBusinessObjectsTasklet())
         .next(createCalendarPDFDtoTasklet())
-        // .next(writeCalendarDTOToGitTasklet())
+        .next(writeCalendarDTOToGitTasklet())
         .next(sendNotificationsForCalendarJobTasklet())
         .build().build()
 

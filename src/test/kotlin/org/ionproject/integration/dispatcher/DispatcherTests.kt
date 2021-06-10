@@ -32,7 +32,8 @@ class DispatcherTests {
         on { gitBranchName } doReturn ""
         on { stagingDir } doReturn ""
         on { tempDir } doReturn ""
-        on { configDir } doReturn ""
+        on { configDirTimetableIsel } doReturn ""
+        on { configDirCalendarIsel } doReturn ""
         on { gitRepository } doReturn ""
         on { gitRepoUrl } doReturn ""
         on { gitUser } doReturn ""
@@ -44,7 +45,7 @@ class DispatcherTests {
 
     @Test
     fun `when given a working git handler then success`() {
-        val dispatcher = DispatcherImpl(mockWriter, getMockFactory(true)).apply { props = appProps }
+        val dispatcher = ISELTimetableDispatcherImpl(mockWriter, getMockFactory(true)).apply { props = appProps }
         val outcome = dispatcher.dispatch(meta, OutputFormat.YAML)
 
         assertEquals(DispatchResult.SUCCESS, outcome)
@@ -52,7 +53,7 @@ class DispatcherTests {
 
     @Test
     fun `when given a broken git handler then failure`() {
-        val dispatcher = DispatcherImpl(mockWriter, getMockFactory(false)).apply { props = appProps }
+        val dispatcher = ISELTimetableDispatcherImpl(mockWriter, getMockFactory(false)).apply { props = appProps }
         val outcome = dispatcher.dispatch(meta, OutputFormat.YAML)
 
         assertEquals(DispatchResult.FAILURE, outcome)
