@@ -2,7 +2,7 @@ package org.ionproject.integration.step.chunkbased.processor
 
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.format.exceptions.FormatCheckException
-import org.ionproject.integration.job.ISELTimetable
+import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
@@ -20,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
     classes = [
-        ISELTimetable::class,
+        ISELTimetableJob::class,
         FormatVerifierProcessor::class,
         BatchAutoConfiguration::class,
         IOnIntegrationApplication::class

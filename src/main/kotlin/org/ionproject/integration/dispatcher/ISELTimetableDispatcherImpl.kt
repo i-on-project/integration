@@ -15,12 +15,12 @@ import java.time.format.DateTimeFormatter
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-class DispatcherImpl(
+class ISELTimetableDispatcherImpl(
     val timetableFileWriter: TimetableFileWriter,
     val gitFactory: IGitHandlerFactory
 ) : ITimetableDispatcher {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-    private val LOGGER = LoggerFactory.getLogger(DispatcherImpl::class.java)
+    private val LOGGER = LoggerFactory.getLogger(ISELTimetableDispatcherImpl::class.java)
 
     @Autowired
     internal lateinit var props: AppProperties

@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component
 import javax.sql.DataSource
 
 @Configuration
-class ISELTimetable(
+class ISELTimetableJob(
     val jobBuilderFactory: JobBuilderFactory,
     val stepBuilderFactory: StepBuilderFactory,
     val properties: AppProperties,

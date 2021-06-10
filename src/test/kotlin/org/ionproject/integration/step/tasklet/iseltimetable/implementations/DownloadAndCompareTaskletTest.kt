@@ -11,7 +11,7 @@ import java.time.Instant
 import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.config.AppProperties
-import org.ionproject.integration.job.ISELTimetable
+import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.utils.CompositeException
@@ -44,7 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
     classes = [
-        ISELTimetable::class,
+        ISELTimetableJob::class,
         DownloadAndCompareTasklet::class,
         IOnIntegrationApplication::class
     ]
@@ -131,7 +131,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
     classes = [
-        ISELTimetable::class,
+        ISELTimetableJob::class,
         DownloadAndCompareTasklet::class,
         IOnIntegrationApplication::class
     ]
@@ -189,7 +189,7 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
     classes = [
-        ISELTimetable::class,
+        ISELTimetableJob::class,
         DownloadAndCompareTasklet::class,
         IOnIntegrationApplication::class
     ]
@@ -265,7 +265,7 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
     classes = [
-        ISELTimetable::class,
+        ISELTimetableJob::class,
         DownloadAndCompareTasklet::class,
         IOnIntegrationApplication::class
     ]
