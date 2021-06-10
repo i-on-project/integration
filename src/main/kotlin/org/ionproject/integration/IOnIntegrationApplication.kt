@@ -1,8 +1,6 @@
 package org.ionproject.integration
 
 import org.ionproject.integration.config.AppProperties
-import java.io.File
-import java.time.Instant
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
@@ -18,6 +16,8 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.support.PropertiesLoaderUtils
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
+import java.io.File
+import java.time.Instant
 
 @SpringBootApplication
 @EnableBatchProcessing
@@ -39,15 +39,14 @@ class JobEngine(
     @Autowired
     private lateinit var props: AppProperties
 
-/*    @Scheduled(cron = "* * * * * *")
-    fun runTimetableJob() {
-        setUpAndRunJob("timetableJob", props.configFilesDir.path)
-    }*/
+    // @Scheduled(cron = "*/30 * * * * *")
+    // fun runTimetableJob() {
+    //     setUpAndRunJob("timetableJob", props.configFilesDirTimetableIsel.path)
+    // }
 
     @Scheduled(cron = "*/60 * * * * *")
     fun runCalendarJob() {
-        // setUpAndRunJob("calendarJob", props.configFilesDir.path)
-        setUpAndRunJob("calendarJob", "src\\main\\resources\\config\\calendar.isel")
+        setUpAndRunJob("calendarJob", props.configFilesDirCalendarIsel.path)
     }
 
     fun setUpAndRunJob(jobName: String, configPath: String) {

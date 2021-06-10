@@ -38,7 +38,7 @@ class DispatcherTests {
         on { gitUser } doReturn ""
         on { gitPassword } doReturn ""
         on { stagingFilesDir } doReturn Filepath(listOf("mock"))
-        on { configFilesDir } doReturn Filepath(listOf("mock"))
+        on { configFilesDirTimetableIsel } doReturn Filepath(listOf("mock"))
         on { tempFilesDir } doReturn Filepath(listOf("mock"))
     }
 
