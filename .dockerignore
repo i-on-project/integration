@@ -7,3 +7,4 @@
 build/
 git-server/*
 .env
+.jdk-overlay
