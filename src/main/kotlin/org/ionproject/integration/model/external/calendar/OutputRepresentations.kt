@@ -52,8 +52,8 @@ data class EventDto(
         fun from(events: List<Event>): List<EventDto> = events.map {
             EventDto(
                 it.name,
-                DateUtils.getDateRepresentation(it.startDate),
-                DateUtils.getDateRepresentation(it.endDate)
+                DateUtils.formatToCalendarDate(it.startDate),
+                DateUtils.formatToCalendarDate(it.endDate)
             )
         }
     }
@@ -69,8 +69,8 @@ data class EvaluationDto(
         fun from(evaluations: List<Evaluation>): List<EvaluationDto> = evaluations.map {
             EvaluationDto(
                 it.name,
-                DateUtils.getDateRepresentation(it.startDate),
-                DateUtils.getDateRepresentation(it.endDate),
+                DateUtils.formatToCalendarDate(it.startDate),
+                DateUtils.formatToCalendarDate(it.endDate),
                 it.duringLectures
             )
         }
@@ -88,8 +88,8 @@ data class DetailDto(
             DetailDto(
                 it.name,
                 it.curricularTerm.map { id -> IdDto(id) },
-                DateUtils.getDateRepresentation(it.startDate),
-                DateUtils.getDateRepresentation(it.endDate)
+                DateUtils.formatToCalendarDate(it.startDate),
+                DateUtils.formatToCalendarDate(it.endDate)
             )
         }
     }

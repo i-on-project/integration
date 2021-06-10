@@ -9,17 +9,6 @@ enum class Institution(val identifier: String) {
     ISEL("pt.ipl.isel")
 }
 
-object DateFormat {
-    init {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
-    }
-
-    private const val format = "yyyyMMdd'T'HHmmssX"
-    private val formatter = SimpleDateFormat(format)
-
-    fun format(date: Date): String = formatter.format(date)
-}
-
 object IgnoredWords {
     private val portugueseWords =
         listOf("de", "do", "da", "e", "o", "a", "para", "dos", "das", "dr", "dr.", "dra", "dra.", "em")

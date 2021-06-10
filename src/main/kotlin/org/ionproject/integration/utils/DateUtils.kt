@@ -1,19 +1,28 @@
 package org.ionproject.integration.utils
 
-import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.ZoneOffset
+import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.Calendar
-import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 object DateUtils {
+    init {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+    }
+
     private const val CALENDAR_SIMPLE_FORMAT = "yyyy-MM-dd"
     private const val PT_DATA_RANGE_DELIMITERS_REGEX = "\\b(?:\\sa\\s|\\se\\s)\\b"
     private const val PT_DATE_DELIMITER = " de "
+    private const val CALENDAR_ISO8601_FORMAT = "yyyyMMdd'T'HHmmssX"
+
+    private val localePT = Locale
+        .Builder()
+        .setLanguageTag("pt")
+        .setRegion("pt")
+        .build()
 
     /**
      * Locale definition  follows IETF BCP 47 Language Tags
@@ -24,27 +33,28 @@ object DateUtils {
      * In the future this object can be extended to support additional languages,
      * allowing to receive the language specification from documents
      */
-    fun getDateFrom(date: String): Date {
-        val locale = Locale
-            .Builder()
-            .setLanguageTag("pt")
-            .setRegion("pt")
-            .build()
-        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(locale)
+    fun getDateFrom(date: String): LocalDate {
+        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(localePT)
 
-        val localDate = LocalDate.parse(date.lowercase(locale), formatter)
+        val localDate = LocalDate.parse(date.lowercase(localePT), formatter)
 
         if (localDate.year < 1900)
             throw IllegalArgumentException("Invalid Year: ${localDate.year}")
 
-        return Date.from(localDate.atStartOfDay().toInstant(ZoneOffset.UTC))
+        return localDate
     }
 
     /**
-     * Converts a Date to String as per the format defined for JSON and YAML files.
+     * Converts a LocalDate to String as per the format defined for JSON and YAML files.
      */
-    fun getDateRepresentation(date: Date): String =
-        SimpleDateFormat(CALENDAR_SIMPLE_FORMAT).format(date)
+    fun formatToCalendarDate(localDate: LocalDate): String =
+        localDate.format(DateTimeFormatter.ofPattern(CALENDAR_SIMPLE_FORMAT, localePT))
+
+    /**
+     * Converts a LocalDate to String as per the format defined in ISO 8601.
+     */
+    fun formatToISO8601(localDate: LocalDate): String =
+        SimpleDateFormat(CALENDAR_ISO8601_FORMAT).format(localDate)
 
     fun isDateRange(eventDateString: String): Boolean =
         eventDateString.contains(PT_DATA_RANGE_DELIMITERS_REGEX.toRegex())
@@ -54,23 +64,18 @@ object DateUtils {
      * If the delimiter doesn't exist then end date is equal to begin date
      */
     fun getDateRange(eventDateString: String): IntervalDate {
-        val fromDate: Date
-        val toDate: Date
+        val fromDate: LocalDate
+        val toDate: LocalDate
 
         if (isDateRange(eventDateString)) {
 
             val list = eventDateString.lowercase().split(PT_DATA_RANGE_DELIMITERS_REGEX.toRegex())
 
+            // End date
             toDate = getDateFrom(list[1])
-            val calendar = Calendar.getInstance()
-            calendar.time = toDate
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)
 
             // Begin date
-            fromDate = buildBeginDate(list[0], month, year)
-
-            // End date
+            fromDate = buildBeginDate(list[0], toDate.month, toDate.year)
         } else {
             fromDate = getDateFrom(eventDateString)
             toDate = fromDate
@@ -79,26 +84,20 @@ object DateUtils {
         return IntervalDate(fromDate, toDate)
     }
 
-    private fun buildBeginDate(string: String, month: Int, year: Int): Date {
-        if (string.length <= 2)
-            return getDateFrom(string + PT_DATE_DELIMITER + getMonthName(month) + PT_DATE_DELIMITER + year)
-        else if (string.trim().takeLast(4).toIntOrNull() == null)
+    private fun buildBeginDate(string: String, month: Month, year: Int): LocalDate {
+        if (isMonthAndYearUnavailable(string))
+            return LocalDate.of(year, month, string.toInt())
+        else if (isYearUnavailable(string))
             return getDateFrom(string + PT_DATE_DELIMITER + year)
         else
             return getDateFrom(string)
     }
 
-    private fun getMonthName(month: Int): String {
-        val locale = Locale
-            .Builder()
-            .setLanguageTag("pt")
-            .setRegion("pt")
-            .build()
-        return DateFormatSymbols(locale).months[month]
-    }
+    private fun isYearUnavailable(string: String): Boolean = string.trim().takeLast(4).toIntOrNull() == null
+    private fun isMonthAndYearUnavailable(string: String): Boolean = string.length <= 2
 }
 
 data class IntervalDate(
-    val from: Date,
-    val to: Date
+    val from: LocalDate,
+    val to: LocalDate
 )
