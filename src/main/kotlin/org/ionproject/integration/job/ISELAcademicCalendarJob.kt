@@ -40,8 +40,6 @@ class ISELAcademicCalendarJob(
     val ds: DataSource
 ) {
 
-    // lateinit var dispatcher: IAcademicCalendarDispatcher
-
     @Bean
     fun calendarJob() = jobBuilderFactory.get("ISEL Academic Calendar Batch Job")
         .start(taskletStep("Download And Compare", downloadCalendarPDFAlternateTasklet()))
