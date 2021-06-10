@@ -1,8 +1,8 @@
 package org.ionproject.integration.utils
 
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Month
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -53,8 +53,8 @@ object DateUtils {
     /**
      * Converts a LocalDate to String as per the format defined in ISO 8601.
      */
-    fun formatToISO8601(localDate: LocalDate): String =
-        SimpleDateFormat(CALENDAR_ISO8601_FORMAT).format(localDate)
+    fun formatToISO8601(zonedDateTime: ZonedDateTime): String =
+        zonedDateTime.format(DateTimeFormatter.ofPattern(CALENDAR_ISO8601_FORMAT))
 
     fun isDateRange(eventDateString: String): Boolean =
         eventDateString.contains(PT_DATA_RANGE_DELIMITERS_REGEX.toRegex())

@@ -26,8 +26,8 @@ import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.generateAcronym
 import org.ionproject.integration.utils.orThrow
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZonedDateTime
 
 class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData> {
     companion object {
@@ -95,7 +95,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
     }
 
     private fun setCommonData(data: String, timetable: Timetable, courseTeacher: CourseTeacher) {
-        val retrievalDateTime = DateUtils.formatToISO8601(LocalDate.now())
+        val retrievalDateTime = DateUtils.formatToISO8601(ZonedDateTime.now())
         val school = RegexUtils.findMatches(SCHOOL_REGEX, data)[0].trimEnd()
         val programme = RegexUtils.findMatches(PROGRAMME_REGEX, data, RegexOption.MULTILINE)[0].trimEnd()
         val calendarTerm = RegexUtils.findMatches(CALENDAR_TERM_REGEX, data, RegexOption.MULTILINE)[0]
