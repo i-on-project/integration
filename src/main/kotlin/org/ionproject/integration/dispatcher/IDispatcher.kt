@@ -1,6 +1,6 @@
 package org.ionproject.integration.dispatcher
 
-import org.ionproject.integration.infrastructure.IntegrationException
+import org.ionproject.integration.infrastructure.error.ArgumentException
 import org.ionproject.integration.model.external.calendar.CalendarDto
 import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
 import org.ionproject.integration.model.external.timetable.TimetableDto
@@ -81,7 +81,7 @@ enum class OutputFormat(val extension: String) {
     companion object {
         fun of(name: String): OutputFormat =
             values().firstOrNull { it.name.equals(name.trim(), ignoreCase = true) }
-                ?: throw IntegrationException("Invalid format: $name")
+                ?: throw ArgumentException("Invalid format: $name")
     }
 }
 

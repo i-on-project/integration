@@ -2,7 +2,7 @@ package org.ionproject.integration.infrastructure.repository
 
 import org.ionproject.integration.domain.model.InstitutionModel
 import org.ionproject.integration.domain.model.SupportedInstitutions
-import org.ionproject.integration.infrastructure.IntegrationException
+import org.ionproject.integration.infrastructure.error.ArgumentException
 import org.springframework.stereotype.Service
 
 interface IInstitutionRepository {
@@ -15,5 +15,5 @@ class InstitutionRepositoryImpl : IInstitutionRepository {
         SupportedInstitutions.values()
             .map(SupportedInstitutions::institution)
             .firstOrNull { it.identifier == identifier }
-            ?: throw IntegrationException("Institution with identifier $identifier not found")
+            ?: throw ArgumentException("Institution with identifier $identifier not found")
 }

@@ -4,6 +4,7 @@ import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.dispatcher.OutputFormat
 import org.ionproject.integration.domain.model.InstitutionModel
 import org.ionproject.integration.domain.model.ProgrammeModel
+import org.ionproject.integration.infrastructure.error.ArgumentException
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
@@ -16,7 +17,14 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Profile
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.support.PropertiesLoaderUtils
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.context.request.WebRequest
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.io.File
 import java.time.Instant
 
@@ -26,6 +34,18 @@ class IOnIntegrationApplication
 
 fun main(args: Array<String>) {
     runApplication<IOnIntegrationApplication>(*args)
+}
+
+@ControllerAdvice
+class ErrorHandler : ResponseEntityExceptionHandler() {
+    private val logger = LoggerFactory.getLogger(ErrorHandler::class.java)
+
+    // TODO: Use json+problem (?)
+    @ExceptionHandler(value = [ArgumentException::class])
+    fun handle(exception: ArgumentException, request: WebRequest): ResponseEntity<Any> {
+        logger.error("Error processing request $request: ${exception.message}")
+        return handleExceptionInternal(exception, exception.message, HttpHeaders(), HttpStatus.BAD_REQUEST, request)
+    }
 }
 
 @Profile("!test")

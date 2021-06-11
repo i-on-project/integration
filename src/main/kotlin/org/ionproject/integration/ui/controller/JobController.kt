@@ -21,13 +21,8 @@ class JobController(
 
     @PostMapping("/${JobEngine.TIMETABLE_JOB_NAME}", consumes = ["application/json"])
     fun createTimetableJob(@RequestBody body: CreateTimetableJobDto): String {
-        val request = input.runCatching {
-            getTimetableJobRequest(body)
-        }.onFailure { logger.error("Failure parsing request: $body") }
-
-        if (request.isFailure) // TODO: Implement proper error handling
-            return "Error: ${request.exceptionOrNull()?.message ?: "Unknown error"}"
-        val requestResult = jobEngine.runTimetableJob(request.getOrThrow())
+        val request = input.getTimetableJobRequest(body)
+        val requestResult = jobEngine.runTimetableJob(request)
 
         return when (requestResult.result) {
             JobEngine.JobExecutionResult.CREATED -> "OK: ${requestResult.jobId}"
