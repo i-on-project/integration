@@ -1,5 +1,7 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import org.ionproject.integration.JobEngine.Companion.JOB_ID_PARAMETER
+import org.ionproject.integration.JobEngine.Companion.REMOTE_FILE_LOCATION_PARAMETER
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.file.interfaces.IBytesFormatChecker
 import org.ionproject.integration.file.interfaces.IFileComparator
@@ -33,10 +35,10 @@ class DownloadAndCompareTasklet(
 
     val log: Logger = LoggerFactory.getLogger(DownloadAndCompareTasklet::class.java)
 
-    @Value("#{jobParameters['srcRemoteLocation']}")
-    private lateinit var srcRemoteLocation: URI
+    @Value("#{jobParameters['$REMOTE_FILE_LOCATION_PARAMETER']}")
+    private lateinit var targetUri: URI
 
-    @Value("#{jobParameters['jobId']}")
+    @Value("#{jobParameters['$JOB_ID_PARAMETER']}")
     private lateinit var jobId: String
 
     @Autowired
@@ -45,8 +47,7 @@ class DownloadAndCompareTasklet(
     private var fileIsEqualToLast: Boolean = false
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
-        val jobName = chunkContext.stepContext.jobName
-        val fileName = parseFileName(srcRemoteLocation)
+        val fileName = parseFileName(targetUri)
         val outputDir = appProperties.tempFilesDir
         val localFileDestination: Path = Paths.get(outputDir.path, fileName)
 
@@ -62,7 +63,7 @@ class DownloadAndCompareTasklet(
             throw DownloadAndCompareTaskletException("File already exists in $localFileDestination")
         }
 
-        val path = downloader.download(srcRemoteLocation, localFileDestination)
+        val path = downloader.download(targetUri, localFileDestination)
             .match(
                 { it },
                 {

@@ -6,7 +6,7 @@ data class ProgrammeModel(
     val institutionModel: InstitutionModel,
     val name: String,
     val acronym: String,
-    val timetableUrl: URI
+    val timetableUri: URI
 )
 
 // TODO: This should eventually be replaced by database data
