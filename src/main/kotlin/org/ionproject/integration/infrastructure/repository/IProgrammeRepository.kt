@@ -3,7 +3,7 @@ package org.ionproject.integration.infrastructure.repository
 import org.ionproject.integration.domain.model.InstitutionModel
 import org.ionproject.integration.domain.model.ProgrammeModel
 import org.ionproject.integration.domain.model.SupportedProgrammes
-import org.ionproject.integration.infrastructure.IntegrationException
+import org.ionproject.integration.infrastructure.error.ArgumentException
 import org.springframework.stereotype.Service
 
 interface IProgrammeRepository {
@@ -16,5 +16,5 @@ class ProgrammeRepositoryImpl : IProgrammeRepository {
         SupportedProgrammes.values()
             .map(SupportedProgrammes::programme)
             .firstOrNull { it.institutionModel == institution && it.acronym.equals(acronym, ignoreCase = true) }
-            ?: throw IntegrationException("Programme $acronym in institution ${institution.identifier} not found")
+            ?: throw ArgumentException("Programme $acronym in institution ${institution.identifier} not found")
 }
