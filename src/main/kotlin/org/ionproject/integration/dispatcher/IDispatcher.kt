@@ -1,5 +1,7 @@
 package org.ionproject.integration.dispatcher
 
+import org.ionproject.integration.infrastructure.IntegrationException
+import org.ionproject.integration.model.external.calendar.CalendarDto
 import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
 import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.ionproject.integration.utils.Institution
@@ -74,7 +76,13 @@ data class CalendarTerm(
 
 enum class OutputFormat(val extension: String) {
     YAML(".yml"),
-    JSON(".json")
+    JSON(".json");
+
+    companion object {
+        fun of(name: String): OutputFormat =
+            values().firstOrNull { it.name.equals(name.trim(), ignoreCase = true) }
+                ?: throw IntegrationException("Invalid format: $name")
+    }
 }
 
 enum class DispatchResult {
