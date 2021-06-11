@@ -1,16 +1,11 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
-import org.ionproject.integration.alert.implementations.EmailAlertChannel
-import org.ionproject.integration.alert.implementations.EmailAlertService
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.file.interfaces.IBytesFormatChecker
 import org.ionproject.integration.file.interfaces.IFileComparator
 import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.format.exceptions.FormatCheckException
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
-import org.ionproject.integration.utils.CompositeException
-import org.ionproject.integration.utils.EmailUtils
-import org.ionproject.integration.utils.JobResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.ExitStatus
@@ -23,7 +18,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.stereotype.Component
 import java.net.URI
 import java.nio.file.Path
@@ -45,14 +39,8 @@ class DownloadAndCompareTasklet(
     @Value("#{jobParameters['jobId']}")
     private lateinit var jobId: String
 
-    @Value("#{jobParameters['alertRecipient']}")
-    private lateinit var alertRecipient: String
-
     @Autowired
     private lateinit var appProperties: AppProperties
-
-    @Autowired
-    private lateinit var sender: JavaMailSenderImpl
 
     private var fileIsEqualToLast: Boolean = false
 
@@ -79,7 +67,6 @@ class DownloadAndCompareTasklet(
                 { it },
                 {
                     file.delete()
-                    selectMessageFromExceptionAndSendEmail(jobName, it, fileName)
                     throw it
                 }
             )
@@ -99,7 +86,6 @@ class DownloadAndCompareTasklet(
                 },
                 {
                     path.toFile().delete()
-                    selectMessageFromExceptionAndSendEmail(jobName, it, fileName)
                     throw it
                 }
             )
@@ -119,29 +105,5 @@ class DownloadAndCompareTasklet(
     private fun parseFileName(uri: URI): String {
         val path = uri.path
         return path.substring(path.lastIndexOf('/') + 1, path.length)
-    }
-
-    private fun selectMessageFromExceptionAndSendEmail(jobName: String, e: Exception, asset: String) {
-        if (e is CompositeException) {
-            val msg = e.exceptions[0].message
-            sendEmail(jobName, msg!!, asset)
-        } else {
-            sendEmail(jobName, e.message!!, asset)
-        }
-        log.info("Email sent successfully")
-    }
-
-    private fun sendEmail(jobName: String, msg: String, asset: String) {
-        val conf =
-            EmailUtils.configure(
-                jobName,
-                JobResult.FAILED,
-                alertRecipient,
-                asset,
-                msg
-            )
-        val channel = EmailAlertChannel(conf, sender)
-        val alertService = EmailAlertService(channel)
-        alertService.sendEmail()
     }
 }

@@ -30,7 +30,7 @@ class JobController(
         }
     }
 
-    @PostMapping("/${JobEngine.ACADEMIC_CALENDAR_JOB_NAME}", consumes = ["application/json"])
+    @PostMapping("/${JobEngine.CALENDAR_JOB_NAME}", consumes = ["application/json"])
     fun createCalendarJob(@RequestBody job: String): String {
         return "Calendar OK"
     }

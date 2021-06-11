@@ -10,6 +10,7 @@ import java.security.Security
 import java.time.Instant
 import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
+import org.ionproject.integration.JobEngine.Companion.TIMESTAMP_PARAMETER
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
@@ -121,8 +122,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
     private fun initJobParameters(jobId: String): JobParameters {
         return JobParametersBuilder()
             .addString("srcRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
-            .addString("alertRecipient", "client@domain.com")
-            .addLong("timestamp", Instant.now().toEpochMilli())
+            .addLong(TIMESTAMP_PARAMETER, Instant.now().toEpochMilli())
             .addString("jobId", jobId)
             .toJobParameters()
     }
