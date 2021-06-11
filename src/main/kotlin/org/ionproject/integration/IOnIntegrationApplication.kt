@@ -7,7 +7,6 @@ import org.ionproject.integration.domain.model.ProgrammeModel
 import org.ionproject.integration.infrastructure.error.ArgumentException
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
-import org.springframework.batch.core.JobParameter
 import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.time.Instant
-import java.util.UUID
 
 @SpringBootApplication
 @EnableBatchProcessing
@@ -61,7 +59,6 @@ class JobEngine(
         const val CALENDAR_JOB_NAME = "calendar"
         const val TIMESTAMP_PARAMETER = "timestamp"
         const val REMOTE_FILE_LOCATION_PARAMETER = "srcRemoteLocation"
-        const val REQUEST_PARAMETER = "job_request"
         const val JOB_ID_PARAMETER = "jobId"
     }
 
@@ -80,13 +77,16 @@ class JobEngine(
         return runJob(CALENDAR_JOB_NAME, jobParams)
     }
 
-    class CustomJobParameter(val request: AbstractJobRequest) : JobParameter(UUID.randomUUID().toString())
-
     fun getJobParameters(request: AbstractJobRequest, jobName: String): JobParameters {
         val parametersBuilder = JobParametersBuilder()
 
+        val uri = when (request) {
+            is TimetableJobRequest -> request.programme.timetableUri
+            is CalendarJobRequest -> request.institution.academicCalendarUri
+        }
+
         parametersBuilder.addLong(TIMESTAMP_PARAMETER, Instant.now().epochSecond)
-        parametersBuilder.addParameter(REQUEST_PARAMETER, CustomJobParameter(request))
+        parametersBuilder.addString(REMOTE_FILE_LOCATION_PARAMETER, uri.toString())
 
         val jobHash = jobName.hashCode() + request.hashCode()
         parametersBuilder.addString(JOB_ID_PARAMETER, jobHash.toString())
@@ -96,7 +96,7 @@ class JobEngine(
 
     fun runJob(jobName: String, parameters: JobParameters): JobStatus {
         val jobExecution = runCatching {
-            val job = ctx.getBean(TIMETABLE_JOB_NAME, Job::class.java)
+            val job = ctx.getBean("${TIMETABLE_JOB_NAME}Job", Job::class.java)
             jobLauncher.run(job, parameters)
         }
             .onFailure { return JobStatus(result = JobExecutionResult.CREATION_FAILED) }
