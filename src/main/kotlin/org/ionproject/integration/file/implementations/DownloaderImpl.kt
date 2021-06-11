@@ -2,11 +2,10 @@ package org.ionproject.integration.file.implementations
 
 import org.ionproject.integration.file.interfaces.IFileDownloader
 import org.ionproject.integration.utils.Try
-import org.springframework.stereotype.Service
 import java.net.URI
 import java.nio.file.Path
 
-@Service
+// @Service
 class DownloaderImpl(val channelProvider: ChannelProvider) : IFileDownloader {
     override fun download(uri: URI, localDestination: Path): Try<Path> {
         channelProvider.getRemoteChannel(uri).use { remoteChannel ->
