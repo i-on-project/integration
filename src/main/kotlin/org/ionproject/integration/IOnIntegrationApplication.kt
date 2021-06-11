@@ -7,6 +7,8 @@ import org.ionproject.integration.domain.model.ProgrammeModel
 import org.ionproject.integration.infrastructure.error.ArgumentException
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
+import org.springframework.batch.core.JobParameter
+import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
 import org.springframework.batch.core.launch.JobLauncher
@@ -15,8 +17,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Profile
-import org.springframework.core.io.FileSystemResource
-import org.springframework.core.io.support.PropertiesLoaderUtils
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
-import java.io.File
 import java.time.Instant
+import java.util.UUID
 
 @SpringBootApplication
 @EnableBatchProcessing
@@ -57,8 +57,12 @@ class JobEngine(
 
     companion object {
         const val TIMETABLE_JOB_NAME = "timetable"
-        const val EXAM_SCHEDULE_JOB_NAME = "evaluation_schedule"
-        const val ACADEMIC_CALENDAR_JOB_NAME = "academic_calendar"
+        const val EVALUATION_JOB_NAME = "evaluation"
+        const val CALENDAR_JOB_NAME = "calendar"
+        const val TIMESTAMP_PARAMETER = "timestamp"
+        const val REMOTE_FILE_LOCATION_PARAMETER = "srcRemoteLocation"
+        const val REQUEST_PARAMETER = "job_request"
+        const val JOB_ID_PARAMETER = "jobId"
     }
 
     private val log = LoggerFactory.getLogger(IOnIntegrationApplication::class.java)
@@ -67,62 +71,91 @@ class JobEngine(
     private lateinit var props: AppProperties
 
     fun runTimetableJob(request: TimetableJobRequest): JobStatus {
-        return setUpAndRunJob("timetableJob", props.configFilesDirTimetableIsel.path)
+        val jobParams = getJobParameters(request, TIMETABLE_JOB_NAME)
+        return runJob(TIMETABLE_JOB_NAME, jobParams)
     }
 
     fun runCalendarJob(request: CalendarJobRequest): JobStatus {
-        return setUpAndRunJob("calendarJob", props.configFilesDirCalendarIsel.path)
+        val jobParams = getJobParameters(request, CALENDAR_JOB_NAME)
+        return runJob(CALENDAR_JOB_NAME, jobParams)
     }
 
-    fun setUpAndRunJob(jobName: String, configPath: String): JobStatus {
-        val props = File(configPath)
-            .listFiles()
-            ?.map {
-                val resource = FileSystemResource(it.absolutePath)
-                PropertiesLoaderUtils.loadProperties(resource)
-            }
+    class CustomJobParameter(val request: AbstractJobRequest) : JobParameter(UUID.randomUUID().toString())
 
-        if (props == null) {
-            log.warn("$configPath has no files. Consider adding properties files for job $jobName to $configPath")
-            return JobStatus(result = JobExecutionResult.CREATION_FAILED)
-        }
-        props.forEach {
-            val job = ctx.getBean(jobName, Job::class.java)
-            val jobParametersBuilder = JobParametersBuilder()
+    fun getJobParameters(request: AbstractJobRequest, jobName: String): JobParameters {
+        val parametersBuilder = JobParametersBuilder()
 
-            jobParametersBuilder.addLong("timestamp", Instant.now().epochSecond)
+        parametersBuilder.addLong(TIMESTAMP_PARAMETER, Instant.now().epochSecond)
+        parametersBuilder.addParameter(REQUEST_PARAMETER, CustomJobParameter(request))
 
-            it.forEach { p ->
-                jobParametersBuilder.addString(p.key.toString(), p.value.toString())
-            }
+        val jobHash = jobName.hashCode() + request.hashCode()
+        parametersBuilder.addString(JOB_ID_PARAMETER, jobHash.toString())
 
-            // We want to detect executions of the job
-            // for the same course without peeking into the pdf.
-            // One way is to concat all the jobParameters
-            // with job name and calculate the hash of the resulting string.
-            // It does not detect all,
-            // but a reasonable amount of times.
-            val jobHash = jobName.plus(it.entries.joinToString()).hashCode()
-            jobParametersBuilder.addString("jobId", jobHash.toString())
-
-            val jobExecution = jobLauncher.run(job, jobParametersBuilder.toJobParameters())
-
-            return JobStatus(jobExecution.jobId, JobExecutionResult.CREATED)
-        }
-
-        return JobStatus(result = JobExecutionResult.CREATION_FAILED)
+        return parametersBuilder.toJobParameters()
     }
 
-    data class CalendarJobRequest(
+    fun runJob(jobName: String, parameters: JobParameters): JobStatus {
+        val jobExecution = runCatching {
+            val job = ctx.getBean(TIMETABLE_JOB_NAME, Job::class.java)
+            jobLauncher.run(job, parameters)
+        }
+            .onFailure { return JobStatus(result = JobExecutionResult.CREATION_FAILED) }
+            .getOrThrow()
+
+        return JobStatus(jobExecution.jobId, JobExecutionResult.CREATED)
+    }
+
+    sealed class AbstractJobRequest(
         val format: OutputFormat,
         val institution: InstitutionModel
-    )
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
 
-    data class TimetableJobRequest(
-        val format: OutputFormat,
-        val institution: InstitutionModel,
+            other as AbstractJobRequest
+
+            if (format != other.format) return false
+            if (institution != other.institution) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = format.hashCode()
+            result = 31 * result + institution.hashCode()
+            return result
+        }
+    }
+
+    class CalendarJobRequest(
+        format: OutputFormat,
+        institution: InstitutionModel
+    ) : AbstractJobRequest(format, institution)
+
+    class TimetableJobRequest(
+        format: OutputFormat,
+        institution: InstitutionModel,
         val programme: ProgrammeModel
-    )
+    ) : AbstractJobRequest(format, institution) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+
+            other as TimetableJobRequest
+
+            if (programme != other.programme) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + programme.hashCode()
+            return result
+        }
+    }
 
     data class JobStatus(val jobId: Long? = null, val result: JobExecutionResult)
 
