@@ -11,11 +11,17 @@ import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
 import org.springframework.batch.core.launch.JobLauncher
+import org.springframework.batch.core.launch.support.SimpleJobLauncher
+import org.springframework.batch.core.repository.JobRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import org.springframework.core.task.SimpleAsyncTaskExecutor
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -29,6 +35,22 @@ import java.time.Instant
 @SpringBootApplication
 @EnableBatchProcessing
 class IOnIntegrationApplication
+
+const val LAUNCHER_NAME = "asyncLauncher"
+
+@Configuration
+class BatchConfig {
+
+    @Autowired
+    lateinit var jobRepository: JobRepository
+
+    @Bean(name = [LAUNCHER_NAME])
+    fun getAsyncLauncher(): JobLauncher = SimpleJobLauncher().apply {
+        setJobRepository(jobRepository)
+        setTaskExecutor(SimpleAsyncTaskExecutor())
+        afterPropertiesSet()
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<IOnIntegrationApplication>(*args)
@@ -49,6 +71,7 @@ class ErrorHandler : ResponseEntityExceptionHandler() {
 @Profile("!test")
 @Component
 class JobEngine(
+    @Qualifier(LAUNCHER_NAME)
     private val jobLauncher: JobLauncher,
     private val ctx: ConfigurableApplicationContext
 ) {
@@ -59,6 +82,7 @@ class JobEngine(
         const val CALENDAR_JOB_NAME = "calendar"
         const val TIMESTAMP_PARAMETER = "timestamp"
         const val REMOTE_FILE_LOCATION_PARAMETER = "srcRemoteLocation"
+        const val FORMAT_PARAMETER = "format"
         const val JOB_ID_PARAMETER = "jobId"
     }
 
@@ -87,6 +111,7 @@ class JobEngine(
 
         parametersBuilder.addLong(TIMESTAMP_PARAMETER, Instant.now().epochSecond)
         parametersBuilder.addString(REMOTE_FILE_LOCATION_PARAMETER, uri.toString())
+        parametersBuilder.addString(FORMAT_PARAMETER, request.format.name)
 
         val jobHash = jobName.hashCode() + request.hashCode()
         parametersBuilder.addString(JOB_ID_PARAMETER, jobHash.toString())
@@ -96,7 +121,7 @@ class JobEngine(
 
     fun runJob(jobName: String, parameters: JobParameters): JobStatus {
         val jobExecution = runCatching {
-            val job = ctx.getBean("${TIMETABLE_JOB_NAME}Job", Job::class.java)
+            val job = ctx.getBean("${jobName}Job", Job::class.java)
             jobLauncher.run(job, parameters)
         }
             .onFailure { return JobStatus(result = JobExecutionResult.CREATION_FAILED) }
