@@ -1,5 +1,6 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import org.ionproject.integration.JobEngine
 import org.ionproject.integration.dispatcher.CalendarTerm
 import org.ionproject.integration.dispatcher.DispatchResult
 import org.ionproject.integration.dispatcher.ITimetableDispatcher
@@ -13,20 +14,24 @@ import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.ionproject.integration.utils.Institution
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
+import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
-import org.springframework.context.annotation.Scope
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-@Scope(value = "prototype")
+@StepScope
 class WriteFileTasklet(
     private val state: ISELTimetableJob.State,
     private val dispatcher: ITimetableDispatcher
 ) : Tasklet {
 
     private val log = LoggerFactory.getLogger(WriteFileTasklet::class.java)
+
+    @Value("#{jobParameters['${JobEngine.FORMAT_PARAMETER}']}")
+    private lateinit var format: OutputFormat
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         return when (val writeResult = writeToGit()) {
@@ -40,7 +45,7 @@ class WriteFileTasklet(
 
     private fun writeToGit(): DispatchResult {
         val timetable = TimetableDto.from(state.timetableTeachers)
-        return dispatcher.dispatch(generateTimetableDataFromDto(timetable), OutputFormat.JSON)
+        return dispatcher.dispatch(generateTimetableDataFromDto(timetable), format)
     }
 
     internal fun generateTimetableDataFromDto(timetableDto: TimetableDto): TimetableData {

@@ -1,6 +1,7 @@
 package org.ionproject.integration.ui.controller
 
 import org.ionproject.integration.JobEngine
+import org.ionproject.integration.ui.dto.CreateCalendarJobDto
 import org.ionproject.integration.ui.dto.CreateTimetableJobDto
 import org.ionproject.integration.ui.dto.InputDto
 import org.slf4j.LoggerFactory
@@ -31,8 +32,14 @@ class JobController(
     }
 
     @PostMapping("/${JobEngine.CALENDAR_JOB_NAME}", consumes = ["application/json"])
-    fun createCalendarJob(@RequestBody job: String): String {
-        return "Calendar OK"
+    fun createCalendarJob(@RequestBody body: CreateCalendarJobDto): String {
+        val request = input.getCalendarJobRequest(body)
+        val requestResult = jobEngine.runCalendarJob(request)
+
+        return when (requestResult.result) {
+            JobEngine.JobExecutionResult.CREATED -> "OK: ${requestResult.jobId}"
+            else -> "FAILED: ${requestResult.result}"
+        }
     }
 
     @GetMapping
