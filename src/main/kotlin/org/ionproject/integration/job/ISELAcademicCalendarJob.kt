@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
+import java.io.File
+import java.nio.file.Path
 import javax.sql.DataSource
 
 @Configuration
@@ -103,6 +105,7 @@ class ISELAcademicCalendarJob(
                 )
             }.orThrow()
         } finally {
+            File(path).delete()
         }
     }
 

@@ -24,6 +24,8 @@ import java.time.Instant
 class IOnIntegrationApplication
 
 fun main(args: Array<String>) {
+    System.setProperty("javax.net.ssl.trustStore", "/usr/main/resources/truststore")
+    System.setProperty("javax.net.ssl.trustStorePassword", "truststore_password")
     SpringApplication.run(IOnIntegrationApplication::class.java, *args)
 }
 
@@ -39,12 +41,12 @@ class JobEngine(
     @Autowired
     private lateinit var props: AppProperties
 
-    @Scheduled(cron = "* */10 * * * *")
+    @Scheduled(cron = "* */2 * * * *")
     fun runTimetableJob() {
         setUpAndRunJob("timetableJob", props.configFilesDirTimetableIsel.path)
     }
 
-    @Scheduled(cron = "* */10 * * * *")
+    @Scheduled(cron = "*/60 * * * * *")
     fun runCalendarJob() {
         setUpAndRunJob("calendarJob", props.configFilesDirCalendarIsel.path)
     }
