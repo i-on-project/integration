@@ -24,7 +24,7 @@ import java.time.Instant
 class IOnIntegrationApplication
 
 fun main(args: Array<String>) {
-    System.setProperty("javax.net.ssl.trustStore", "/usr/main/resources/truststore")
+    System.setProperty("javax.net.ssl.trustStore", "/app/truststore")
     System.setProperty("javax.net.ssl.trustStorePassword", "truststore_password")
     SpringApplication.run(IOnIntegrationApplication::class.java, *args)
 }

@@ -3,7 +3,6 @@ package org.ionproject.integration.infrastructure.http
 import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import java.io.File
-import java.io.FileNotFoundException
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Path
@@ -80,7 +78,7 @@ class HttpsClientServiceTests {
         )
     }
 
-    @Test
+/*    @Test
     @Ignore
     fun whenClientAsksForUnexistingResource_ThenThrowsFileNotFoundException() {
         val uri = URI.create("http://google.com/i-on-project")
@@ -92,7 +90,7 @@ class HttpsClientServiceTests {
         assertFileDoesntExist(
             fileDst
         )
-    }
+    }*/
 
     @Test
     fun whenUrlIsNotPassed_ThenThrowsIllegalArgumentException() {
