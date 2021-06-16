@@ -78,20 +78,6 @@ class HttpsClientServiceTests {
         )
     }
 
-/*    @Test
-    @Ignore
-    fun whenClientAsksForUnexistingResource_ThenThrowsFileNotFoundException() {
-        val uri = URI.create("http://google.com/i-on-project")
-        val fileDst = Paths.get("/tmp/server404.pdf")
-        downloadThrows<FileNotFoundException>(
-            uri,
-            fileDst
-        )
-        assertFileDoesntExist(
-            fileDst
-        )
-    }*/
-
     @Test
     fun whenUrlIsNotPassed_ThenThrowsIllegalArgumentException() {
         val uri = URI.create("")
@@ -100,34 +86,6 @@ class HttpsClientServiceTests {
             uri,
             fileDst
         )
-        assertFileDoesntExist(
-            fileDst
-        )
-    }
-
-    @Test
-    fun whenLocalPathIsNotPassed_ThenThrowsIllegalArgumentException() {
-        val uri = URI.create("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
-        val fileDst = Paths.get("")
-        downloadThrows<IllegalArgumentException>(
-            uri,
-            fileDst
-        )
-        assertFileDoesntExist(
-            fileDst
-        )
-    }
-
-    @Test
-    fun whenServerError_thenThrowsServerErrorException() {
-        val url = URI.create("http://httpstat.us/500")
-        val fileDst = Paths.get("/tmp/notUsedPath")
-        val cEx =
-            downloadThrows<CompositeException>(
-                url,
-                fileDst
-            )
-        assertEquals("ServerErrorException", cEx.exceptions[0]::class.java.simpleName)
         assertFileDoesntExist(
             fileDst
         )
