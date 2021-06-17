@@ -1,10 +1,10 @@
 package org.ionproject.integration.ui.controller
 
 import org.ionproject.integration.JobEngine
-import org.ionproject.integration.ui.dto.CreateCalendarJobDto
-import org.ionproject.integration.ui.dto.CreateTimetableJobDto
-import org.ionproject.integration.ui.dto.InputDto
+import org.ionproject.integration.ui.dto.CreateJobDto
+import org.ionproject.integration.ui.dto.InputProcessor
 import org.slf4j.LoggerFactory
+import org.springframework.batch.core.explore.JobExplorer
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -15,35 +15,30 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/jobs")
 class JobController(
     val jobEngine: JobEngine,
-    val input: InputDto
+    val inputProcessor: InputProcessor,
+    val jobExplorer: JobExplorer
 ) {
 
     private val logger = LoggerFactory.getLogger(JobController::class.java)
 
-    @PostMapping("/${JobEngine.TIMETABLE_JOB_NAME}", consumes = ["application/json"])
-    fun createTimetableJob(@RequestBody body: CreateTimetableJobDto): String {
-        val request = input.getTimetableJobRequest(body)
-        val requestResult = jobEngine.runTimetableJob(request)
+    @PostMapping(consumes = ["application/json"])
+    fun createTimetableJob(@RequestBody body: CreateJobDto): String {
+        val request = inputProcessor.getJobRequest(body)
+        val requestResult = jobEngine.runJob(request)
 
         return when (requestResult.result) {
-            JobEngine.JobExecutionResult.CREATED -> "OK: ${requestResult.jobId}"
-            else -> "FAILED: ${requestResult.result}"
-        }
-    }
-
-    @PostMapping("/${JobEngine.CALENDAR_JOB_NAME}", consumes = ["application/json"])
-    fun createCalendarJob(@RequestBody body: CreateCalendarJobDto): String {
-        val request = input.getCalendarJobRequest(body)
-        val requestResult = jobEngine.runCalendarJob(request)
-
-        return when (requestResult.result) {
-            JobEngine.JobExecutionResult.CREATED -> "OK: ${requestResult.jobId}"
+            JobEngine.JobExecutionResult.CREATED -> "Created ${request.javaClass.simpleName} job with ID ${requestResult.jobId}"
             else -> "FAILED: ${requestResult.result}"
         }
     }
 
     @GetMapping
-    fun getJobs(): String {
-        return "Sum jobs yo"
+    fun getJobs(): List<String> {
+        val jobNames = jobExplorer.jobNames
+
+        // val instances = jobExplorer.getJobInstances(TIMETABLE_JOB_NAME, 0, 1000)
+        val executions = jobNames.map { jobExplorer.findRunningJobExecutions(it) }
+
+        return executions.flatMap { it.map { je -> "${je.jobInstance.jobName} -> ${je.jobId}" } }
     }
 }
