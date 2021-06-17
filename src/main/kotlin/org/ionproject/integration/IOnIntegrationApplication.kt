@@ -5,6 +5,8 @@ import org.ionproject.integration.dispatcher.OutputFormat
 import org.ionproject.integration.domain.model.InstitutionModel
 import org.ionproject.integration.domain.model.ProgrammeModel
 import org.ionproject.integration.infrastructure.error.ArgumentException
+import org.ionproject.integration.job.CALENDAR_JOB_NAME
+import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters
@@ -77,9 +79,6 @@ class JobEngine(
 ) {
 
     companion object {
-        const val TIMETABLE_JOB_NAME = "timetable"
-        const val EVALUATION_JOB_NAME = "evaluation"
-        const val CALENDAR_JOB_NAME = "calendar"
         const val TIMESTAMP_PARAMETER = "timestamp"
         const val REMOTE_FILE_LOCATION_PARAMETER = "srcRemoteLocation"
         const val FORMAT_PARAMETER = "format"
@@ -91,12 +90,19 @@ class JobEngine(
     @Autowired
     private lateinit var props: AppProperties
 
-    fun runTimetableJob(request: TimetableJobRequest): JobStatus {
+    fun runJob(request: AbstractJobRequest): JobStatus {
+        return when (request) {
+            is TimetableJobRequest -> runTimetableJob(request)
+            is CalendarJobRequest -> runCalendarJob(request)
+        }
+    }
+
+    private fun runTimetableJob(request: TimetableJobRequest): JobStatus {
         val jobParams = getJobParameters(request, TIMETABLE_JOB_NAME)
         return runJob(TIMETABLE_JOB_NAME, jobParams)
     }
 
-    fun runCalendarJob(request: CalendarJobRequest): JobStatus {
+    private fun runCalendarJob(request: CalendarJobRequest): JobStatus {
         val jobParams = getJobParameters(request, CALENDAR_JOB_NAME)
         return runJob(CALENDAR_JOB_NAME, jobParams)
     }
@@ -121,7 +127,7 @@ class JobEngine(
 
     fun runJob(jobName: String, parameters: JobParameters): JobStatus {
         val jobExecution = runCatching {
-            val job = ctx.getBean("${jobName}Job", Job::class.java)
+            val job = ctx.getBean(jobName, Job::class.java)
             jobLauncher.run(job, parameters)
         }
             .onFailure { return JobStatus(result = JobExecutionResult.CREATION_FAILED) }
