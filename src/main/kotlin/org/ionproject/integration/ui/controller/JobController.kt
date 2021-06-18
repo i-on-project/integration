@@ -33,12 +33,8 @@ class JobController(
     }
 
     @GetMapping
-    fun getJobs(): List<String> {
-        val jobNames = jobExplorer.jobNames
-
-        // val instances = jobExplorer.getJobInstances(TIMETABLE_JOB_NAME, 0, 1000)
-        val executions = jobNames.map { jobExplorer.findRunningJobExecutions(it) }
-
-        return executions.flatMap { it.map { je -> "${je.jobInstance.jobName} -> ${je.jobId}" } }
+    fun getJobs(): List<JobEngine.IntegrationJob> {
+        val jobs = jobEngine.getRunningJobs()
+        return jobs
     }
 }

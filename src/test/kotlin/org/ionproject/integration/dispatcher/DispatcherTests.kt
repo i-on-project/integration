@@ -32,15 +32,11 @@ class DispatcherTests {
         on { gitBranchName } doReturn ""
         on { stagingDir } doReturn ""
         on { tempDir } doReturn ""
-        on { configDirTimetableIsel } doReturn ""
-        on { configDirCalendarIsel } doReturn ""
         on { gitRepository } doReturn ""
         on { gitRepoUrl } doReturn ""
         on { gitUser } doReturn ""
         on { gitPassword } doReturn ""
         on { stagingFilesDir } doReturn Filepath(listOf("mock"))
-        on { configFilesDirTimetableIsel } doReturn Filepath(listOf("mock"))
-        on { configFilesDirCalendarIsel } doReturn Filepath(listOf("mock"))
         on { tempFilesDir } doReturn Filepath(listOf("mock"))
     }
 

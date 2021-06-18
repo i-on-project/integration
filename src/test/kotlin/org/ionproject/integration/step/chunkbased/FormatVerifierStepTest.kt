@@ -307,7 +307,7 @@ internal class FormatVerifierStepTestInvalidFormat {
             assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
             assertTrue(
                 GreenMailUtil.getBody(messages[0])
-                    .contains("ISEL Timetable Batch Job FAILED for file: LEIC_0310.pdf with message The timetable header changed its format")
+                    .contains("FAILED for file: LEIC_0310.pdf with message The timetable header changed its format")
             )
         } finally {
             assertFalse(temp.delete())

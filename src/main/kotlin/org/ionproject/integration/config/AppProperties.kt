@@ -12,12 +12,6 @@ import javax.validation.constraints.NotEmpty
 class AppProperties {
 
     @NotEmpty
-    lateinit var configDirTimetableIsel: String
-
-    @NotEmpty
-    lateinit var configDirCalendarIsel: String
-
-    @NotEmpty
     lateinit var stagingDir: String
 
     @NotEmpty
@@ -38,9 +32,6 @@ class AppProperties {
     lateinit var gitBranchName: String
 
     val gitRepoUrl by lazy { "$gitServer$gitRepository.git" }
-
-    val configFilesDirTimetableIsel by lazy { getAsFilePath(configDirTimetableIsel) }
-    val configFilesDirCalendarIsel by lazy { getAsFilePath(configDirCalendarIsel) }
 
     val stagingFilesDir by lazy { getAsFilePath(stagingDir) }
 
