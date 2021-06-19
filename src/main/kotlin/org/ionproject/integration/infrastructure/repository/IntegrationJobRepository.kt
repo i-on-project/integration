@@ -28,12 +28,14 @@ class IntegrationJobRepository(
 
     override fun extractData(rs: ResultSet): List<JobEngine.IntegrationJob>? {
         val jobsData = mutableListOf<JobEngine.IntegrationJob>()
-        while (rs.next()) jobsData += getJobDataFromResultSet(rs)
+        while (rs.next())
+            jobsData += getJobDataFromResultSet(rs)
 
         return jobsData
     }
 
     private fun getJobDataFromResultSet(resultSet: ResultSet): JobEngine.IntegrationJob {
+        // TODO: create vars for indexes
         val id = resultSet.getLong(1)
         val jobIdentifier = resultSet.getString(2)
         val creationDate = resultSet.getDate(3)

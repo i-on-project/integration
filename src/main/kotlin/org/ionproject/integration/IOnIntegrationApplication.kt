@@ -1,10 +1,10 @@
 package org.ionproject.integration
 
+import org.ionproject.integration.application.LAUNCHER_NAME
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.dispatcher.OutputFormat
 import org.ionproject.integration.domain.model.InstitutionModel
 import org.ionproject.integration.domain.model.ProgrammeModel
-import org.ionproject.integration.infrastructure.error.ArgumentException
 import org.ionproject.integration.infrastructure.repository.IIntegrationJobRepository
 import org.ionproject.integration.job.CALENDAR_JOB_NAME
 import org.ionproject.integration.job.TIMETABLE_JOB_NAME
@@ -15,24 +15,12 @@ import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
 import org.springframework.batch.core.launch.JobLauncher
-import org.springframework.batch.core.launch.support.SimpleJobLauncher
-import org.springframework.batch.core.repository.JobRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.core.task.SimpleAsyncTaskExecutor
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.ControllerAdvice
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.context.request.WebRequest
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.net.URI
 import java.time.Instant
 import java.time.LocalDate
@@ -41,36 +29,8 @@ import java.time.LocalDate
 @EnableBatchProcessing
 class IOnIntegrationApplication
 
-const val LAUNCHER_NAME = "asyncLauncher"
-
-@Configuration
-class BatchConfig {
-
-    @Autowired
-    lateinit var jobRepository: JobRepository
-
-    @Bean(name = [LAUNCHER_NAME])
-    fun getAsyncLauncher(): JobLauncher = SimpleJobLauncher().apply {
-        setJobRepository(jobRepository)
-        setTaskExecutor(SimpleAsyncTaskExecutor())
-        afterPropertiesSet()
-    }
-}
-
 fun main(args: Array<String>) {
     runApplication<IOnIntegrationApplication>(*args)
-}
-
-@ControllerAdvice
-class ErrorHandler : ResponseEntityExceptionHandler() {
-    private val logger = LoggerFactory.getLogger(ErrorHandler::class.java)
-
-    // TODO: Use json+problem (?)
-    @ExceptionHandler(value = [ArgumentException::class])
-    fun handle(exception: ArgumentException, request: WebRequest): ResponseEntity<Any> {
-        logger.error("Error processing request $request: ${exception.message}")
-        return handleExceptionInternal(exception, exception.message, HttpHeaders(), HttpStatus.BAD_REQUEST, request)
-    }
 }
 
 @Component
@@ -85,7 +45,7 @@ class JobEngine(
         const val TIMESTAMP_PARAMETER = "timestamp"
         const val REMOTE_FILE_LOCATION_PARAMETER = "srcRemoteLocation"
         const val FORMAT_PARAMETER = "format"
-        const val JOB_ID_PARAMETER = "jobId"
+        const val JOB_HASH_PARAMETER = "jobHash"
         const val INSTITUTION_PARAMETER = "institution"
         const val PROGRAMME_PARAMETER = "programme"
         const val JOB_TYPE_PARAMETER = "jobType"
@@ -133,7 +93,7 @@ class JobEngine(
         parametersBuilder.addString(JOB_TYPE_PARAMETER, request.jobType.identifier)
 
         val jobHash = jobName.hashCode() + request.hashCode()
-        parametersBuilder.addString(JOB_ID_PARAMETER, jobHash.toString())
+        parametersBuilder.addString(JOB_HASH_PARAMETER, jobHash.toString())
 
         return parametersBuilder.toJobParameters()
     }
