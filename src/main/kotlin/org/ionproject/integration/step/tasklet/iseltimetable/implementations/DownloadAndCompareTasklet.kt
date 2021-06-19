@@ -1,6 +1,6 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
-import org.ionproject.integration.JobEngine.Companion.JOB_ID_PARAMETER
+import org.ionproject.integration.JobEngine.Companion.JOB_HASH_PARAMETER
 import org.ionproject.integration.JobEngine.Companion.REMOTE_FILE_LOCATION_PARAMETER
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.file.interfaces.IBytesFormatChecker
@@ -38,7 +38,7 @@ class DownloadAndCompareTasklet(
     @Value("#{jobParameters['$REMOTE_FILE_LOCATION_PARAMETER']}")
     private lateinit var targetUri: URI
 
-    @Value("#{jobParameters['$JOB_ID_PARAMETER']}")
+    @Value("#{jobParameters['$JOB_HASH_PARAMETER']}")
     private lateinit var jobId: String
 
     @Autowired

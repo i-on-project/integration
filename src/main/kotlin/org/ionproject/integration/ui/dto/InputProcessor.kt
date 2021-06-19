@@ -22,7 +22,7 @@ class InputProcessor(
         val type = JobType.of(dto.type) ?: throw ArgumentException("Invalid Job Type: ${dto.type}")
         validateDto(dto, type)
 
-        return dto.toSafeDto()
+        return dto.toSafeDto(type)
     }
 }
 
@@ -52,14 +52,11 @@ data class CreateJobDto(
     val format: String? = null,
     val type: String? = null
 ) {
-    fun toSafeDto(): SafeJobDto {
-        val type = JobType.of(type) ?: throw ArgumentException("Invalid Job Type: $type")
-        validateDto(this, type)
-
+    fun toSafeDto(type: JobType): SafeJobDto {
         return when (type) {
             JobType.TIMETABLE -> SafeTimetableJobDto(institution!!, programme!!, format!!)
             JobType.ACADEMIC_CALENDAR -> SafeCalendarJobDto(institution!!, format!!)
-            JobType.EXAM_SCHEDULE -> throw UnsupportedOperationException("Exame Schedule not yet supported")
+            JobType.EXAM_SCHEDULE -> throw UnsupportedOperationException("Exam Schedule not yet supported")
         }
     }
 }
