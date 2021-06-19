@@ -34,6 +34,8 @@ import org.springframework.core.task.TaskExecutor
 import org.springframework.stereotype.Component
 import javax.sql.DataSource
 
+const val TIMETABLE_JOB_NAME = "timetable"
+
 @Configuration
 class ISELTimetableJob(
     val jobBuilderFactory: JobBuilderFactory,
@@ -44,8 +46,8 @@ class ISELTimetableJob(
     val ds: DataSource
 ) {
 
-    @Bean
-    fun timetableJob() = jobBuilderFactory.get("ISEL Timetable Batch Job")
+    @Bean(name = [TIMETABLE_JOB_NAME])
+    fun timetableJob() = jobBuilderFactory.get(TIMETABLE_JOB_NAME)
         .start(taskletStep("Download And Compare", downloadAndCompareTasklet()))
         .on("STOPPED").end()
         .next(formatVerifierStep())

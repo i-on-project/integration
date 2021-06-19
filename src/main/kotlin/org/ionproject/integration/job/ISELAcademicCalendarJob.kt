@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import javax.sql.DataSource
 
+const val CALENDAR_JOB_NAME = "calendar"
+
 @Configuration
 class ISELAcademicCalendarJob(
     val jobBuilderFactory: JobBuilderFactory,
@@ -40,8 +42,8 @@ class ISELAcademicCalendarJob(
     val ds: DataSource
 ) {
 
-    @Bean
-    fun calendarJob() = jobBuilderFactory.get("ISEL Academic Calendar Batch Job")
+    @Bean(name = [CALENDAR_JOB_NAME])
+    fun calendarJob() = jobBuilderFactory.get(CALENDAR_JOB_NAME)
         .start(taskletStep("Download And Compare", downloadCalendarPDFAlternateTasklet()))
         .on("STOPPED").end()
         .next(extractCalendarPDFTasklet())

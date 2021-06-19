@@ -3,6 +3,7 @@ package org.ionproject.integration.step.chunkbased.writer
 import java.net.URI
 import org.ionproject.integration.alert.implementations.EmailAlertChannel
 import org.ionproject.integration.alert.implementations.EmailAlertService
+import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.utils.EmailUtils
 import org.ionproject.integration.utils.JobResult
 import org.ionproject.integration.utils.Try
@@ -46,7 +47,7 @@ class AlertOnFailureWriter() : ItemWriter<Try<Boolean>> {
         val asset = filePath.substring(filePath.lastIndexOf('/') + 1, filePath.length)
 
         val conf = EmailUtils.configure(
-            "ISEL Timetable Batch Job",
+            TIMETABLE_JOB_NAME,
             JobResult.FAILED,
             alertRecipient,
             asset,
