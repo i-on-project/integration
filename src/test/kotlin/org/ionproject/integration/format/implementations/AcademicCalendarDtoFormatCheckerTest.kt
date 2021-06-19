@@ -12,7 +12,6 @@ import org.ionproject.integration.model.external.calendar.TermDto
 import org.ionproject.integration.model.external.timetable.Language
 import org.ionproject.integration.model.external.timetable.School
 import org.ionproject.integration.model.external.timetable.SchoolDto
-import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
