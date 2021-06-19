@@ -1,7 +1,6 @@
 package org.ionproject.integration.dispatcher
 
 import org.ionproject.integration.infrastructure.error.ArgumentException
-import org.ionproject.integration.model.external.calendar.CalendarDto
 import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
 import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.ionproject.integration.utils.Institution
