@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
+import java.io.File
 import javax.sql.DataSource
 
 const val CALENDAR_JOB_NAME = "calendar"
@@ -105,6 +106,7 @@ class ISELAcademicCalendarJob(
                 )
             }.orThrow()
         } finally {
+            File(path).delete()
         }
     }
 

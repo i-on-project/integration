@@ -1,5 +1,6 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import org.ionproject.integration.JobEngine.Companion.JOB_HASH_PARAMETER
 import javax.sql.DataSource
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.slf4j.LoggerFactory
@@ -22,7 +23,7 @@ class PostUploadTasklet() : Tasklet {
     @Autowired
     private lateinit var ds: DataSource
 
-    @Value("#{jobParameters['jobId']}")
+    @Value("#{jobParameters['$JOB_HASH_PARAMETER']}")
     private lateinit var jobId: String
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
