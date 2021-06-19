@@ -3,6 +3,7 @@ package org.ionproject.integration.format.implementations
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
 import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
+import org.ionproject.integration.model.external.calendar.Evaluation
 import org.ionproject.integration.model.external.calendar.EvaluationDto
 import org.ionproject.integration.model.external.calendar.Event
 import org.ionproject.integration.model.external.calendar.EventDto
@@ -11,11 +12,11 @@ import org.ionproject.integration.model.external.calendar.TermDto
 import org.ionproject.integration.model.external.timetable.Language
 import org.ionproject.integration.model.external.timetable.School
 import org.ionproject.integration.model.external.timetable.SchoolDto
+import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.Month
-import java.util.Date
 
 internal class AcademicCalendarDtoFormatCheckerTest {
 
@@ -183,7 +184,7 @@ internal class AcademicCalendarDtoFormatCheckerTest {
     }
 
     @Test
-    fun `when Simple Business object is equal to expected Dto then Success`() {
+    fun `when Business object is equal to expected Dto then Success`() {
         val academicCalendarDto = AcademicCalendarDto(
             "20200706T160021Z",
             "20210606T235001Z",
@@ -261,7 +262,7 @@ internal class AcademicCalendarDtoFormatCheckerTest {
             )
         )
 
-        /*val academicCalendarBO = AcademicCalendar(
+        val academicCalendarBO = AcademicCalendar(
             "20200706T160021Z",
             "20210606T235001Z",
             School("Instituto Superior Engenharia Lisboa", "ISEL"),
@@ -273,12 +274,70 @@ internal class AcademicCalendarDtoFormatCheckerTest {
                         Event(
                             "Interrupção de atividades letivas (Natal)",
                             LocalDate.of(2020, Month.DECEMBER, 21),
-
-
-                                                    )
+                            LocalDate.of(2021, Month.JANUARY, 3)
+                        )
+                    ),
+                    listOf(
+                        Evaluation(
+                            "Período de exames (época normal)",
+                            LocalDate.of(2021, Month.JANUARY, 25),
+                            LocalDate.of(2021, Month.FEBRUARY, 13),
+                            false
+                        )
+                    ),
+                    listOf(),
+                    listOf(
+                        Event(
+                            "Divulgação de horários",
+                            LocalDate.of(2020, Month.SEPTEMBER, 9),
+                            LocalDate.of(2020, Month.SEPTEMBER, 9)
+                        ),
+                        Event(
+                            "Abertura das atividades letivas 2020/2021",
+                            LocalDate.of(2020, Month.SEPTEMBER, 28),
+                            LocalDate.of(2020, Month.SEPTEMBER, 28)
+                        )
+                    )
+                ),
+                Term(
+                    "2020-2021-2",
+                    listOf(
+                        Event(
+                            "Interrupção de atividades letivas (Páscoa)",
+                            LocalDate.of(2021, Month.MARCH, 29),
+                            LocalDate.of(2021, Month.APRIL, 5)
+                        )
+                    ),
+                    listOf(
+                        Evaluation(
+                            "Período de exames (época normal)",
+                            LocalDate.of(2021, Month.JUNE, 28),
+                            LocalDate.of(2021, Month.JULY, 17),
+                            false
+                        ),
+                        Evaluation(
+                            "Período de exames (época de recurso)",
+                            LocalDate.of(2021, Month.JULY, 19),
+                            LocalDate.of(2021, Month.JULY, 31),
+                            false
+                        )
+                    ),
+                    listOf(),
+                    listOf(
+                        Event(
+                            "Divulgação de horários",
+                            LocalDate.of(2021, Month.FEBRUARY, 22),
+                            LocalDate.of(2021, Month.FEBRUARY, 22)
+                        ),
+                        Event(
+                            "Início das aulas",
+                            LocalDate.of(2021, Month.MARCH, 15),
+                            LocalDate.of(2021, Month.MARCH, 15)
+                        )
                     )
                 )
             )
-        )*/
+        )
+        assertEquals(AcademicCalendarDto.from(academicCalendarBO), academicCalendarDto)
     }
 }
