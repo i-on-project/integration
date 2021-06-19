@@ -5,6 +5,7 @@ import javax.sql.DataSource
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.job.ISELTimetableJob
+import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -43,7 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 internal class PostUploadTaskletTest {
 
     @Autowired
-    @Qualifier(value = "timetableJob")
+    @Qualifier(value = TIMETABLE_JOB_NAME)
     private lateinit var job: Job
 
     @Autowired

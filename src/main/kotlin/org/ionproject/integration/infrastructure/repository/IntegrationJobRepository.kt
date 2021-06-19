@@ -22,10 +22,6 @@ class IntegrationJobRepository(
     private val programmeRepository: IProgrammeRepository
 ) : IIntegrationJobRepository, ResultSetExtractor<List<JobEngine.IntegrationJob>> {
 
-    init {
-        JdbcTemplate(dataSource).execute(SETUP_EXTENSION_QUERY)
-    }
-
     override fun getRunningJobs(): List<JobEngine.IntegrationJob> {
         return JdbcTemplate(dataSource).query(RUNNING_JOBS_QUERY, ::extractData) ?: emptyList()
     }

@@ -13,6 +13,7 @@ import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.JobEngine.Companion.TIMESTAMP_PARAMETER
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.ISELTimetableJob
+import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.step.tasklet.iseltimetable.exceptions.DownloadAndCompareTaskletException
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.utils.CompositeException
@@ -60,7 +61,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
     private lateinit var appProperties: AppProperties
 
     @Autowired
-    @Qualifier(value = "timetableJob")
+    @Qualifier(value = TIMETABLE_JOB_NAME)
     private lateinit var job: Job
 
     @Autowired
@@ -140,7 +141,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
 internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
     @Autowired
-    @Qualifier(value = "timetableJob")
+    @Qualifier(value = TIMETABLE_JOB_NAME)
     private lateinit var job: Job
 
     @Autowired
@@ -198,7 +199,7 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
 internal class DownloadAndCompareTaskletUrlNotPdfTest {
 
     @Autowired
-    @Qualifier(value = "timetableJob")
+    @Qualifier(value = TIMETABLE_JOB_NAME)
     private lateinit var job: Job
 
     @Autowired
@@ -274,7 +275,7 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
 internal class DownloadAndCompareTaskletServerErrorTest {
 
     @Autowired
-    @Qualifier(value = "timetableJob")
+    @Qualifier(value = TIMETABLE_JOB_NAME)
     private lateinit var job: Job
 
     @Autowired

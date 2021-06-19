@@ -1,7 +1,5 @@
 package org.ionproject.integration.infrastructure.repository
 
-const val SETUP_EXTENSION_QUERY = "CREATE extension IF NOT EXISTS tablefunc;"
-
 const val RUNNING_JOBS_QUERY = """
 SELECT bje.job_instance_id
 ,bji.job_name

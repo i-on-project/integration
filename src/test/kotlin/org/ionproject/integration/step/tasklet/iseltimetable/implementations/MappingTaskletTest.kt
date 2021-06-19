@@ -3,6 +3,7 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 import java.time.LocalTime
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.ISELTimetableJob
+import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.model.external.timetable.EventCategory
 import org.ionproject.integration.model.external.timetable.Instructor
 import org.ionproject.integration.model.external.timetable.TimetableTeachers
@@ -37,7 +38,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 internal class MappingTaskletTest {
 
     @Autowired
-    @Qualifier(value = "timetableJob")
+    @Qualifier(value = TIMETABLE_JOB_NAME)
     private lateinit var job: Job
 
     @Autowired

@@ -12,6 +12,7 @@ import java.time.Instant
 import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.job.ISELTimetableJob
+import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.utils.CompositeException
 import org.junit.jupiter.api.AfterEach
@@ -46,7 +47,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 internal class FormatVerifierStepTestSuccessful {
 
     @Autowired
-    @Qualifier(value = "timetableJob")
+    @Qualifier(value = TIMETABLE_JOB_NAME)
     private lateinit var job: Job
 
     @Autowired
@@ -135,7 +136,7 @@ internal class FormatVerifierStepTestSuccessful {
 internal class FormatVerifierStepTestUnexistingFile {
 
     @Autowired
-    @Qualifier(value = "timetableJob")
+    @Qualifier(value = TIMETABLE_JOB_NAME)
     private lateinit var job: Job
 
     @Autowired
@@ -212,7 +213,7 @@ internal class FormatVerifierStepTestUnexistingFile {
 internal class FormatVerifierStepTestInvalidFormat {
 
     @Autowired
-    @Qualifier(value = "timetableJob")
+    @Qualifier(value = TIMETABLE_JOB_NAME)
     private lateinit var job: Job
 
     @Autowired
@@ -328,7 +329,7 @@ internal class FormatVerifierStepTestInvalidFormat {
 internal class FormatVerifierStepTestEmptyPath {
 
     @Autowired
-    @Qualifier(value = "timetableJob")
+    @Qualifier(value = TIMETABLE_JOB_NAME)
     private lateinit var job: Job
 
     @Autowired

@@ -31,7 +31,7 @@ class WriteFileTasklet(
     private val log = LoggerFactory.getLogger(WriteFileTasklet::class.java)
 
     @Value("#{jobParameters['${JobEngine.FORMAT_PARAMETER}']}")
-    private lateinit var format: OutputFormat
+    private var format: OutputFormat = OutputFormat.JSON
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         return when (val writeResult = writeToGit()) {
