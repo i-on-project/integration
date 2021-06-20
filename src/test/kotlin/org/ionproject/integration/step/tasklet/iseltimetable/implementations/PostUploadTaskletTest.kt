@@ -3,6 +3,9 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 import java.time.Instant
 import javax.sql.DataSource
 import org.ionproject.integration.IOnIntegrationApplication
+import org.ionproject.integration.JobEngine.Companion.JOB_HASH_PARAMETER
+import org.ionproject.integration.JobEngine.Companion.REMOTE_FILE_LOCATION_PARAMETER
+import org.ionproject.integration.JobEngine.Companion.TIMESTAMP_PARAMETER
 import org.ionproject.integration.hash.implementations.HashRepositoryImpl
 import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.job.TIMETABLE_JOB_NAME
@@ -126,9 +129,9 @@ internal class PostUploadTaskletTest {
     private fun initJobParameters(jobId: String): JobParameters {
         return JobParametersBuilder()
             .addString("hashKey", "file-hash")
-            .addLong("timestamp", Instant.now().toEpochMilli())
-            .addString("jobId", jobId)
-            .addString("srcRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
+            .addLong(TIMESTAMP_PARAMETER, Instant.now().toEpochMilli())
+            .addString(JOB_HASH_PARAMETER, jobId)
+            .addString(REMOTE_FILE_LOCATION_PARAMETER, "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
             .addString("alertRecipient", "client@domain.com")
             .toJobParameters()
     }
