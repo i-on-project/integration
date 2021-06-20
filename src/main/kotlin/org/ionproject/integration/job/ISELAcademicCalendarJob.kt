@@ -2,7 +2,7 @@ package org.ionproject.integration.job
 
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.dispatcher.AcademicCalendarData
-import org.ionproject.integration.dispatcher.IAcademicCalendarDispatcher
+import org.ionproject.integration.dispatcher.IDispatcher
 import org.ionproject.integration.dispatcher.OutputFormat
 import org.ionproject.integration.extractor.implementations.AcademicCalendarExtractor
 import org.ionproject.integration.extractor.implementations.ITextPdfExtractor
@@ -38,7 +38,7 @@ class ISELAcademicCalendarJob(
     val stepBuilderFactory: StepBuilderFactory,
     val properties: AppProperties,
     val downloader: IFileDownloader,
-    val dispatcher: IAcademicCalendarDispatcher,
+    val dispatcher: IDispatcher<AcademicCalendarData>,
     @Autowired
     val ds: DataSource
 ) {

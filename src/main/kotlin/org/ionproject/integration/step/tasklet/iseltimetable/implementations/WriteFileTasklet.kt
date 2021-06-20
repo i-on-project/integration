@@ -3,7 +3,7 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 import org.ionproject.integration.JobEngine
 import org.ionproject.integration.dispatcher.CalendarTerm
 import org.ionproject.integration.dispatcher.DispatchResult
-import org.ionproject.integration.dispatcher.ITimetableDispatcher
+import org.ionproject.integration.dispatcher.IDispatcher
 import org.ionproject.integration.dispatcher.InstitutionMetadata
 import org.ionproject.integration.dispatcher.OutputFormat
 import org.ionproject.integration.dispatcher.ProgrammeMetadata
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component
 @StepScope
 class WriteFileTasklet(
     private val state: ISELTimetableJob.State,
-    private val dispatcher: ITimetableDispatcher
+    private val dispatcher: IDispatcher<TimetableData>
 ) : Tasklet {
 
     private val log = LoggerFactory.getLogger(WriteFileTasklet::class.java)

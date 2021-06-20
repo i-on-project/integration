@@ -16,14 +16,32 @@ import java.time.format.DateTimeFormatter
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 class ISELTimetableDispatcherImpl(
-    val timetableFileWriter: TimetableFileWriter,
+    val fileWriter: FileWriter,
     val gitFactory: IGitHandlerFactory
-) : ITimetableDispatcher {
+) : IDispatcher<TimetableData> {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
     private val LOGGER = LoggerFactory.getLogger(ISELTimetableDispatcherImpl::class.java)
 
     @Autowired
     internal lateinit var props: AppProperties
+
+    private val TIMETABLE_FILENAME = "timetable"
+    private val PROGRAMMES = "programmes"
+
+    val staging by lazy { props.stagingFilesDir }
+    val repositoryName by lazy { props.gitRepository }
+
+    private fun getDirectory(timetable: TimetableData): Filepath {
+        val segments = listOf(
+            repositoryName,
+            timetable.programme.institution.domain,
+            PROGRAMMES,
+            timetable.programme.acronym,
+            timetable.term.toString()
+        )
+
+        return staging + segments
+    }
 
     private val git by lazy {
         val data = GitRepoData(
@@ -41,7 +59,7 @@ class ISELTimetableDispatcherImpl(
             if (git.update() == GitOutcome.CONFLICT)
                 throw IllegalStateException("Unresolved conflict while updating Git Repo")
 
-            timetableFileWriter.write(data, format)
+            fileWriter.write(data, format, TIMETABLE_FILENAME, getDirectory(data))
             git.add()
             git.commit(generateCommitMessage(data))
 

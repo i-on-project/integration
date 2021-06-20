@@ -6,20 +6,16 @@ import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.ionproject.integration.utils.Institution
 
 /**
- * This file contains the interfaces that must be implemented by Dispatcher modules (i.e. FileRepository).
+ * This file contains the interface that must be implemented by each job type.
  * It also contains all the auxiliary data classes and enums.
  */
 
 /**
- * Interface definitions
+ * Interface definition
  */
-sealed interface IDispatcher<T : ParsedData> {
+interface IDispatcher<in T : ParsedData> {
     fun dispatch(data: T, format: OutputFormat): DispatchResult
 }
-
-interface IAcademicCalendarDispatcher : IDispatcher<AcademicCalendarData>
-
-interface ITimetableDispatcher : IDispatcher<TimetableData>
 
 /**
  * ParsedData will be used to "transport" the final data along with the required metadata.

@@ -24,8 +24,8 @@ class DispatcherTests {
         on { checkout(any(), any(), any()) } doReturn if (isWorking) mockHandlerSuccess else mockHandlerFailure
     }
 
-    private val mockWriter = mock<TimetableFileWriter> {
-        on { write(any(), any()) } doReturn File("")
+    private val mockWriter = mock<FileWriter> {
+        on { write(any(), any(), any(), any()) } doReturn File("")
     }
 
     private val appProps = mock<AppProperties> {
