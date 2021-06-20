@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 class ISELTimetableDispatcherImpl(
-    val fileWriter: FileWriter,
+    val fileWriter: IFileWriter<ParsedData>,
     val gitFactory: IGitHandlerFactory
 ) : IDispatcher<TimetableData> {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")

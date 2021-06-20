@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 class ISELAcademicCalendarDispatcherImpl(
-    val fileWriter: FileWriter,
+    val fileWriter: IFileWriter<ParsedData>,
     val gitFactory: IGitHandlerFactory
 ) : IDispatcher<AcademicCalendarData> {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
