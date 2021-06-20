@@ -24,7 +24,7 @@ class DispatcherTests {
         on { checkout(any(), any(), any()) } doReturn if (isWorking) mockHandlerSuccess else mockHandlerFailure
     }
 
-    private val mockWriter = mock<FileWriter> {
+    private val mockWriter = mock<IFileWriter<ParsedData>> {
         on { write(any(), any(), any(), any()) } doReturn File("")
     }
 
