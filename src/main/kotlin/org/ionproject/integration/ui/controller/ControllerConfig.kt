@@ -1,4 +1,4 @@
-package org.ionproject.integration.ui.controller // ktlint-disable filename
+package org.ionproject.integration.ui.controller
 
 import org.ionproject.integration.infrastructure.error.ArgumentException
 import org.slf4j.LoggerFactory
@@ -11,8 +11,8 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
 @ControllerAdvice
-class ErrorHandler : ResponseEntityExceptionHandler() {
-    private val logger = LoggerFactory.getLogger(ErrorHandler::class.java)
+class ControllerConfig : ResponseEntityExceptionHandler() {
+    private val logger = LoggerFactory.getLogger(ControllerConfig::class.java)
 
     // TODO: Use json+problem (?)
     @ExceptionHandler(value = [ArgumentException::class])
