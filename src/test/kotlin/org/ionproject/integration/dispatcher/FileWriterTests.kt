@@ -1,5 +1,6 @@
 package org.ionproject.integration.dispatcher
 
+import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.model.external.timetable.ClassDto
 import org.ionproject.integration.model.external.timetable.EventDto
 import org.ionproject.integration.model.external.timetable.InstructorDto
@@ -13,14 +14,20 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TimetableFileWriterTests {
+class FileWriterTests {
 
     @Autowired
-    private lateinit var writer: TimetableFileWriter
+    private lateinit var writer: FileWriter
+
+    @Autowired
+    internal lateinit var props: AppProperties
+
+    val staging by lazy { props.stagingFilesDir }
+    val repositoryName by lazy { props.gitRepository }
 
     @Test
     fun `when given a timetable DTO then write the file to JSON`() {
-        val file = writer.write(meta, OutputFormat.JSON)
+        val file = writer.write(meta, OutputFormat.JSON, "test", staging)
         try {
             assert(file.exists())
             assertEquals(expectedJSON, file.readText())
@@ -31,7 +38,7 @@ class TimetableFileWriterTests {
 
     @Test
     fun `when given a timetable DTO then write the file to YAML`() {
-        val file = writer.write(meta, OutputFormat.YAML)
+        val file = writer.write(meta, OutputFormat.YAML, "test", staging)
 
         try {
             assert(file.exists())

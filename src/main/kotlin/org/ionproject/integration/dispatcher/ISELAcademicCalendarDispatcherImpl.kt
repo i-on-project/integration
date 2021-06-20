@@ -16,14 +16,31 @@ import java.time.format.DateTimeFormatter
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 class ISELAcademicCalendarDispatcherImpl(
-    val calendaFileWriter: CalendarFileWriter,
+    val fileWriter: FileWriter,
     val gitFactory: IGitHandlerFactory
-) : IAcademicCalendarDispatcher {
+) : IDispatcher<AcademicCalendarData> {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
     private val LOGGER = LoggerFactory.getLogger(ISELAcademicCalendarDispatcherImpl::class.java)
 
     @Autowired
     internal lateinit var props: AppProperties
+
+    val staging by lazy { props.stagingFilesDir }
+    val repositoryName by lazy { props.gitRepository }
+
+    private val ACADEMIC_CALENDAR_FILENAME = "calendar"
+    private val ACADEMIC_YEARS_FOLDER_NAME = "academic_years"
+
+    private fun getDirectory(academicCalendar: AcademicCalendarData): Filepath {
+        val segments = listOf(
+            repositoryName,
+            academicCalendar.institution.domain,
+            ACADEMIC_YEARS_FOLDER_NAME,
+            academicCalendar.academicYear
+        )
+
+        return staging + segments
+    }
 
     private val git by lazy {
         val data = GitRepoData(
@@ -41,7 +58,7 @@ class ISELAcademicCalendarDispatcherImpl(
             if (git.update() == GitOutcome.CONFLICT)
                 throw IllegalStateException("Unresolved conflict while updating Git Repo")
 
-            calendaFileWriter.write(data, format)
+            fileWriter.write(data, format, ACADEMIC_CALENDAR_FILENAME, getDirectory(data))
             git.add()
             git.commit(generateCommitMessage(data))
 
