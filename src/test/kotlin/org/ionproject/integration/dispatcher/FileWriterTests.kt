@@ -23,7 +23,6 @@ class FileWriterTests {
     internal lateinit var props: AppProperties
 
     val staging by lazy { props.stagingFilesDir }
-    val repositoryName by lazy { props.gitRepository }
 
     @Test
     fun `when given a timetable DTO then write the file to JSON`() {

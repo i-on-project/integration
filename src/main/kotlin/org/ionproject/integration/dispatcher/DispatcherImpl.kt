@@ -15,32 +15,18 @@ import java.time.format.DateTimeFormatter
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-class ISELAcademicCalendarDispatcherImpl(
+class DispatcherImpl(
     val fileWriter: IFileWriter<ParsedData>,
     val gitFactory: IGitHandlerFactory
-) : IDispatcher<AcademicCalendarData> {
+) : IDispatcher {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-    private val LOGGER = LoggerFactory.getLogger(ISELAcademicCalendarDispatcherImpl::class.java)
+    private val LOGGER = LoggerFactory.getLogger(DispatcherImpl::class.java)
 
     @Autowired
     internal lateinit var props: AppProperties
 
     val staging by lazy { props.stagingFilesDir }
     val repositoryName by lazy { props.gitRepository }
-
-    private val ACADEMIC_CALENDAR_FILENAME = "calendar"
-    private val ACADEMIC_YEARS_FOLDER_NAME = "academic_years"
-
-    private fun getDirectory(academicCalendar: AcademicCalendarData): Filepath {
-        val segments = listOf(
-            repositoryName,
-            academicCalendar.institution.domain,
-            ACADEMIC_YEARS_FOLDER_NAME,
-            academicCalendar.academicYear
-        )
-
-        return staging + segments
-    }
 
     private val git by lazy {
         val data = GitRepoData(
@@ -53,12 +39,12 @@ class ISELAcademicCalendarDispatcherImpl(
         gitFactory.checkout(props.stagingFilesDir.path, data, props.timeoutInSeconds)
     }
 
-    override fun dispatch(data: AcademicCalendarData, format: OutputFormat): DispatchResult =
+    override fun dispatch(data: ParsedData, filename: String, format: OutputFormat): DispatchResult =
         runCatching {
             if (git.update() == GitOutcome.CONFLICT)
                 throw IllegalStateException("Unresolved conflict while updating Git Repo")
 
-            fileWriter.write(data, format, ACADEMIC_CALENDAR_FILENAME, getDirectory(data))
+            fileWriter.write(data, format, filename, data.getDirectory(repositoryName, staging))
             git.add()
             git.commit(generateCommitMessage(data))
 
@@ -72,8 +58,8 @@ class ISELAcademicCalendarDispatcherImpl(
                 DispatchResult.FAILURE
         }
 
-    private fun generateCommitMessage(data: AcademicCalendarData): String {
+    private fun generateCommitMessage(data: ParsedData): String {
         val now = LocalDateTime.now().format(formatter)
-        return "${data.javaClass.simpleName}:${data.institution.acronym}:${data.academicYear} at $now"
+        return "${data.identifier} at $now"
     }
 }

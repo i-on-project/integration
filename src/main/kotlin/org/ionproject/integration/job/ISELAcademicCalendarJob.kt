@@ -38,7 +38,7 @@ class ISELAcademicCalendarJob(
     val stepBuilderFactory: StepBuilderFactory,
     val properties: AppProperties,
     val downloader: IFileDownloader,
-    val dispatcher: IDispatcher<AcademicCalendarData>,
+    val dispatcher: IDispatcher,
     @Autowired
     val ds: DataSource
 ) {
@@ -130,7 +130,11 @@ class ISELAcademicCalendarJob(
     @Bean
     fun writeCalendarDTOToGitTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
         .tasklet { _, _ ->
-            dispatcher.dispatch(AcademicCalendarData.from(State.academicCalendarDto), OutputFormat.JSON)
+            dispatcher.dispatch(
+                AcademicCalendarData.from(State.academicCalendarDto),
+                CALENDAR_JOB_NAME,
+                OutputFormat.JSON
+            )
             RepeatStatus.FINISHED
         }
         .build()
