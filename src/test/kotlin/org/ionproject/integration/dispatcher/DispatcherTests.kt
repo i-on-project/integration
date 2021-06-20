@@ -29,29 +29,29 @@ class DispatcherTests {
     }
 
     private val appProps = mock<AppProperties> {
-        on { gitBranchName } doReturn ""
-        on { stagingDir } doReturn ""
-        on { tempDir } doReturn ""
-        on { gitRepository } doReturn ""
-        on { gitRepoUrl } doReturn ""
-        on { gitUser } doReturn ""
-        on { gitPassword } doReturn ""
+        on { gitBranchName } doReturn "mock"
+        on { stagingDir } doReturn "mock"
+        on { tempDir } doReturn "mock"
+        on { gitRepository } doReturn "mock"
+        on { gitRepoUrl } doReturn "mock"
+        on { gitUser } doReturn "mock"
+        on { gitPassword } doReturn "mock"
         on { stagingFilesDir } doReturn Filepath(listOf("mock"))
         on { tempFilesDir } doReturn Filepath(listOf("mock"))
     }
 
     @Test
     fun `when given a working git handler then success`() {
-        val dispatcher = ISELTimetableDispatcherImpl(mockWriter, getMockFactory(true)).apply { props = appProps }
-        val outcome = dispatcher.dispatch(meta, OutputFormat.YAML)
+        val dispatcher = DispatcherImpl(mockWriter, getMockFactory(true)).apply { props = appProps }
+        val outcome = dispatcher.dispatch(meta, "test", OutputFormat.YAML)
 
         assertEquals(DispatchResult.SUCCESS, outcome)
     }
 
     @Test
     fun `when given a broken git handler then failure`() {
-        val dispatcher = ISELTimetableDispatcherImpl(mockWriter, getMockFactory(false)).apply { props = appProps }
-        val outcome = dispatcher.dispatch(meta, OutputFormat.YAML)
+        val dispatcher = DispatcherImpl(mockWriter, getMockFactory(false)).apply { props = appProps }
+        val outcome = dispatcher.dispatch(meta, "test", OutputFormat.YAML)
 
         assertEquals(DispatchResult.FAILURE, outcome)
     }

@@ -2,7 +2,6 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
 import org.ionproject.integration.dispatcher.DispatchResult
 import org.ionproject.integration.dispatcher.IDispatcher
-import org.ionproject.integration.dispatcher.TimetableData
 import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.model.external.timetable.Programme
 import org.ionproject.integration.model.external.timetable.ProgrammeDto
@@ -73,12 +72,12 @@ class WriteFileTaskletTests {
 
     private lateinit var timetableDto: TimetableDto
 
-    val mockDispatcherSuccess = mock<IDispatcher<TimetableData>> {
-        on { dispatch(any(), any()) } doReturn DispatchResult.SUCCESS
+    val mockDispatcherSuccess = mock<IDispatcher> {
+        on { dispatch(any(), any(), any()) } doReturn DispatchResult.SUCCESS
     }
 
-    val mockDispatcherFailure = mock<IDispatcher<TimetableData>> {
-        on { dispatch(any(), any()) } doReturn DispatchResult.FAILURE
+    val mockDispatcherFailure = mock<IDispatcher> {
+        on { dispatch(any(), any(), any()) } doReturn DispatchResult.FAILURE
     }
 
     @BeforeEach

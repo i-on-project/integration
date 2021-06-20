@@ -10,6 +10,7 @@ import org.ionproject.integration.dispatcher.ProgrammeMetadata
 import org.ionproject.integration.dispatcher.Term
 import org.ionproject.integration.dispatcher.TimetableData
 import org.ionproject.integration.job.ISELTimetableJob
+import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.model.external.timetable.TimetableDto
 import org.ionproject.integration.utils.Institution
 import org.slf4j.LoggerFactory
@@ -25,7 +26,7 @@ import org.springframework.stereotype.Component
 @StepScope
 class WriteFileTasklet(
     private val state: ISELTimetableJob.State,
-    private val dispatcher: IDispatcher<TimetableData>
+    private val dispatcher: IDispatcher
 ) : Tasklet {
 
     private val log = LoggerFactory.getLogger(WriteFileTasklet::class.java)
@@ -45,7 +46,7 @@ class WriteFileTasklet(
 
     private fun writeToGit(): DispatchResult {
         val timetable = TimetableDto.from(state.timetableTeachers)
-        return dispatcher.dispatch(generateTimetableDataFromDto(timetable), format)
+        return dispatcher.dispatch(generateTimetableDataFromDto(timetable), TIMETABLE_JOB_NAME, format)
     }
 
     internal fun generateTimetableDataFromDto(timetableDto: TimetableDto): TimetableData {
