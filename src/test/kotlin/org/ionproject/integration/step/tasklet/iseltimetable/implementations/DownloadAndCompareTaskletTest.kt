@@ -10,6 +10,7 @@ import java.security.Security
 import java.time.Instant
 import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
+import org.ionproject.integration.JobEngine.Companion.JOB_HASH_PARAMETER
 import org.ionproject.integration.JobEngine.Companion.TIMESTAMP_PARAMETER
 import org.ionproject.integration.config.AppProperties
 import org.ionproject.integration.job.ISELTimetableJob
@@ -124,7 +125,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
         return JobParametersBuilder()
             .addString("srcRemoteLocation", "https://www.isel.pt/media/uploads/LEIC_0310.pdf")
             .addLong(TIMESTAMP_PARAMETER, Instant.now().toEpochMilli())
-            .addString("jobId", jobId)
+            .addString(JOB_HASH_PARAMETER, jobId)
             .toJobParameters()
     }
 }
