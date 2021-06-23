@@ -1,6 +1,7 @@
 package org.ionproject.integration.format.implementations
 
 import com.squareup.moshi.Types
+import org.ionproject.integration.infrastructure.JsonFormatChecker
 import org.ionproject.integration.model.Nested
 import org.ionproject.integration.model.Simple
 import org.junit.jupiter.api.Assertions.assertFalse

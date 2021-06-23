@@ -1,13 +1,15 @@
 package org.ionproject.integration.dispatcher
 
-import org.ionproject.integration.config.AppProperties
-import org.ionproject.integration.model.external.timetable.ClassDto
-import org.ionproject.integration.model.external.timetable.EventDto
-import org.ionproject.integration.model.external.timetable.InstructorDto
-import org.ionproject.integration.model.external.timetable.ProgrammeDto
-import org.ionproject.integration.model.external.timetable.SchoolDto
-import org.ionproject.integration.model.external.timetable.SectionDto
-import org.ionproject.integration.model.external.timetable.TimetableDto
+import org.ionproject.integration.application.config.AppProperties
+import org.ionproject.integration.domain.Term
+import org.ionproject.integration.domain.dto.ClassDto
+import org.ionproject.integration.domain.dto.EventDto
+import org.ionproject.integration.domain.dto.InstructorDto
+import org.ionproject.integration.domain.dto.ProgrammeDto
+import org.ionproject.integration.domain.dto.SchoolDto
+import org.ionproject.integration.domain.dto.SectionDto
+import org.ionproject.integration.domain.dto.TimetableDto
+import org.ionproject.integration.infrastructure.OutputFormat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

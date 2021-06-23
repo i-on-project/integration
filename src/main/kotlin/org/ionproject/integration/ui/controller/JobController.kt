@@ -1,6 +1,6 @@
 package org.ionproject.integration.ui.controller
 
-import org.ionproject.integration.JobEngine
+import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.ui.dto.CreateJobDto
 import org.ionproject.integration.ui.dto.InputProcessor
 import org.slf4j.LoggerFactory

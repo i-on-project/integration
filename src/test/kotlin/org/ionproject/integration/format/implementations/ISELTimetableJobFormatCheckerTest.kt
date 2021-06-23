@@ -1,7 +1,8 @@
 package org.ionproject.integration.format.implementations
 
-import org.ionproject.integration.format.exceptions.FormatCheckException
-import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
+import org.ionproject.integration.domain.timetable.ISELTimetableFormatChecker
+import org.ionproject.integration.infrastructure.exceptions.FormatCheckException
+import org.ionproject.integration.domain.timetable.RawTimetableData
 import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals

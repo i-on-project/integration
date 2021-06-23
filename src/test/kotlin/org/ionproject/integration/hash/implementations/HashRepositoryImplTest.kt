@@ -1,5 +1,6 @@
 package org.ionproject.integration.hash.implementations
 
+import org.ionproject.integration.infrastructure.HashRepositoryImpl
 import javax.sql.DataSource
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertNull

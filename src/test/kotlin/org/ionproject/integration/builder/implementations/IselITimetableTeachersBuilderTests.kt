@@ -1,11 +1,12 @@
 package org.ionproject.integration.builder.implementations
 
-import org.ionproject.integration.builder.exceptions.TimetableTeachersBuilderException
-import org.ionproject.integration.model.external.timetable.EventCategory
-import org.ionproject.integration.model.external.timetable.Instructor
-import org.ionproject.integration.model.external.timetable.TimetableTeachers
-import org.ionproject.integration.model.external.timetable.Weekday
-import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
+import org.ionproject.integration.domain.exceptions.TimetableTeachersBuilderException
+import org.ionproject.integration.domain.timetable.EventCategory
+import org.ionproject.integration.domain.timetable.Instructor
+import org.ionproject.integration.domain.timetable.IselTimetableTeachersBuilder
+import org.ionproject.integration.domain.timetable.TimetableTeachers
+import org.ionproject.integration.domain.timetable.Weekday
+import org.ionproject.integration.domain.timetable.RawTimetableData
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

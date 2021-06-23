@@ -2,13 +2,14 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
 import java.time.LocalTime
 import org.ionproject.integration.IOnIntegrationApplication
+import org.ionproject.integration.application.job.MappingTasklet
 import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.job.TIMETABLE_JOB_NAME
-import org.ionproject.integration.model.external.timetable.EventCategory
-import org.ionproject.integration.model.external.timetable.Instructor
-import org.ionproject.integration.model.external.timetable.TimetableTeachers
-import org.ionproject.integration.model.external.timetable.Weekday
-import org.ionproject.integration.model.internal.timetable.isel.RawTimetableData
+import org.ionproject.integration.domain.timetable.EventCategory
+import org.ionproject.integration.domain.timetable.Instructor
+import org.ionproject.integration.domain.timetable.TimetableTeachers
+import org.ionproject.integration.domain.timetable.Weekday
+import org.ionproject.integration.domain.timetable.RawTimetableData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

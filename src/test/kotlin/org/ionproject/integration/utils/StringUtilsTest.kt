@@ -1,6 +1,6 @@
 package org.ionproject.integration.utils
 
-import org.ionproject.integration.model.external.timetable.Language
+import org.ionproject.integration.domain.timetable.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

@@ -1,6 +1,6 @@
 package org.ionproject.integration.model
 
-import org.ionproject.integration.model.external.timetable.Weekday
+import org.ionproject.integration.domain.timetable.Weekday
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

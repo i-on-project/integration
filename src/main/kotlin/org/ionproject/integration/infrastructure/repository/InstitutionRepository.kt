@@ -2,7 +2,7 @@ package org.ionproject.integration.infrastructure.repository
 
 import org.ionproject.integration.domain.model.InstitutionModel
 import org.ionproject.integration.domain.model.SupportedInstitutions
-import org.ionproject.integration.infrastructure.error.ArgumentException
+import org.ionproject.integration.infrastructure.exceptions.ArgumentException
 import org.springframework.stereotype.Service
 
 interface IInstitutionRepository {

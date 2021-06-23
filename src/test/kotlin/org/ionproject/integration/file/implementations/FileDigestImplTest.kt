@@ -1,5 +1,6 @@
 package org.ionproject.integration.file.implementations
 
+import org.ionproject.integration.infrastructure.FileDigestImpl
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

@@ -1,17 +1,18 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
+import org.ionproject.integration.application.job.WriteFileTasklet
 import org.ionproject.integration.dispatcher.DispatchResult
 import org.ionproject.integration.dispatcher.IDispatcher
 import org.ionproject.integration.job.ISELTimetableJob
-import org.ionproject.integration.model.external.timetable.Programme
-import org.ionproject.integration.model.external.timetable.ProgrammeDto
-import org.ionproject.integration.model.external.timetable.School
-import org.ionproject.integration.model.external.timetable.SchoolDto
-import org.ionproject.integration.model.external.timetable.Timetable
-import org.ionproject.integration.model.external.timetable.TimetableDto
-import org.ionproject.integration.model.external.timetable.TimetableTeachers
+import org.ionproject.integration.domain.timetable.Programme
+import org.ionproject.integration.domain.dto.ProgrammeDto
+import org.ionproject.integration.domain.timetable.School
+import org.ionproject.integration.domain.dto.SchoolDto
+import org.ionproject.integration.domain.timetable.Timetable
+import org.ionproject.integration.domain.dto.TimetableDto
+import org.ionproject.integration.domain.timetable.TimetableTeachers
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
-import org.ionproject.integration.utils.JsonUtils
+import org.ionproject.integration.infrastructure.JsonUtils
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
