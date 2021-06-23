@@ -1,5 +1,6 @@
 package org.ionproject.integration.format.implementations
 
+import org.ionproject.integration.infrastructure.StringFormatChecker
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

@@ -1,6 +1,6 @@
 package org.ionproject.integration.format.implementations
 
-import org.ionproject.integration.model.internal.calendar.isel.RawCalendarData
+import org.ionproject.integration.domain.calendar.RawCalendarData
 import org.junit.jupiter.api.Test
 
 internal class AcademicCalendarBusinessObjFormatCheckerTest {

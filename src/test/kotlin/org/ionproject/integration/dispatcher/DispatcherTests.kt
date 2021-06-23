@@ -1,9 +1,11 @@
 package org.ionproject.integration.dispatcher
 
-import org.ionproject.integration.config.AppProperties
-import org.ionproject.integration.dispatcher.git.GitOutcome
-import org.ionproject.integration.dispatcher.git.IGitHandler
-import org.ionproject.integration.dispatcher.git.IGitHandlerFactory
+import org.ionproject.integration.application.config.AppProperties
+import org.ionproject.integration.application.DispatcherImpl
+import org.ionproject.integration.infrastructure.GitOutcome
+import org.ionproject.integration.infrastructure.IGitHandler
+import org.ionproject.integration.infrastructure.IGitHandlerFactory
+import org.ionproject.integration.infrastructure.OutputFormat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any

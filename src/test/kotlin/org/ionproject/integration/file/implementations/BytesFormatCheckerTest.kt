@@ -1,5 +1,6 @@
 package org.ionproject.integration.file.implementations
 
+import org.ionproject.integration.infrastructure.PDFBytesFormatChecker
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

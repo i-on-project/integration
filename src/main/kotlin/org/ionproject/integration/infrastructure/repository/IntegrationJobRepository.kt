@@ -1,7 +1,7 @@
 package org.ionproject.integration.infrastructure.repository
 
-import org.ionproject.integration.JobEngine
-import org.ionproject.integration.dispatcher.OutputFormat
+import org.ionproject.integration.application.JobEngine
+import org.ionproject.integration.infrastructure.OutputFormat
 import org.ionproject.integration.ui.dto.JobType
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor

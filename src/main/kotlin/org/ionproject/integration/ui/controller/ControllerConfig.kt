@@ -1,6 +1,6 @@
 package org.ionproject.integration.ui.controller
 
-import org.ionproject.integration.infrastructure.error.ArgumentException
+import org.ionproject.integration.infrastructure.exceptions.ArgumentException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

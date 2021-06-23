@@ -1,5 +1,6 @@
 package org.ionproject.integration.utils
 
+import org.ionproject.integration.infrastructure.RegexUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

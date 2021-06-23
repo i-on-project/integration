@@ -1,8 +1,8 @@
 package org.ionproject.integration.ui.dto
 
-import org.ionproject.integration.JobEngine
-import org.ionproject.integration.dispatcher.OutputFormat
-import org.ionproject.integration.infrastructure.error.ArgumentException
+import org.ionproject.integration.application.JobEngine
+import org.ionproject.integration.infrastructure.OutputFormat
+import org.ionproject.integration.infrastructure.exceptions.ArgumentException
 import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
 import org.ionproject.integration.infrastructure.repository.IProgrammeRepository
 import org.springframework.stereotype.Component
