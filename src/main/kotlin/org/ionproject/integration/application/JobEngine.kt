@@ -2,13 +2,13 @@ package org.ionproject.integration.application
 
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.config.LAUNCHER_NAME
+import org.ionproject.integration.application.job.CALENDAR_JOB_NAME
 import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.ProgrammeModel
 import org.ionproject.integration.infrastructure.repository.IIntegrationJobRepository
-import org.ionproject.integration.job.CALENDAR_JOB_NAME
-import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.application.job.JobType
+import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters

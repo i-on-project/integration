@@ -90,7 +90,7 @@ class ISELTimetableJob(
     @Bean
     @StepScope
     fun mappingTasklet() =
-        MappingTasklet(State)
+        MappingTasklet()
 
     fun flow(name: String, step: Step): Flow {
         return FlowBuilder<SimpleFlow>(name)

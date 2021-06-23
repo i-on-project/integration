@@ -118,7 +118,6 @@ internal class TimetableDtoFormatCheckerTest {
                             listOf(
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.LECTURE,
                                     listOf("L_H2"),
                                     "14:00",
@@ -127,7 +126,6 @@ internal class TimetableDtoFormatCheckerTest {
                                 ),
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.LECTURE,
                                     listOf(),
                                     "14:00",
@@ -261,7 +259,6 @@ internal class TimetableDtoFormatCheckerTest {
                             listOf(
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.PRACTICE,
                                     listOf("L_H2"),
                                     "14:00",
@@ -270,7 +267,6 @@ internal class TimetableDtoFormatCheckerTest {
                                 ),
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.LECTURE,
                                     listOf(),
                                     "14:00",
@@ -285,7 +281,6 @@ internal class TimetableDtoFormatCheckerTest {
                             listOf(
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.PRACTICE,
                                     listOf("L_H1"),
                                     "15:30",
@@ -294,7 +289,6 @@ internal class TimetableDtoFormatCheckerTest {
                                 ),
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.LECTURE,
                                     listOf(),
                                     "14:00",
@@ -303,7 +297,6 @@ internal class TimetableDtoFormatCheckerTest {
                                 ),
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.LECTURE,
                                     listOf(),
                                     "15:30",
@@ -333,7 +326,6 @@ internal class TimetableDtoFormatCheckerTest {
                             listOf(
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.PRACTICE,
                                     listOf("L_H2"),
                                     "15:30",
@@ -342,7 +334,6 @@ internal class TimetableDtoFormatCheckerTest {
                                 ),
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.LECTURE,
                                     listOf(),
                                     "14:00",
@@ -357,7 +348,6 @@ internal class TimetableDtoFormatCheckerTest {
                             listOf(
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.PRACTICE,
                                     listOf("L_H1"),
                                     "17:00",
@@ -366,7 +356,6 @@ internal class TimetableDtoFormatCheckerTest {
                                 ),
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.LECTURE,
                                     listOf(),
                                     "14:00",
@@ -375,7 +364,6 @@ internal class TimetableDtoFormatCheckerTest {
                                 ),
                                 RecurrentEvent(
                                     null,
-                                    "",
                                     EventCategory.LECTURE,
                                     listOf(),
                                     "15:30",

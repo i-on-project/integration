@@ -1,9 +1,9 @@
 package org.ionproject.integration.application.job.chunkbased.processor
 
 import org.ionproject.integration.IOnIntegrationApplication
+import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.application.job.chunkbased.FormatVerifierProcessor
 import org.ionproject.integration.infrastructure.exception.FormatCheckException
-import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.domain.timetable.dto.RawTimetableData
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow

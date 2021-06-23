@@ -3,7 +3,7 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 import org.ionproject.integration.application.job.tasklet.WriteFileTasklet
 import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dispatcher.IDispatcher
-import org.ionproject.integration.job.ISELTimetableJob
+import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.domain.timetable.model.Programme
 import org.ionproject.integration.domain.timetable.dto.ProgrammeDto
 import org.ionproject.integration.domain.common.School
@@ -107,8 +107,8 @@ class WriteFileTaskletTests {
         chunkContext = SpringBatchTestUtils().createChunkContext()
 
         state.timetableTeachers = WriteFileTaskletTestFixtures.timetableTeachers
-        writeFileTaskletSuccess = WriteFileTasklet(state, mockDispatcherSuccess)
-        writeFileTaskletFailure = WriteFileTasklet(state, mockDispatcherFailure)
+        writeFileTaskletSuccess = WriteFileTasklet(mockDispatcherSuccess)
+        writeFileTaskletFailure = WriteFileTasklet(mockDispatcherFailure)
     }
 
     @Test
