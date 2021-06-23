@@ -2,7 +2,7 @@ package org.ionproject.integration.application
 
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.config.LAUNCHER_NAME
-import org.ionproject.integration.infrastructure.OutputFormat
+import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.ProgrammeModel
 import org.ionproject.integration.infrastructure.repository.IIntegrationJobRepository

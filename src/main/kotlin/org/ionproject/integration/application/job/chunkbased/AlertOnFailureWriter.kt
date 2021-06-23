@@ -1,8 +1,8 @@
 package org.ionproject.integration.application.job.chunkbased
 
 import java.net.URI
-import org.ionproject.integration.infrastructure.alert.EmailAlertChannel
-import org.ionproject.integration.infrastructure.alert.EmailAlertService
+import org.ionproject.integration.infrastructure.notification.EmailAlertChannel
+import org.ionproject.integration.infrastructure.notification.EmailAlertService
 import org.ionproject.integration.application.JobResult
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.infrastructure.EmailUtils

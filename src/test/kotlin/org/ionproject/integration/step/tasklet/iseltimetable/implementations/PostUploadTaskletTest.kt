@@ -7,7 +7,7 @@ import org.ionproject.integration.application.JobEngine.Companion.JOB_HASH_PARAM
 import org.ionproject.integration.application.JobEngine.Companion.REMOTE_FILE_LOCATION_PARAMETER
 import org.ionproject.integration.application.JobEngine.Companion.TIMESTAMP_PARAMETER
 import org.ionproject.integration.application.job.tasklet.PostUploadTasklet
-import org.ionproject.integration.infrastructure.HashRepositoryImpl
+import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
 import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.step.utils.SpringBatchTestUtils

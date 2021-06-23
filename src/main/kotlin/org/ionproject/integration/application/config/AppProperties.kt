@@ -1,6 +1,6 @@
 package org.ionproject.integration.application.config
 
-import org.ionproject.integration.infrastructure.Filepath
+import org.ionproject.integration.infrastructure.file.Filepath
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated

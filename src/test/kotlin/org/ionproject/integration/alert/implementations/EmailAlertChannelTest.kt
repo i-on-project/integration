@@ -6,10 +6,10 @@ import com.icegreen.greenmail.util.GreenMailUtil
 import com.icegreen.greenmail.util.ServerSetupTest
 import org.apache.commons.mail.util.MimeMessageParser
 import org.ionproject.integration.IOnIntegrationApplication
-import org.ionproject.integration.infrastructure.alert.EmailAlertChannel
-import org.ionproject.integration.infrastructure.alert.EmailConfiguration
-import org.ionproject.integration.infrastructure.exceptions.AlertConfigurationException
-import org.ionproject.integration.infrastructure.alert.Attachment
+import org.ionproject.integration.infrastructure.notification.EmailAlertChannel
+import org.ionproject.integration.infrastructure.notification.EmailConfiguration
+import org.ionproject.integration.infrastructure.exception.AlertConfigurationException
+import org.ionproject.integration.infrastructure.notification.Attachment
 import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.AfterEach

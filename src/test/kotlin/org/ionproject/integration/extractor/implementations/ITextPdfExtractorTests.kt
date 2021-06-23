@@ -1,7 +1,7 @@
 package org.ionproject.integration.extractor.implementations
 
 import java.io.File
-import org.ionproject.integration.infrastructure.exceptions.PdfExtractorException
+import org.ionproject.integration.infrastructure.exception.PdfExtractorException
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.utils.CompositeException
 import org.ionproject.integration.utils.orThrow
