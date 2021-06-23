@@ -1,4 +1,4 @@
-package org.ionproject.integration.domain.timetable
+package org.ionproject.integration.domain.common
 
 data class School(
     var name: String = "",

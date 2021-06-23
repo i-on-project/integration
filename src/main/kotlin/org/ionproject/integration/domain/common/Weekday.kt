@@ -1,4 +1,4 @@
-package org.ionproject.integration.domain.timetable
+package org.ionproject.integration.domain.common
 
 enum class Weekday(val shortName: String) {
     MONDAY("MO"),

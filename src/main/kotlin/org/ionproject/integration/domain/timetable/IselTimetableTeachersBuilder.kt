@@ -1,10 +1,21 @@
 package org.ionproject.integration.domain.timetable
 
 import com.squareup.moshi.Types
-import org.ionproject.integration.builder.implementations.FacultyDTO
-import org.ionproject.integration.builder.implementations.FacultyRawData
-import org.ionproject.integration.builder.implementations.toDto
-import org.ionproject.integration.domain.exceptions.TimetableTeachersBuilderException
+import org.ionproject.integration.domain.exception.TimetableTeachersBuilderException
+import org.ionproject.integration.domain.timetable.model.ClassDetail
+import org.ionproject.integration.domain.timetable.model.Course
+import org.ionproject.integration.domain.timetable.model.CourseTeacher
+import org.ionproject.integration.domain.timetable.model.Faculty
+import org.ionproject.integration.domain.timetable.model.Label
+import org.ionproject.integration.domain.common.Language
+import org.ionproject.integration.domain.timetable.model.Programme
+import org.ionproject.integration.domain.timetable.model.RecurrentEvent
+import org.ionproject.integration.domain.common.School
+import org.ionproject.integration.domain.common.Weekday
+import org.ionproject.integration.domain.timetable.dto.FacultyDTO
+import org.ionproject.integration.domain.timetable.dto.FacultyRawData
+import org.ionproject.integration.domain.timetable.dto.RawTimetableData
+import org.ionproject.integration.domain.timetable.dto.toDto
 import org.ionproject.integration.infrastructure.tabula.Cell
 import org.ionproject.integration.infrastructure.tabula.Table
 import org.ionproject.integration.utils.DateUtils

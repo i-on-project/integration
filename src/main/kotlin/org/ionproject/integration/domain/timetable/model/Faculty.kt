@@ -1,4 +1,4 @@
-package org.ionproject.integration.domain.timetable
+package org.ionproject.integration.domain.timetable.model
 
 class Faculty(
     val classDetail: ClassDetail,

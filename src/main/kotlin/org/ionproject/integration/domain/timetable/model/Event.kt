@@ -1,8 +1,7 @@
-package org.ionproject.integration.domain.timetable
+package org.ionproject.integration.domain.timetable.model
 
 abstract class Event(
     var title: String?,
-    var description: String = "",
     val category: EventCategory,
     var location: List<String>
 )

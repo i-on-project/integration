@@ -1,7 +1,7 @@
-package org.ionproject.integration.builder.implementations
+package org.ionproject.integration.domain.timetable.dto
 
-import org.ionproject.integration.domain.timetable.ClassDetail
-import org.ionproject.integration.domain.timetable.Instructor
+import org.ionproject.integration.domain.timetable.model.ClassDetail
+import org.ionproject.integration.domain.timetable.model.Instructor
 
 data class FacultyRawData(val courseText: String, val instructorText: String)
 
