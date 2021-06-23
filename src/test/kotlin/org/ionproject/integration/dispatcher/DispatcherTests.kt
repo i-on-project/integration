@@ -4,6 +4,7 @@ import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.dispatcher.DispatcherImpl
 import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dto.ParsedData
+import org.ionproject.integration.infrastructure.file.Filepath
 import org.ionproject.integration.infrastructure.git.GitOutcome
 import org.ionproject.integration.infrastructure.git.IGitHandler
 import org.ionproject.integration.infrastructure.git.IGitHandlerFactory

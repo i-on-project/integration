@@ -5,7 +5,7 @@ import org.ionproject.integration.infrastructure.notification.EmailAlertChannel
 import org.ionproject.integration.infrastructure.notification.EmailAlertService
 import org.ionproject.integration.application.JobResult
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
-import org.ionproject.integration.infrastructure.EmailUtils
+import org.ionproject.integration.infrastructure.notification.EmailUtils
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.slf4j.LoggerFactory

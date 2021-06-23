@@ -2,9 +2,9 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
 import java.time.LocalTime
 import org.ionproject.integration.IOnIntegrationApplication
+import org.ionproject.integration.application.job.ISELTimetableJob
+import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.application.job.tasklet.MappingTasklet
-import org.ionproject.integration.job.ISELTimetableJob
-import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.domain.timetable.model.EventCategory
 import org.ionproject.integration.domain.timetable.model.Instructor
 import org.ionproject.integration.domain.timetable.TimetableTeachers

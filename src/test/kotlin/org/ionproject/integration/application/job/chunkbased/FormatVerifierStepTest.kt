@@ -11,8 +11,8 @@ import java.security.Security
 import java.time.Instant
 import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
-import org.ionproject.integration.job.ISELTimetableJob
-import org.ionproject.integration.job.TIMETABLE_JOB_NAME
+import org.ionproject.integration.application.job.ISELTimetableJob
+import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.utils.CompositeException
 import org.junit.jupiter.api.AfterEach
@@ -44,7 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     ]
 )
 @TestPropertySource("classpath:application.properties")
-internal class FormatVerifierStepTestSuccessful {
+class FormatVerifierStepTestSuccessful {
 
     @Autowired
     @Qualifier(value = TIMETABLE_JOB_NAME)

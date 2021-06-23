@@ -2,6 +2,7 @@ package org.ionproject.integration.utils
 
 import org.ionproject.integration.application.JobResult
 import org.ionproject.integration.infrastructure.exception.AlertConfigurationException
+import org.ionproject.integration.infrastructure.notification.EmailUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
