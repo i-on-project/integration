@@ -1,4 +1,4 @@
-package org.ionproject.integration.application.job.chunkbased.reader
+package org.ionproject.integration.application.job.chunkbased
 
 import java.nio.file.Path
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor

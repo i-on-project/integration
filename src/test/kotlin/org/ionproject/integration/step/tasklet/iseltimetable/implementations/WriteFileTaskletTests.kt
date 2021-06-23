@@ -1,8 +1,8 @@
 package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
-import org.ionproject.integration.application.job.WriteFileTasklet
-import org.ionproject.integration.dispatcher.DispatchResult
-import org.ionproject.integration.dispatcher.IDispatcher
+import org.ionproject.integration.application.job.tasklet.WriteFileTasklet
+import org.ionproject.integration.application.dispatcher.DispatchResult
+import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.domain.timetable.Programme
 import org.ionproject.integration.domain.dto.ProgrammeDto

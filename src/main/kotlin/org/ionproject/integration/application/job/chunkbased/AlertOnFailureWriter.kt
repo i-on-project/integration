@@ -1,11 +1,11 @@
-package org.ionproject.integration.application.job.chunkbased.writer
+package org.ionproject.integration.application.job.chunkbased
 
 import java.net.URI
 import org.ionproject.integration.infrastructure.alert.EmailAlertChannel
 import org.ionproject.integration.infrastructure.alert.EmailAlertService
-import org.ionproject.integration.job.TIMETABLE_JOB_NAME
-import org.ionproject.integration.utils.EmailUtils
 import org.ionproject.integration.application.JobResult
+import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
+import org.ionproject.integration.infrastructure.EmailUtils
 import org.ionproject.integration.utils.Try
 import org.ionproject.integration.utils.orThrow
 import org.slf4j.LoggerFactory
@@ -42,6 +42,7 @@ class AlertOnFailureWriter() : ItemWriter<Try<Boolean>> {
         )
         item.orThrow()
     }
+
     private fun sendEmail(e: Exception) {
         val filePath = srcRemoteLocation.toString()
         val asset = filePath.substring(filePath.lastIndexOf('/') + 1, filePath.length)

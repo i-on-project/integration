@@ -1,14 +1,16 @@
-package org.ionproject.integration.application.job
+package org.ionproject.integration.application.job.tasklet
 
 import org.ionproject.integration.application.JobEngine
-import org.ionproject.integration.dispatcher.CalendarTerm
-import org.ionproject.integration.dispatcher.DispatchResult
-import org.ionproject.integration.dispatcher.IDispatcher
-import org.ionproject.integration.dispatcher.InstitutionMetadata
+import org.ionproject.integration.application.job.ISELTimetableJob
+import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
+import org.ionproject.integration.application.dto.CalendarTerm
+import org.ionproject.integration.application.dispatcher.DispatchResult
+import org.ionproject.integration.application.dispatcher.IDispatcher
+import org.ionproject.integration.application.dto.InstitutionMetadata
 import org.ionproject.integration.infrastructure.OutputFormat
-import org.ionproject.integration.dispatcher.ProgrammeMetadata
+import org.ionproject.integration.application.dto.ProgrammeMetadata
 import org.ionproject.integration.domain.Term
-import org.ionproject.integration.dispatcher.TimetableData
+import org.ionproject.integration.application.dto.TimetableData
 import org.ionproject.integration.domain.dto.TimetableDto
 import org.ionproject.integration.utils.Institution
 import org.slf4j.LoggerFactory
@@ -23,7 +25,6 @@ import org.springframework.stereotype.Component
 @Component
 @StepScope
 class WriteFileTasklet(
-    private val state: ISELTimetableJob.State,
     private val dispatcher: IDispatcher
 ) : Tasklet {
 
@@ -43,7 +44,7 @@ class WriteFileTasklet(
     }
 
     private fun writeToGit(): DispatchResult {
-        val timetable = TimetableDto.from(state.timetableTeachers)
+        val timetable = TimetableDto.from(ISELTimetableJob.State.timetableTeachers)
         return dispatcher.dispatch(generateTimetableDataFromDto(timetable), TIMETABLE_JOB_NAME, format)
     }
 

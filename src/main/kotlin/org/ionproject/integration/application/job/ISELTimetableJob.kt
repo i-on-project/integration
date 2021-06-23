@@ -10,9 +10,13 @@ import org.ionproject.integration.infrastructure.HashRepositoryImpl
 import org.ionproject.integration.domain.timetable.TimetableTeachers
 import org.ionproject.integration.domain.timetable.RawTimetableData
 import org.ionproject.integration.application.job.chunkbased.FormatVerifierStepBuilder
-import org.ionproject.integration.application.job.chunkbased.processor.FormatVerifierProcessor
-import org.ionproject.integration.application.job.chunkbased.reader.ExtractReader
-import org.ionproject.integration.application.job.chunkbased.writer.AlertOnFailureWriter
+import org.ionproject.integration.application.job.chunkbased.FormatVerifierProcessor
+import org.ionproject.integration.application.job.chunkbased.ExtractReader
+import org.ionproject.integration.application.job.chunkbased.AlertOnFailureWriter
+import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
+import org.ionproject.integration.application.job.tasklet.MappingTasklet
+import org.ionproject.integration.application.job.tasklet.PostUploadTasklet
+import org.ionproject.integration.application.job.tasklet.WriteFileTasklet
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory

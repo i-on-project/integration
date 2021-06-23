@@ -1,8 +1,9 @@
 package org.ionproject.integration.application.job
 
 import org.ionproject.integration.application.config.AppProperties
-import org.ionproject.integration.dispatcher.AcademicCalendarData
-import org.ionproject.integration.dispatcher.IDispatcher
+import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
+import org.ionproject.integration.application.dto.AcademicCalendarData
+import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.infrastructure.OutputFormat
 import org.ionproject.integration.infrastructure.pdfextractor.AcademicCalendarExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor

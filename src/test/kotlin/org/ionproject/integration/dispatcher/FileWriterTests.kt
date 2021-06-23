@@ -1,6 +1,10 @@
 package org.ionproject.integration.dispatcher
 
 import org.ionproject.integration.application.config.AppProperties
+import org.ionproject.integration.application.dto.CalendarTerm
+import org.ionproject.integration.application.dto.InstitutionMetadata
+import org.ionproject.integration.application.dto.ProgrammeMetadata
+import org.ionproject.integration.application.dto.TimetableData
 import org.ionproject.integration.domain.Term
 import org.ionproject.integration.domain.dto.ClassDto
 import org.ionproject.integration.domain.dto.EventDto
