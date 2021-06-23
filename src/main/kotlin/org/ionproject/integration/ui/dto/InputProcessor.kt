@@ -2,7 +2,7 @@ package org.ionproject.integration.ui.dto
 
 import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.application.job.JobType
-import org.ionproject.integration.infrastructure.exceptions.ArgumentException
+import org.ionproject.integration.infrastructure.exception.ArgumentException
 import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
 import org.ionproject.integration.infrastructure.repository.IProgrammeRepository
 import org.springframework.stereotype.Component

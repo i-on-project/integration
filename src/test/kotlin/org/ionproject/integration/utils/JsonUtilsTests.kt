@@ -2,7 +2,7 @@ package org.ionproject.integration.utils
 
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Types
-import org.ionproject.integration.infrastructure.JsonUtils
+import org.ionproject.integration.infrastructure.text.JsonUtils
 import org.ionproject.integration.model.Simple
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

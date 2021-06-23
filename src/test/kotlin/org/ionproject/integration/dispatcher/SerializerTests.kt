@@ -1,8 +1,8 @@
 package org.ionproject.integration.dispatcher
 
-import org.ionproject.integration.infrastructure.ISerializer
-import org.ionproject.integration.infrastructure.OutputFormat
-import org.ionproject.integration.infrastructure.SerializerImpl
+import org.ionproject.integration.infrastructure.text.ISerializer
+import org.ionproject.integration.infrastructure.file.OutputFormat
+import org.ionproject.integration.infrastructure.text.SerializerImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

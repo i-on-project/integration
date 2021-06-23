@@ -2,11 +2,11 @@ package org.ionproject.integration.application.dispatcher
 
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.dto.ParsedData
-import org.ionproject.integration.dispatcher.IFileWriter
-import org.ionproject.integration.infrastructure.GitOutcome
-import org.ionproject.integration.infrastructure.GitRepoData
-import org.ionproject.integration.infrastructure.IGitHandlerFactory
-import org.ionproject.integration.infrastructure.OutputFormat
+import org.ionproject.integration.infrastructure.file.IFileWriter
+import org.ionproject.integration.infrastructure.git.GitOutcome
+import org.ionproject.integration.infrastructure.git.GitRepoData
+import org.ionproject.integration.infrastructure.git.IGitHandlerFactory
+import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.ConfigurableBeanFactory

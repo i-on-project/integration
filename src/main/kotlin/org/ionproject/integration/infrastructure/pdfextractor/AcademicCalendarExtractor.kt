@@ -1,6 +1,5 @@
 package org.ionproject.integration.infrastructure.pdfextractor
 
-import org.ionproject.integration.infrastructure.PdfUtils
 import org.ionproject.integration.utils.Try
 
 object AcademicCalendarExtractor {

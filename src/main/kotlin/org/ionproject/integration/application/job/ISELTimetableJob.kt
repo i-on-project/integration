@@ -1,12 +1,12 @@
 package org.ionproject.integration.application.job
 
 import org.ionproject.integration.application.config.AppProperties
-import org.ionproject.integration.infrastructure.FileComparatorImpl
-import org.ionproject.integration.infrastructure.FileDigestImpl
-import org.ionproject.integration.infrastructure.PDFBytesFormatChecker
-import org.ionproject.integration.infrastructure.IFileDownloader
+import org.ionproject.integration.infrastructure.file.FileComparatorImpl
+import org.ionproject.integration.infrastructure.file.FileDigestImpl
+import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
+import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.domain.timetable.ISELTimetableFormatChecker
-import org.ionproject.integration.infrastructure.HashRepositoryImpl
+import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
 import org.ionproject.integration.domain.timetable.TimetableTeachers
 import org.ionproject.integration.domain.timetable.dto.RawTimetableData
 import org.ionproject.integration.application.job.chunkbased.FormatVerifierStepBuilder
