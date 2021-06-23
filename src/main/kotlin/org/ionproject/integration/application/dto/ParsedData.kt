@@ -1,9 +1,9 @@
 package org.ionproject.integration.application.dto
 
-import org.ionproject.integration.domain.dto.TimetableDto
-import org.ionproject.integration.infrastructure.Filepath
+import org.ionproject.integration.domain.timetable.dto.TimetableDto
+import org.ionproject.integration.infrastructure.file.Filepath
 import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
-import org.ionproject.integration.utils.Institution
+import org.ionproject.integration.infrastructure.text.Institution
 
 /**
  * ParsedData will be used to "transport" the final data along with the required metadata.

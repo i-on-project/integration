@@ -1,6 +1,6 @@
 package org.ionproject.integration.application.job.chunkbased
 
-import org.ionproject.integration.domain.timetable.RawTimetableData
+import org.ionproject.integration.domain.timetable.dto.RawTimetableData
 import org.ionproject.integration.utils.Try
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.step.tasklet.TaskletStep

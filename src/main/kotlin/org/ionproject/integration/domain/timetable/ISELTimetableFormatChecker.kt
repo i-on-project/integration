@@ -1,11 +1,11 @@
 package org.ionproject.integration.domain.timetable
 
 import com.squareup.moshi.Types
-import org.ionproject.integration.infrastructure.exceptions.FormatCheckException
-import org.ionproject.integration.infrastructure.IRawDataFormatChecker
-import org.ionproject.integration.infrastructure.tabula.Table
-import org.ionproject.integration.infrastructure.JsonFormatChecker
-import org.ionproject.integration.infrastructure.StringFormatChecker
+import org.ionproject.integration.domain.timetable.dto.RawTimetableData
+import org.ionproject.integration.infrastructure.exception.FormatCheckException
+import org.ionproject.integration.infrastructure.pdfextractor.tabula.Table
+import org.ionproject.integration.infrastructure.text.JsonFormatChecker
+import org.ionproject.integration.infrastructure.text.StringFormatChecker
 import org.ionproject.integration.utils.Try
 import org.springframework.stereotype.Component
 

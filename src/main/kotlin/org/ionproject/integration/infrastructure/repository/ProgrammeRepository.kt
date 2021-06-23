@@ -1,9 +1,9 @@
 package org.ionproject.integration.infrastructure.repository
 
-import org.ionproject.integration.domain.model.InstitutionModel
-import org.ionproject.integration.domain.model.ProgrammeModel
-import org.ionproject.integration.domain.model.SupportedProgrammes
-import org.ionproject.integration.infrastructure.exceptions.ArgumentException
+import org.ionproject.integration.domain.common.InstitutionModel
+import org.ionproject.integration.domain.common.ProgrammeModel
+import org.ionproject.integration.domain.common.SupportedProgrammes
+import org.ionproject.integration.infrastructure.exception.ArgumentException
 import org.springframework.stereotype.Service
 
 interface IProgrammeRepository {

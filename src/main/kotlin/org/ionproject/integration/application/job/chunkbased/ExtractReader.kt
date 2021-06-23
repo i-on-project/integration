@@ -3,8 +3,8 @@ package org.ionproject.integration.application.job.chunkbased
 import java.nio.file.Path
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.TimetableExtractor
-import org.ionproject.integration.infrastructure.FileDigestImpl
-import org.ionproject.integration.domain.timetable.RawTimetableData
+import org.ionproject.integration.infrastructure.file.FileDigestImpl
+import org.ionproject.integration.domain.timetable.dto.RawTimetableData
 import org.ionproject.integration.utils.Try.Companion.map
 import org.ionproject.integration.utils.orThrow
 import org.springframework.batch.core.StepExecution

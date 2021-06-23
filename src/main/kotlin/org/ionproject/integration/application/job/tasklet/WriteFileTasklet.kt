@@ -7,12 +7,12 @@ import org.ionproject.integration.application.dto.CalendarTerm
 import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.application.dto.InstitutionMetadata
-import org.ionproject.integration.infrastructure.OutputFormat
+import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.ionproject.integration.application.dto.ProgrammeMetadata
-import org.ionproject.integration.domain.Term
+import org.ionproject.integration.domain.common.Term
 import org.ionproject.integration.application.dto.TimetableData
-import org.ionproject.integration.domain.dto.TimetableDto
-import org.ionproject.integration.utils.Institution
+import org.ionproject.integration.domain.timetable.dto.TimetableDto
+import org.ionproject.integration.infrastructure.text.Institution
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.configuration.annotation.StepScope

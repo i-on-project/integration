@@ -1,6 +1,6 @@
 package org.ionproject.integration.model.external.calendar
 
-import org.ionproject.integration.domain.dto.SchoolDto
+import org.ionproject.integration.domain.timetable.dto.SchoolDto
 import org.ionproject.integration.utils.DateUtils
 
 data class AcademicCalendarDto(

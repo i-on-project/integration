@@ -1,10 +1,10 @@
 package org.ionproject.integration.model.external.calendar
 
-import org.ionproject.integration.domain.timetable.Language
-import org.ionproject.integration.domain.timetable.School
+import org.ionproject.integration.domain.common.Language
+import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.domain.calendar.RawCalendarData
 import org.ionproject.integration.utils.DateUtils
-import org.ionproject.integration.infrastructure.RegexUtils
+import org.ionproject.integration.infrastructure.text.RegexUtils
 import java.time.LocalDate
 import java.time.ZonedDateTime
 

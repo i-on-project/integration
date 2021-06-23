@@ -1,7 +1,7 @@
 package org.ionproject.integration.extractor.implementations
 
 import java.io.File
-import org.ionproject.integration.infrastructure.exceptions.PdfExtractorException
+import org.ionproject.integration.infrastructure.exception.PdfExtractorException
 import org.ionproject.integration.infrastructure.pdfextractor.AcademicCalendarExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.TimetableExtractor
 import org.ionproject.integration.utils.CompositeException

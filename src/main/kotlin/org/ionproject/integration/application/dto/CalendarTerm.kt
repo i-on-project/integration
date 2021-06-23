@@ -1,6 +1,6 @@
 package org.ionproject.integration.application.dto
 
-import org.ionproject.integration.domain.Term
+import org.ionproject.integration.domain.common.Term
 
 data class CalendarTerm(
     val startYear: Int,

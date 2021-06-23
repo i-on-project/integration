@@ -3,9 +3,9 @@ package org.ionproject.integration.file.implementations
 import java.io.File
 import java.io.FileNotFoundException
 import javax.sql.DataSource
-import org.ionproject.integration.infrastructure.HashRepositoryImpl
-import org.ionproject.integration.infrastructure.FileComparatorImpl
-import org.ionproject.integration.infrastructure.FileDigestImpl
+import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
+import org.ionproject.integration.infrastructure.file.FileComparatorImpl
+import org.ionproject.integration.infrastructure.file.FileDigestImpl
 import org.ionproject.integration.utils.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
