@@ -6,7 +6,7 @@ import org.springframework.batch.core.repository.JobRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.task.SimpleAsyncTaskExecutor
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 
 const val LAUNCHER_NAME = "asyncLauncher"
 
@@ -22,7 +22,13 @@ class BatchConfig {
     @Bean(name = [LAUNCHER_NAME])
     fun getAsyncLauncher(): JobLauncher = SimpleJobLauncher().apply {
         setJobRepository(jobRepository)
-        setTaskExecutor(SimpleAsyncTaskExecutor())
+
+        val executor = ThreadPoolTaskExecutor().apply {
+            maxPoolSize = 1 // Single threaded executor
+            initialize()
+        }
+        setTaskExecutor(executor)
+
         afterPropertiesSet()
     }
 }
