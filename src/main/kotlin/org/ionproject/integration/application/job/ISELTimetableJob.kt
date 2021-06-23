@@ -8,7 +8,7 @@ import org.ionproject.integration.infrastructure.IFileDownloader
 import org.ionproject.integration.domain.timetable.ISELTimetableFormatChecker
 import org.ionproject.integration.infrastructure.HashRepositoryImpl
 import org.ionproject.integration.domain.timetable.TimetableTeachers
-import org.ionproject.integration.domain.timetable.RawTimetableData
+import org.ionproject.integration.domain.timetable.dto.RawTimetableData
 import org.ionproject.integration.application.job.chunkbased.FormatVerifierStepBuilder
 import org.ionproject.integration.application.job.chunkbased.FormatVerifierProcessor
 import org.ionproject.integration.application.job.chunkbased.ExtractReader

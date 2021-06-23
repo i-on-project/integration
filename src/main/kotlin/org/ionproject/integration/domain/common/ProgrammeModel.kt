@@ -1,4 +1,4 @@
-package org.ionproject.integration.domain.model
+package org.ionproject.integration.domain.common
 
 import java.net.URI
 

@@ -1,11 +1,11 @@
-package org.ionproject.integration.domain.dto
+package org.ionproject.integration.domain.timetable.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import org.ionproject.integration.domain.timetable.Course
-import org.ionproject.integration.domain.timetable.CourseTeacher
-import org.ionproject.integration.domain.timetable.EventCategory
-import org.ionproject.integration.domain.timetable.Instructor
-import org.ionproject.integration.domain.timetable.RecurrentEvent
+import org.ionproject.integration.domain.timetable.model.Course
+import org.ionproject.integration.domain.timetable.model.CourseTeacher
+import org.ionproject.integration.domain.timetable.model.EventCategory
+import org.ionproject.integration.domain.timetable.model.Instructor
+import org.ionproject.integration.domain.timetable.model.RecurrentEvent
 import org.ionproject.integration.domain.timetable.TimetableTeachers
 
 data class TimetableDto(
@@ -64,23 +64,23 @@ data class TimetableDto(
                 classes
             )
         }
-    }
-}
 
-private fun getInstructors(
-    courseTeacherList: List<CourseTeacher>,
-    course: Course,
-    section: String
-): List<InstructorDto> {
-    return courseTeacherList
-        .filter { it.calendarSection == section }
-        .flatMap { it.courses }
-        .filter { it.classDetail.acronym == course.label.acr }
-        .flatMap { faculty ->
-            faculty.instructors.map {
-                InstructorDto.from(it, faculty.classDetail.type)
-            }
+        private fun getInstructors(
+            courseTeacherList: List<CourseTeacher>,
+            course: Course,
+            section: String
+        ): List<InstructorDto> {
+            return courseTeacherList
+                .filter { it.calendarSection == section }
+                .flatMap { it.courses }
+                .filter { it.classDetail.acronym == course.label.acr }
+                .flatMap { faculty ->
+                    faculty.instructors.map {
+                        InstructorDto.from(it, faculty.classDetail.type)
+                    }
+                }
         }
+    }
 }
 
 data class SchoolDto(

@@ -9,9 +9,9 @@ import org.ionproject.integration.model.external.calendar.Event
 import org.ionproject.integration.model.external.calendar.EventDto
 import org.ionproject.integration.model.external.calendar.Term
 import org.ionproject.integration.model.external.calendar.TermDto
-import org.ionproject.integration.domain.timetable.Language
-import org.ionproject.integration.domain.timetable.School
-import org.ionproject.integration.domain.dto.SchoolDto
+import org.ionproject.integration.domain.common.Language
+import org.ionproject.integration.domain.common.School
+import org.ionproject.integration.domain.timetable.dto.SchoolDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

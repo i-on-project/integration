@@ -1,4 +1,6 @@
-package org.ionproject.integration.domain.timetable
+package org.ionproject.integration.domain.timetable.model
+
+import org.ionproject.integration.domain.common.Weekday
 
 class RecurrentEvent(
     title: String?,
@@ -7,4 +9,4 @@ class RecurrentEvent(
     val beginTime: String,
     val duration: String,
     val weekdays: List<Weekday>
-) : Event(title, description, category, location)
+) : Event(title, category, location)
