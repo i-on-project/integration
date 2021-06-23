@@ -1,5 +1,6 @@
 package org.ionproject.integration.dispatcher
 
+import org.ionproject.integration.application.dto.ParsedData
 import org.ionproject.integration.infrastructure.Filepath
 import org.ionproject.integration.infrastructure.ISerializer
 import org.ionproject.integration.infrastructure.OutputFormat

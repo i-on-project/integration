@@ -13,7 +13,7 @@ import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.application.JobEngine.Companion.JOB_HASH_PARAMETER
 import org.ionproject.integration.application.JobEngine.Companion.TIMESTAMP_PARAMETER
 import org.ionproject.integration.application.config.AppProperties
-import org.ionproject.integration.application.job.DownloadAndCompareTasklet
+import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
 import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.application.exception.DownloadAndCompareTaskletException

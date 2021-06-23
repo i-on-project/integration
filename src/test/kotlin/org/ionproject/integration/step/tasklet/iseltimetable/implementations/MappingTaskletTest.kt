@@ -2,7 +2,7 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
 import java.time.LocalTime
 import org.ionproject.integration.IOnIntegrationApplication
-import org.ionproject.integration.application.job.MappingTasklet
+import org.ionproject.integration.application.job.tasklet.MappingTasklet
 import org.ionproject.integration.job.ISELTimetableJob
 import org.ionproject.integration.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.domain.timetable.EventCategory

@@ -1,10 +1,8 @@
-package org.ionproject.integration.application
+package org.ionproject.integration.application.dispatcher
 
 import org.ionproject.integration.application.config.AppProperties
-import org.ionproject.integration.dispatcher.DispatchResult
-import org.ionproject.integration.dispatcher.IDispatcher
+import org.ionproject.integration.application.dto.ParsedData
 import org.ionproject.integration.dispatcher.IFileWriter
-import org.ionproject.integration.dispatcher.ParsedData
 import org.ionproject.integration.infrastructure.GitOutcome
 import org.ionproject.integration.infrastructure.GitRepoData
 import org.ionproject.integration.infrastructure.IGitHandlerFactory

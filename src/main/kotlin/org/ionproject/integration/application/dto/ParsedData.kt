@@ -1,23 +1,9 @@
-package org.ionproject.integration.dispatcher
+package org.ionproject.integration.application.dto
 
-import org.ionproject.integration.domain.Term
-import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
 import org.ionproject.integration.domain.dto.TimetableDto
 import org.ionproject.integration.infrastructure.Filepath
-import org.ionproject.integration.infrastructure.OutputFormat
+import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
 import org.ionproject.integration.utils.Institution
-
-/**
- * This file contains the interface that must be implemented by each job type.
- * It also contains all the auxiliary data classes and enums.
- */
-
-/**
- * Interface definition
- */
-interface IDispatcher {
-    fun dispatch(data: ParsedData, filename: String, format: OutputFormat): DispatchResult
-}
 
 /**
  * ParsedData will be used to "transport" the final data along with the required metadata.
@@ -90,28 +76,3 @@ data class AcademicCalendarData(
         return staging + segments
     }
 }
-
-data class InstitutionMetadata(
-    val name: String,
-    val acronym: String,
-    val domain: String
-)
-
-data class ProgrammeMetadata(
-    val institution: InstitutionMetadata,
-    val name: String,
-    val acronym: String
-)
-
-data class CalendarTerm(
-    val startYear: Int,
-    val term: Term
-) {
-    override fun toString(): String = "$startYear-${startYear + 1}-${term.number}"
-}
-
-enum class DispatchResult {
-    SUCCESS,
-    FAILURE
-}
-
