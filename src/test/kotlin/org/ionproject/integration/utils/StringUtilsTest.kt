@@ -1,6 +1,8 @@
 package org.ionproject.integration.utils
 
-import org.ionproject.integration.domain.timetable.Language
+import org.ionproject.integration.domain.common.Language
+import org.ionproject.integration.infrastructure.text.IgnoredWords
+import org.ionproject.integration.infrastructure.text.generateAcronym
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
