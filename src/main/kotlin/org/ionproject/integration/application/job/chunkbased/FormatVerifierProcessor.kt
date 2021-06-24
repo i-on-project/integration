@@ -3,7 +3,7 @@ package org.ionproject.integration.application.job.chunkbased
 import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.domain.timetable.IRawDataFormatChecker
 import org.ionproject.integration.domain.timetable.dto.RawTimetableData
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.stereotype.Component
 

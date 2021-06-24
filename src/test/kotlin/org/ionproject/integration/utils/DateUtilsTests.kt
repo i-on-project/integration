@@ -1,5 +1,6 @@
 package org.ionproject.integration.utils
 
+import org.ionproject.integration.infrastructure.DateUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

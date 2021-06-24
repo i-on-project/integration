@@ -2,7 +2,7 @@ package org.ionproject.integration.infrastructure.pdfextractor
 
 import org.apache.commons.cli.DefaultParser
 import org.ionproject.integration.infrastructure.exception.PdfExtractorException
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 import technology.tabula.CommandLineApp
 import java.io.File
 

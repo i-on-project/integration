@@ -2,7 +2,7 @@ package org.ionproject.integration.infrastructure.notification
 
 import javax.mail.internet.InternetAddress
 import org.ionproject.integration.infrastructure.exception.AlertChannelException
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.mail.javamail.JavaMailSender

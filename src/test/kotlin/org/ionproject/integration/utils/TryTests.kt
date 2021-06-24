@@ -1,6 +1,10 @@
 package org.ionproject.integration.utils
 
-import org.ionproject.integration.utils.Try.Companion.ofValue
+import org.ionproject.integration.infrastructure.CompositeException
+import org.ionproject.integration.infrastructure.Try
+import org.ionproject.integration.infrastructure.Try.Companion.ofValue
+import org.ionproject.integration.infrastructure.orElse
+import org.ionproject.integration.infrastructure.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

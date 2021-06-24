@@ -15,8 +15,8 @@ import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
 import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
 import org.ionproject.integration.domain.calendar.RawCalendarData
-import org.ionproject.integration.utils.Try
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.Try
+import org.ionproject.integration.infrastructure.orThrow
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope

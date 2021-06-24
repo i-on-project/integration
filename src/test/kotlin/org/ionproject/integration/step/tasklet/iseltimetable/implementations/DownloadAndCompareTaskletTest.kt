@@ -18,7 +18,7 @@ import org.ionproject.integration.application.exception.DownloadAndCompareTaskle
 import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
-import org.ionproject.integration.utils.CompositeException
+import org.ionproject.integration.infrastructure.CompositeException
 import org.junit.FixMethodOrder
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

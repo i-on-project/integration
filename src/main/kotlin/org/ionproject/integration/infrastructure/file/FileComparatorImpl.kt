@@ -2,7 +2,7 @@ package org.ionproject.integration.infrastructure.file
 
 import org.ionproject.integration.infrastructure.hash.IHashRepository
 import java.io.File
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 
 class FileComparatorImpl(private val fd: IFileDigest, private val hr: IHashRepository) : IFileComparator {
 

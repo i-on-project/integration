@@ -2,7 +2,7 @@ package org.ionproject.integration.application.job.tasklet
 
 import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.domain.timetable.IselTimetableTeachersBuilder
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.orThrow
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet

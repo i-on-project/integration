@@ -10,8 +10,8 @@ import org.ionproject.integration.infrastructure.notification.EmailAlertChannel
 import org.ionproject.integration.infrastructure.notification.EmailConfiguration
 import org.ionproject.integration.infrastructure.exception.AlertConfigurationException
 import org.ionproject.integration.infrastructure.notification.Attachment
-import org.ionproject.integration.utils.CompositeException
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.CompositeException
+import org.ionproject.integration.infrastructure.orThrow
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

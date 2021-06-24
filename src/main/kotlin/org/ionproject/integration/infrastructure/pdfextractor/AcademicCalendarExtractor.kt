@@ -1,6 +1,6 @@
 package org.ionproject.integration.infrastructure.pdfextractor
 
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 
 object AcademicCalendarExtractor {
     // Arguments to pass to tabula
