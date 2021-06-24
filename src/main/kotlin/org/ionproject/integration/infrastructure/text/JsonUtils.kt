@@ -3,7 +3,7 @@ package org.ionproject.integration.infrastructure.text
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 import java.lang.reflect.Type
 
 object JsonUtils {

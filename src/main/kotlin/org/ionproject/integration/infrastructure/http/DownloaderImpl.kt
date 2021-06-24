@@ -1,6 +1,6 @@
 package org.ionproject.integration.infrastructure.http
 
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 import org.springframework.stereotype.Service
 import java.net.URI
 import java.nio.file.Path

@@ -6,7 +6,7 @@ import org.ionproject.integration.infrastructure.exception.FormatCheckException
 import org.ionproject.integration.infrastructure.pdfextractor.tabula.Table
 import org.ionproject.integration.infrastructure.text.JsonFormatChecker
 import org.ionproject.integration.infrastructure.text.StringFormatChecker
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 import org.springframework.stereotype.Component
 
 @Component

@@ -1,4 +1,4 @@
-package org.ionproject.integration.utils
+package org.ionproject.integration.infrastructure
 
 import java.time.LocalDate
 import java.time.Month
@@ -16,7 +16,7 @@ object DateUtils {
     private const val CALENDAR_SIMPLE_FORMAT = "yyyy-MM-dd"
     private const val PT_DATA_RANGE_DELIMITERS_REGEX = "\\b(?:\\sa\\s|\\se\\s)\\b"
     private const val PT_DATE_DELIMITER = " de "
-    private const val CALENDAR_ISO8601_FORMAT = "yyyyMMdd'T'HHmmssX"
+    private const val CALENDAR_ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ssX"
 
     private val localePT = Locale
         .Builder()

@@ -3,7 +3,7 @@ package org.ionproject.integration.infrastructure.text
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.lang.reflect.Type
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 
 class JsonFormatChecker<T>(type: Type) : IFormatChecker {
     private val moshi: Moshi = Moshi.Builder()

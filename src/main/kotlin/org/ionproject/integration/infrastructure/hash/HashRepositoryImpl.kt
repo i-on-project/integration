@@ -1,7 +1,7 @@
 package org.ionproject.integration.infrastructure.hash
 
 import javax.sql.DataSource
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 

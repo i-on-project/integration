@@ -13,7 +13,7 @@ import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.ionproject.integration.domain.timetable.TimetableTeachers
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.infrastructure.text.JsonUtils
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

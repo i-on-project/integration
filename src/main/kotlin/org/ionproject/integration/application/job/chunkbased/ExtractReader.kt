@@ -5,8 +5,8 @@ import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.TimetableExtractor
 import org.ionproject.integration.infrastructure.file.FileDigestImpl
 import org.ionproject.integration.domain.timetable.dto.RawTimetableData
-import org.ionproject.integration.utils.Try.Companion.map
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.Try.Companion.map
+import org.ionproject.integration.infrastructure.orThrow
 import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.annotation.BeforeStep
 import org.springframework.batch.core.configuration.annotation.StepScope

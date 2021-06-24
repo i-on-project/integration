@@ -6,8 +6,8 @@ import org.ionproject.integration.infrastructure.notification.EmailAlertService
 import org.ionproject.integration.application.JobResult
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.infrastructure.notification.EmailUtils
-import org.ionproject.integration.utils.Try
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.Try
+import org.ionproject.integration.infrastructure.orThrow
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.ItemWriter

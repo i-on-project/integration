@@ -6,8 +6,8 @@ import com.itextpdf.kernel.pdf.PdfName
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import org.ionproject.integration.infrastructure.exception.PdfExtractorException
-import org.ionproject.integration.utils.DateUtils
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.DateUtils
+import org.ionproject.integration.infrastructure.Try
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Calendar

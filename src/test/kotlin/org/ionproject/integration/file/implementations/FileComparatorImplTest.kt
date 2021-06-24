@@ -6,7 +6,7 @@ import javax.sql.DataSource
 import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
 import org.ionproject.integration.infrastructure.file.FileComparatorImpl
 import org.ionproject.integration.infrastructure.file.FileDigestImpl
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

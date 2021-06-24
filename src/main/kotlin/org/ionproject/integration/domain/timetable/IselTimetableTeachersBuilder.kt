@@ -18,13 +18,13 @@ import org.ionproject.integration.domain.timetable.dto.RawTimetableData
 import org.ionproject.integration.domain.timetable.dto.toDto
 import org.ionproject.integration.infrastructure.pdfextractor.tabula.Cell
 import org.ionproject.integration.infrastructure.pdfextractor.tabula.Table
-import org.ionproject.integration.utils.DateUtils
+import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.infrastructure.text.IgnoredWords
 import org.ionproject.integration.infrastructure.text.JsonUtils
 import org.ionproject.integration.infrastructure.text.RegexUtils
-import org.ionproject.integration.utils.Try
+import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.text.generateAcronym
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.orThrow
 import java.time.Duration
 import java.time.LocalTime
 import java.time.ZonedDateTime

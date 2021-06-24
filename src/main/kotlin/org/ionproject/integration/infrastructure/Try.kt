@@ -1,4 +1,4 @@
-package org.ionproject.integration.utils
+package org.ionproject.integration.infrastructure
 
 class CompositeException(val exceptions: List<Exception>) : Exception()
 

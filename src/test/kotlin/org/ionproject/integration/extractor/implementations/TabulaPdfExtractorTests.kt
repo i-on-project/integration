@@ -4,8 +4,8 @@ import java.io.File
 import org.ionproject.integration.infrastructure.exception.PdfExtractorException
 import org.ionproject.integration.infrastructure.pdfextractor.AcademicCalendarExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.TimetableExtractor
-import org.ionproject.integration.utils.CompositeException
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.CompositeException
+import org.ionproject.integration.infrastructure.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

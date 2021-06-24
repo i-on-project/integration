@@ -7,7 +7,7 @@ import org.ionproject.integration.domain.timetable.IselTimetableTeachersBuilder
 import org.ionproject.integration.domain.timetable.TimetableTeachers
 import org.ionproject.integration.domain.common.Weekday
 import org.ionproject.integration.domain.timetable.dto.RawTimetableData
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

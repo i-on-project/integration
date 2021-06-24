@@ -3,8 +3,8 @@ package org.ionproject.integration.format.implementations
 import org.ionproject.integration.domain.timetable.ISELTimetableFormatChecker
 import org.ionproject.integration.infrastructure.exception.FormatCheckException
 import org.ionproject.integration.domain.timetable.dto.RawTimetableData
-import org.ionproject.integration.utils.CompositeException
-import org.ionproject.integration.utils.orThrow
+import org.ionproject.integration.infrastructure.CompositeException
+import org.ionproject.integration.infrastructure.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
