@@ -9,6 +9,7 @@ import org.ionproject.integration.domain.common.ProgrammeModel
 import org.ionproject.integration.infrastructure.repository.IIntegrationJobRepository
 import org.ionproject.integration.application.job.JobType
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
+import org.ionproject.integration.infrastructure.exception.JobNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters
@@ -53,6 +54,8 @@ class JobEngine(
     }
 
     fun getRunningJobs(): List<IntegrationJob> = integrationJobRepository.getRunningJobs()
+
+    fun getJob(id: Long): IntegrationJob = integrationJobRepository.getJobById(id) ?: throw JobNotFoundException(id)
 
     private fun runTimetableJob(request: TimetableJobRequest): JobStatus {
         val jobParams = getJobParameters(request, TIMETABLE_JOB_NAME)

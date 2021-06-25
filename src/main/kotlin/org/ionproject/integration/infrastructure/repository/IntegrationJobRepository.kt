@@ -14,6 +14,7 @@ import javax.sql.DataSource
 
 interface IIntegrationJobRepository {
     fun getRunningJobs(): List<JobEngine.IntegrationJob>
+    fun getJobById(id: Long): JobEngine.IntegrationJob?
 }
 
 @Repository
@@ -26,8 +27,19 @@ class IntegrationJobRepository(
     val jdbc by lazy { JdbcTemplate(dataSource).apply { update(CREATE_JOBS_VIEW_QUERY) } }
 
     override fun getRunningJobs(): List<JobEngine.IntegrationJob> {
-        return jdbc.query(SELECT_RUNNING_JOBS_QUERY, ::extractData) ?: emptyList()
+        return jdbc.query(RUNNING_JOBS_QUERY, ::extractData) ?: emptyList()
     }
+
+    override fun getJobById(id: Long): JobEngine.IntegrationJob? =
+        jdbc.query(
+            { conn -> conn.prepareStatement(JOB_DETAILS_QUERY) },
+            { statement -> statement.setLong(1, id) }
+        ) {
+            if (it.next())
+                getJobDataFromResultSet(it)
+            else
+                null
+        }
 
     override fun extractData(rs: ResultSet): List<JobEngine.IntegrationJob>? {
         val jobsData = mutableListOf<JobEngine.IntegrationJob>()
