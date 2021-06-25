@@ -53,8 +53,8 @@ class IntegrationJobRepository(
         // TODO: create vars for indexes
         val id = resultSet.getLong(1)
         val jobIdentifier = resultSet.getString(2)
-        val creationDate = resultSet.getDate(3)
-        val startDate = resultSet.getDate(4)
+        val creationDate = resultSet.getTimestamp(3)
+        val startDate = resultSet.getTimestamp(4)
         val status = resultSet.getString(5)
         val format = resultSet.getString(6)
         val institutionIdentifier = resultSet.getString(7)
@@ -66,8 +66,8 @@ class IntegrationJobRepository(
         val institution = institutionRepository.getInstitutionByIdentifier(institutionIdentifier)
 
         val parameters = JobEngine.IntegrationJobParameters(
-            creationDate.toLocalDate(),
-            startDate.toLocalDate(),
+            creationDate.toLocalDateTime(),
+            startDate.toLocalDateTime(),
             OutputFormat.of(format),
             institution,
             if (jobType != JobType.ACADEMIC_CALENDAR)
