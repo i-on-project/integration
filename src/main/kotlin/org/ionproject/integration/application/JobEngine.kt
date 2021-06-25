@@ -21,7 +21,7 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.stereotype.Component
 import java.net.URI
 import java.time.Instant
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Component
 class JobEngine(
@@ -161,8 +161,8 @@ class JobEngine(
     )
 
     data class IntegrationJobParameters(
-        val creationDate: LocalDate,
-        val startDate: LocalDate,
+        val creationDate: LocalDateTime,
+        val startDate: LocalDateTime,
         val format: OutputFormat,
         val institution: InstitutionModel,
         val programme: ProgrammeModel? = null,
