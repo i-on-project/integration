@@ -1,6 +1,7 @@
 package org.ionproject.integration.ui.controller
 
 import org.ionproject.integration.infrastructure.exception.ArgumentException
+import org.ionproject.integration.infrastructure.exception.JobNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -19,5 +20,11 @@ class ControllerConfig : ResponseEntityExceptionHandler() {
     fun handle(exception: ArgumentException, request: WebRequest): ResponseEntity<Any> {
         logger.error("Error processing request $request: ${exception.message}")
         return handleExceptionInternal(exception, exception.message, HttpHeaders(), HttpStatus.BAD_REQUEST, request)
+    }
+
+    @ExceptionHandler(value = [JobNotFoundException::class])
+    fun handleNotFound(exception: ArgumentException, request: WebRequest): ResponseEntity<Any> {
+        logger.error("Error processing request $request: ${exception.message}")
+        return handleExceptionInternal(exception, exception.message, HttpHeaders(), HttpStatus.NOT_FOUND, request)
     }
 }

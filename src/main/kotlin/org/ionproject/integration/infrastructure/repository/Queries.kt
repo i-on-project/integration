@@ -6,7 +6,12 @@ SELECT bje.job_instance_id as id
      , bji.job_name        as name
      , bje.create_time     as creation_date
      , bje.start_time      as start_date
-     , bje.status          as status
+     ,CASE 
+		WHEN bje.STATUS IN ('STARTED','STARTING')
+			AND bje.create_time < (CURRENT_TIMESTAMP - interval '1 hour')
+			THEN 'FAILED'
+		ELSE bje.status
+		END as status
      , ct.format           as output_format
      , ct.institution      as institution
      , ct.programme        as programme
@@ -23,4 +28,8 @@ FROM batch_job_execution bje
                     ON ct.job_execution_id = bje.job_execution_id
 ;"""
 
-const val SELECT_RUNNING_JOBS_QUERY = "SELECT * FROM vw_job_detail"
+const val RUNNING_JOBS_QUERY = "SELECT * FROM vw_job_detail WHERE status IN ('STARTED', 'STARTING')"
+const val JOB_DETAILS_QUERY = "SELECT * FROM vw_job_detail WHERE ID = ?"
+const val GET_HASH_QUERY = "SELECT hash from filehashes where jobId = ?"
+const val INSERT_HASH_QUERY = "insert into filehashes values(?,?)"
+const val UPDATE_HASH_QUERY = "update filehashes set hash=? where jobId = ?"

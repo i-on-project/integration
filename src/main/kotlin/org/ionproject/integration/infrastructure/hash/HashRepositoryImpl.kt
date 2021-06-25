@@ -2,6 +2,9 @@ package org.ionproject.integration.infrastructure.hash
 
 import javax.sql.DataSource
 import org.ionproject.integration.infrastructure.Try
+import org.ionproject.integration.infrastructure.repository.GET_HASH_QUERY
+import org.ionproject.integration.infrastructure.repository.INSERT_HASH_QUERY
+import org.ionproject.integration.infrastructure.repository.UPDATE_HASH_QUERY
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 
@@ -9,11 +12,9 @@ import org.springframework.stereotype.Repository
 class HashRepositoryImpl(private val ds: DataSource) : IHashRepository {
 
     override fun fetchHash(jobId: String): ByteArray? {
-        val query = "SELECT hash from filehashes where jobId = ?"
-
         return JdbcTemplate(ds)
             .query(
-                { conn -> conn.prepareStatement(query) },
+                { conn -> conn.prepareStatement(GET_HASH_QUERY) },
                 { pss -> pss.setString(1, jobId) },
                 { rss -> if (rss.next()) rss.getBytes(1) else null }
             )
@@ -30,16 +31,13 @@ class HashRepositoryImpl(private val ds: DataSource) : IHashRepository {
     }
 
     private fun insert(jobId: String, hash: ByteArray): Int {
-        val query = "insert into filehashes values(?,?)"
+        val query = INSERT_HASH_QUERY
         return JdbcTemplate(ds).update(
             query, jobId, hash
         )
     }
 
     private fun update(jobId: String, hash: ByteArray): Int {
-        val query = "update filehashes set hash=? where jobId = ?"
-        return JdbcTemplate(ds).update(
-            query, hash, jobId
-        )
+        return JdbcTemplate(ds).update(UPDATE_HASH_QUERY, hash, jobId)
     }
 }
