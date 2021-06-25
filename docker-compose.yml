@@ -22,9 +22,7 @@ services:
       git-server:
         condition: service_healthy
   ion-db:
-    build: 
-      context: ./devops/database
-      dockerfile: db-dockerfile
+    image: postgres:13.2-alpine
     ports:
       - "${SQL_PORT}:5432"
     environment:

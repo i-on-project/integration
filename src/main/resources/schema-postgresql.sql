@@ -1,1 +1,6 @@
-create table if not exists filehashes ( jobId varchar(255) PRIMARY KEY, hash bytea not null)
+CREATE TABLE IF NOT EXISTS filehashes
+(
+    jobid VARCHAR(255) PRIMARY KEY,
+    hash  BYTEA NOT NULL
+);
+CREATE EXTENSION IF NOT EXISTS tablefunc;
