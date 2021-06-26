@@ -44,14 +44,16 @@ class DispatcherImpl(
 
     override fun dispatch(data: ParsedData, filename: String, format: OutputFormat): DispatchResult =
         runCatching {
-            if (git.update() == GitOutcome.CONFLICT)
-                throw IllegalStateException("Unresolved conflict while updating Git Repo")
-
-            fileWriter.write(data, format, filename, data.getDirectory(repositoryName, staging))
+            git.update()
+            val fileDir = data.getDirectory(repositoryName, staging)
+            val file = fileWriter.write(data, format, filename, fileDir)
             git.add()
             git.commit(generateCommitMessage(data))
 
-            git.push()
+            val result = git.push()
+
+            if (result == GitOutcome.CONFLICT)
+                throw IllegalStateException("Git push failed due to concurrent modification in '${file.path}'")
         }.onFailure {
             LOGGER.error("Error submitting to git server: ${it.message ?: it}", it)
         }.run {
