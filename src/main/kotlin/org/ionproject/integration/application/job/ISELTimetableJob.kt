@@ -1,22 +1,23 @@
 package org.ionproject.integration.application.job
 
 import org.ionproject.integration.application.config.AppProperties
-import org.ionproject.integration.infrastructure.file.FileComparatorImpl
-import org.ionproject.integration.infrastructure.file.FileDigestImpl
-import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
-import org.ionproject.integration.infrastructure.http.IFileDownloader
-import org.ionproject.integration.domain.timetable.ISELTimetableFormatChecker
-import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
-import org.ionproject.integration.domain.timetable.TimetableTeachers
-import org.ionproject.integration.domain.timetable.dto.RawTimetableData
-import org.ionproject.integration.application.job.chunkbased.FormatVerifierStepBuilder
-import org.ionproject.integration.application.job.chunkbased.FormatVerifierProcessor
-import org.ionproject.integration.application.job.chunkbased.ExtractReader
 import org.ionproject.integration.application.job.chunkbased.AlertOnFailureWriter
+import org.ionproject.integration.application.job.chunkbased.ExtractReader
+import org.ionproject.integration.application.job.chunkbased.FormatVerifierProcessor
+import org.ionproject.integration.application.job.chunkbased.FormatVerifierStepBuilder
 import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
 import org.ionproject.integration.application.job.tasklet.MappingTasklet
 import org.ionproject.integration.application.job.tasklet.PostUploadTasklet
 import org.ionproject.integration.application.job.tasklet.WriteFileTasklet
+import org.ionproject.integration.domain.timetable.ISELTimetableFormatChecker
+import org.ionproject.integration.domain.timetable.TimetableTeachers
+import org.ionproject.integration.domain.timetable.dto.RawTimetableData
+import org.ionproject.integration.infrastructure.file.FileComparatorImpl
+import org.ionproject.integration.infrastructure.file.FileDigestImpl
+import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
+import org.ionproject.integration.infrastructure.http.IFileDownloader
+import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
+import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
@@ -52,7 +53,7 @@ class ISELTimetableJob(
         .on("STOPPED").end()
         .next(formatVerifierStep())
         .next(taskletStep("RawData to Business Object", mappingTasklet()))
-        .next(writeLocalStep())
+        .next(writeLocalStep()).on(ExitStatus.FAILED.exitCode).fail()
         .next(taskletStep("PostUpload", postUploadTasklet()))
         .build().build()
 

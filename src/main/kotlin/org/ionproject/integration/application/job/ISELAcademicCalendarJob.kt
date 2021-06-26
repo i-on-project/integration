@@ -49,10 +49,10 @@ class ISELAcademicCalendarJob(
     fun calendarJob() = jobBuilderFactory.get(CALENDAR_JOB_NAME)
         .start(taskletStep("Download And Compare", downloadCalendarPDFAlternateTasklet()))
         .on("STOPPED").end()
-        .next(extractCalendarPDFTasklet()).on(ExitStatus.FAILED.exitCode).end()
+        .next(extractCalendarPDFTasklet())
         .next(createCalendarPDFBusinessObjectsTasklet())
         .next(createCalendarPDFDtoTasklet())
-        .next(writeCalendarDTOToGitTasklet()).on(ExitStatus.FAILED.exitCode).end()
+        .next(writeCalendarDTOToGitTasklet()).on(ExitStatus.FAILED.exitCode).fail()
         .next(sendNotificationsForCalendarJobTasklet())
         .build().build()
 
