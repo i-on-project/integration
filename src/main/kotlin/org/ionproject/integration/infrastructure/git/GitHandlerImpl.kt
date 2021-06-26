@@ -7,6 +7,7 @@ import org.eclipse.jgit.transport.CredentialsProvider
 import org.eclipse.jgit.transport.RefSpec
 import org.eclipse.jgit.transport.RemoteRefUpdate
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
+import org.ionproject.integration.infrastructure.git.GitHandlerImpl.Factory.getAllBranchNames
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
@@ -45,20 +46,11 @@ class GitHandlerImpl : IGitHandler {
                 .setTimeout(timeout)
                 .call()
 
-            val branches = repo.getAllBranchNames()
-
-            if (!branches.contains(repoData.branch)) {
-                LOGGER.info("Branch '${repoData.branch}' does not exist. New local branch will be created and published.")
-
-                val branch = repo.createLocalBranch(repoData.branch)
-                    ?: throw IllegalStateException("Could not create local branch.")
-                repo.publishBranchToRemote(credentialProvider, branch)
+            if (!isBranchCreated(repo, repoData.branch)) {
+                createRemoteBranch(repo, repoData.branch, credentialProvider)
             }
 
-            LOGGER.info("Switching to branch '${repoData.branch}'.")
-            repo.checkout()
-                .setName(repoData.branch)
-                .call()
+            checkoutBranch(repo, repoData.branch)
 
             return GitHandlerImpl().apply {
                 repositoryMetadata = repoData
@@ -68,21 +60,44 @@ class GitHandlerImpl : IGitHandler {
             }
         }
 
+        private fun isBranchCreated(git: Git, branchName: String): Boolean {
+            val branches = git.getAllBranchNames()
+            return branches.contains(branchName)
+        }
+
+        private fun createRemoteBranch(repo: Git, branchName: String, credentialsProvider: CredentialsProvider) {
+            LOGGER.info("Branch '$branchName' does not exist. New local branch will be created and published.")
+
+            val branch = repo.createLocalBranch(branchName)
+                ?: throw IllegalStateException("Could not create local branch.")
+            repo.publishBranchToRemote(credentialsProvider, branch)
+        }
+
+        private fun checkoutBranch(repo: Git, branchName: String) {
+            LOGGER.info("Switching to branch '$branchName'.")
+            repo.checkout()
+                .setName(branchName)
+                .call()
+        }
+
         private fun cleanStagingArea(path: File) {
             path.deleteRecursively()
         }
 
         private fun Git.getAllBranchNames(): List<String> {
+            fetch()
+                .setRemoveDeletedRefs(true)
+                .call()
+
             val branchRefs = branchList()
                 .setListMode(ListBranchCommand.ListMode.ALL)
                 .call()
 
-            return branchRefs.map { ref ->
-                if (ref.name.startsWith(REMOTE_REF_STRING)) // TODO: FILTRAR
+            return branchRefs
+                .filter { ref -> ref.name.startsWith(REMOTE_REF_STRING) }
+                .map { ref ->
                     ref.name.substringAfter(REMOTE_REF_STRING)
-                else
-                    ref.name.substringAfter(HEAD_REF_STRING)
-            }
+                }
         }
 
         private fun Git.createLocalBranch(branchName: String): Ref? =
@@ -130,6 +145,11 @@ class GitHandlerImpl : IGitHandler {
     }
 
     override fun update() {
+        if (!isBranchCreated(git, repositoryMetadata.branch)) {
+            createRemoteBranch(git, repositoryMetadata.branch, credentials)
+            checkoutBranch(git, repositoryMetadata.branch)
+        }
+
         git.pull()
             .setCredentialsProvider(credentials)
             .setTimeout(timeoutInSeconds)
