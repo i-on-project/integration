@@ -1,5 +1,6 @@
 package org.ionproject.integration.application.job
 
+import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dispatcher.IDispatcher
@@ -18,6 +19,10 @@ import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
 import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
+import org.ionproject.integration.domain.calendar.RawCalendarData
+import org.ionproject.integration.infrastructure.Try
+import org.ionproject.integration.infrastructure.file.OutputFormat
+import org.ionproject.integration.infrastructure.orThrow
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
@@ -131,11 +136,12 @@ class ISELAcademicCalendarJob(
 
     @Bean
     fun writeCalendarDTOToGitTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
-        .tasklet { stepContribution, _ ->
+        .tasklet { stepContribution, context ->
+            val formatParam = context.stepContext.jobParameters[JobEngine.FORMAT_PARAMETER] as String
             if (dispatcher.dispatch(
                     AcademicCalendarData.from(State.academicCalendarDto),
                     CALENDAR_JOB_NAME,
-                    OutputFormat.JSON
+                    OutputFormat.of(formatParam)
                 ) == DispatchResult.FAILURE
             ) {
                 stepContribution.exitStatus = ExitStatus.FAILED
