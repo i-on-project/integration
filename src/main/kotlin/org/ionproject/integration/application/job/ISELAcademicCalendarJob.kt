@@ -19,10 +19,6 @@ import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
 import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
-import org.ionproject.integration.domain.calendar.RawCalendarData
-import org.ionproject.integration.infrastructure.Try
-import org.ionproject.integration.infrastructure.file.OutputFormat
-import org.ionproject.integration.infrastructure.orThrow
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
