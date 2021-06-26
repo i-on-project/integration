@@ -118,13 +118,7 @@ class ISELTimetableJob(
     private lateinit var timetableWriteTasklet: WriteFileTasklet
 
     @Bean
-    fun writeTimetableStep(): TaskletStep {
-
-        return taskletStep(
-            "Submit Timetable data to Git",
-            timetableWriteTasklet
-        )
-    }
+    fun writeTimetableStep(): TaskletStep = taskletStep("Submit Timetable data to Git", timetableWriteTasklet)
 
     @Bean
     @StepScope
