@@ -17,7 +17,6 @@ import org.ionproject.integration.infrastructure.file.FileDigestImpl
 import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
-import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
@@ -53,7 +52,7 @@ class ISELTimetableJob(
         .on("STOPPED").end()
         .next(formatVerifierStep())
         .next(taskletStep("RawData to Business Object", mappingTasklet()))
-        .next(writeLocalStep()).on(ExitStatus.FAILED.exitCode).fail()
+        .next(writeLocalStep())
         .next(taskletStep("PostUpload", postUploadTasklet()))
         .build().build()
 

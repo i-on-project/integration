@@ -52,7 +52,7 @@ class ISELAcademicCalendarJob(
         .next(extractCalendarPDFTasklet())
         .next(createCalendarPDFBusinessObjectsTasklet())
         .next(createCalendarPDFDtoTasklet())
-        .next(writeCalendarDTOToGitTasklet()).on(ExitStatus.FAILED.exitCode).fail()
+        .next(writeCalendarDTOToGitTasklet())
         .next(sendNotificationsForCalendarJobTasklet())
         .build().build()
 
