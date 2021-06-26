@@ -2,13 +2,11 @@ package org.ionproject.integration.step.tasklet.iseltimetable.implementations
 
 import com.icegreen.greenmail.util.DummySSLSocketFactory
 import com.icegreen.greenmail.util.GreenMail
-import com.icegreen.greenmail.util.GreenMailUtil
 import com.icegreen.greenmail.util.ServerSetupTest
 import java.io.File
 import java.lang.reflect.UndeclaredThrowableException
 import java.security.Security
 import java.time.Instant
-import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.application.JobEngine.Companion.JOB_HASH_PARAMETER
 import org.ionproject.integration.application.JobEngine.Companion.TIMESTAMP_PARAMETER
@@ -18,7 +16,6 @@ import org.ionproject.integration.application.exception.DownloadAndCompareTaskle
 import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.step.utils.SpringBatchTestUtils
-import org.ionproject.integration.infrastructure.CompositeException
 import org.junit.FixMethodOrder
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -26,7 +23,6 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runners.MethodSorters
@@ -310,53 +306,6 @@ internal class DownloadAndCompareTaskletServerErrorTest {
     @AfterEach
     fun stopMailServer() {
         testSmtp.stop()
-    }
-
-    @Test
-    @Disabled
-    fun whenServerResponds5xx_ThenAssertExceptionIsServerErrorAndPathIsNotInContext() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-        val localFileDestination = "src/test/resources/SERVER_DOWN.pdf"
-        val pathKey = "file-path"
-        val ec = utils.createExecutionContext()
-        val jp = initJobParameters()
-        val file = File(localFileDestination)
-        try {
-            val je = jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
-
-            val actualPath = je.executionContext.get(pathKey)
-            assertNull(actualPath)
-            val ute = je.allFailureExceptions[0] as UndeclaredThrowableException
-            val compEx = ute.undeclaredThrowable as CompositeException
-            assertEquals("ServerErrorException", compEx.exceptions[0]::class.java.simpleName)
-            assertEquals("Server responded with error code 500", compEx.exceptions[0].message)
-            assertFalse(file.exists())
-        } finally {
-            file.deleteOnExit()
-        }
-    }
-
-    @Disabled
-    @Test
-    fun whenServerResponds5xx_ThenAssertAlertWasSent() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
-        val localFileDestination = "src/test/resources/SERVER_DOWN.pdf"
-        val ec = utils.createExecutionContext()
-        val jp = initJobParameters()
-        val file = File(localFileDestination)
-        try {
-            jobLauncherTestUtils.launchStep("Download And Compare", jp, ec)
-
-            val messages: Array<MimeMessage> = testSmtp.receivedMessages
-            assertEquals(1, messages.size)
-            assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
-            assertTrue(
-                GreenMailUtil.getBody(messages[0])
-                    .contains("TestJob FAILED for file: 500 with message Server responded with error code 500")
-            )
-        } finally {
-            file.deleteOnExit()
-        }
     }
 
     private fun initJobParameters(): JobParameters {

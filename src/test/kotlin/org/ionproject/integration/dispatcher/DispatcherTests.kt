@@ -19,11 +19,11 @@ import java.io.File
 
 class DispatcherTests {
     private val mockHandlerSuccess = mock<IGitHandler> {
-        on { update() } doReturn GitOutcome.SUCCESS
+        on { push() } doReturn GitOutcome.SUCCESS
     }
 
     private val mockHandlerFailure = mock<IGitHandler> {
-        on { update() } doReturn GitOutcome.CONFLICT
+        on { push() } doReturn GitOutcome.CONFLICT
     }
 
     private fun getMockFactory(isWorking: Boolean): IGitHandlerFactory = mock {
