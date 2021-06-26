@@ -46,11 +46,13 @@ class GitHandlerImpl : IGitHandler {
                 .setTimeout(timeout)
                 .call()
 
-            if (!isBranchCreated(repo, repoData.branch)) {
-                createRemoteBranch(repo, repoData.branch, credentialProvider)
+            val branchName = repoData.branch
+            if (!isBranchCreated(repo, branchName)) {
+                LOGGER.info("Branch '$branchName' does not exist. New local branch will be created and published.")
+                createRemoteBranch(repo, branchName, credentialProvider)
             }
 
-            checkoutBranch(repo, repoData.branch)
+            checkoutBranch(repo, branchName)
 
             return GitHandlerImpl().apply {
                 repositoryMetadata = repoData
@@ -66,8 +68,6 @@ class GitHandlerImpl : IGitHandler {
         }
 
         private fun createRemoteBranch(repo: Git, branchName: String, credentialsProvider: CredentialsProvider) {
-            LOGGER.info("Branch '$branchName' does not exist. New local branch will be created and published.")
-
             val branch = repo.createLocalBranch(branchName)
                 ?: throw IllegalStateException("Could not create local branch.")
             repo.publishBranchToRemote(credentialsProvider, branch)
