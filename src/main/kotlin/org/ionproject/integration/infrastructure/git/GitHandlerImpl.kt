@@ -94,10 +94,8 @@ class GitHandlerImpl : IGitHandler {
                 .call()
 
             return branchRefs
-                .filter { ref -> ref.name.startsWith(REMOTE_REF_STRING) }
-                .map { ref ->
-                    ref.name.substringAfter(REMOTE_REF_STRING)
-                }
+                .filter { it.name.startsWith(REMOTE_REF_STRING) }
+                .map { it.name.substringAfter(REMOTE_REF_STRING) }
         }
 
         private fun Git.createLocalBranch(branchName: String): Ref? =
@@ -133,7 +131,8 @@ class GitHandlerImpl : IGitHandler {
             .setTimeout(timeoutInSeconds)
             .call()
 
-        val errorStatus = res.map { ref -> ref.getRemoteUpdate("refs/heads/${repositoryMetadata.branch}").status }
+        val errorStatus = res
+            .map { ref -> ref.getRemoteUpdate("$HEAD_REF_STRING${repositoryMetadata.branch}").status }
             .firstOrNull { update -> update != RemoteRefUpdate.Status.OK }
 
         return if (errorStatus == null)
