@@ -5,9 +5,9 @@ sealed interface IGitHandler {
 
     fun add(input: String = "*")
 
-    fun push()
+    fun push(): GitOutcome
 
-    fun update(): GitOutcome
+    fun update()
 }
 
 sealed interface IGitHandlerFactory {

@@ -1,9 +1,11 @@
 package org.ionproject.integration.infrastructure.git
 
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.api.ListBranchCommand
 import org.eclipse.jgit.lib.Ref
 import org.eclipse.jgit.transport.CredentialsProvider
 import org.eclipse.jgit.transport.RefSpec
+import org.eclipse.jgit.transport.RemoteRefUpdate
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
@@ -13,6 +15,8 @@ import java.io.File
 import java.lang.IllegalStateException
 
 private val LOGGER = LoggerFactory.getLogger(GitHandlerImpl::class.java)
+private const val REMOTE_REF_STRING = "refs/remotes/origin/"
+private const val HEAD_REF_STRING = "refs/heads/"
 
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -52,7 +56,9 @@ class GitHandlerImpl : IGitHandler {
             }
 
             LOGGER.info("Switching to branch '${repoData.branch}'.")
-            repo.checkout().setName(repoData.branch).call()
+            repo.checkout()
+                .setName(repoData.branch)
+                .call()
 
             return GitHandlerImpl().apply {
                 repositoryMetadata = repoData
@@ -66,10 +72,18 @@ class GitHandlerImpl : IGitHandler {
             path.deleteRecursively()
         }
 
-        private fun Git.getAllBranchNames(): List<String> =
-            branchList().call().map {
-                it.name.substringAfter("refs/heads/")
+        private fun Git.getAllBranchNames(): List<String> {
+            val branchRefs = branchList()
+                .setListMode(ListBranchCommand.ListMode.ALL)
+                .call()
+
+            return branchRefs.map { ref ->
+                if (ref.name.startsWith(REMOTE_REF_STRING)) // TODO: FILTRAR
+                    ref.name.substringAfter(REMOTE_REF_STRING)
+                else
+                    ref.name.substringAfter(HEAD_REF_STRING)
             }
+        }
 
         private fun Git.createLocalBranch(branchName: String): Ref? =
             branchCreate()
@@ -98,26 +112,29 @@ class GitHandlerImpl : IGitHandler {
             .call()
     }
 
-    override fun push() {
-        git.push()
+    override fun push(): GitOutcome {
+        val res = git.push()
             .setCredentialsProvider(credentials)
             .setTimeout(timeoutInSeconds)
             .call()
+
+        val errorStatus = res.map { ref -> ref.getRemoteUpdate("refs/heads/${repositoryMetadata.branch}").status }
+            .firstOrNull { update -> update != RemoteRefUpdate.Status.OK }
+
+        return if (errorStatus == null)
+            GitOutcome.SUCCESS
+        else {
+            LOGGER.info("Git push failed: ${errorStatus.name}")
+            GitOutcome.CONFLICT
+        }
     }
 
-    override fun update(): GitOutcome {
-        val result = git.pull()
+    override fun update() {
+        git.pull()
             .setCredentialsProvider(credentials)
             .setTimeout(timeoutInSeconds)
             .call()
             .mergeResult
             .mergeStatus
-
-        LOGGER.info("Merge result: $result")
-
-        return if (result.isSuccessful)
-            GitOutcome.SUCCESS
-        else
-            GitOutcome.CONFLICT
     }
 }
