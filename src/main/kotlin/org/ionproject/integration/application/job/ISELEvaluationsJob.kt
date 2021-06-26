@@ -1,5 +1,6 @@
 package org.ionproject.integration.application.job
 
+import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
@@ -78,9 +79,9 @@ class ISELEvaluationsJob(
 
     @Bean
     fun extractEvaluationsPDFTasklet() = stepBuilderFactory.get("Extract Evaluations PDF Raw Data")
-        .tasklet { stepContribution, _ ->
+        .tasklet { stepContribution, context ->
             val path = stepContribution.stepExecution.jobExecution.executionContext.get("file-path").toString()
-
+            val school = context.stepContext.jobParameters[JobEngine.INSTITUTION_PARAMETER] as String
             State.rawEvaluationsData = extractEvaluationsPDF(path)
             RepeatStatus.FINISHED
         }
