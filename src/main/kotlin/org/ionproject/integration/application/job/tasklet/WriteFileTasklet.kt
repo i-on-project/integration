@@ -14,6 +14,7 @@ import org.ionproject.integration.application.dto.TimetableData
 import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.ionproject.integration.infrastructure.text.Institution
 import org.slf4j.LoggerFactory
+import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.scope.context.ChunkContext
@@ -38,6 +39,7 @@ class WriteFileTasklet(
             DispatchResult.SUCCESS -> RepeatStatus.FINISHED
             else -> {
                 log.error("Error Writing to Git: $writeResult")
+                contribution.exitStatus = ExitStatus.FAILED
                 RepeatStatus.FINISHED
             }
         }
