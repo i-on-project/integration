@@ -1,22 +1,24 @@
 package org.ionproject.integration.application.job
 
 import org.ionproject.integration.application.config.AppProperties
-import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
-import org.ionproject.integration.application.dto.AcademicCalendarData
+import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dispatcher.IDispatcher
-import org.ionproject.integration.infrastructure.file.OutputFormat
-import org.ionproject.integration.infrastructure.pdfextractor.AcademicCalendarExtractor
-import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
-import org.ionproject.integration.infrastructure.file.FileComparatorImpl
-import org.ionproject.integration.infrastructure.file.FileDigestImpl
-import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
-import org.ionproject.integration.infrastructure.http.IFileDownloader
-import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
-import org.ionproject.integration.model.external.calendar.AcademicCalendar
-import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
+import org.ionproject.integration.application.dto.AcademicCalendarData
+import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
 import org.ionproject.integration.domain.calendar.RawCalendarData
 import org.ionproject.integration.infrastructure.Try
+import org.ionproject.integration.infrastructure.file.FileComparatorImpl
+import org.ionproject.integration.infrastructure.file.FileDigestImpl
+import org.ionproject.integration.infrastructure.file.OutputFormat
+import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
+import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.orThrow
+import org.ionproject.integration.infrastructure.pdfextractor.AcademicCalendarExtractor
+import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
+import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
+import org.ionproject.integration.model.external.calendar.AcademicCalendar
+import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
+import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -47,10 +49,10 @@ class ISELAcademicCalendarJob(
     fun calendarJob() = jobBuilderFactory.get(CALENDAR_JOB_NAME)
         .start(taskletStep("Download And Compare", downloadCalendarPDFAlternateTasklet()))
         .on("STOPPED").end()
-        .next(extractCalendarPDFTasklet())
+        .next(extractCalendarPDFTasklet()).on(ExitStatus.FAILED.exitCode).end()
         .next(createCalendarPDFBusinessObjectsTasklet())
         .next(createCalendarPDFDtoTasklet())
-        .next(writeCalendarDTOToGitTasklet())
+        .next(writeCalendarDTOToGitTasklet()).on(ExitStatus.FAILED.exitCode).end()
         .next(sendNotificationsForCalendarJobTasklet())
         .build().build()
 
@@ -129,12 +131,15 @@ class ISELAcademicCalendarJob(
 
     @Bean
     fun writeCalendarDTOToGitTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
-        .tasklet { _, _ ->
-            dispatcher.dispatch(
-                AcademicCalendarData.from(State.academicCalendarDto),
-                CALENDAR_JOB_NAME,
-                OutputFormat.JSON
-            )
+        .tasklet { stepContribution, _ ->
+            if (dispatcher.dispatch(
+                    AcademicCalendarData.from(State.academicCalendarDto),
+                    CALENDAR_JOB_NAME,
+                    OutputFormat.JSON
+                ) == DispatchResult.FAILURE
+            ) {
+                stepContribution.exitStatus = ExitStatus.FAILED
+            }
             RepeatStatus.FINISHED
         }
         .build()
