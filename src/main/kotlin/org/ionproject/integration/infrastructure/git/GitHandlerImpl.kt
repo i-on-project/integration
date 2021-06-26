@@ -47,12 +47,12 @@ class GitHandlerImpl : IGitHandler {
                 .call()
 
             val branchName = repoData.branch
-            if (!isBranchCreated(repo, branchName)) {
+            if (!repo.isBranchCreated(branchName)) {
                 LOGGER.info("Branch '$branchName' does not exist. New local branch will be created and published.")
-                createRemoteBranch(repo, branchName, credentialProvider)
+                repo.createRemoteBranch(branchName, credentialProvider)
             }
 
-            checkoutBranch(repo, branchName)
+            repo.checkoutBranch(branchName)
 
             return GitHandlerImpl().apply {
                 repositoryMetadata = repoData
@@ -62,20 +62,20 @@ class GitHandlerImpl : IGitHandler {
             }
         }
 
-        private fun isBranchCreated(git: Git, branchName: String): Boolean {
-            val branches = git.getAllBranchNames()
+        private fun Git.isBranchCreated(branchName: String): Boolean {
+            val branches = getAllBranchNames()
             return branches.contains(branchName)
         }
 
-        private fun createRemoteBranch(repo: Git, branchName: String, credentialsProvider: CredentialsProvider) {
-            val branch = repo.createLocalBranch(branchName)
+        private fun Git.createRemoteBranch(branchName: String, credentialsProvider: CredentialsProvider) {
+            val branch = createLocalBranch(branchName)
                 ?: throw IllegalStateException("Could not create local branch.")
-            repo.publishBranchToRemote(credentialsProvider, branch)
+            publishBranchToRemote(credentialsProvider, branch)
         }
 
-        private fun checkoutBranch(repo: Git, branchName: String) {
+        private fun Git.checkoutBranch(branchName: String) {
             LOGGER.info("Switching to branch '$branchName'.")
-            repo.checkout()
+            checkout()
                 .setName(branchName)
                 .call()
         }
@@ -145,9 +145,10 @@ class GitHandlerImpl : IGitHandler {
     }
 
     override fun update() {
-        if (!isBranchCreated(git, repositoryMetadata.branch)) {
-            createRemoteBranch(git, repositoryMetadata.branch, credentials)
-            checkoutBranch(git, repositoryMetadata.branch)
+        val branchName = repositoryMetadata.branch
+        if (!git.isBranchCreated(branchName)) {
+            git.createRemoteBranch(branchName, credentials)
+            git.checkoutBranch(branchName)
         }
 
         git.pull()
