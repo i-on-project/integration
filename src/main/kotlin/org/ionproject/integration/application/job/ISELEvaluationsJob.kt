@@ -1,26 +1,20 @@
 package org.ionproject.integration.application.job
 
-import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.application.config.AppProperties
-import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dispatcher.IDispatcher
-import org.ionproject.integration.application.dto.AcademicCalendarData
 import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
-import org.ionproject.integration.domain.calendar.AcademicCalendarDto
-import org.ionproject.integration.domain.calendar.RawCalendarData
+import org.ionproject.integration.domain.evaluations.Evaluations
+import org.ionproject.integration.domain.evaluations.EvaluationsDto
+import org.ionproject.integration.domain.evaluations.RawEvaluationsData
 import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.file.FileComparatorImpl
 import org.ionproject.integration.infrastructure.file.FileDigestImpl
-import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.AcademicCalendarExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
-import org.ionproject.integration.model.external.calendar.AcademicCalendar
-import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
-import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -34,10 +28,10 @@ import org.springframework.stereotype.Component
 import java.io.File
 import javax.sql.DataSource
 
-const val CALENDAR_JOB_NAME = "calendar"
+const val EVALUATIONS_JOB_NAME = "evaluations"
 
 @Configuration
-class ISELAcademicCalendarJob(
+class ISELEvaluationsJob(
     val jobBuilderFactory: JobBuilderFactory,
     val stepBuilderFactory: StepBuilderFactory,
     val properties: AppProperties,
@@ -47,16 +41,16 @@ class ISELAcademicCalendarJob(
     val ds: DataSource
 ) {
 
-    @Bean(name = [CALENDAR_JOB_NAME])
-    fun calendarJob() = jobBuilderFactory.get(CALENDAR_JOB_NAME)
-        .start(taskletStep("Download And Compare", downloadCalendarPDFAlternateTasklet()))
+    @Bean(name = [EVALUATIONS_JOB_NAME])
+    fun calendarJob() = jobBuilderFactory.get(EVALUATIONS_JOB_NAME)
+        .start(taskletStep("Download And Compare", downloadEvaluationsPDFTasklet()))
         .on("STOPPED").end()
-        .next(extractCalendarPDFTasklet())
-        .next(createCalendarPDFBusinessObjectsTasklet())
-        .next(createCalendarPDFDtoTasklet())
-        .next(writeCalendarDTOToGitTasklet())
-        .next(sendNotificationsForCalendarJobTasklet())
-        .build().build()
+        .next(extractEvaluationsPDFTasklet())
+        //    .next(createEvaluationsPDFBusinessObjectsTasklet())
+        //    .next(createEvaluationsPDFDtoTasklet())
+        //    .next(writeEvaluationsDTOToGitTasklet())
+        .build().listener(NotificationListener())
+        .build()
 
     private fun taskletStep(name: String, tasklet: Tasklet): TaskletStep {
         return stepBuilderFactory
@@ -67,45 +61,45 @@ class ISELAcademicCalendarJob(
 
     @StepScope
     @Bean
-    fun downloadCalendarPDFAlternateTasklet(): DownloadAndCompareTasklet {
+    fun downloadEvaluationsPDFTasklet(): DownloadAndCompareTasklet {
         val pdfChecker = PDFBytesFormatChecker()
         val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
         return DownloadAndCompareTasklet(downloader, pdfChecker, fileComparator)
     }
 
-    @Bean
-    fun downloadCalendarPDFTasklet() = stepBuilderFactory.get("Download Calendar PDF")
+/*    @Bean
+    fun downloadEvaluationsPDFTasklet() = stepBuilderFactory.get("Download Calendar PDF")
         .tasklet { stepContribution, chunkContext ->
             val pdfChecker = PDFBytesFormatChecker()
             val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
             DownloadAndCompareTasklet(downloader, pdfChecker, fileComparator).execute(stepContribution, chunkContext)
         }
-        .build()
+        .build()*/
 
     @Bean
-    fun extractCalendarPDFTasklet() = stepBuilderFactory.get("Extract Calendar PDF Raw Data")
+    fun extractEvaluationsPDFTasklet() = stepBuilderFactory.get("Extract Evaluations PDF Raw Data")
         .tasklet { stepContribution, _ ->
             val path = stepContribution.stepExecution.jobExecution.executionContext.get("file-path").toString()
 
-            State.rawCalendarData = extractCalendarPDF(path)
+            State.rawEvaluationsData = extractEvaluationsPDF(path)
             RepeatStatus.FINISHED
         }
         .build()
 
-    fun extractCalendarPDF(path: String): RawCalendarData {
+    fun extractEvaluationsPDF(path: String): RawEvaluationsData {
         try {
             val itext = ITextPdfExtractor()
 
             val headerText = itext.extract(path)
-            val calendarTable = AcademicCalendarExtractor.calendarTable.extract(path)
+            val evaluationsTable = AcademicCalendarExtractor.calendarTable.extract(path)
 
             return Try.map(
                 headerText,
-                calendarTable
-            ) { (text, calendarTable) ->
-                RawCalendarData(
+                evaluationsTable
+            ) { (text, evaluationsTable) ->
+                RawEvaluationsData(
                     text.dropLast(1),
-                    calendarTable.first().replace("\\r", " "),
+                    evaluationsTable.first().replace("\\r", " "),
                     text.last()
                 )
             }.orThrow()
@@ -115,51 +109,39 @@ class ISELAcademicCalendarJob(
     }
 
     @Bean
-    fun createCalendarPDFBusinessObjectsTasklet() =
-        stepBuilderFactory.get("Create Business Objects from Calendar Raw Data")
+    fun createEvaluationsPDFBusinessObjectsTasklet() =
+        stepBuilderFactory.get("Create Business Objects from Evaluations Raw Data")
             .tasklet { _, _ ->
-                State.academicCalendar = AcademicCalendar.from(State.rawCalendarData)
+                State.evaluations = Evaluations.from(State.rawEvaluationsData)
                 RepeatStatus.FINISHED
             }
             .build()
 
     @Bean
-    fun createCalendarPDFDtoTasklet() = stepBuilderFactory.get("Create DTO from Calendar Business Objects")
+    fun createEvaluationsPDFDtoTasklet() = stepBuilderFactory.get("Create DTO from Evaluations Business Objects")
         .tasklet { _, _ ->
-            State.academicCalendarDto = AcademicCalendarDto.from(State.academicCalendar)
+            State.evaluationsDto = EvaluationsDto.from(State.evaluations)
             RepeatStatus.FINISHED
         }
         .build()
 
+    // TODO
     @Bean
-    fun writeCalendarDTOToGitTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
-        .tasklet { stepContribution, context ->
-            val formatParam = context.stepContext.jobParameters[JobEngine.FORMAT_PARAMETER] as String
-            val identifier = context.stepContext.jobParameters[JobEngine.INSTITUTION_PARAMETER] as String
-            val format = OutputFormat.of(formatParam)
-            val calendarData = AcademicCalendarData.from(State.academicCalendarDto, identifier)
-
-            val dispatchResult = dispatcher.dispatch(calendarData, CALENDAR_JOB_NAME, format)
-
-            if (dispatchResult == DispatchResult.FAILURE) {
-                stepContribution.exitStatus = ExitStatus.FAILED
-            }
-            RepeatStatus.FINISHED
-        }
-        .build()
-
-    @Bean
-    fun sendNotificationsForCalendarJobTasklet() = stepBuilderFactory.get("Send Calendar Job Notifications")
+    fun writeEvaluationsDTOToGitTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
         .tasklet { _, _ ->
-            // TODO
+/*            dispatcher.dispatch(
+                EvaluationsData.from(State.evaluationsDto),
+                EVALUATIONS_JOB_NAME,
+                OutputFormat.JSON
+            )*/
             RepeatStatus.FINISHED
         }
         .build()
 
     @Component
     object State {
-        lateinit var rawCalendarData: RawCalendarData
-        lateinit var academicCalendar: AcademicCalendar
-        lateinit var academicCalendarDto: AcademicCalendarDto
+        lateinit var rawEvaluationsData: RawEvaluationsData
+        lateinit var evaluations: Evaluations
+        lateinit var evaluationsDto: EvaluationsDto
     }
 }
