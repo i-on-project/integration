@@ -12,6 +12,9 @@ import javax.validation.constraints.NotEmpty
 class AppProperties {
 
     @NotEmpty
+    lateinit var configFile: String
+
+    @NotEmpty
     lateinit var stagingDir: String
 
     @NotEmpty
@@ -36,6 +39,8 @@ class AppProperties {
     val stagingFilesDir by lazy { getAsFilePath(stagingDir) }
 
     val tempFilesDir by lazy { getAsFilePath(tempDir) }
+
+    val configurationFile by lazy { getAsFilePath(configFile) }
 
     val timeoutInSeconds = 60
 

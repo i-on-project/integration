@@ -1,0 +1,30 @@
+- name: Instituto Superior de Engenharia de Lisboa
+  identifier: pt.ipl.isel
+  resources:
+    - type: academic_calendar
+      uri: https://www.isel.pt/media/uploads/OS09P2020_signed.pdf
+  programmes:
+    - name: Licenciatura em Engenharia Electrónica e Telecomunicações e de Computadores
+      resources:
+        - type: timetable
+          uri: https://www.isel.pt/media/uploads/ADEETC_LEETC_210322.pdf
+    - name: Licenciatura em Engenharia Informática e de Computadores
+      resources:
+        - type: timetable
+          uri: https://www.isel.pt/media/uploads/ADEETC_LEIC_210322.pdf
+    - name: Licenciatura em Engenharia Informática e Multimédia
+      resources:
+        - type: timetable
+          uri: https://www.isel.pt/media/uploads/ADEETC_LEIM_210228.pdf
+    - name: Licenciatura em Engenharia Informática, Redes e Telecomunicações
+      resources:
+        - type: timetable
+          uri: https://www.isel.pt/media/uploads/ADEETC_LEIRT_210318.pdf
+    - name: Mestrado em Engenharia Informática e de Computadores
+      resources:
+        - type: timetable
+          uri: https://www.isel.pt/media/uploads/ADEETC_MEIC_210301.pdf
+    - name: Mestrado em Engenharia Informática e Multimédia
+      resources:
+        - type: timetable
+          uri: https://www.isel.pt/media/uploads/ADEETC_MEIM_210228.pdf
