@@ -7,7 +7,7 @@ import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.domain.timetable.model.Programme
 import org.ionproject.integration.domain.timetable.dto.ProgrammeDto
 import org.ionproject.integration.domain.common.School
-import org.ionproject.integration.domain.timetable.dto.SchoolDto
+import org.ionproject.integration.domain.common.dto.SchoolDto
 import org.ionproject.integration.domain.timetable.Timetable
 import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.ionproject.integration.domain.timetable.TimetableTeachers
