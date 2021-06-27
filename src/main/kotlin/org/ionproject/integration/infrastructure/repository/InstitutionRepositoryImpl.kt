@@ -11,12 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.net.URI
 
-interface IInstitutionRepository {
-    fun getInstitutionByIdentifier(identifier: String): InstitutionModel
-}
-
 @Service
-class InstitutionRepositoryFile : IInstitutionRepository {
+class InstitutionRepositoryImpl : IInstitutionRepository {
     private val mapper by lazy { ObjectMapper(YAMLFactory()) }
 
     @Autowired
