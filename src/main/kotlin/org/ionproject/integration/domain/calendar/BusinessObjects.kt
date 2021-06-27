@@ -3,6 +3,7 @@ package org.ionproject.integration.model.external.calendar
 import org.ionproject.integration.domain.common.Language
 import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.domain.calendar.RawCalendarData
+import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.infrastructure.text.RegexUtils
 import java.time.LocalDate
@@ -23,13 +24,13 @@ data class AcademicCalendar(
         private const val PT_EVALUATION_REGEX = "\\b(?:Exames|Testes)\\b"
         private const val PT_DETAILS_REGEX = "\\b(?:Turmas)\\b"
 
-        fun from(rawCalendarData: RawCalendarData): AcademicCalendar =
+        fun from(rawCalendarData: RawCalendarData, jobInstitution: InstitutionModel): AcademicCalendar =
             AcademicCalendar(
                 creationDateTime = rawCalendarData.creationDate,
                 retrievalDateTime = DateUtils.formatToISO8601(ZonedDateTime.now()),
                 School(
-                    "Instituto Superior de Engenharia de Lisboa",
-                    "ISEL"
+                    jobInstitution.name,
+                    jobInstitution.acronym
                 ),
                 Language.PT,
                 buildTerms(rawCalendarData)

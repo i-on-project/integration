@@ -8,6 +8,7 @@ import org.ionproject.integration.application.dto.AcademicCalendarData
 import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
 import org.ionproject.integration.domain.calendar.AcademicCalendarDto
 import org.ionproject.integration.domain.calendar.RawCalendarData
+import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.file.FileComparatorImpl
 import org.ionproject.integration.infrastructure.file.FileDigestImpl
@@ -18,12 +19,14 @@ import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.AcademicCalendarExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
+import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
 import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
+import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.core.step.tasklet.TaskletStep
 import org.springframework.batch.repeat.RepeatStatus
@@ -43,6 +46,7 @@ class ISELAcademicCalendarJob(
     val properties: AppProperties,
     val downloader: IFileDownloader,
     val dispatcher: IDispatcher,
+    private val institutionRepository: IInstitutionRepository,
     @Autowired
     val ds: DataSource
 ) {
@@ -117,11 +121,16 @@ class ISELAcademicCalendarJob(
     @Bean
     fun createCalendarPDFBusinessObjectsTasklet() =
         stepBuilderFactory.get("Create Business Objects from Calendar Raw Data")
-            .tasklet { _, _ ->
-                State.academicCalendar = AcademicCalendar.from(State.rawCalendarData)
+            .tasklet { _, context ->
+                State.academicCalendar = AcademicCalendar.from(State.rawCalendarData, getJobInstitution(context))
                 RepeatStatus.FINISHED
             }
             .build()
+
+    private fun getJobInstitution(context: ChunkContext): InstitutionModel =
+        institutionRepository.getInstitutionByIdentifier(
+            context.stepContext.jobParameters[JobEngine.INSTITUTION_PARAMETER] as String
+        )
 
     @Bean
     fun createCalendarPDFDtoTasklet() = stepBuilderFactory.get("Create DTO from Calendar Business Objects")
