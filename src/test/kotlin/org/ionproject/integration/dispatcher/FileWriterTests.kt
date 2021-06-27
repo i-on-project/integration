@@ -10,7 +10,7 @@ import org.ionproject.integration.domain.timetable.dto.ClassDto
 import org.ionproject.integration.domain.timetable.dto.EventDto
 import org.ionproject.integration.domain.timetable.dto.InstructorDto
 import org.ionproject.integration.domain.timetable.dto.ProgrammeDto
-import org.ionproject.integration.domain.timetable.dto.SchoolDto
+import org.ionproject.integration.domain.common.dto.SchoolDto
 import org.ionproject.integration.domain.timetable.dto.SectionDto
 import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.ionproject.integration.infrastructure.file.OutputFormat

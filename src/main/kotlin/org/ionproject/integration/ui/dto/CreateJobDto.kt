@@ -1,7 +1,6 @@
 package org.ionproject.integration.ui.dto
 
 import org.ionproject.integration.application.job.JobType
-import java.lang.UnsupportedOperationException
 
 data class CreateJobDto(
     val institution: String? = null,
@@ -13,7 +12,7 @@ data class CreateJobDto(
         return when (type) {
             JobType.TIMETABLE -> SafeTimetableJobDto(institution!!, programme!!, format!!)
             JobType.ACADEMIC_CALENDAR -> SafeCalendarJobDto(institution!!, format!!)
-            JobType.EXAM_SCHEDULE -> throw UnsupportedOperationException("Exam Schedule not yet supported")
+            JobType.EXAM_SCHEDULE -> SafeEvaluationsJobDto(institution!!, programme!!, format!!)
         }
     }
 }

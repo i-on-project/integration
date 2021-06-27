@@ -3,13 +3,13 @@ package org.ionproject.integration.application
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.config.LAUNCHER_NAME
 import org.ionproject.integration.application.job.EVALUATIONS_JOB_NAME
-import org.ionproject.integration.infrastructure.file.OutputFormat
-import org.ionproject.integration.domain.common.InstitutionModel
-import org.ionproject.integration.domain.common.ProgrammeModel
-import org.ionproject.integration.infrastructure.repository.IIntegrationJobRepository
 import org.ionproject.integration.application.job.JobType
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
+import org.ionproject.integration.domain.common.InstitutionModel
+import org.ionproject.integration.domain.common.ProgrammeModel
 import org.ionproject.integration.infrastructure.exception.JobNotFoundException
+import org.ionproject.integration.infrastructure.file.OutputFormat
+import org.ionproject.integration.infrastructure.repository.IIntegrationJobRepository
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters
@@ -49,6 +49,7 @@ class JobEngine(
     fun runJob(request: AbstractJobRequest): JobStatus {
         return when (request) {
             is TimetableJobRequest -> runTimetableJob(request)
+            is EvaluationsJobRequest -> runEvaluationsJob(request)
             is CalendarJobRequest -> runCalendarJob(request)
         }
     }
@@ -62,6 +63,11 @@ class JobEngine(
         return runJob(TIMETABLE_JOB_NAME, jobParams)
     }
 
+    private fun runEvaluationsJob(request: EvaluationsJobRequest): JobStatus {
+        val jobParams = getJobParameters(request, EVALUATIONS_JOB_NAME)
+        return runJob(EVALUATIONS_JOB_NAME, jobParams)
+    }
+
     private fun runCalendarJob(request: CalendarJobRequest): JobStatus {
         val jobParams = getJobParameters(request, EVALUATIONS_JOB_NAME)
         return runJob(EVALUATIONS_JOB_NAME, jobParams)
@@ -72,7 +78,11 @@ class JobEngine(
 
         val uri = when (request) {
             is TimetableJobRequest ->
-                request.programme.timetableUri.also {
+                request.programme.resources.timetableUri.also {
+                    parametersBuilder.addString(PROGRAMME_PARAMETER, request.programme.acronym)
+                }
+            is EvaluationsJobRequest ->
+                request.programme.resources.evaluationsUri.also {
                     parametersBuilder.addString(PROGRAMME_PARAMETER, request.programme.acronym)
                 }
             is CalendarJobRequest -> request.institution.academicCalendarUri
@@ -141,6 +151,30 @@ class JobEngine(
             if (!super.equals(other)) return false
 
             other as TimetableJobRequest
+
+            if (programme != other.programme) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + programme.hashCode()
+            return result
+        }
+    }
+
+    class EvaluationsJobRequest(
+        format: OutputFormat,
+        institution: InstitutionModel,
+        val programme: ProgrammeModel
+    ) : AbstractJobRequest(format, institution, JobType.EXAM_SCHEDULE) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+
+            other as EvaluationsJobRequest
 
             if (programme != other.programme) return false
 
