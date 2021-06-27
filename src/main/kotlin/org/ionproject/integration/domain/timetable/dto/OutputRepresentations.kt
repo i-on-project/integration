@@ -1,6 +1,7 @@
 package org.ionproject.integration.domain.timetable.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import org.ionproject.integration.domain.common.dto.SchoolDto
 import org.ionproject.integration.domain.timetable.model.Course
 import org.ionproject.integration.domain.timetable.model.CourseTeacher
 import org.ionproject.integration.domain.timetable.model.EventCategory
@@ -82,11 +83,6 @@ data class TimetableDto(
         }
     }
 }
-
-data class SchoolDto(
-    val name: String,
-    val acr: String,
-)
 
 data class ProgrammeDto(
     val name: String,
