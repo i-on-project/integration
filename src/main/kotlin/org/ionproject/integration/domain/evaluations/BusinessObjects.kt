@@ -1,7 +1,11 @@
 package org.ionproject.integration.domain.evaluations
 
+import com.squareup.moshi.Types
 import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.infrastructure.DateUtils
+import org.ionproject.integration.infrastructure.Try
+import org.ionproject.integration.infrastructure.pdfextractor.tabula.Table
+import org.ionproject.integration.infrastructure.text.JsonUtils
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
@@ -13,8 +17,9 @@ data class Evaluations(
     val exams: List<Exam>
 ) {
     companion object {
-        fun from(rawEvaluationsData: RawEvaluationsData): Evaluations =
-            Evaluations(
+        fun from(rawEvaluationsData: RawEvaluationsData): Evaluations {
+
+            return Evaluations(
                 creationDateTime = rawEvaluationsData.creationDate,
                 retrievalDateTime = DateUtils.formatToISO8601(ZonedDateTime.now()),
                 School(
@@ -24,6 +29,20 @@ data class Evaluations(
                 calendarTerm = buildCalendarTerm(rawEvaluationsData),
                 emptyList()
             )
+        }
+
+        private fun rawDataToBusiness(rawEvaluationsData: RawEvaluationsData) {
+            fun String.toTableList(): Try<List<Table>> =
+                JsonUtils.fromJson(this, Types.newParameterizedType(List::class.java, Table::class.java))
+
+            rawEvaluationsData.table.toTableList().map { mapTablesToBusiness(rawEvaluationsData, it) }
+        }
+
+        private fun mapTablesToBusiness(
+            rawEvaluationsData: RawEvaluationsData,
+            tableList: List<Table>
+        ) {
+        }
 
         // TODO
         private fun buildCalendarTerm(rawEvaluationsData: RawEvaluationsData): String = ""

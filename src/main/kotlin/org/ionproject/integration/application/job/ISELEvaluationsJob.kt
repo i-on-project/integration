@@ -47,7 +47,7 @@ class ISELEvaluationsJob(
         .start(taskletStep("Download And Compare", downloadEvaluationsPDFTasklet()))
         .on("STOPPED").end()
         .next(extractEvaluationsPDFTasklet())
-        //    .next(createEvaluationsPDFBusinessObjectsTasklet())
+        .next(createEvaluationsPDFBusinessObjectsTasklet())
         //    .next(createEvaluationsPDFDtoTasklet())
         //    .next(writeEvaluationsDTOToGitTasklet())
         .build().listener(NotificationListener())
