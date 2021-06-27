@@ -2,7 +2,7 @@ package org.ionproject.integration.application.job
 
 enum class JobType(val identifier: String) {
     TIMETABLE("timetable"),
-    EXAM_SCHEDULE("evaluation"),
+    EXAM_SCHEDULE("evaluations"),
     ACADEMIC_CALENDAR("calendar");
 
     companion object Factory {
