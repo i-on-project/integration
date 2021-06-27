@@ -1,5 +1,6 @@
 package org.ionproject.integration.infrastructure.git
 
+import org.eclipse.jgit.api.CreateBranchCommand
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ListBranchCommand
 import org.eclipse.jgit.lib.Ref
@@ -7,7 +8,6 @@ import org.eclipse.jgit.transport.CredentialsProvider
 import org.eclipse.jgit.transport.RefSpec
 import org.eclipse.jgit.transport.RemoteRefUpdate
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
-import org.ionproject.integration.infrastructure.git.GitHandlerImpl.Factory.getAllBranchNames
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
@@ -75,8 +75,10 @@ class GitHandlerImpl : IGitHandler {
 
         private fun Git.checkoutBranch(branchName: String) {
             LOGGER.info("Switching to branch '$branchName'.")
+
             checkout()
                 .setName(branchName)
+                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
                 .call()
         }
 
