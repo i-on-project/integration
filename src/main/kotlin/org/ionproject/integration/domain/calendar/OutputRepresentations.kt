@@ -1,6 +1,6 @@
 package org.ionproject.integration.domain.calendar
 
-import org.ionproject.integration.domain.timetable.dto.SchoolDto
+import org.ionproject.integration.domain.common.dto.SchoolDto
 import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
 import org.ionproject.integration.model.external.calendar.Detail
