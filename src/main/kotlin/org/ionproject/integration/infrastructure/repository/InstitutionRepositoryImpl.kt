@@ -5,13 +5,18 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.Language
+import org.ionproject.integration.domain.common.ProgrammeModel
+import org.ionproject.integration.infrastructure.exception.ArgumentException
 import org.ionproject.integration.infrastructure.text.IgnoredWords
 import org.ionproject.integration.infrastructure.text.generateAcronym
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.config.ConfigurableBeanFactory
+import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Service
 import java.net.URI
 
 @Service
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 class InstitutionRepositoryImpl : IInstitutionRepository {
     private val mapper by lazy { ObjectMapper(YAMLFactory()) }
 
@@ -19,37 +24,67 @@ class InstitutionRepositoryImpl : IInstitutionRepository {
     private lateinit var props: AppProperties
 
     override fun getInstitutionByIdentifier(identifier: String): InstitutionModel {
+        val supportedInstitutions = readInstitutionsFromFile()
+        val institutionDto = findInstitution(identifier, supportedInstitutions)
+
+        return institutionDto.toModel()
+    }
+
+    internal fun readInstitutionsFromFile(): List<InstitutionDto> {
         val type = mapper.typeFactory.constructCollectionType(List::class.java, InstitutionDto::class.java)
         val file = props.configurationFile.asFile
-        val supportedInstitutions: List<InstitutionDto> = mapper.readValue(file, type)
-
-        return supportedInstitutions.first().toModel()
+        return mapper.readValue(file, type)
     }
+
+    internal fun findInstitution(identifier: String, institutions: List<InstitutionDto>): InstitutionDto =
+        institutions
+            .firstOrNull { it.identifier.equals(identifier, ignoreCase = true) }
+            ?: throw ArgumentException("Institution with $identifier not found")
 }
 
-private data class InstitutionDto(
+internal data class InstitutionDto(
     val name: String = "",
     val identifier: String = "",
     val resources: List<ResourceDto> = listOf(),
     val programmes: List<ProgrammeDto> = listOf()
 ) {
     fun toModel(): InstitutionModel {
+        val calendar = resources.first { it.type == ResourceType.CALENDAR.identifier }
+        val institutionAcronym = generateAcronym(name, IgnoredWords.of(Language.PT))
+
         return InstitutionModel(
             name = this.name,
-            acronym = generateAcronym(this.name, IgnoredWords.of(Language.PT)),
+            acronym = institutionAcronym,
             identifier = this.identifier,
-            academicCalendarUri = URI(this.resources.first().uri)
+            academicCalendarUri = URI(calendar.uri)
         )
     }
 }
 
-private data class ResourceDto(
+internal data class ResourceDto(
     val type: String = "",
     val uri: String = ""
 )
 
-private data class ProgrammeDto(
+internal enum class ResourceType(val identifier: String) {
+    CALENDAR("academic_calendar"),
+    TIMETABLE("timetable")
+}
+
+internal data class ProgrammeDto(
     val name: String = "",
     val acronym: String? = null,
     val resources: List<ResourceDto> = listOf()
-)
+) {
+    fun toModel(institution: InstitutionModel): ProgrammeModel {
+        val acronym = generateAcronym(name, IgnoredWords.of(Language.PT))
+        val timetableUri = resources.first { it.type == ResourceType.TIMETABLE.identifier }
+
+        return ProgrammeModel(
+            institutionModel = institution,
+            name = this.name,
+            acronym = acronym,
+            timetableUri = URI(timetableUri.uri)
+        )
+    }
+}
