@@ -2,6 +2,7 @@ package org.ionproject.integration.application.dispatcher
 
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.dto.ParsedData
+import org.ionproject.integration.infrastructure.DateUtils.formatToISO8601
 import org.ionproject.integration.infrastructure.file.IFileWriter
 import org.ionproject.integration.infrastructure.git.GitOutcome
 import org.ionproject.integration.infrastructure.git.GitRepoData
@@ -14,7 +15,6 @@ import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import java.lang.IllegalStateException
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -22,7 +22,6 @@ class DispatcherImpl(
     val fileWriter: IFileWriter<ParsedData>,
     val gitFactory: IGitHandlerFactory
 ) : IDispatcher {
-    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
     private val LOGGER = LoggerFactory.getLogger(DispatcherImpl::class.java)
 
     @Autowired
@@ -64,7 +63,7 @@ class DispatcherImpl(
         }
 
     private fun generateCommitMessage(data: ParsedData): String {
-        val now = LocalDateTime.now().format(formatter)
+        val now = formatToISO8601(LocalDateTime.now())
         return "${data.identifier} at $now"
     }
 }
