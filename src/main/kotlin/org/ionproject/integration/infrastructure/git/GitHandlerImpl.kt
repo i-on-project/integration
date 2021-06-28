@@ -8,6 +8,7 @@ import org.eclipse.jgit.transport.CredentialsProvider
 import org.eclipse.jgit.transport.RefSpec
 import org.eclipse.jgit.transport.RemoteRefUpdate
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
+import org.ionproject.integration.infrastructure.git.GitHandlerImpl.Factory.createLocalBranch
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
@@ -47,9 +48,13 @@ class GitHandlerImpl : IGitHandler {
                 .call()
 
             val branchName = repoData.branch
+
+            val branch = repo.createLocalBranch(branchName)
+                ?: throw IllegalStateException("Could not create local branch.")
+
             if (!repo.isBranchCreated(branchName)) {
                 LOGGER.info("Branch '$branchName' does not exist. New local branch will be created and published.")
-                repo.createRemoteBranch(branchName, credentialProvider)
+                repo.publishBranchToRemote(credentialProvider, branch)
             }
 
             repo.checkoutBranch(branchName)
@@ -78,6 +83,7 @@ class GitHandlerImpl : IGitHandler {
 
             checkout()
                 .setName(branchName)
+                .setForced(true)
                 .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
                 .call()
         }
