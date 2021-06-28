@@ -1,6 +1,7 @@
 package org.ionproject.integration.infrastructure
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -55,6 +56,9 @@ object DateUtils {
      */
     fun formatToISO8601(zonedDateTime: ZonedDateTime): String =
         zonedDateTime.format(DateTimeFormatter.ofPattern(CALENDAR_ISO8601_FORMAT))
+
+    fun formatToISO8601(localDateTime: LocalDateTime): String =
+        localDateTime.format(DateTimeFormatter.ofPattern(CALENDAR_ISO8601_FORMAT))
 
     fun isDateRange(eventDateString: String): Boolean =
         eventDateString.contains(PT_DATA_RANGE_DELIMITERS_REGEX.toRegex())
