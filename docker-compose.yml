@@ -15,8 +15,11 @@ services:
       - GIT_USER=${GIT_USER}
       - GIT_PASSWORD=${GIT_PASSWORD}
       - GIT_BRANCH=${GIT_BRANCH}
+      - SERVER_PORT=${SERVER_PORT}
     volumes:
       - db-data:/var/lib/postgresql/data
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
     depends_on:
       ion-db:
         condition: service_started
