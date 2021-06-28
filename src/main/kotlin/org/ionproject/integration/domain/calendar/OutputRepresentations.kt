@@ -28,7 +28,7 @@ data class TermDto(
     val interruptions: List<EventDto>,
     val evaluations: List<EvaluationDto>,
     val details: List<DetailDto>,
-    val otherEvents: List<EventDto>
+    val lectures: List<EventDto>
 ) {
     companion object {
         fun from(terms: List<Term>): List<TermDto> = terms.map {
@@ -37,7 +37,7 @@ data class TermDto(
                 EventDto.from(it.interruptions),
                 EvaluationDto.from(it.evaluations),
                 DetailDto.from(it.details),
-                EventDto.from(it.otherEvents)
+                EventDto.from(it.lectures)
             )
         }
     }
