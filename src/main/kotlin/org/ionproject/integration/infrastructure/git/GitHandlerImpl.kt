@@ -53,7 +53,7 @@ class GitHandlerImpl : IGitHandler {
                 ?: throw IllegalStateException("Could not create local branch.")
 
             if (!repo.isBranchCreated(branchName)) {
-                LOGGER.info("Branch '$branchName' does not exist. New local branch will be created and published.")
+                LOGGER.info("Branch '$branchName' does not exist. New branch will be created and published.")
                 repo.publishBranchToRemote(credentialProvider, branch)
             }
 
