@@ -134,12 +134,12 @@ class ISELAcademicCalendarJob(
     fun writeCalendarDTOToGitTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
         .tasklet { stepContribution, context ->
             val formatParam = context.stepContext.jobParameters[JobEngine.FORMAT_PARAMETER] as String
-            if (dispatcher.dispatch(
-                    AcademicCalendarData.from(State.academicCalendarDto),
-                    CALENDAR_JOB_NAME,
-                    OutputFormat.of(formatParam)
-                ) == DispatchResult.FAILURE
-            ) {
+            val format = OutputFormat.of(formatParam)
+            val calendarData = AcademicCalendarData.from(State.academicCalendarDto)
+
+            val dispatchResult = dispatcher.dispatch(calendarData, CALENDAR_JOB_NAME, format)
+
+            if (dispatchResult == DispatchResult.FAILURE) {
                 stepContribution.exitStatus = ExitStatus.FAILED
             }
             RepeatStatus.FINISHED

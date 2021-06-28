@@ -54,7 +54,7 @@ data class AcademicCalendar(
             val interruptions = mutableListOf<Event>()
             val evaluations = mutableListOf<Evaluation>()
             val details = mutableListOf<Detail>()
-            val otherEvents = mutableListOf<Event>()
+            val lectures = mutableListOf<Event>()
             val (descriptions, dates) = events.withIndex().partition { it.index % 2 == 0 }
 
             descriptions.forEachIndexed { index, _ ->
@@ -91,7 +91,7 @@ data class AcademicCalendar(
                         )
                     }
                     EventType.OTHER -> {
-                        otherEvents.add(
+                        lectures.add(
                             Event(
                                 events[index],
                                 intervalDate.from,
@@ -111,7 +111,7 @@ data class AcademicCalendar(
                 interruptions,
                 evaluations,
                 details,
-                otherEvents
+                lectures
             )
         }
 
@@ -144,7 +144,7 @@ data class Term(
     val interruptions: List<Event>,
     val evaluations: List<Evaluation>,
     val details: List<Detail>,
-    val otherEvents: List<Event>
+    val lectures: List<Event>
 )
 
 data class Event(
