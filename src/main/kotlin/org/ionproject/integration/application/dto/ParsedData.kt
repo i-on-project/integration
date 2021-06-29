@@ -2,8 +2,7 @@ package org.ionproject.integration.application.dto
 
 import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.ionproject.integration.infrastructure.file.Filepath
-import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
-import org.ionproject.integration.infrastructure.text.Institution
+import org.ionproject.integration.domain.calendar.AcademicCalendarDto
 
 /**
  * ParsedData will be used to "transport" the final data along with the required metadata.
@@ -50,12 +49,12 @@ data class AcademicCalendarData(
         private const val ACADEMIC_YEAR_LENGTH = 9
         private const val ACADEMIC_YEARS_FOLDER_NAME = "academic_years"
 
-        fun from(academicCalendarDto: AcademicCalendarDto): AcademicCalendarData =
+        fun from(academicCalendarDto: AcademicCalendarDto, identifier: String): AcademicCalendarData =
             AcademicCalendarData(
                 InstitutionMetadata(
                     academicCalendarDto.school.name,
                     academicCalendarDto.school.acr,
-                    Institution.valueOf(academicCalendarDto.school.acr).identifier
+                    identifier
                 ),
                 academicCalendarDto.terms.first().calendarTerm.take(ACADEMIC_YEAR_LENGTH),
                 academicCalendarDto

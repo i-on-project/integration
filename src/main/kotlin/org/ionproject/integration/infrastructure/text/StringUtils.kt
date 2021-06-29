@@ -2,10 +2,6 @@ package org.ionproject.integration.infrastructure.text
 
 import org.ionproject.integration.domain.common.Language
 
-enum class Institution(val identifier: String) {
-    ISEL("pt.ipl.isel")
-}
-
 object IgnoredWords {
     private val portugueseWords =
         listOf("de", "do", "da", "e", "o", "a", "para", "dos", "das", "dr", "dr.", "dra", "dra.", "em")
