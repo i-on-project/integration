@@ -12,7 +12,6 @@ import org.ionproject.integration.application.dto.ProgrammeMetadata
 import org.ionproject.integration.domain.common.Term
 import org.ionproject.integration.application.dto.TimetableData
 import org.ionproject.integration.domain.timetable.dto.TimetableDto
-import org.ionproject.integration.infrastructure.text.Institution
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.StepContribution
@@ -33,6 +32,9 @@ class WriteFileTasklet(
 
     @Value("#{jobParameters['${JobEngine.FORMAT_PARAMETER}']}")
     private var format: OutputFormat = OutputFormat.JSON
+
+    @Value("#{jobParameters['${JobEngine.INSTITUTION_PARAMETER}']}")
+    private var institutionIdentifier: String = ""
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         return when (val writeResult = writeToGit()) {
@@ -56,7 +58,7 @@ class WriteFileTasklet(
                 InstitutionMetadata(
                     timetableDto.school.name,
                     timetableDto.school.acr,
-                    Institution.valueOf(timetableDto.school.acr).identifier
+                    institutionIdentifier
                 ),
                 timetableDto.programme.name,
                 timetableDto.programme.acr

@@ -1,7 +1,12 @@
-package org.ionproject.integration.model.external.calendar
+package org.ionproject.integration.domain.calendar
 
 import org.ionproject.integration.domain.timetable.dto.SchoolDto
 import org.ionproject.integration.infrastructure.DateUtils
+import org.ionproject.integration.model.external.calendar.AcademicCalendar
+import org.ionproject.integration.model.external.calendar.Detail
+import org.ionproject.integration.model.external.calendar.Evaluation
+import org.ionproject.integration.model.external.calendar.Event
+import org.ionproject.integration.model.external.calendar.Term
 
 data class AcademicCalendarDto(
     val creationDateTime: String,

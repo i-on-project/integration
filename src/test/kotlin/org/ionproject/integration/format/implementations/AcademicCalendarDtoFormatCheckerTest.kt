@@ -2,13 +2,13 @@ package org.ionproject.integration.format.implementations
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
-import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
+import org.ionproject.integration.domain.calendar.AcademicCalendarDto
 import org.ionproject.integration.model.external.calendar.Evaluation
-import org.ionproject.integration.model.external.calendar.EvaluationDto
+import org.ionproject.integration.domain.calendar.EvaluationDto
 import org.ionproject.integration.model.external.calendar.Event
-import org.ionproject.integration.model.external.calendar.EventDto
+import org.ionproject.integration.domain.calendar.EventDto
 import org.ionproject.integration.model.external.calendar.Term
-import org.ionproject.integration.model.external.calendar.TermDto
+import org.ionproject.integration.domain.calendar.TermDto
 import org.ionproject.integration.domain.common.Language
 import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.domain.timetable.dto.SchoolDto

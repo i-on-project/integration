@@ -18,7 +18,7 @@ import org.ionproject.integration.infrastructure.pdfextractor.AcademicCalendarEx
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
-import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
+import org.ionproject.integration.domain.calendar.AcademicCalendarDto
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
@@ -134,8 +134,9 @@ class ISELAcademicCalendarJob(
     fun writeCalendarDTOToGitTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
         .tasklet { stepContribution, context ->
             val formatParam = context.stepContext.jobParameters[JobEngine.FORMAT_PARAMETER] as String
+            val identifier = context.stepContext.jobParameters[JobEngine.INSTITUTION_PARAMETER] as String
             val format = OutputFormat.of(formatParam)
-            val calendarData = AcademicCalendarData.from(State.academicCalendarDto)
+            val calendarData = AcademicCalendarData.from(State.academicCalendarDto, identifier)
 
             val dispatchResult = dispatcher.dispatch(calendarData, CALENDAR_JOB_NAME, format)
 

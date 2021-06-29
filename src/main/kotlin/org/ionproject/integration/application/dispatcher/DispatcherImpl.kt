@@ -14,7 +14,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import java.lang.IllegalStateException
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -63,7 +63,7 @@ class DispatcherImpl(
         }
 
     private fun generateCommitMessage(data: ParsedData): String {
-        val now = formatToISO8601(LocalDateTime.now())
+        val now = formatToISO8601(ZonedDateTime.now())
         return "${data.identifier} at $now"
     }
 }
