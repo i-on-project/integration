@@ -114,7 +114,7 @@ To do this you need to configure the following environment variables in the **.e
 
 After configuring the **.env** file with these variables your app will be ready to commit and push to your newly configured repository after the next restart. At this point you can also bring down the local Git Server container.
 
-`*` **NOTE:** The branch **must** exist in the remote repository, otherwise the app will default to the `master` branch.
+`*` **NOTE:** If the configured branch does **not** exist in the remote repository it **will be created and published** automatically by the application.
 
 ### Stopping and removing the environment
 If you are running in **attached** mode (without the `-d` flag) you can use `Ctrl + C` to stop all containers **gracefully** or, if you're in a hurry (or a container is not stopping on its own) you can press `Ctrl + C` a **second time** to **force shutdown**.
