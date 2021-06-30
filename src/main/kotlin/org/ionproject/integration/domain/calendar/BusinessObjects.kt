@@ -60,11 +60,11 @@ data class AcademicCalendar(
             descriptions.forEachIndexed { index, _ ->
                 val intervalDate = DateUtils.getDateRange(dates[index].value)
 
-                when (getEventType(events[index])) {
+                when (getEventType(descriptions[index].value)) {
                     EventType.EVALUATION -> {
                         evaluations.add(
                             Evaluation(
-                                events[index],
+                                descriptions[index].value,
                                 intervalDate.from,
                                 intervalDate.to,
                                 false
@@ -74,7 +74,7 @@ data class AcademicCalendar(
                     EventType.INTERRUPTION -> {
                         interruptions.add(
                             Event(
-                                events[index],
+                                descriptions[index].value,
                                 intervalDate.from,
                                 intervalDate.to,
                             )
@@ -83,7 +83,7 @@ data class AcademicCalendar(
                     EventType.DETAILS -> {
                         details.add(
                             Detail(
-                                events[index],
+                                descriptions[index].value,
                                 listOf(),
                                 intervalDate.from,
                                 intervalDate.to,
@@ -93,7 +93,7 @@ data class AcademicCalendar(
                     EventType.OTHER -> {
                         lectures.add(
                             Event(
-                                events[index],
+                                descriptions[index].value,
                                 intervalDate.from,
                                 intervalDate.to,
                             )
