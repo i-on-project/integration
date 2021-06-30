@@ -67,7 +67,7 @@ class IntegrationJobRepository(
 
         val parameters = JobEngine.IntegrationJobParameters(
             creationDate.toLocalDateTime(),
-            startDate.toLocalDateTime(),
+            startDate?.toLocalDateTime(),
             OutputFormat.of(format),
             institution,
             if (jobType != JobType.ACADEMIC_CALENDAR)
