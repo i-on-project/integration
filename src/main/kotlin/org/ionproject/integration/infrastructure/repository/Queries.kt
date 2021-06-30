@@ -4,11 +4,11 @@ const val CREATE_JOBS_VIEW_QUERY = """create or replace view vw_job_detail
 as
 SELECT bje.job_instance_id as id
      , bji.job_name        as name
-     , bje.create_time     as creation_date
-     , bje.start_time      as start_date
+     , bje.create_time at time zone 'utc'     as creation_date
+     , bje.start_time at time zone 'utc'     as start_date
      ,CASE 
 		WHEN bje.STATUS IN ('STARTED','STARTING')
-			AND bje.create_time < (CURRENT_TIMESTAMP - interval '1 hour')
+			AND (bje.create_time at time zone 'utc') < ((CURRENT_TIMESTAMP at time zone 'utc') - interval '1 hours')
 			THEN 'FAILED'
 		ELSE bje.status
 		END as status
