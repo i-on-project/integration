@@ -51,7 +51,7 @@ jobs:
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           usedocker: true
-          docker_heroku_process_type: worker
+          docker_heroku_process_type: web
       - run: |
           echo "::add-mask::$HD_SQL_HOST"
           echo "::add-mask::$HD_SQL_USER"
