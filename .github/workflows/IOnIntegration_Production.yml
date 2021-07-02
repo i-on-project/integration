@@ -6,7 +6,7 @@ on:
     tags:
       - v*
 env:
-  REGISTRY: ghcr.Integration
+  REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
