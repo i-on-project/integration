@@ -7,7 +7,7 @@ import org.ionproject.integration.domain.common.Language
 import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
-import org.ionproject.integration.model.external.calendar.Detail
+import org.ionproject.integration.model.external.calendar.Lectures
 import org.ionproject.integration.model.external.calendar.Evaluation
 import org.ionproject.integration.model.external.calendar.Event
 import org.ionproject.integration.model.external.calendar.Term
@@ -84,7 +84,7 @@ class AcademicCalendarBusinessObjFormatCheckerTests {
                         )
                     ),
                     listOf(
-                        Detail(
+                        Lectures(
                             "Aulas",
                             listOf<Int>(1, 2, 3, 4, 5, 6),
                             LocalDate.of(2020, Month.OCTOBER, 6),
@@ -96,6 +96,11 @@ class AcademicCalendarBusinessObjFormatCheckerTests {
                             "Divulgação de horários",
                             LocalDate.of(2020, Month.SEPTEMBER, 9),
                             LocalDate.of(2020, Month.SEPTEMBER, 9)
+                        ),
+                        Event(
+                            "Abertura das atividades letivas 2020/2021",
+                            LocalDate.of(2020, Month.SEPTEMBER, 28),
+                            LocalDate.of(2020, Month.SEPTEMBER, 28)
                         ),
                         Event(
                             "Data limite para lançamento de classificações no Portal Académico (frequência, exames de época normal e de época de recurso)",
@@ -111,11 +116,6 @@ class AcademicCalendarBusinessObjFormatCheckerTests {
                             "Interrupção de atividades letivas (Páscoa)",
                             LocalDate.of(2021, Month.MARCH, 29),
                             LocalDate.of(2021, Month.APRIL, 5)
-                        ),
-                        Event(
-                            "Período de ausência de atividade letiva (férias)",
-                            LocalDate.of(2021, Month.AUGUST, 1),
-                            LocalDate.of(2021, Month.AUGUST, 31)
                         )
                     ),
                     listOf(
@@ -139,7 +139,7 @@ class AcademicCalendarBusinessObjFormatCheckerTests {
                         )
                     ),
                     listOf(
-                        Detail(
+                        Lectures(
                             "Aulas",
                             listOf<Int>(1, 2, 3, 4, 5, 6),
                             LocalDate.of(2021, Month.MARCH, 15),
@@ -156,6 +156,16 @@ class AcademicCalendarBusinessObjFormatCheckerTests {
                             "Encerramento das atividades letivas 2020/2021",
                             LocalDate.of(2021, Month.JULY, 31),
                             LocalDate.of(2021, Month.JULY, 31)
+                        ),
+                        Event(
+                            "Período de ausência de atividade letiva (férias)",
+                            LocalDate.of(2021, Month.AUGUST, 1),
+                            LocalDate.of(2021, Month.AUGUST, 31)
+                        ),
+                        Event(
+                            "Data limite para lançamento de classificações no Portal Académico (frequência, exames de época normal e de época de recurso)",
+                            LocalDate.of(2021, Month.SEPTEMBER, 2),
+                            LocalDate.of(2021, Month.SEPTEMBER, 2)
                         ),
                         Event(
                             "Data limite para lançamento de classificações no Portal Académico (época especial)",

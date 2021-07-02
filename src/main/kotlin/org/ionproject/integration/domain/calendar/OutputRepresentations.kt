@@ -3,7 +3,7 @@ package org.ionproject.integration.domain.calendar
 import org.ionproject.integration.domain.timetable.dto.SchoolDto
 import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
-import org.ionproject.integration.model.external.calendar.Detail
+import org.ionproject.integration.model.external.calendar.Lectures
 import org.ionproject.integration.model.external.calendar.Evaluation
 import org.ionproject.integration.model.external.calendar.Event
 import org.ionproject.integration.model.external.calendar.Term
@@ -32,8 +32,8 @@ data class TermDto(
     val calendarTerm: String,
     val interruptions: List<EventDto>,
     val evaluations: List<EvaluationDto>,
-    val details: List<DetailDto>,
-    val lectures: List<EventDto>
+    val lectures: List<LecturesDto>,
+    val otherEvents: List<EventDto>
 ) {
     companion object {
         fun from(terms: List<Term>): List<TermDto> = terms.map {
@@ -41,8 +41,8 @@ data class TermDto(
                 it.calendarTerm,
                 EventDto.from(it.interruptions),
                 EvaluationDto.from(it.evaluations),
-                DetailDto.from(it.details),
-                EventDto.from(it.lectures)
+                LecturesDto.from(it.lectures),
+                EventDto.from(it.otherEvents)
             )
         }
     }
@@ -82,15 +82,15 @@ data class EvaluationDto(
     }
 }
 
-data class DetailDto(
+data class LecturesDto(
     val name: String,
     val curricularTerm: List<IdDto>,
     val startDate: String,
     val endDate: String,
 ) {
     companion object {
-        fun from(details: List<Detail>): List<DetailDto> = details.map {
-            DetailDto(
+        fun from(lectures: List<Lectures>): List<LecturesDto> = lectures.map {
+            LecturesDto(
                 it.name,
                 it.curricularTerm.map { id -> IdDto(id) },
                 DateUtils.formatToCalendarDate(it.startDate),

@@ -6,6 +6,7 @@ import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.application.dto.AcademicCalendarData
 import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
+import org.ionproject.integration.domain.calendar.AcademicCalendarDto
 import org.ionproject.integration.domain.calendar.RawCalendarData
 import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.file.FileComparatorImpl
@@ -18,7 +19,6 @@ import org.ionproject.integration.infrastructure.pdfextractor.AcademicCalendarEx
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
-import org.ionproject.integration.domain.calendar.AcademicCalendarDto
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory

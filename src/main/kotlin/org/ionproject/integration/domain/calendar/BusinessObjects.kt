@@ -21,7 +21,7 @@ data class AcademicCalendar(
         private const val TABLE_DELIMITER = "extraction"
         private const val PT_INTERRUPTION_REGEX = "\\b(?:Interrupção|Férias)\\b"
         private const val PT_EVALUATION_REGEX = "\\b(?:Exames|Testes)\\b"
-        private const val PT_DETAILS_REGEX = "\\b(?:Turmas)\\b"
+        private const val PT_LECTURES_REGEX = "\\b(?:Turmas)\\b"
 
         fun from(rawCalendarData: RawCalendarData): AcademicCalendar =
             AcademicCalendar(
@@ -53,8 +53,8 @@ data class AcademicCalendar(
         private fun buildTerm(events: List<String>, pdfRawText: String, term: CalendarTerm): Term {
             val interruptions = mutableListOf<Event>()
             val evaluations = mutableListOf<Evaluation>()
-            val details = mutableListOf<Detail>()
-            val lectures = mutableListOf<Event>()
+            val lectures = mutableListOf<Lectures>()
+            val otherEvents = mutableListOf<Event>()
             val (descriptions, dates) = events.withIndex().partition { it.index % 2 == 0 }
 
             descriptions.forEachIndexed { index, _ ->
@@ -80,9 +80,9 @@ data class AcademicCalendar(
                             )
                         )
                     }
-                    EventType.DETAILS -> {
-                        details.add(
-                            Detail(
+                    EventType.LECTURES -> {
+                        lectures.add(
+                            Lectures(
                                 descriptions[index].value,
                                 listOf(),
                                 intervalDate.from,
@@ -91,7 +91,7 @@ data class AcademicCalendar(
                         )
                     }
                     EventType.OTHER -> {
-                        lectures.add(
+                        otherEvents.add(
                             Event(
                                 descriptions[index].value,
                                 intervalDate.from,
@@ -110,8 +110,8 @@ data class AcademicCalendar(
                     .plus("-${getTermNumber(term)}"),
                 interruptions,
                 evaluations,
-                details,
-                lectures
+                lectures,
+                otherEvents
             )
         }
 
@@ -125,7 +125,7 @@ data class AcademicCalendar(
             return when {
                 event.contains(PT_INTERRUPTION_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.INTERRUPTION
                 event.contains(PT_EVALUATION_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.EVALUATION
-                event.contains(PT_DETAILS_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.DETAILS
+                event.contains(PT_LECTURES_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.LECTURES
                 else -> EventType.OTHER
             }
         }
@@ -143,8 +143,8 @@ data class Term(
     val calendarTerm: String = "",
     val interruptions: List<Event>,
     val evaluations: List<Evaluation>,
-    val details: List<Detail>,
-    val lectures: List<Event>
+    val lectures: List<Lectures>,
+    val otherEvents: List<Event>
 )
 
 data class Event(
@@ -160,7 +160,7 @@ data class Evaluation(
     val duringLectures: Boolean
 )
 
-data class Detail(
+data class Lectures(
     val name: String,
     val curricularTerm: List<Int>,
     val startDate: LocalDate,
@@ -175,6 +175,6 @@ enum class CalendarTerm {
 enum class EventType {
     INTERRUPTION,
     EVALUATION,
-    DETAILS,
+    LECTURES,
     OTHER
 }
