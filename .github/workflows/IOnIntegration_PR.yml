@@ -15,7 +15,6 @@ env:
 jobs:
   push_pr:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(github.ref, 'tags')
     permissions:
       contents: read
       packages: write
