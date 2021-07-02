@@ -22,7 +22,7 @@ Academic information such as class schedules or academic calendars is often scat
 
 ![I-On Integration Architecture](img/ion_integration_architecture.png)
 
-**I-On Integration** uses *batch processing* techniques to acquire and process all unstructured data and write it to the common **File Repository** (a Git repo whose sole purpose is to host this data).
+**I-On Integration** uses *batch processing* techniques to acquire and process all unstructured data and write it to the common **File Repository** (a Git repo whose sole purpose is to host this data). The data is available for anyone that wishes to use their data on their own projects. It is available at [GitHub i-on Integration Data repository](https://github.com/i-on-project/integration-data).
 
 The **Scheduler** component, as the name suggests, is responsible for periodically triggering job executions through Integration's Web API (not yet available).
 
