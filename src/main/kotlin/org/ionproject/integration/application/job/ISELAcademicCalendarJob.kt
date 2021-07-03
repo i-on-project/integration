@@ -46,7 +46,7 @@ class ISELAcademicCalendarJob(
     val properties: AppProperties,
     val downloader: IFileDownloader,
     val dispatcher: IDispatcher,
-    private val institutionRepository: IInstitutionRepository,
+    val institutionRepository: IInstitutionRepository,
     @Autowired
     val ds: DataSource
 ) {
