@@ -1,7 +1,7 @@
 package org.ionproject.integration.domain.timetable
 
 import org.ionproject.integration.domain.timetable.model.Course
-import org.ionproject.integration.domain.timetable.model.Programme
+import org.ionproject.integration.domain.common.Programme
 import org.ionproject.integration.domain.common.School
 
 data class Timetable(

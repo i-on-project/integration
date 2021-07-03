@@ -1,4 +1,4 @@
-package org.ionproject.integration.domain.timetable.model
+package org.ionproject.integration.domain.common
 
 data class Programme(
     var name: String = "",

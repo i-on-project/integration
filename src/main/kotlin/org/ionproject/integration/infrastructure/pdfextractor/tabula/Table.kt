@@ -10,6 +10,10 @@ data class Table(
     val bottom: Double,
     val data: Array<Array<Cell>>
 ) {
+    companion object {
+        private const val HASH_PRIME_NUMBER = 31
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -30,13 +34,13 @@ data class Table(
 
     override fun hashCode(): Int {
         var result = extraction_method.hashCode()
-        result = 31 * result + top.hashCode()
-        result = 31 * result + left.hashCode()
-        result = 31 * result + width.hashCode()
-        result = 31 * result + height.hashCode()
-        result = 31 * result + right.hashCode()
-        result = 31 * result + bottom.hashCode()
-        result = 31 * result + data.contentDeepHashCode()
+        result = HASH_PRIME_NUMBER * result + top.hashCode()
+        result = HASH_PRIME_NUMBER * result + left.hashCode()
+        result = HASH_PRIME_NUMBER * result + width.hashCode()
+        result = HASH_PRIME_NUMBER * result + height.hashCode()
+        result = HASH_PRIME_NUMBER * result + right.hashCode()
+        result = HASH_PRIME_NUMBER * result + bottom.hashCode()
+        result = HASH_PRIME_NUMBER * result + data.contentDeepHashCode()
         return result
     }
 }
