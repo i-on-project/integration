@@ -7,6 +7,12 @@ import org.ionproject.integration.infrastructure.repository.IInstitutionReposito
 import org.ionproject.integration.infrastructure.repository.IProgrammeRepository
 import org.springframework.stereotype.Component
 
+internal const val INVALID_JOB_TYPE_ERROR = "Invalid Job Type: %s"
+internal const val MISSING_PARAMETER_ERROR = "Parameter '%s' missing"
+internal const val FORMAT = "format"
+internal const val INSTITUTION = "institution"
+internal const val PROGRAMME = "programme"
+
 @Component
 class InputProcessor(
     val institutionRepo: IInstitutionRepository,
@@ -18,7 +24,7 @@ class InputProcessor(
     }
 
     private fun getValidatedDto(dto: CreateJobDto): SafeJobDto {
-        val type = JobType.of(dto.type) ?: throw ArgumentException("Invalid Job Type: ${dto.type}")
+        val type = JobType.of(dto.type) ?: throw ArgumentException(INVALID_JOB_TYPE_ERROR.format(dto.type?.trim()))
         validateDto(dto, type)
 
         return dto.toSafeDto(type)
@@ -26,11 +32,11 @@ class InputProcessor(
 
     private fun validateDto(dto: CreateJobDto, jobType: JobType) {
         runCatching {
-            requireNotNull(dto.format) { "format" }
-            requireNotNull(dto.institution) { "institution" }
+            require(dto.format?.isNotBlank() ?: false) { FORMAT }
+            require(dto.institution?.isNotBlank() ?: false) { INSTITUTION }
 
             if (jobType == JobType.TIMETABLE || jobType == JobType.EXAM_SCHEDULE)
-                requireNotNull(dto.programme) { "programme" }
-        }.onFailure { throw ArgumentException("Parameter '${it.message}' missing") }
+                require(dto.programme?.isNotBlank() ?: false) { PROGRAMME }
+        }.onFailure { throw ArgumentException(MISSING_PARAMETER_ERROR.format(it.message)) }
     }
 }
