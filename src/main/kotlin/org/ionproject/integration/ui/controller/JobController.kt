@@ -4,7 +4,6 @@ import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.ui.dto.CreateJobDto
 import org.ionproject.integration.ui.dto.InputProcessor
 import org.slf4j.LoggerFactory
-import org.springframework.batch.core.explore.JobExplorer
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController
 class JobController(
     val jobEngine: JobEngine,
     val inputProcessor: InputProcessor,
-    val jobExplorer: JobExplorer
 ) {
 
     private val logger = LoggerFactory.getLogger(JobController::class.java)
