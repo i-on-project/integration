@@ -4,6 +4,7 @@ import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
+import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.evaluations.Evaluations
 import org.ionproject.integration.domain.evaluations.EvaluationsDto
 import org.ionproject.integration.domain.evaluations.RawEvaluationsData
@@ -16,9 +17,11 @@ import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.EvaluationsExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
+import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
+import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.core.step.tasklet.TaskletStep
 import org.springframework.batch.repeat.RepeatStatus
@@ -38,6 +41,7 @@ class ISELEvaluationsJob(
     val properties: AppProperties,
     val downloader: IFileDownloader,
     val dispatcher: IDispatcher,
+    val institutionRepository: IInstitutionRepository,
     @Autowired
     val ds: DataSource
 ) {
@@ -79,9 +83,8 @@ class ISELEvaluationsJob(
 
     @Bean
     fun extractEvaluationsPDFTasklet() = stepBuilderFactory.get("Extract Evaluations PDF Raw Data")
-        .tasklet { stepContribution, context ->
+        .tasklet { stepContribution, _ ->
             val path = stepContribution.stepExecution.jobExecution.executionContext.get("file-path").toString()
-            val school = context.stepContext.jobParameters[JobEngine.INSTITUTION_PARAMETER] as String
             State.rawEvaluationsData = extractEvaluationsPDF(path)
             RepeatStatus.FINISHED
         }
@@ -112,11 +115,16 @@ class ISELEvaluationsJob(
     @Bean
     fun createEvaluationsPDFBusinessObjectsTasklet() =
         stepBuilderFactory.get("Create Business Objects from Evaluations Raw Data")
-            .tasklet { _, _ ->
-                State.evaluations = Evaluations.from(State.rawEvaluationsData)
+            .tasklet { _, context ->
+                State.evaluations = Evaluations.from(State.rawEvaluationsData, getJobInstitution(context))
                 RepeatStatus.FINISHED
             }
             .build()
+
+    private fun getJobInstitution(context: ChunkContext): InstitutionModel =
+        institutionRepository.getInstitutionByIdentifier(
+            context.stepContext.jobParameters[JobEngine.INSTITUTION_PARAMETER] as String
+        )
 
     @Bean
     fun createEvaluationsPDFDtoTasklet() = stepBuilderFactory.get("Create DTO from Evaluations Business Objects")
