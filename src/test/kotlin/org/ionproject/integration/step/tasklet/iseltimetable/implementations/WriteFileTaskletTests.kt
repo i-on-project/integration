@@ -4,7 +4,7 @@ import org.ionproject.integration.application.job.tasklet.WriteFileTasklet
 import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.application.job.ISELTimetableJob
-import org.ionproject.integration.domain.timetable.model.Programme
+import org.ionproject.integration.domain.common.Programme
 import org.ionproject.integration.domain.timetable.dto.ProgrammeDto
 import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.domain.common.dto.SchoolDto
