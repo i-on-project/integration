@@ -10,9 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+
+internal const val JOBS_URI = "/jobs"
 
 @RestController
-@RequestMapping("/jobs")
+@RequestMapping(JOBS_URI)
 class JobController(
     val jobEngine: JobEngine,
     val inputProcessor: InputProcessor,
@@ -21,25 +25,34 @@ class JobController(
     private val logger = LoggerFactory.getLogger(JobController::class.java)
 
     @PostMapping(consumes = ["application/json"])
-    fun createTimetableJob(@RequestBody body: CreateJobDto): String {
+    fun createTimetableJob(
+        @RequestBody body: CreateJobDto,
+        servletRequest: HttpServletRequest,
+        response: HttpServletResponse
+    ): String {
         val request = inputProcessor.getJobRequest(body)
         val requestResult = jobEngine.runJob(request)
 
         return when (requestResult.result) {
-            JobEngine.JobExecutionResult.CREATED -> "Created ${request.javaClass.simpleName} job with ID ${requestResult.jobId}"
-            else -> "FAILED: ${requestResult.result}"
+            JobEngine.JobExecutionResult.CREATED -> {
+                response.status = HttpServletResponse.SC_CREATED
+                response.addHeader("Location", servletRequest.getLocationForJobRequest(requestResult))
+                "Created ${request.javaClass.simpleName} job with ID ${requestResult.jobId}"
+            }
+            else -> {
+                logger.error("Job creation failed: $body")
+                response.status = HttpServletResponse.SC_BAD_REQUEST
+                "FAILED: ${requestResult.result}"
+            }
         }
     }
 
     @GetMapping
-    fun getJobs(): List<JobEngine.IntegrationJob> {
-        val jobs = jobEngine.getRunningJobs()
-        return jobs
-    }
+    fun getJobs(): List<JobEngine.IntegrationJob> = jobEngine.getRunningJobs()
 
     @GetMapping("/{id}")
-    fun getJobDetails(@PathVariable id: Long): JobEngine.IntegrationJob {
-        val job = jobEngine.getJob(id)
-        return job
-    }
+    fun getJobDetails(@PathVariable id: Long): JobEngine.IntegrationJob = jobEngine.getJob(id)
+
+    private fun HttpServletRequest.getLocationForJobRequest(jobStatus: JobEngine.JobStatus): String =
+        "$localName:${localPort}$JOBS_URI/${jobStatus.jobId}"
 }
