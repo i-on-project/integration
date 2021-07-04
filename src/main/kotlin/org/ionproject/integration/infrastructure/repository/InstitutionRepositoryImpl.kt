@@ -39,7 +39,7 @@ class InstitutionRepositoryImpl : IInstitutionRepository {
     internal fun findInstitution(identifier: String, institutions: List<InstitutionDto>): InstitutionDto =
         institutions
             .firstOrNull { it.identifier.equals(identifier, ignoreCase = true) }
-            ?: throw ArgumentException("Institution with $identifier not found")
+            ?: throw ArgumentException("Institution with ID '$identifier' not found")
 }
 
 internal data class InstitutionDto(
