@@ -54,5 +54,5 @@ class JobController(
     fun getJobDetails(@PathVariable id: Long): JobEngine.IntegrationJob = jobEngine.getJob(id)
 
     private fun HttpServletRequest.getLocationForJobRequest(jobStatus: JobEngine.JobStatus): String =
-        "$localName:${localPort}$JOBS_URI/${jobStatus.jobId}"
+        "$scheme://$localName:${localPort}$contextPath$JOBS_URI/${jobStatus.jobId}"
 }

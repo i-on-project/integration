@@ -1,5 +1,6 @@
 package org.ionproject.integration.ui.controller
 
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.application.job.JobType
@@ -7,15 +8,19 @@ import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.infrastructure.exception.ArgumentException
 import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.ionproject.integration.ui.dto.InputProcessor
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
+import org.springframework.mock.web.MockServletContext
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -26,6 +31,7 @@ import java.net.URI
 import java.time.LocalDateTime
 
 @WebMvcTest
+@TestPropertySource("classpath:application.properties")
 class JobControllerTests {
     @MockBean
     private lateinit var jobEngine: JobEngine
@@ -36,7 +42,16 @@ class JobControllerTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
+    @Value("\${server.servlet.context-path}")
+    private lateinit var contextPath: String
+
     private val mockInstitution = InstitutionModel("test", "test", "test", URI("www.test.com"))
+
+    @BeforeEach
+    fun setUp() {
+        assertThat(contextPath).isNotBlank
+        (mockMvc.dispatcherServlet.servletContext as MockServletContext).contextPath = contextPath
+    }
 
     @Test
     fun `when receiving a request to list running jobs then return OK`() {
@@ -67,7 +82,7 @@ class JobControllerTests {
 
         whenever(jobEngine.getRunningJobs()) doReturn listOf(mockJob1, mockJob2)
 
-        mockMvc.perform(get(JOBS_URI))
+        mockMvc.perform(get("$contextPath$JOBS_URI").contextPath(contextPath))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(containsString(expectedResponse)))
@@ -85,12 +100,12 @@ class JobControllerTests {
         val expectedResponse = "Created CalendarJobRequest job with ID 1"
 
         mockMvc.perform(
-            post(JOBS_URI)
+            post("$contextPath$JOBS_URI").contextPath(contextPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}")
         )
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", """localhost:80/jobs/1"""))
+            .andExpect(header().string("Location", """http://localhost:80$contextPath$JOBS_URI/1"""))
             .andExpect(content().string(containsString(expectedResponse)))
     }
 
@@ -101,7 +116,7 @@ class JobControllerTests {
         val expectedResponse = "You've been a bad, bad boy!"
 
         mockMvc.perform(
-            post(JOBS_URI)
+            post("$contextPath$JOBS_URI").contextPath(contextPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}")
         )
