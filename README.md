@@ -62,10 +62,6 @@ By **default** the app containers will be accessible via the following ports:
 
 If you wish to change these values please refer to the [Customizing Containers](#customizing-containers) section.
 
-On Windows 10 you may see a **warning** about poor performance due to filesharing to a WSL container. This is due to the fact that we make use of [Docker Bind Mounts](https://docs.docker.com/storage/bind-mounts/) to share the necessary server files.
-
-![Warning](img/bindmountwarning.jpg)
-
 #### Using the containerized database
 While the Integration app will be able to connect to the database out of the box without any human intervention you might also be interested in connecting directly to run your own queries.
 
@@ -88,6 +84,8 @@ Or, if you're using a client that supports PostgreSQL Drivers (like [DBeaver](ht
 The Git server currently deployed for local development is based on the [GitBucket](https://github.com/gitbucket/gitbucket) image which should be pretty familiar and intuitive to anyone with experience using **GitHub**.
 
 It's Web front-end can be accessed by pointing your browser to `localhost:8080` (default port, see the [Customizing Containers section](#customizing-containers) if you need to use a different port value).
+
+On startup a repository named **"integration-data"** is created and initialized to mirror the existing production repository.
 
 ##### Git Credentials
 The server is deployed with a single **account** that can be accessed by entering `root` for both username and password fields.
