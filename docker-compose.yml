@@ -23,8 +23,8 @@ services:
     depends_on:
       ion-db:
         condition: service_started
-      git-server:
-        condition: service_healthy
+      git-setup:
+        condition: service_started
   ion-db:
     image: postgres:13.2-alpine
     ports:
@@ -38,11 +38,19 @@ services:
     ports:
       - "${GIT_PORT}:8080"
     volumes:
-      - "./git-server:/gitbucket"
+      - git-data:/gitbucket
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${GIT_PORT}" ]
       interval: 30s
       timeout: 10s
       retries: 5
+  git-setup:
+    image: gitbucket/gitbucket:4.35.3
+    depends_on:
+      git-server:
+        condition: service_healthy
+    restart: "no"
+    entrypoint: [ "curl", "-X", "POST", "-u", "root:root", "git-server:${GIT_PORT}/api/v3/user/repos", "-d", "{\"name\":\"integration-data\", \"auto_init\": true}" ]
 volumes:
   db-data:
+  git-data:
