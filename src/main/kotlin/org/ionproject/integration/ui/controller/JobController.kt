@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 internal const val JOBS_URI = "/jobs"
+private const val HTTP_PORT = 80
 
 @RestController
 @RequestMapping(JOBS_URI)
@@ -73,6 +74,9 @@ class JobController(
         return JobDetailDto.of(job, url, JobDetailDto.DetailType.FULL)
     }
 
-    private fun HttpServletRequest.getLocationForJobRequest(jobStatus: JobEngine.JobStatus): String =
-        "$scheme://$serverName:${localPort}$contextPath$JOBS_URI/${jobStatus.jobId}"
+    private fun HttpServletRequest.getLocationForJobRequest(jobStatus: JobEngine.JobStatus): String {
+        val portField = if (localPort != HTTP_PORT) ":$localPort" else ""
+
+        return "$scheme://$serverName$portField$contextPath$JOBS_URI/${jobStatus.jobId}"
+    }
 }
