@@ -163,6 +163,7 @@ class JobEngine(
     data class IntegrationJobParameters(
         val creationDate: LocalDateTime,
         val startDate: LocalDateTime?,
+        val endDate: LocalDateTime?,
         val format: OutputFormat,
         val institution: InstitutionModel,
         val programme: ProgrammeModel? = null,
