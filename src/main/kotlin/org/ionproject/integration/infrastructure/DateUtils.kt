@@ -2,6 +2,7 @@ package org.ionproject.integration.infrastructure
 
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.Month
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -91,6 +92,28 @@ object DateUtils {
         return IntervalDate(fromDate, toDate)
     }
 
+    fun getEvaluationDateTimeFrom(
+        yearStr: String,
+        dayMonthStr: String,
+        timeStr: String,
+        durationStr: String
+    ): IntervalDateTime {
+        val timeFormat = DateTimeFormatter.ofPattern("HH'h'mm")
+        val durationFormat = DateTimeFormatter.ofPattern("H'h'mm")
+        val dateFormat = DateTimeFormatter.ofPattern("d MMM yyyy", localePT)
+
+        val time = LocalTime.parse(timeStr, timeFormat)
+        val duration = LocalTime.parse(durationStr, durationFormat)
+        val date = LocalDate.parse(dayMonthStr.split(".")[0] + " " + yearStr, dateFormat)
+
+        val startDateTime = LocalDateTime.of(date, time)
+        val endDateTime = LocalDateTime.of(date, addToStartTime(time, duration))
+        return IntervalDateTime(startDateTime, endDateTime)
+    }
+
+    private fun addToStartTime(time: LocalTime, duration: LocalTime): LocalTime =
+        time.plusHours(duration.hour.toLong()).plusMinutes(duration.minute.toLong())
+
     private fun buildBeginDate(string: String, month: Month, year: Int): LocalDate {
         if (isMonthAndYearUnavailable(string))
             return LocalDate.of(year, month, string.toInt())
@@ -103,6 +126,11 @@ object DateUtils {
     private fun isYearUnavailable(string: String): Boolean = string.trim().takeLast(4).toIntOrNull() == null
     private fun isMonthAndYearUnavailable(string: String): Boolean = string.length <= 2
 }
+
+data class IntervalDateTime(
+    val from: LocalDateTime,
+    val to: LocalDateTime
+)
 
 data class IntervalDate(
     val from: LocalDate,
