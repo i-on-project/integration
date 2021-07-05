@@ -158,4 +158,34 @@ class DateUtilsTests {
         assertEquals("1982-05-11", DateUtils.formatToCalendarDate(intervalDate.from))
         assertEquals("1982-05-17", DateUtils.formatToCalendarDate(intervalDate.to))
     }
+
+    @Test
+    fun `when Date Time Range and Duration are presented then Return a IntervalDateTime`() {
+        // Arrange
+        val dayMonthStr = "29 jun. (terça)"
+        val timeStr = "19h00"
+        val durationStr = "3h00"
+
+        // Act
+        val intervalDate = DateUtils.getEvaluationDateTimeFrom("2021", dayMonthStr, timeStr, durationStr)
+
+        // Assert
+        assertEquals("2021-06-29T19:00", intervalDate.from.toString())
+        assertEquals("2021-06-29T22:00", intervalDate.to.toString())
+    }
+
+    @Test
+    fun `when Date Time Range with and Duration with Half-Hour are presented then Return a IntervalDateTime`() {
+        // Arrange
+        val dayMonthStr = "2 jun. (segunda)"
+        val timeStr = "19h30"
+        val durationStr = "2h30"
+
+        // Act
+        val intervalDate = DateUtils.getEvaluationDateTimeFrom("2021", dayMonthStr, timeStr, durationStr)
+
+        // Assert
+        assertEquals("2021-06-02T19:30", intervalDate.from.toString())
+        assertEquals("2021-06-02T22:00", intervalDate.to.toString())
+    }
 }
