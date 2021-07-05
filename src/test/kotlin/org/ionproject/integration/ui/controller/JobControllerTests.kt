@@ -24,6 +24,7 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -78,7 +79,7 @@ class JobControllerTests {
         )
 
         val expectedResponse =
-            """[{"type":"TIMETABLE","status":{"jobId":1,"result":"RUNNING"},"parameters":{"creationDate":"2020-06-30T15:03:00","startDate":"2020-06-30T15:03:00","format":"YAML","institution":{"name":"test","acronym":"test","identifier":"test","academicCalendarUri":"www.test.com"},"programme":null,"uri":"www.test.com"}},{"type":"ACADEMIC_CALENDAR","status":{"jobId":3,"result":"CREATED"},"parameters":{"creationDate":"2020-06-30T15:03:00","startDate":"2020-06-30T15:03:00","format":"YAML","institution":{"name":"test","acronym":"test","identifier":"test","academicCalendarUri":"www.test.com"},"programme":null,"uri":"www.test.com"}}]"""
+            """[{"type":"timetable","id":1,"status":"RUNNING","createdOn":"2020-06-30T15:03:00Z","startedOn":"2020-06-30T15:03:00Z","links":{"self":"http://localhost:80/integration/jobs/1"}},{"type":"calendar","id":3,"status":"CREATED","createdOn":"2020-06-30T15:03:00Z","startedOn":"2020-06-30T15:03:00Z","links":{"self":"http://localhost:80/integration/jobs/3"}}]"""
 
         whenever(jobEngine.getRunningJobs()) doReturn listOf(mockJob1, mockJob2)
 
@@ -97,7 +98,7 @@ class JobControllerTests {
         )
         whenever(jobEngine.runJob(any())) doReturn JobEngine.JobStatus(1, JobEngine.JobExecutionResult.CREATED)
 
-        val expectedResponse = "Created CalendarJobRequest job with ID 1"
+        val expectedResponse = """{"location":"http://localhost:80/integration/jobs/1","status":"CREATED"}"""
 
         mockMvc.perform(
             post("$contextPath$JOBS_URI").contextPath(contextPath)
@@ -113,14 +114,17 @@ class JobControllerTests {
     fun `when receiving a bad job request then return BAD_REQUEST`() {
         whenever(inputProcessor.getJobRequest(any())) doThrow ArgumentException("You've been a bad, bad boy!")
 
-        val expectedResponse = "You've been a bad, bad boy!"
+        val expectedResponse =
+            """{"type":"https://github.com/i-on-project/integration/blob/master/docs/infrastructure/ArgumentException.md","title":"Bad Request","status":400,"detail":"You've been a bad, bad boy!","instance":"/integration/jobs""""
 
         mockMvc.perform(
             post("$contextPath$JOBS_URI").contextPath(contextPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}")
         )
+            .andDo(print())
             .andExpect(status().isBadRequest)
+            .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
             .andExpect(content().string(containsString(expectedResponse)))
     }
 }
