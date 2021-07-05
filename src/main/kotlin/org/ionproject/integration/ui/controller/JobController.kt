@@ -3,6 +3,7 @@ package org.ionproject.integration.ui.controller
 import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.ui.dto.CreateJobDto
 import org.ionproject.integration.ui.dto.InputProcessor
+import org.ionproject.integration.ui.dto.JobDetailDto
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -51,8 +52,17 @@ class JobController(
     fun getJobs(): List<JobEngine.IntegrationJob> = jobEngine.getRunningJobs()
 
     @GetMapping("/{id}")
-    fun getJobDetails(@PathVariable id: Long): JobEngine.IntegrationJob = jobEngine.getJob(id)
+    fun getJobDetails(
+        @PathVariable id: Long,
+        servletRequest: HttpServletRequest,
+        response: HttpServletResponse
+    ): JobDetailDto {
+        val job = jobEngine.getJob(id)
+        val url = servletRequest.getLocationForJobRequest(job.status)
+
+        return JobDetailDto.of(job, url, JobDetailDto.DetailType.FULL)
+    }
 
     private fun HttpServletRequest.getLocationForJobRequest(jobStatus: JobEngine.JobStatus): String =
-        "$scheme://$localName:${localPort}$contextPath$JOBS_URI/${jobStatus.jobId}"
+        "$scheme://$serverName:${localPort}$contextPath$JOBS_URI/${jobStatus.jobId}"
 }
