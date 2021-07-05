@@ -49,13 +49,17 @@ class JobController(
     }
 
     @GetMapping
-    fun getJobs(): List<JobEngine.IntegrationJob> = jobEngine.getRunningJobs()
+    fun getJobs(servletRequest: HttpServletRequest): List<JobDetailDto> =
+        jobEngine.getRunningJobs()
+            .map { job ->
+                val url = servletRequest.getLocationForJobRequest(job.status)
+                JobDetailDto.of(job, url, JobDetailDto.DetailType.METADATA_ONLY)
+            }
 
     @GetMapping("/{id}")
     fun getJobDetails(
         @PathVariable id: Long,
-        servletRequest: HttpServletRequest,
-        response: HttpServletResponse
+        servletRequest: HttpServletRequest
     ): JobDetailDto {
         val job = jobEngine.getJob(id)
         val url = servletRequest.getLocationForJobRequest(job.status)
