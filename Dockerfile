@@ -27,6 +27,5 @@ ARG EXTRACT_DEPENDENCY_PATH=/src/build/dependency
 COPY --from=build-env ${EXTRACT_DEPENDENCY_PATH}/BOOT-INF/classes /app
 COPY --from=build-env ${EXTRACT_DEPENDENCY_PATH}/BOOT-INF/lib /app/lib
 
-ENV LISTEN_PORT=""
 
-ENTRYPOINT java -cp "app:app/lib/*" org.ionproject.integration.IOnIntegrationApplicationKt -XX:+UseContainerSupport --server.port=${LISTEN_PORT:-80}
+ENTRYPOINT java -cp "app:app/lib/*" org.ionproject.integration.IOnIntegrationApplicationKt --server.port=$PORT
