@@ -50,16 +50,16 @@ class IntegrationJobRepository(
     }
 
     private fun getJobDataFromResultSet(resultSet: ResultSet): JobEngine.IntegrationJob {
-        // TODO: create vars for indexes
-        val id = resultSet.getLong(1)
-        val jobIdentifier = resultSet.getString(2)
-        val creationDate = resultSet.getTimestamp(3)
-        val startDate = resultSet.getTimestamp(4)
-        val status = resultSet.getString(5)
-        val format = resultSet.getString(6)
-        val institutionIdentifier = resultSet.getString(7)
-        val programme = resultSet.getString(8)
-        val uri = resultSet.getString(9)
+        val id = resultSet.getLong(JobQueryFields.ID.index)
+        val jobIdentifier = resultSet.getString(JobQueryFields.NAME.index)
+        val creationDate = resultSet.getTimestamp(JobQueryFields.CREATION_DATE.index)
+        val startDate = resultSet.getTimestamp(JobQueryFields.START_DATE.index)
+        val endDate = resultSet.getTimestamp(JobQueryFields.END_DATE.index)
+        val status = resultSet.getString(JobQueryFields.STATUS.index)
+        val format = resultSet.getString(JobQueryFields.FORMAT.index)
+        val institutionIdentifier = resultSet.getString(JobQueryFields.INSTITUTION.index)
+        val programme = resultSet.getString(JobQueryFields.PROGRAMME.index)
+        val uri = resultSet.getString(JobQueryFields.URI.index)
 
         val jobType = JobType.of(jobIdentifier) ?: throw IllegalArgumentException("Invalid job: $jobIdentifier")
 
@@ -68,6 +68,7 @@ class IntegrationJobRepository(
         val parameters = JobEngine.IntegrationJobParameters(
             creationDate.toLocalDateTime(),
             startDate?.toLocalDateTime(),
+            endDate?.toLocalDateTime(),
             OutputFormat.of(format),
             institution,
             if (jobType != JobType.ACADEMIC_CALENDAR)
