@@ -79,7 +79,7 @@ class JobControllerTests {
         )
 
         val expectedResponse =
-            """[{"type":"timetable","id":1,"status":"RUNNING","createdOn":"2020-06-30T15:03:00Z","startedOn":"2020-06-30T15:03:00Z","links":{"self":"http://localhost:80/integration/jobs/1"}},{"type":"calendar","id":3,"status":"CREATED","createdOn":"2020-06-30T15:03:00Z","startedOn":"2020-06-30T15:03:00Z","links":{"self":"http://localhost:80/integration/jobs/3"}}]"""
+            """[{"type":"timetable","id":1,"status":"RUNNING","createdOn":"2020-06-30T15:03:00Z","startedOn":"2020-06-30T15:03:00Z","links":{"self":"http://localhost/integration/jobs/1"}},{"type":"calendar","id":3,"status":"CREATED","createdOn":"2020-06-30T15:03:00Z","startedOn":"2020-06-30T15:03:00Z","links":{"self":"http://localhost/integration/jobs/3"}}]"""
 
         whenever(jobEngine.getRunningJobs()) doReturn listOf(mockJob1, mockJob2)
 
@@ -98,7 +98,7 @@ class JobControllerTests {
         )
         whenever(jobEngine.runJob(any())) doReturn JobEngine.JobStatus(1, JobEngine.JobExecutionResult.CREATED)
 
-        val expectedResponse = """{"location":"http://localhost:80/integration/jobs/1","status":"CREATED"}"""
+        val expectedResponse = """{"location":"http://localhost/integration/jobs/1","status":"CREATED"}"""
 
         mockMvc.perform(
             post("$contextPath$JOBS_URI").contextPath(contextPath)
@@ -106,7 +106,7 @@ class JobControllerTests {
                 .content("{}")
         )
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", """http://localhost:80$contextPath$JOBS_URI/1"""))
+            .andExpect(header().string("Location", """http://localhost$contextPath$JOBS_URI/1"""))
             .andExpect(content().string(containsString(expectedResponse)))
     }
 
