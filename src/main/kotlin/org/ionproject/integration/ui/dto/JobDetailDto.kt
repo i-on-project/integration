@@ -8,8 +8,6 @@ import org.ionproject.integration.infrastructure.DateUtils
 import java.lang.IllegalStateException
 import java.net.URI
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class JobDetailDto(
@@ -44,8 +42,7 @@ data class JobDetailDto(
             )
         }
 
-        private fun LocalDateTime.toOutputFormat(): String =
-            DateUtils.formatToISO8601(ZonedDateTime.of(this, ZoneId.systemDefault()))
+        private fun LocalDateTime.toOutputFormat(): String = DateUtils.formatToISO8601(this)
     }
 
     enum class DetailType {
