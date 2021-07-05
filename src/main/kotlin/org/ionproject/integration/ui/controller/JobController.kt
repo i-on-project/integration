@@ -4,7 +4,9 @@ import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.ui.dto.CreateJobDto
 import org.ionproject.integration.ui.dto.InputProcessor
 import org.ionproject.integration.ui.dto.JobDetailDto
+import org.ionproject.integration.ui.dto.PostResponse
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -30,20 +32,24 @@ class JobController(
         @RequestBody body: CreateJobDto,
         servletRequest: HttpServletRequest,
         response: HttpServletResponse
-    ): String {
+    ): PostResponse {
         val request = inputProcessor.getJobRequest(body)
         val requestResult = jobEngine.runJob(request)
 
         return when (requestResult.result) {
             JobEngine.JobExecutionResult.CREATED -> {
-                response.status = HttpServletResponse.SC_CREATED
-                response.addHeader("Location", servletRequest.getLocationForJobRequest(requestResult))
-                "Created ${request.javaClass.simpleName} job with ID ${requestResult.jobId}"
+                PostResponse(
+                    location = servletRequest.getLocationForJobRequest(requestResult),
+                    status = HttpStatus.CREATED,
+                    response = response
+                )
             }
             else -> {
                 logger.error("Job creation failed: $body")
-                response.status = HttpServletResponse.SC_BAD_REQUEST
-                "FAILED: ${requestResult.result}"
+                PostResponse(
+                    status = HttpStatus.BAD_REQUEST,
+                    response = response
+                )
             }
         }
     }
