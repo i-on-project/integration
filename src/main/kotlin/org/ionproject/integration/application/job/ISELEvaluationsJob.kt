@@ -5,6 +5,7 @@ import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
 import org.ionproject.integration.domain.common.InstitutionModel
+import org.ionproject.integration.domain.common.ProgrammeModel
 import org.ionproject.integration.domain.evaluations.Evaluations
 import org.ionproject.integration.domain.evaluations.EvaluationsDto
 import org.ionproject.integration.domain.evaluations.RawEvaluationsData
@@ -18,6 +19,7 @@ import org.ionproject.integration.infrastructure.pdfextractor.EvaluationsExtract
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
 import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
+import org.ionproject.integration.infrastructure.repository.IProgrammeRepository
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -42,6 +44,7 @@ class ISELEvaluationsJob(
     val downloader: IFileDownloader,
     val dispatcher: IDispatcher,
     val institutionRepository: IInstitutionRepository,
+    val programmeRepository: IProgrammeRepository,
     @Autowired
     val ds: DataSource
 ) {
@@ -71,15 +74,6 @@ class ISELEvaluationsJob(
         val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
         return DownloadAndCompareTasklet(downloader, pdfChecker, fileComparator)
     }
-
-/*    @Bean
-    fun downloadEvaluationsPDFTasklet() = stepBuilderFactory.get("Download Calendar PDF")
-        .tasklet { stepContribution, chunkContext ->
-            val pdfChecker = PDFBytesFormatChecker()
-            val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
-            DownloadAndCompareTasklet(downloader, pdfChecker, fileComparator).execute(stepContribution, chunkContext)
-        }
-        .build()*/
 
     @Bean
     fun extractEvaluationsPDFTasklet() = stepBuilderFactory.get("Extract Evaluations PDF Raw Data")
@@ -116,10 +110,16 @@ class ISELEvaluationsJob(
     fun createEvaluationsPDFBusinessObjectsTasklet() =
         stepBuilderFactory.get("Create Business Objects from Evaluations Raw Data")
             .tasklet { _, context ->
-                State.evaluations = Evaluations.from(State.rawEvaluationsData, getJobInstitution(context))
+                State.evaluations = Evaluations.from(State.rawEvaluationsData, getJobProgramme(context))
                 RepeatStatus.FINISHED
             }
             .build()
+
+    private fun getJobProgramme(context: ChunkContext): ProgrammeModel =
+        programmeRepository.getProgrammeByAcronymAndInstitution(
+            context.stepContext.jobParameters[JobEngine.PROGRAMME_PARAMETER] as String,
+            getJobInstitution(context)
+        )
 
     private fun getJobInstitution(context: ChunkContext): InstitutionModel =
         institutionRepository.getInstitutionByIdentifier(
