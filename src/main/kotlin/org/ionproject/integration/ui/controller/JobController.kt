@@ -75,7 +75,7 @@ class JobController(
     }
 
     private fun HttpServletRequest.getLocationForJobRequest(jobStatus: JobEngine.JobStatus): String {
-        val portField = if (localPort != HTTP_PORT) ":$localPort" else ""
+        val portField = if (serverPort != HTTP_PORT) ":$serverPort" else ""
 
         return "$scheme://$serverName$portField$contextPath$JOBS_URI/${jobStatus.jobId}"
     }
