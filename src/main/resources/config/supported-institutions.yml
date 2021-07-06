@@ -8,23 +8,35 @@
       resources:
         - type: timetable
           uri: https://www.isel.pt/media/uploads/ADEETC_LEETC_210322.pdf
+        - type: evaluations
+          uri: https://www.isel.pt/media/uploads/tinymce/ADEETC_EN_ER_EE_210526.pdf
     - name: Licenciatura em Engenharia Informática e de Computadores
       resources:
         - type: timetable
           uri: https://www.isel.pt/media/uploads/ADEETC_LEIC_210322.pdf
+        - type: evaluations
+          uri: https://www.isel.pt/media/uploads/tinymce/ADEETC_EN_ER_EE_210526.pdf
     - name: Licenciatura em Engenharia Informática e Multimédia
       resources:
         - type: timetable
           uri: https://www.isel.pt/media/uploads/ADEETC_LEIM_210228.pdf
+        - type: evaluations
+          uri: https://www.isel.pt/media/uploads/tinymce/ADEETC_EN_ER_EE_210526.pdf
     - name: Licenciatura em Engenharia Informática, Redes e Telecomunicações
       resources:
         - type: timetable
           uri: https://www.isel.pt/media/uploads/ADEETC_LEIRT_210318.pdf
+        - type: evaluations
+          uri: https://www.isel.pt/media/uploads/tinymce/ADEETC_EN_ER_EE_210526.pdf
     - name: Mestrado em Engenharia Informática e de Computadores
       resources:
         - type: timetable
           uri: https://www.isel.pt/media/uploads/ADEETC_MEIC_210301.pdf
+        - type: evaluations
+          uri: https://www.isel.pt/media/uploads/tinymce/ADEETC_EN_ER_EE_210526.pdf
     - name: Mestrado em Engenharia Informática e Multimédia
       resources:
         - type: timetable
           uri: https://www.isel.pt/media/uploads/ADEETC_MEIM_210228.pdf
+        - type: evaluations
+          uri: https://www.isel.pt/media/uploads/tinymce/ADEETC_EN_ER_EE_210526.pdf

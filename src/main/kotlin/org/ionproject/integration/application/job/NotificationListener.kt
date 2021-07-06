@@ -11,14 +11,14 @@ class NotificationListener : JobExecutionListener {
     private val log: Logger = LoggerFactory.getLogger(NotificationListener::class.java)
 
     override fun beforeJob(jobExecution: JobExecution) {
-        log.info("Job ${jobExecution.jobConfigurationName} starting")
+        log.info("Job ID ${jobExecution.jobId} starting")
     }
 
     override fun afterJob(jobExecution: JobExecution) {
         when (jobExecution.exitStatus) {
-            ExitStatus.FAILED -> log.error("Job ${jobExecution.jobConfigurationName} failed")
-            ExitStatus.COMPLETED -> log.info("Job ${jobExecution.jobConfigurationName} completed")
-            else -> log.debug("Job ${jobExecution.jobConfigurationName} exited with status = ${jobExecution.status}")
+            ExitStatus.FAILED -> log.error("Job ID ${jobExecution.jobId} failed")
+            ExitStatus.COMPLETED -> log.info("Job ID ${jobExecution.jobId} completed")
+            else -> log.debug("Job ID ${jobExecution.jobId} exited with status = ${jobExecution.status}")
         }
     }
 }

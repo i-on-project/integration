@@ -93,22 +93,25 @@ object DateUtils {
     }
 
     fun getEvaluationDateTimeFrom(
-        yearStr: String,
-        dayMonthStr: String,
-        timeStr: String,
-        durationStr: String
+        year: String,
+        dayMonth: String, // Format: 15 Jul.(Quinta)
+        time: String,
+        duration: String
     ): IntervalDateTime {
         val timeFormat = DateTimeFormatter.ofPattern("HH'h'mm")
         val durationFormat = DateTimeFormatter.ofPattern("H'h'mm")
         val dateFormat = DateTimeFormatter.ofPattern("d MMM yyyy", localePT)
 
-        val time = LocalTime.parse(timeStr, timeFormat)
-        val duration = LocalTime.parse(durationStr, durationFormat)
-        val date = LocalDate.parse(dayMonthStr.split(".")[0] + " " + yearStr, dateFormat)
+        val timeParsed = LocalTime.parse(time, timeFormat)
+        val durationParsed = LocalTime.parse(duration, durationFormat)
 
-        val startDateTime = ZonedDateTime.of(LocalDateTime.of(date, time), ZoneId.systemDefault())
+        // Format: d MMM yyyy - Ex.: 15 Jul 2021
+        val rawDate = "${dayMonth.split(".").first()} $year"
+        val date = LocalDate.parse(rawDate, dateFormat)
+
+        val startDateTime = ZonedDateTime.of(LocalDateTime.of(date, timeParsed), ZoneId.systemDefault())
         val endDateTime =
-            ZonedDateTime.of(LocalDateTime.of(date, addToStartTime(time, duration)), ZoneId.systemDefault())
+            ZonedDateTime.of(LocalDateTime.of(date, addToStartTime(timeParsed, durationParsed)), ZoneId.systemDefault())
         return IntervalDateTime(startDateTime, endDateTime)
     }
 
