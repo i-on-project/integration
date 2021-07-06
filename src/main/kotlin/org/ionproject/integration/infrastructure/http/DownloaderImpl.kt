@@ -14,6 +14,8 @@ import java.time.Duration
 
 @Service
 class DownloaderImpl : IFileDownloader {
+    private val client by lazy { HttpClient.newHttpClient() }
+
     override fun download(uri: URI, localDestination: Path, timeoutInSeconds: Int): Try<Path> = Try.of {
         val response = sendRequest(uri, timeoutInSeconds)
 
@@ -25,8 +27,6 @@ class DownloaderImpl : IFileDownloader {
     }
 
     private fun sendRequest(uri: URI, timeoutInSeconds: Int): HttpResponse<ByteArray> {
-        val client = HttpClient.newHttpClient()
-
         val request = HttpRequest.newBuilder()
             .uri(uri)
             .timeout(Duration.ofSeconds(timeoutInSeconds.toLong()))
