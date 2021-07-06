@@ -2,6 +2,7 @@ package org.ionproject.integration.application
 
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.config.LAUNCHER_NAME
+import org.ionproject.integration.application.job.CALENDAR_JOB_NAME
 import org.ionproject.integration.application.job.EVALUATIONS_JOB_NAME
 import org.ionproject.integration.application.job.JobType
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
@@ -69,8 +70,8 @@ class JobEngine(
     }
 
     private fun runCalendarJob(request: CalendarJobRequest): JobStatus {
-        val jobParams = getJobParameters(request, EVALUATIONS_JOB_NAME)
-        return runJob(EVALUATIONS_JOB_NAME, jobParams)
+        val jobParams = getJobParameters(request, CALENDAR_JOB_NAME)
+        return runJob(CALENDAR_JOB_NAME, jobParams)
     }
 
     private fun getJobParameters(request: AbstractJobRequest, jobName: String): JobParameters {

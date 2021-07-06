@@ -21,7 +21,6 @@ import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
 import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
 import org.ionproject.integration.model.external.calendar.AcademicCalendar
-import org.ionproject.integration.model.external.calendar.AcademicCalendarDto
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
@@ -53,14 +52,15 @@ class ISELAcademicCalendarJob(
 
     @Bean(name = [CALENDAR_JOB_NAME])
     fun calendarJob() = jobBuilderFactory.get(CALENDAR_JOB_NAME)
-        .start(taskletStep("Download And Compare", downloadCalendarPDFAlternateTasklet()))
+        .start(taskletStep("Download And Compare", downloadCalendarPDFTasklet()))
         .on("STOPPED").end()
         .next(extractCalendarPDFTasklet())
         .next(createCalendarPDFBusinessObjectsTasklet())
         .next(createCalendarPDFDtoTasklet())
         .next(writeCalendarDTOToGitTasklet())
-        .next(sendNotificationsForCalendarJobTasklet())
-        .build().build()
+        .build()
+        .listener(NotificationListener())
+        .build()
 
     private fun taskletStep(name: String, tasklet: Tasklet): TaskletStep {
         return stepBuilderFactory
@@ -71,20 +71,11 @@ class ISELAcademicCalendarJob(
 
     @StepScope
     @Bean
-    fun downloadCalendarPDFAlternateTasklet(): DownloadAndCompareTasklet {
+    fun downloadCalendarPDFTasklet(): DownloadAndCompareTasklet {
         val pdfChecker = PDFBytesFormatChecker()
         val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
         return DownloadAndCompareTasklet(downloader, pdfChecker, fileComparator)
     }
-
-    @Bean
-    fun downloadCalendarPDFTasklet() = stepBuilderFactory.get("Download Calendar PDF")
-        .tasklet { stepContribution, chunkContext ->
-            val pdfChecker = PDFBytesFormatChecker()
-            val fileComparator = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
-            DownloadAndCompareTasklet(downloader, pdfChecker, fileComparator).execute(stepContribution, chunkContext)
-        }
-        .build()
 
     @Bean
     fun extractCalendarPDFTasklet() = stepBuilderFactory.get("Extract Calendar PDF Raw Data")
@@ -153,14 +144,6 @@ class ISELAcademicCalendarJob(
             if (dispatchResult == DispatchResult.FAILURE) {
                 stepContribution.exitStatus = ExitStatus.FAILED
             }
-            RepeatStatus.FINISHED
-        }
-        .build()
-
-    @Bean
-    fun sendNotificationsForCalendarJobTasklet() = stepBuilderFactory.get("Send Calendar Job Notifications")
-        .tasklet { _, _ ->
-            // TODO
             RepeatStatus.FINISHED
         }
         .build()

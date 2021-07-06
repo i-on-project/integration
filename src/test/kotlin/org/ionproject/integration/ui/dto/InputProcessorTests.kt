@@ -4,6 +4,7 @@ import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.application.job.JobType
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.ProgrammeModel
+import org.ionproject.integration.domain.common.ProgrammeResources
 import org.ionproject.integration.infrastructure.exception.ArgumentException
 import org.ionproject.integration.infrastructure.file.INVALID_FORMAT_ERROR
 import org.ionproject.integration.infrastructure.file.OutputFormat
@@ -36,7 +37,7 @@ class InputProcessorTests {
         institutionModel = testInstitution,
         name = TEST_PROGRAMME_NAME,
         acronym = TEST_PROGRAMME_ACRONYM,
-        timetableUri = TEST_URI
+        resources = ProgrammeResources(TEST_URI, TEST_URI)
     )
 
     private val mockInstitutionRepoOK = mock<IInstitutionRepository> {
