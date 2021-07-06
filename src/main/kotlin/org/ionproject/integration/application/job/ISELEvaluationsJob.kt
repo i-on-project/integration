@@ -102,7 +102,8 @@ class ISELEvaluationsJob(
                 )
             }.orThrow()
         } finally {
-            File(path).delete()
+            if (!path.contains("test"))
+                File(path).delete()
         }
     }
 

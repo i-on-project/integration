@@ -106,8 +106,9 @@ object DateUtils {
         val duration = LocalTime.parse(durationStr, durationFormat)
         val date = LocalDate.parse(dayMonthStr.split(".")[0] + " " + yearStr, dateFormat)
 
-        val startDateTime = LocalDateTime.of(date, time)
-        val endDateTime = LocalDateTime.of(date, addToStartTime(time, duration))
+        val startDateTime = ZonedDateTime.of(LocalDateTime.of(date, time), ZoneId.systemDefault())
+        val endDateTime =
+            ZonedDateTime.of(LocalDateTime.of(date, addToStartTime(time, duration)), ZoneId.systemDefault())
         return IntervalDateTime(startDateTime, endDateTime)
     }
 
@@ -128,8 +129,8 @@ object DateUtils {
 }
 
 data class IntervalDateTime(
-    val from: LocalDateTime,
-    val to: LocalDateTime
+    val from: ZonedDateTime,
+    val to: ZonedDateTime
 )
 
 data class IntervalDate(
