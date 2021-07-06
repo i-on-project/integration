@@ -54,7 +54,9 @@ class ISELTimetableJob(
         .next(taskletStep("RawData to Business Object", mappingTasklet()))
         .next(writeLocalStep())
         .next(taskletStep("PostUpload", postUploadTasklet()))
-        .build().build()
+        .build()
+        .listener(NotificationListener())
+        .build()
 
     private fun taskletStep(name: String, tasklet: Tasklet): TaskletStep {
         return stepBuilderFactory

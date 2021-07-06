@@ -29,7 +29,7 @@ class JobController(
     private val logger = LoggerFactory.getLogger(JobController::class.java)
 
     @PostMapping(consumes = ["application/json"])
-    fun createTimetableJob(
+    fun createJob(
         @RequestBody body: CreateJobDto,
         servletRequest: HttpServletRequest,
         response: HttpServletResponse

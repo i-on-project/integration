@@ -6,6 +6,7 @@ import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.Language
 import org.ionproject.integration.domain.common.ProgrammeModel
+import org.ionproject.integration.domain.common.ProgrammeResources
 import org.ionproject.integration.infrastructure.exception.ArgumentException
 import org.ionproject.integration.infrastructure.text.IgnoredWords
 import org.ionproject.integration.infrastructure.text.generateAcronym
@@ -68,7 +69,8 @@ internal data class ResourceDto(
 
 internal enum class ResourceType(val identifier: String) {
     CALENDAR("academic_calendar"),
-    TIMETABLE("timetable")
+    TIMETABLE("timetable"),
+    EVALUATIONS("evaluations")
 }
 
 internal data class ProgrammeDto(
@@ -79,12 +81,18 @@ internal data class ProgrammeDto(
     fun toModel(institution: InstitutionModel): ProgrammeModel {
         val acronym = generateAcronym(name, IgnoredWords.of(Language.PT))
         val timetableUri = resources.first { it.type == ResourceType.TIMETABLE.identifier }
+        val evaluationsUri = resources.first { it.type == ResourceType.EVALUATIONS.identifier }
+
+        val resources = ProgrammeResources(
+            timetableUri = URI(timetableUri.uri),
+            evaluationsUri = URI(evaluationsUri.uri)
+        )
 
         return ProgrammeModel(
             institutionModel = institution,
             name = this.name,
             acronym = acronym,
-            timetableUri = URI(timetableUri.uri)
+            resources = resources
         )
     }
 }
