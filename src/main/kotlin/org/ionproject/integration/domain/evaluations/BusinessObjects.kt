@@ -9,7 +9,6 @@ import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.tabula.Table
 import org.ionproject.integration.infrastructure.text.JsonUtils
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
 data class Evaluations(
@@ -137,8 +136,8 @@ data class Evaluations(
 
 data class Exam(
     val course: String,
-    val startDate: LocalDateTime,
-    val endDate: LocalDateTime,
+    val startDate: ZonedDateTime,
+    val endDate: ZonedDateTime,
     val category: ExamCategory,
     val location: String
 )
