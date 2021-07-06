@@ -9,6 +9,7 @@ import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.tabula.Table
 import org.ionproject.integration.infrastructure.text.JsonUtils
+import org.ionproject.integration.infrastructure.text.RegexUtils
 import java.time.ZonedDateTime
 
 data class Evaluations(
@@ -20,13 +21,16 @@ data class Evaluations(
     val exams: List<Exam>
 ) {
     companion object {
-        private const val CALENDAR_TERM_REGEX = "(\\sAno\\sLetivo\\s?:\\s?)(.+?(\\r|\\R))"
+        private const val CALENDAR_TERM_REGEX = "(verão|inverno) \\d{4}\\/\\d{4}"
+        private const val SUMMER_TERM = "verão"
+        private const val WINTER_TERM = "inverno"
 
         fun from(rawEvaluationsData: RawEvaluationsData, jobProgramme: ProgrammeModel): Evaluations {
+            val calendarTerm = buildCalendarTerm(rawEvaluationsData)
 
             return Evaluations(
-                creationDateTime = rawEvaluationsData.creationDate,
-                retrievalDateTime = DateUtils.formatToISO8601(ZonedDateTime.now()),
+                rawEvaluationsData.creationDate,
+                DateUtils.formatToISO8601(ZonedDateTime.now()),
                 School(
                     jobProgramme.institutionModel.name,
                     jobProgramme.institutionModel.acronym
@@ -35,23 +39,46 @@ data class Evaluations(
                     jobProgramme.name,
                     jobProgramme.acronym
                 ),
-                calendarTerm = buildCalendarTerm(rawEvaluationsData),
-                buildExamList(rawEvaluationsData, jobProgramme)
+                calendarTerm,
+                buildExamList(rawEvaluationsData, jobProgramme, getCalendarYear(calendarTerm))
             )
         }
 
-        // TODO
-        private fun buildCalendarTerm(rawEvaluationsData: RawEvaluationsData): String = "2020-2021-2"
+        private fun getCalendarYear(calendarTerm: String) =
+            when (val termNumber = calendarTerm.last()) {
+                '1' -> calendarTerm.take(4)
+                '2' -> calendarTerm.substring(5, 9)
+                else -> throw IllegalArgumentException("Invalid term description: $termNumber")
+            }
 
-        private fun buildExamList(rawEvaluationsData: RawEvaluationsData, jobProgramme: ProgrammeModel): List<Exam> =
-            rawEvaluationsData.table.toTableList().map { getExamsFromTable(it, jobProgramme.acronym) }.orThrow()
+        private fun buildCalendarTerm(rawEvaluationsData: RawEvaluationsData): String {
+            val calendarTerm =
+                RegexUtils.findMatches(CALENDAR_TERM_REGEX, rawEvaluationsData.textData.toString()).first()
+                    .replace("/", "-")
+
+            val termNumber = when (val termType = calendarTerm.substringBefore(" ").lowercase()) {
+                WINTER_TERM -> 1
+                SUMMER_TERM -> 2
+                else -> throw IllegalArgumentException("Invalid term description: $termType")
+            }
+
+            return calendarTerm.substringAfter(" ") + "-" + termNumber
+        }
+
+        private fun buildExamList(
+            rawEvaluationsData: RawEvaluationsData,
+            jobProgramme: ProgrammeModel,
+            year: String
+        ): List<Exam> =
+            rawEvaluationsData.table.toTableList().map { getExamsFromTable(it, jobProgramme.acronym, year) }.orThrow()
 
         private fun String.toTableList(): Try<List<Table>> =
             JsonUtils.fromJson(this, Types.newParameterizedType(List::class.java, Table::class.java))
 
         private fun getExamsFromTable(
             tableList: List<Table>,
-            programmeAcronym: String
+            programmeAcronym: String,
+            year: String
         ): List<Exam> {
             val examList = mutableListOf<Exam>()
             for (table in tableList) {
@@ -60,7 +87,7 @@ data class Evaluations(
                     if (cleanedLine[TableColumn.SUMMER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym)) {
                         val intervalDateTimeNormal =
                             DateUtils.getEvaluationDateTimeFrom(
-                                "2021",
+                                year,
                                 cleanedLine[TableColumn.NORMAL_EXAM_DATE.ordinal].text,
                                 cleanedLine[TableColumn.NORMAL_EXAM_TIME.ordinal].text,
                                 cleanedLine[TableColumn.NORMAL_EXAM_DURATION.ordinal].text
@@ -76,7 +103,7 @@ data class Evaluations(
                         )
                         val intervalDateTimeAltern =
                             DateUtils.getEvaluationDateTimeFrom(
-                                "2021",
+                                year,
                                 cleanedLine[TableColumn.ALTERN_EXAM_DATE.ordinal].text,
                                 cleanedLine[TableColumn.ALTERN_EXAM_TIME.ordinal].text,
                                 cleanedLine[TableColumn.ALTERN_EXAM_DURATION.ordinal].text
@@ -92,7 +119,7 @@ data class Evaluations(
                         )
                         val intervalDateTimeSpecial =
                             DateUtils.getEvaluationDateTimeFrom(
-                                "2021",
+                                year,
                                 cleanedLine[TableColumn.SPECIAL_EXAM_DATE.ordinal].text,
                                 cleanedLine[TableColumn.SPECIAL_EXAM_TIME.ordinal].text,
                                 cleanedLine[TableColumn.SPECIAL_EXAM_DURATION.ordinal].text
@@ -112,7 +139,7 @@ data class Evaluations(
                     ) {
                         val intervalDateTimeSpecial =
                             DateUtils.getEvaluationDateTimeFrom(
-                                "2021",
+                                year,
                                 cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DATE.ordinal].text,
                                 cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_TIME.ordinal].text,
                                 cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DURATION.ordinal].text
