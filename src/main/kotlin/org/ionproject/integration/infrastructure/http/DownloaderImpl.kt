@@ -14,14 +14,14 @@ import java.time.Duration
 
 @Service
 class DownloaderImpl : IFileDownloader {
-    override fun download(uri: URI, localDestination: Path, timeoutInSeconds: Int): Try<Path> {
+    override fun download(uri: URI, localDestination: Path, timeoutInSeconds: Int): Try<Path> = Try.of {
         val response = sendRequest(uri, timeoutInSeconds)
 
         if (response.isError())
             throw IllegalStateException("Server responded with error code ${response.statusCode()}")
 
         val file = response.writeToFile(localDestination)
-        return Try.of { file.toPath() }
+        file.toPath()
     }
 
     private fun sendRequest(uri: URI, timeoutInSeconds: Int): HttpResponse<ByteArray> {
