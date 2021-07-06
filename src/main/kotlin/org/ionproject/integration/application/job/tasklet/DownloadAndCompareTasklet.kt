@@ -63,7 +63,7 @@ class DownloadAndCompareTasklet(
             throw DownloadAndCompareTaskletException("File already exists in $localFileDestination")
         }
 
-        val path = downloader.download(targetUri, localFileDestination)
+        val path = downloader.download(targetUri, localFileDestination, appProperties.timeoutInSeconds)
             .match(
                 { it },
                 {
