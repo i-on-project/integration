@@ -695,21 +695,21 @@ class EvaluationsBusinessObjFormatCheckerTest {
                         ""
                     ),
                     Exam(
-                        "SO-leic",
+                        "SO",
                         ZonedDateTime.of(2021, 7, 9, 10, 0, 0, 0, ZoneId.systemDefault()),
                         ZonedDateTime.of(2021, 7, 9, 13, 0, 0, 0, ZoneId.systemDefault()),
                         ExamCategory.EXAM_NORMAL,
                         ""
                     ),
                     Exam(
-                        "SO-leic",
+                        "SO",
                         ZonedDateTime.of(2021, 7, 26, 19, 0, 0, 0, ZoneId.systemDefault()),
                         ZonedDateTime.of(2021, 7, 26, 22, 0, 0, 0, ZoneId.systemDefault()),
                         ExamCategory.EXAM_ALTERN,
                         ""
                     ),
                     Exam(
-                        "SO-leic",
+                        "SO",
                         ZonedDateTime.of(2021, 9, 7, 19, 0, 0, 0, ZoneId.systemDefault()),
                         ZonedDateTime.of(2021, 9, 7, 22, 0, 0, 0, ZoneId.systemDefault()),
                         ExamCategory.EXAM_SPECIAL,

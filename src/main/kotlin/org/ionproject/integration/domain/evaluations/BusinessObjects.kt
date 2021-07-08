@@ -94,7 +94,7 @@ data class Evaluations(
                             )
                         examList.add(
                             Exam(
-                                cleanedLine[TableColumn.COURSE.ordinal].text,
+                                trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text),
                                 intervalDateTimeNormal.from,
                                 intervalDateTimeNormal.to,
                                 ExamCategory.EXAM_NORMAL,
@@ -110,7 +110,7 @@ data class Evaluations(
                             )
                         examList.add(
                             Exam(
-                                cleanedLine[TableColumn.COURSE.ordinal].text,
+                                trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text),
                                 intervalDateTimeAltern.from,
                                 intervalDateTimeAltern.to,
                                 ExamCategory.EXAM_ALTERN,
@@ -126,7 +126,7 @@ data class Evaluations(
                             )
                         examList.add(
                             Exam(
-                                cleanedLine[TableColumn.COURSE.ordinal].text,
+                                trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text),
                                 intervalDateTimeSpecial.from,
                                 intervalDateTimeSpecial.to,
                                 ExamCategory.EXAM_SPECIAL,
@@ -146,7 +146,7 @@ data class Evaluations(
                             )
                         examList.add(
                             Exam(
-                                cleanedLine[TableColumnWinterCourse.COURSE.ordinal].text,
+                                trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text),
                                 intervalDateTimeSpecial.from,
                                 intervalDateTimeSpecial.to,
                                 ExamCategory.EXAM_SPECIAL,
@@ -158,6 +158,13 @@ data class Evaluations(
             }
             return examList.toList()
         }
+
+        /**
+         * Removes any substring from the course acronum that starts with hyphen.
+         * Examples: SO-leect-leirt, SS-leetc
+         */
+        private fun trimCourse(course: String) =
+            course.substringBefore("-")
     }
 }
 
