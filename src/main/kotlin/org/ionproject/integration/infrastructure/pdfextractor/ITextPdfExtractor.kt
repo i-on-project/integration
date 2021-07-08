@@ -1,17 +1,16 @@
 package org.ionproject.integration.infrastructure.pdfextractor
 
+import com.itextpdf.kernel.pdf.PdfDate
 import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfName
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.exception.PdfExtractorException
-import java.nio.file.LinkOption
-import java.nio.file.Path
-import java.nio.file.attribute.BasicFileAttributes
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import kotlin.io.path.readAttributes
+import java.util.Calendar
 
 class ITextPdfExtractor : IPdfExtractor {
     /**
@@ -33,7 +32,7 @@ class ITextPdfExtractor : IPdfExtractor {
                         val pageData = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(i))
                         data.add(pageData)
                     }
-                    data.add(getCreationDateFromPdfDocument(pdfPath))
+                    data.add(getCreationDateFromPdfDocument(pdfDoc))
                 }
                 .map { data.toList() }
                 .mapError { PdfExtractorException("Itext cannot process file") }
@@ -43,14 +42,13 @@ class ITextPdfExtractor : IPdfExtractor {
         }
     }
 
-    private fun getCreationDateFromPdfDocument(pdfPath: String): String {
-        val creationDate =
-            Path.of(pdfPath)
-                .readAttributes<BasicFileAttributes>(LinkOption.NOFOLLOW_LINKS)
-                .creationTime()
+    private fun getCreationDateFromPdfDocument(pdfDocument: PdfDocument): String {
+        val creationDateString = pdfDocument.documentInfo.getMoreInfo(PdfName.CreationDate.value)
+        val creationDateCalendar = PdfDate.decode(creationDateString) ?: Calendar.getInstance()
+
         return DateUtils.formatToISO8601(
             ZonedDateTime.ofInstant(
-                creationDate.toInstant(),
+                creationDateCalendar.toInstant(),
                 ZoneId.systemDefault()
             )
         )
