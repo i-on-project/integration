@@ -12,7 +12,7 @@ import org.ionproject.integration.domain.timetable.model.Instructor
 import org.ionproject.integration.domain.timetable.dto.InstructorDto
 import org.ionproject.integration.domain.timetable.model.Label
 import org.ionproject.integration.domain.common.Programme
-import org.ionproject.integration.domain.timetable.dto.ProgrammeDto
+import org.ionproject.integration.domain.common.dto.ProgrammeDto
 import org.ionproject.integration.domain.timetable.model.RecurrentEvent
 import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.domain.common.dto.SchoolDto

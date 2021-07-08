@@ -76,12 +76,12 @@ class EvaluationsBusinessObjFormatCheckerTest {
             )
         )
 
-        val academicCalendarRetrieved = Evaluations.from(evaluationsData, programme)
+        val evaluationsRetrieved = Evaluations.from(evaluationsData, programme)
 
-        val academicCalendarExpected =
+        val evaluationsExpected =
             Evaluations(
-                academicCalendarRetrieved.creationDateTime, // 2020-2021 Evaluations PDF doesn't have a creation date in its properties, so it gets the retrieval date time.
-                academicCalendarRetrieved.retrievalDateTime,
+                evaluationsRetrieved.creationDateTime, // 2020-2021 Evaluations PDF doesn't have a creation date in its properties, so it gets the retrieval date time.
+                evaluationsRetrieved.retrievalDateTime,
                 School(
                     "Instituto Superior de Engenharia de Lisboa",
                     "ISEL"
@@ -781,6 +781,6 @@ class EvaluationsBusinessObjFormatCheckerTest {
                 )
             )
 
-        assertEquals(academicCalendarExpected, academicCalendarRetrieved)
+        assertEquals(evaluationsExpected, evaluationsRetrieved)
     }
 }
