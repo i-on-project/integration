@@ -1,13 +1,14 @@
 package org.ionproject.integration.domain.timetable.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import org.ionproject.integration.domain.common.dto.ProgrammeDto
 import org.ionproject.integration.domain.common.dto.SchoolDto
+import org.ionproject.integration.domain.timetable.TimetableTeachers
 import org.ionproject.integration.domain.timetable.model.Course
 import org.ionproject.integration.domain.timetable.model.CourseTeacher
 import org.ionproject.integration.domain.timetable.model.EventCategory
 import org.ionproject.integration.domain.timetable.model.Instructor
 import org.ionproject.integration.domain.timetable.model.RecurrentEvent
-import org.ionproject.integration.domain.timetable.TimetableTeachers
 
 data class TimetableDto(
     val creationDateTime: String,
@@ -83,11 +84,6 @@ data class TimetableDto(
         }
     }
 }
-
-data class ProgrammeDto(
-    val name: String,
-    val acr: String,
-)
 
 data class ClassDto(
     val acr: String,

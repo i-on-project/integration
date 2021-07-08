@@ -1,8 +1,10 @@
 package org.ionproject.integration.application.dto
 
+import org.ionproject.integration.domain.calendar.AcademicCalendarDto
+import org.ionproject.integration.domain.common.Term
+import org.ionproject.integration.domain.evaluations.EvaluationsDto
 import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.ionproject.integration.infrastructure.file.Filepath
-import org.ionproject.integration.domain.calendar.AcademicCalendarDto
 
 /**
  * ParsedData will be used to "transport" the final data along with the required metadata.
@@ -73,5 +75,55 @@ data class AcademicCalendarData(
         )
 
         return staging + segments
+    }
+
+    data class EvaluationsData(
+        val programme: ProgrammeMetadata,
+        val term: CalendarTerm,
+        private val dto: EvaluationsDto
+    ) : ParsedData(dto) {
+        companion object Factory {
+            private const val ACADEMIC_YEAR_LENGTH = 9
+            private const val ACADEMIC_YEARS_FOLDER_NAME = "academic_years"
+
+            fun from(evaluationsDto: EvaluationsDto, identifier: String): EvaluationsData =
+                EvaluationsData(
+                    ProgrammeMetadata(
+                        InstitutionMetadata(
+                            evaluationsDto.school.name,
+                            evaluationsDto.school.acr,
+                            identifier
+                        ),
+                        evaluationsDto.programme.name,
+                        evaluationsDto.programme.acr
+                    ),
+                    CalendarTerm(
+                        evaluationsDto.calendarTerm.take(4).toInt(),
+                        when (evaluationsDto.calendarTerm.takeLast(1).toInt()) {
+                            1 -> Term.FALL
+                            2 -> Term.SPRING
+                            else -> throw IllegalArgumentException("Invalid Term ${evaluationsDto.calendarTerm}")
+                        }
+                    ),
+                    evaluationsDto
+                )
+        }
+
+        private val PROGRAMMES = "programmes"
+
+        override val identifier: String
+            get() = "${javaClass.simpleName}:${programme.acronym}:$term"
+
+        override fun getDirectory(repositoryName: String, staging: Filepath): Filepath {
+            val segments = listOf(
+                repositoryName,
+                programme.institution.domain,
+                PROGRAMMES,
+                programme.acronym,
+                term.toString()
+            )
+
+            return staging + segments
+        }
     }
 }

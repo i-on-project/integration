@@ -2,7 +2,9 @@ package org.ionproject.integration.application.job
 
 import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.application.config.AppProperties
+import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dispatcher.IDispatcher
+import org.ionproject.integration.application.dto.AcademicCalendarData
 import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.ProgrammeModel
@@ -12,6 +14,7 @@ import org.ionproject.integration.domain.evaluations.RawEvaluationsData
 import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.file.FileComparatorImpl
 import org.ionproject.integration.infrastructure.file.FileDigestImpl
+import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.orThrow
@@ -20,6 +23,7 @@ import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
 import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
 import org.ionproject.integration.infrastructure.repository.IProgrammeRepository
+import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -55,8 +59,8 @@ class ISELEvaluationsJob(
         .on("STOPPED").end()
         .next(extractEvaluationsPDFTasklet())
         .next(createEvaluationsPDFBusinessObjectsTasklet())
-        //    .next(createEvaluationsPDFDtoTasklet())
-        //    .next(writeEvaluationsDTOToGitTasklet())
+        .next(createEvaluationsDtoTasklet())
+        .next(writeEvaluationsDTOToGitTasklet())
         .build().listener(NotificationListener())
         .build()
 
@@ -128,22 +132,26 @@ class ISELEvaluationsJob(
         )
 
     @Bean
-    fun createEvaluationsPDFDtoTasklet() = stepBuilderFactory.get("Create DTO from Evaluations Business Objects")
+    fun createEvaluationsDtoTasklet() = stepBuilderFactory.get("Create DTO from Evaluations Business Objects")
         .tasklet { _, _ ->
             State.evaluationsDto = EvaluationsDto.from(State.evaluations)
             RepeatStatus.FINISHED
         }
         .build()
 
-    // TODO
     @Bean
-    fun writeEvaluationsDTOToGitTasklet() = stepBuilderFactory.get("Write Calendar DTO to Git")
-        .tasklet { _, _ ->
-/*            dispatcher.dispatch(
-                EvaluationsData.from(State.evaluationsDto),
-                EVALUATIONS_JOB_NAME,
-                OutputFormat.JSON
-            )*/
+    fun writeEvaluationsDTOToGitTasklet() = stepBuilderFactory.get("Write Evaluations DTO to Git")
+        .tasklet { stepContribution, context ->
+            val formatParam = context.stepContext.jobParameters[JobEngine.FORMAT_PARAMETER] as String
+            val identifier = context.stepContext.jobParameters[JobEngine.INSTITUTION_PARAMETER] as String
+            val format = OutputFormat.of(formatParam)
+            val evaluationsData = AcademicCalendarData.EvaluationsData.from(ISELEvaluationsJob.State.evaluationsDto, identifier)
+
+            val dispatchResult = dispatcher.dispatch(evaluationsData, EVALUATIONS_JOB_NAME, format)
+
+            if (dispatchResult == DispatchResult.FAILURE) {
+                stepContribution.exitStatus = ExitStatus.FAILED
+            }
             RepeatStatus.FINISHED
         }
         .build()
