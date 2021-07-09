@@ -11,5 +11,15 @@ data class Timetable(
     var programme: Programme = Programme(),
     var calendarTerm: String = "",
     var calendarSection: String = "",
+    var curricularTerm: Int = 0,
     var courses: List<Course> = listOf()
 )
+
+private val curricularTerm = """\b\D+(\d)\w+\b""".toRegex()
+
+fun getCurricularTermFromSection(section: String): Int {
+    val match = curricularTerm.find(section) ?: throw IllegalArgumentException(section)
+    val (term) = match.destructured
+
+    return term.toInt()
+}

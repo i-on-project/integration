@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test
 class RegexUtilsTests {
 
     companion object {
-        private val match_pattern = "\\d{3}"
-        private val matches_pattern = "^(Undergraduate|Masters).*\$"
+        private const val match_pattern = "\\d{3}"
+        private const val matches_pattern = "^(Undergraduate|Masters).*\$"
 
         fun isMatch(string: String): Boolean {
             return RegexUtils.isMatch(match_pattern, string)
