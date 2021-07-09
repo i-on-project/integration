@@ -96,8 +96,8 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
 
     private fun setCommonData(data: String, timetable: Timetable, courseTeacher: CourseTeacher) {
         val retrievalDateTime = DateUtils.formatToISO8601(ZonedDateTime.now())
-        val school = RegexUtils.findMatches(SCHOOL_REGEX, data)[0].trimEnd()
-        val programme = RegexUtils.findMatches(PROGRAMME_REGEX, data, RegexOption.MULTILINE)[0].trimEnd()
+        val schoolText = RegexUtils.findMatches(SCHOOL_REGEX, data)[0].trimEnd()
+        val programmeText = RegexUtils.findMatches(PROGRAMME_REGEX, data, RegexOption.MULTILINE)[0].trimEnd()
         val calendarTerm = RegexUtils.findMatches(CALENDAR_TERM_REGEX, data, RegexOption.MULTILINE)[0]
             .replace("Ano Letivo :", "")
             .trim()
@@ -106,17 +106,21 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
             }
         val classSection =
             RegexUtils.findMatches(CLASS_SECTION_REGEX, data, RegexOption.MULTILINE)[0].replace("Turma :", "").trim()
-        val schoolAcr = generateAcronym(school, IgnoredWords.of(Language.PT))
-        val programmeArc = generateAcronym(programme, IgnoredWords.of(Language.PT))
+        val schoolAcr = generateAcronym(schoolText, IgnoredWords.of(Language.PT))
+        val programmeArc = generateAcronym(programmeText, IgnoredWords.of(Language.PT))
+
+        val school = School(name = schoolText, acr = schoolAcr)
+        val programme = Programme(name = programmeText, acr = programmeArc)
 
         timetable.retrievalDateTime = retrievalDateTime
-        timetable.school = School(name = school, acr = schoolAcr)
-        timetable.programme = Programme(name = programme, acr = programmeArc)
+        timetable.school = school
+        timetable.programme = programme
         timetable.calendarTerm = calendarTerm
         timetable.calendarSection = classSection
+        timetable.curricularTerm = getCurricularTermFromSection(classSection)
 
-        courseTeacher.school = School(name = school, acr = schoolAcr)
-        courseTeacher.programme = Programme(name = programme, acr = programmeArc)
+        courseTeacher.school = school
+        courseTeacher.programme = programme
         courseTeacher.calendarTerm = calendarTerm
         courseTeacher.calendarSection = classSection
     }
@@ -186,8 +190,6 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
             )
         )
     }
-
-    private fun isTimeslot(cell: Cell): Boolean = TIME_SLOT_REGEX.toRegex().containsMatchIn(cell.text)
 
     private fun getDuration(cell: Cell): Duration = when {
         cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD -> {

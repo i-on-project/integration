@@ -112,6 +112,7 @@ internal class TimetableDtoFormatCheckerTest {
                     ),
                     "2020-2021-2",
                     "LEIC11Da",
+                    1,
                     listOf(
                         Course(
                             Label("E"),
@@ -253,6 +254,7 @@ internal class TimetableDtoFormatCheckerTest {
                     ),
                     "2020-2021-2",
                     "LEIC11Da",
+                    1,
                     listOf(
                         Course(
                             Label("E"),
@@ -320,6 +322,7 @@ internal class TimetableDtoFormatCheckerTest {
                     ),
                     "2020-2021-2",
                     "LEIC11Db",
+                    1,
                     listOf(
                         Course(
                             Label("E"),
