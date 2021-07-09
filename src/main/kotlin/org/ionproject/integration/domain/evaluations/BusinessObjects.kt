@@ -84,6 +84,7 @@ data class Evaluations(
             for (table in tableList) {
                 for (line in table.data) {
                     val cleanedLine = line.dropWhile { it.text.isBlank() }
+                    val courseAcronym = trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text)
                     if (cleanedLine[TableColumn.SUMMER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym)) {
                         val intervalDateTimeNormal =
                             DateUtils.getEvaluationDateTimeFrom(
@@ -94,7 +95,7 @@ data class Evaluations(
                             )
                         examList.add(
                             Exam(
-                                trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text),
+                                courseAcronym,
                                 intervalDateTimeNormal.from,
                                 intervalDateTimeNormal.to,
                                 ExamCategory.EXAM_NORMAL,
@@ -110,7 +111,7 @@ data class Evaluations(
                             )
                         examList.add(
                             Exam(
-                                trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text),
+                                courseAcronym,
                                 intervalDateTimeAltern.from,
                                 intervalDateTimeAltern.to,
                                 ExamCategory.EXAM_ALTERN,
@@ -126,7 +127,7 @@ data class Evaluations(
                             )
                         examList.add(
                             Exam(
-                                trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text),
+                                courseAcronym,
                                 intervalDateTimeSpecial.from,
                                 intervalDateTimeSpecial.to,
                                 ExamCategory.EXAM_SPECIAL,
