@@ -147,7 +147,7 @@ data class Evaluations(
                             )
                         examList.add(
                             Exam(
-                                trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text),
+                                courseAcronym,
                                 intervalDateTimeSpecial.from,
                                 intervalDateTimeSpecial.to,
                                 ExamCategory.EXAM_SPECIAL,
