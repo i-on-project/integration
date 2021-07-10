@@ -46,6 +46,7 @@ internal class TimetableDtoFormatCheckerTest {
             listOf(
                 ClassDto(
                     "E",
+                    1,
                     listOf(
                         SectionDto(
                             "LEIC11Da",
@@ -90,7 +91,7 @@ internal class TimetableDtoFormatCheckerTest {
         val serialized = mapper.writeValueAsString(timetable)
 
         val json =
-            """{"creationDateTime":"20210421T204916Z","retrievalDateTime":"20210421T204916Z","school":{"name":"INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA","acr":"ISEL"},"programme":{"name":"Licenciatura em Engenharia Informática e de Computadores","acr":"LEIC"},"calendarTerm":"2020-2021-2","classes":[{"acr":"E","sections":[{"section":"LEIC11Da","events":[{"category":"LECTURE","location":["L_H2"],"beginTime":"14:00","duration":"01:30","weekdays":"MO"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"WE"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"TH"}],"instructors":[{"name":"João Manuel Ferreira Martins","category":"PRACTICE"},{"name":"João Manuel Ferreira Martins","category":"LECTURE"}]}]}]}"""
+            """{"creationDateTime":"20210421T204916Z","retrievalDateTime":"20210421T204916Z","school":{"name":"INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA","acr":"ISEL"},"programme":{"name":"Licenciatura em Engenharia Informática e de Computadores","acr":"LEIC"},"calendarTerm":"2020-2021-2","classes":[{"acr":"E","curricularTerm":1,"sections":[{"section":"LEIC11Da","events":[{"category":"LECTURE","location":["L_H2"],"beginTime":"14:00","duration":"01:30","weekdays":"MO"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"WE"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"TH"}],"instructors":[{"name":"João Manuel Ferreira Martins","category":"PRACTICE"},{"name":"João Manuel Ferreira Martins","category":"LECTURE"}]}]}]}"""
 
         assertEquals(json, serialized)
     }
@@ -192,6 +193,7 @@ internal class TimetableDtoFormatCheckerTest {
             listOf(
                 ClassDto(
                     "E",
+                    1,
                     listOf(
                         SectionDto(
                             "LEIC11Da",
@@ -505,6 +507,7 @@ internal class TimetableDtoFormatCheckerTest {
             listOf(
                 ClassDto(
                     "E",
+                    1,
                     listOf(
                         SectionDto(
                             "LEIC11Da",
@@ -582,6 +585,7 @@ internal class TimetableDtoFormatCheckerTest {
                 ),
                 ClassDto(
                     "LSD",
+                    1,
                     listOf(
                         SectionDto(
                             "LEIC11Da",
