@@ -21,34 +21,38 @@ data class TimetableDto(
 ) {
     companion object {
         fun from(timetableTeachers: TimetableTeachers): TimetableDto {
-            val creationDateTime = timetableTeachers.timetable[0].creationDateTime
-            val retrievalDateTime = timetableTeachers.timetable[0].retrievalDateTime
-            val school = SchoolDto(
-                timetableTeachers.timetable[0].school.name,
-                timetableTeachers.timetable[0].school.acr
-            )
-            val programme = ProgrammeDto(
-                timetableTeachers.timetable[0].programme.name,
-                timetableTeachers.timetable[0].programme.acr
-            )
-            val calendarTerm = timetableTeachers.timetable[0].calendarTerm
 
-            // to get classes/courses associated to sections as per DTO definition
-            val classes = timetableTeachers.timetable.flatMap { timetable ->
-                val calendarSection = timetable.calendarSection
-                timetable.courses.map { course -> getAcronymAndSectionDto(course, timetableTeachers, calendarSection) }
+            with(timetableTeachers) {
+                val creationDateTime = timetable[0].creationDateTime
+                val retrievalDateTime = timetable[0].retrievalDateTime
+                val school = SchoolDto(
+                    timetable[0].school.name,
+                    timetable[0].school.acr
+                )
+                val programme = ProgrammeDto(
+                    timetable[0].programme.name,
+                    timetable[0].programme.acr
+                )
+                val calendarTerm = timetable[0].calendarTerm
+
+                // to get classes/courses associated to sections as per DTO definition
+                val classes = timetable.flatMap { timetable ->
+                    timetable.courses.map { course ->
+                        getAcronymAndSectionDto(course, timetableTeachers, timetable.calendarSection)
+                    }
+                }
+                    .groupBy(keySelector = { it.first }, valueTransform = { it.second })
+                    .map { (acronym, sections) -> ClassDto(acronym, sections) }
+
+                return TimetableDto(
+                    creationDateTime,
+                    retrievalDateTime,
+                    school,
+                    programme,
+                    calendarTerm,
+                    classes
+                )
             }
-                .groupBy(keySelector = { it.first }, valueTransform = { it.second })
-                .map { (acronym, sections) -> ClassDto(acronym, sections) }
-
-            return TimetableDto(
-                creationDateTime,
-                retrievalDateTime,
-                school,
-                programme,
-                calendarTerm,
-                classes
-            )
         }
 
         private fun getAcronymAndSectionDto(
