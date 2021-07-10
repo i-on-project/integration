@@ -70,7 +70,7 @@ data class AcademicCalendar(
                                 descriptions[index].value,
                                 intervalDate.from,
                                 intervalDate.to,
-                                false
+                                isDuringLectures(intervalDate.from, lectures)
                             )
                         )
                     }
@@ -177,10 +177,9 @@ data class AcademicCalendar(
 
         private fun isDuringLectures(
             eventDate: LocalDate,
-            lectureBeginDate: LocalDate,
-            lectureEndDate: LocalDate
+            lectures: List<Lectures>
         ): Boolean =
-            eventDate in lectureBeginDate..lectureEndDate
+            lectures.map { eventDate in it.startDate..it.endDate }.contains(true)
     }
 }
 
