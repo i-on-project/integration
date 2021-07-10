@@ -21,19 +21,32 @@ import org.ionproject.integration.domain.timetable.Timetable
 import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.ionproject.integration.domain.timetable.TimetableTeachers
 import org.ionproject.integration.domain.common.Weekday
+import org.ionproject.integration.infrastructure.DateUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 internal class TimetableDtoFormatCheckerTest {
-
     private val mapper = jacksonObjectMapper()
+    private val dateFormatted = LocalDateTime.of(
+        2021,
+        4,
+        21,
+        20,
+        49,
+        16,
+    ).let { date ->
+        DateUtils.formatToISO8601(date)
+    }
 
     @Test
     fun `when Serialized Timetable is equal to expected Dto then Success`() {
 
         val timetable = TimetableDto(
-            "20210421T204916Z",
-            "20210421T204916Z",
+            dateFormatted,
+            dateFormatted,
             SchoolDto(
                 "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                 "ISEL"
@@ -91,18 +104,19 @@ internal class TimetableDtoFormatCheckerTest {
         val serialized = mapper.writeValueAsString(timetable)
 
         val json =
-            """{"creationDateTime":"20210421T204916Z","retrievalDateTime":"20210421T204916Z","school":{"name":"INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA","acr":"ISEL"},"programme":{"name":"Licenciatura em Engenharia Informática e de Computadores","acr":"LEIC"},"calendarTerm":"2020-2021-2","classes":[{"acr":"E","sections":[{"section":"LEIC11Da","curricularTerm":1,"events":[{"category":"LECTURE","location":["L_H2"],"beginTime":"14:00","duration":"01:30","weekdays":"MO"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"WE"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"TH"}],"instructors":[{"name":"João Manuel Ferreira Martins","category":"PRACTICE"},{"name":"João Manuel Ferreira Martins","category":"LECTURE"}]}]}]}"""
+            """{"creationDateTime":"2021-04-21T20:49:16Z","retrievalDateTime":"2021-04-21T20:49:16Z","school":{"name":"INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA","acr":"ISEL"},"programme":{"name":"Licenciatura em Engenharia Informática e de Computadores","acr":"LEIC"},"calendarTerm":"2020-2021-2","classes":[{"acr":"E","sections":[{"section":"LEIC11Da","curricularTerm":1,"events":[{"category":"LECTURE","location":["L_H2"],"beginTime":"14:00","duration":"01:30","weekdays":"MO"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"WE"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"TH"}],"instructors":[{"name":"João Manuel Ferreira Martins","category":"PRACTICE"},{"name":"João Manuel Ferreira Martins","category":"LECTURE"}]}]}]}"""
 
         assertEquals(json, serialized)
     }
 
     @Test
     fun `when Simple Business object is equal to expected Dto then Success`() {
+        val date = ZonedDateTime.of(2021, 4, 21, 20, 49, 16, 0, ZoneId.systemDefault())
         val timetableTeachers = TimetableTeachers(
             listOf(
                 Timetable(
-                    "20210421T204916Z",
-                    "20210421T204916Z",
+                    DateUtils.formatToISO8601(date),
+                    DateUtils.formatToISO8601(date),
                     School(
                         "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                         "ISEL"
@@ -179,8 +193,8 @@ internal class TimetableDtoFormatCheckerTest {
         )
 
         val timetableDto = TimetableDto(
-            "20210421T204916Z",
-            "20210421T204916Z",
+            dateFormatted,
+            dateFormatted,
             SchoolDto(
                 "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                 "ISEL"
@@ -244,8 +258,8 @@ internal class TimetableDtoFormatCheckerTest {
         val timetableTeachers = TimetableTeachers(
             listOf(
                 Timetable(
-                    "20210421T204916Z",
-                    "20210421T204916Z",
+                    dateFormatted,
+                    dateFormatted,
                     School(
                         "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                         "ISEL"
@@ -312,8 +326,8 @@ internal class TimetableDtoFormatCheckerTest {
                     )
                 ),
                 Timetable(
-                    "20210421T204916Z",
-                    "20210421T204916Z",
+                    dateFormatted,
+                    dateFormatted,
                     School(
                         "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                         "ISEL"
@@ -493,8 +507,8 @@ internal class TimetableDtoFormatCheckerTest {
         )
 
         val timetableDto = TimetableDto(
-            "20210421T204916Z",
-            "20210421T204916Z",
+            dateFormatted,
+            dateFormatted,
             SchoolDto(
                 "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                 "ISEL"
