@@ -144,7 +144,7 @@ data class AcademicCalendar(
             descriptions: List<IndexedValue<String>>,
             dates: List<IndexedValue<String>>,
             regex: String
-        ) : IntervalDate {
+        ): IntervalDate {
 
             val eventName = descriptions.find {
                 it.value.contains(regex.toRegex(RegexOption.IGNORE_CASE))
