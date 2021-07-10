@@ -31,11 +31,11 @@ import java.time.ZonedDateTime
 
 class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData> {
     companion object {
-        private const val SCHOOL_REGEX = "\\A.*"
-        private const val PROGRAMME_REGEX = "^(Licenciatura|Mestrado).*$"
-        private const val CLASS_SECTION_REGEX = "\\sTurma\\s?:\\s?[LM][A-Z+]+\\d{1,2}\\w+"
+        private const val SCHOOL_REGEX = """\A.*"""
+        private const val PROGRAMME_REGEX = """^(Licenciatura|Mestrado).*$"""
+        private const val CLASS_SECTION_REGEX = """\sTurma\s?:\s?[LM][A-Z+]+\d{1,2}\w+"""
         private const val CALENDAR_TERM_REGEX = """\b(\s?Ano\sLetivo\s?:\s?)(\d{4}\/\d{2})\s?-\s?(Verão|Inverno)\b""" // Ex.: Ano Letivo: 2020/21-Verão
-        private const val TIME_SLOT_REGEX = "([8-9]|1[0-9]|2[0-3]).([03])0"
+        private const val TIME_SLOT_REGEX = """([8-9]|1[0-9]|2[0-3]).([03])0"""
         private const val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 58
         private const val HEIGHT_HALF_HOUR_THRESHOLD = 20
     }
