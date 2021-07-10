@@ -56,9 +56,9 @@ class FileWriterTests {
 }
 
 private val expectedYAML =
-    "---\ncreationDateTime: \"20210421T204916Z\"\nretrievalDateTime: \"20210421T204916Z\"\nschool:\n  name: \"INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA\"\n  acr: \"ISEL\"\nprogramme:\n  name: \"Licenciatura em Engenharia Informática e de Computadores\"\n  acr: \"LEIC\"\ncalendarTerm: \"2020-2021-2\"\nclasses:\n- acr: \"E\"\n  curricularTerm: 1\n  sections:\n  - section: \"LEIC11Da\"\n    events:\n    - category: \"LECTURE\"\n      location:\n      - \"L_H2\"\n      beginTime: \"14:00\"\n      duration: \"01:30\"\n      weekdays: \"MO\"\n    - category: \"LECTURE\"\n      beginTime: \"14:00\"\n      duration: \"01:30\"\n      weekdays: \"WE\"\n    - category: \"LECTURE\"\n      beginTime: \"14:00\"\n      duration: \"01:30\"\n      weekdays: \"TH\"\n    instructors:\n    - name: \"João Manuel Ferreira Martins\"\n      category: \"PRACTICE\"\n    - name: \"João Manuel Ferreira Martins\"\n      category: \"LECTURE\"\n"
+    "---\ncreationDateTime: \"20210421T204916Z\"\nretrievalDateTime: \"20210421T204916Z\"\nschool:\n  name: \"INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA\"\n  acr: \"ISEL\"\nprogramme:\n  name: \"Licenciatura em Engenharia Informática e de Computadores\"\n  acr: \"LEIC\"\ncalendarTerm: \"2020-2021-2\"\nclasses:\n- acr: \"E\"\n  sections:\n  - section: \"LEIC11Da\"\n    curricularTerm: 1\n    events:\n    - category: \"LECTURE\"\n      location:\n      - \"L_H2\"\n      beginTime: \"14:00\"\n      duration: \"01:30\"\n      weekdays: \"MO\"\n    - category: \"LECTURE\"\n      beginTime: \"14:00\"\n      duration: \"01:30\"\n      weekdays: \"WE\"\n    - category: \"LECTURE\"\n      beginTime: \"14:00\"\n      duration: \"01:30\"\n      weekdays: \"TH\"\n    instructors:\n    - name: \"João Manuel Ferreira Martins\"\n      category: \"PRACTICE\"\n    - name: \"João Manuel Ferreira Martins\"\n      category: \"LECTURE\"\n"
 private val expectedJSON =
-    """{"creationDateTime":"20210421T204916Z","retrievalDateTime":"20210421T204916Z","school":{"name":"INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA","acr":"ISEL"},"programme":{"name":"Licenciatura em Engenharia Informática e de Computadores","acr":"LEIC"},"calendarTerm":"2020-2021-2","classes":[{"acr":"E","curricularTerm":1,"sections":[{"section":"LEIC11Da","events":[{"category":"LECTURE","location":["L_H2"],"beginTime":"14:00","duration":"01:30","weekdays":"MO"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"WE"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"TH"}],"instructors":[{"name":"João Manuel Ferreira Martins","category":"PRACTICE"},{"name":"João Manuel Ferreira Martins","category":"LECTURE"}]}]}]}"""
+    """{"creationDateTime":"20210421T204916Z","retrievalDateTime":"20210421T204916Z","school":{"name":"INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA","acr":"ISEL"},"programme":{"name":"Licenciatura em Engenharia Informática e de Computadores","acr":"LEIC"},"calendarTerm":"2020-2021-2","classes":[{"acr":"E","sections":[{"section":"LEIC11Da","curricularTerm":1,"events":[{"category":"LECTURE","location":["L_H2"],"beginTime":"14:00","duration":"01:30","weekdays":"MO"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"WE"},{"category":"LECTURE","beginTime":"14:00","duration":"01:30","weekdays":"TH"}],"instructors":[{"name":"João Manuel Ferreira Martins","category":"PRACTICE"},{"name":"João Manuel Ferreira Martins","category":"LECTURE"}]}]}]}"""
 
 private val timetable = TimetableDto(
     "20210421T204916Z",
@@ -75,10 +75,10 @@ private val timetable = TimetableDto(
     listOf(
         ClassDto(
             "E",
-            1,
             listOf(
                 SectionDto(
                     "LEIC11Da",
+                    1,
                     listOf(
                         EventDto(
                             "LECTURE",
