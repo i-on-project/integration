@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import org.ionproject.integration.domain.common.dto.ProgrammeDto
 import org.ionproject.integration.domain.common.dto.SchoolDto
 import org.ionproject.integration.domain.timetable.TimetableTeachers
+import org.ionproject.integration.domain.timetable.getCurricularTermFromSection
 import org.ionproject.integration.domain.timetable.model.Course
 import org.ionproject.integration.domain.timetable.model.CourseTeacher
 import org.ionproject.integration.domain.timetable.model.EventCategory
@@ -55,7 +56,10 @@ data class TimetableDto(
                     }
                 }
 
-            val classes = courseMap.toList().map { ClassDto(it.first, it.second) }
+            val classes = courseMap.toList().map { (acronym, sections) ->
+                val curricularTerm = getCurricularTermFromSection(sections.first().section)
+                ClassDto(acronym, curricularTerm, sections)
+            }
 
             return TimetableDto(
                 creationDateTime,
@@ -87,6 +91,7 @@ data class TimetableDto(
 
 data class ClassDto(
     val acr: String,
+    val curricularTerm: Int,
     val sections: List<SectionDto>
 )
 
