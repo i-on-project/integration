@@ -1,9 +1,8 @@
-package org.ionproject.integration.model.external.calendar
+package org.ionproject.integration.domain.calendar
 
+import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.Language
 import org.ionproject.integration.domain.common.School
-import org.ionproject.integration.domain.calendar.RawCalendarData
-import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.infrastructure.text.RegexUtils
 import java.time.LocalDate
@@ -21,8 +20,11 @@ data class AcademicCalendar(
         private const val CALENDAR_TERM_REGEX = """(?<=\sCalendário\sEscolar\s).+?(?=\r|\R)"""
         private const val TABLE_DELIMITER = "extraction"
         private const val PT_INTERRUPTION_REGEX = "\\b(?:Interrupção|Férias)\\b"
-        private const val PT_EVALUATION_REGEX = "\\b(?:Exames|Testes)\\b"
-        private const val PT_DETAILS_REGEX = "\\b(?:Turmas)\\b"
+        private const val PT_EVALUATION_REGEX = "\\b(?:Período de exames|Exames de época especial)\\b"
+        private const val PT_LECTURES_REGEX = "\\b(?:Turmas)\\b"
+        private const val PT_LECTURES_START_REGEX = "\\b(?:Início das aulas)\\b"
+        private const val PT_LECTURES_END_REGEX = "\\b(?:Fim das aulas)\\b"
+        private const val PT_LECTURES_ALL_SECTIONS_NAME = "Todas as turmas"
 
         fun from(rawCalendarData: RawCalendarData, jobInstitution: InstitutionModel): AcademicCalendar =
             AcademicCalendar(
@@ -54,18 +56,18 @@ data class AcademicCalendar(
         private fun buildTerm(events: List<String>, pdfRawText: String, term: CalendarTerm): Term {
             val interruptions = mutableListOf<Event>()
             val evaluations = mutableListOf<Evaluation>()
-            val details = mutableListOf<Detail>()
-            val lectures = mutableListOf<Event>()
+            val otherEvents = mutableListOf<Event>()
             val (descriptions, dates) = events.withIndex().partition { it.index % 2 == 0 }
+            val lectures = getLectures(descriptions, dates)
 
             descriptions.forEachIndexed { index, _ ->
                 val intervalDate = DateUtils.getDateRange(dates[index].value)
 
-                when (getEventType(events[index])) {
+                when (getEventType(descriptions[index].value)) {
                     EventType.EVALUATION -> {
                         evaluations.add(
                             Evaluation(
-                                events[index],
+                                descriptions[index].value,
                                 intervalDate.from,
                                 intervalDate.to,
                                 false
@@ -75,26 +77,19 @@ data class AcademicCalendar(
                     EventType.INTERRUPTION -> {
                         interruptions.add(
                             Event(
-                                events[index],
+                                descriptions[index].value,
                                 intervalDate.from,
                                 intervalDate.to,
                             )
                         )
                     }
-                    EventType.DETAILS -> {
-                        details.add(
-                            Detail(
-                                events[index],
-                                listOf(),
-                                intervalDate.from,
-                                intervalDate.to,
-                            )
-                        )
+                    EventType.LECTURES -> {
+                        // Do nothing - they were processed on top
                     }
                     EventType.OTHER -> {
-                        lectures.add(
+                        otherEvents.add(
                             Event(
-                                events[index],
+                                descriptions[index].value,
                                 intervalDate.from,
                                 intervalDate.to,
                             )
@@ -111,10 +106,57 @@ data class AcademicCalendar(
                     .plus("-${getTermNumber(term)}"),
                 interruptions,
                 evaluations,
-                details,
-                lectures
+                lectures,
+                otherEvents
             )
         }
+
+        private fun getLectures(
+            descriptions: List<IndexedValue<String>>,
+            dates: List<IndexedValue<String>>
+        ): List<Lectures> {
+            val lectures = mutableListOf<Lectures>()
+
+            val numberOfLecturesEvents =
+                descriptions.filter { it.value.contains(PT_LECTURES_START_REGEX.toRegex(RegexOption.IGNORE_CASE)) }
+                    .count()
+
+            /* if it's a single event then it's for all academic terms*/
+            if (numberOfLecturesEvents == 1) {
+                lectures.add(
+                    Lectures(
+                        PT_LECTURES_ALL_SECTIONS_NAME,
+                        listOf(1, 2, 3, 4, 5, 6),
+                        findFirstDateRangeFromEvent(descriptions, dates, PT_LECTURES_START_REGEX).from,
+                        findFirstDateRangeFromEvent(descriptions, dates, PT_LECTURES_END_REGEX).from,
+                    )
+                )
+                // if there are multiple events it's necessary to split per each section
+            } else {
+                // TODO: when there's different dates for different sections
+            }
+
+            return lectures
+        }
+
+        private fun findFirstDateRangeFromEvent(
+            descriptions: List<IndexedValue<String>>,
+            dates: List<IndexedValue<String>>,
+            regex: String
+        ) =
+            DateUtils.getDateRange(
+                dates[
+                    descriptions.indexOf(
+                        descriptions.find {
+                            it.value.contains(
+                                regex.toRegex(
+                                    RegexOption.IGNORE_CASE
+                                )
+                            )
+                        }
+                    )
+                ].value
+            )
 
         private fun getTermNumber(term: CalendarTerm) =
             when (term) {
@@ -126,7 +168,9 @@ data class AcademicCalendar(
             return when {
                 event.contains(PT_INTERRUPTION_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.INTERRUPTION
                 event.contains(PT_EVALUATION_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.EVALUATION
-                event.contains(PT_DETAILS_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.DETAILS
+                event.contains(PT_LECTURES_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.LECTURES
+                event.contains(PT_LECTURES_START_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.LECTURES
+                event.contains(PT_LECTURES_END_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.LECTURES
                 else -> EventType.OTHER
             }
         }
@@ -144,8 +188,8 @@ data class Term(
     val calendarTerm: String = "",
     val interruptions: List<Event>,
     val evaluations: List<Evaluation>,
-    val details: List<Detail>,
-    val lectures: List<Event>
+    val lectures: List<Lectures>,
+    val otherEvents: List<Event>
 )
 
 data class Event(
@@ -161,7 +205,7 @@ data class Evaluation(
     val duringLectures: Boolean
 )
 
-data class Detail(
+data class Lectures(
     val name: String,
     val curricularTerm: List<Int>,
     val startDate: LocalDate,
@@ -176,6 +220,6 @@ enum class CalendarTerm {
 enum class EventType {
     INTERRUPTION,
     EVALUATION,
-    DETAILS,
+    LECTURES,
     OTHER
 }
