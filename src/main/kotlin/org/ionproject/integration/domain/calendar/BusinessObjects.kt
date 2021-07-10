@@ -4,6 +4,7 @@ import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.Language
 import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.infrastructure.DateUtils
+import org.ionproject.integration.infrastructure.IntervalDate
 import org.ionproject.integration.infrastructure.text.RegexUtils
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -143,20 +144,17 @@ data class AcademicCalendar(
             descriptions: List<IndexedValue<String>>,
             dates: List<IndexedValue<String>>,
             regex: String
-        ) =
-            DateUtils.getDateRange(
-                dates[
-                    descriptions.indexOf(
-                        descriptions.find {
-                            it.value.contains(
-                                regex.toRegex(
-                                    RegexOption.IGNORE_CASE
-                                )
-                            )
-                        }
-                    )
-                ].value
-            )
+        ) : IntervalDate {
+
+            val eventName = descriptions.find {
+                it.value.contains(regex.toRegex(RegexOption.IGNORE_CASE))
+            }
+
+            val eventIndex = descriptions.indexOf(eventName)
+            val eventDate = dates[eventIndex].value
+
+            return DateUtils.getDateRange(eventDate)
+        }
 
         private fun getTermNumber(term: CalendarTerm) =
             when (term) {
