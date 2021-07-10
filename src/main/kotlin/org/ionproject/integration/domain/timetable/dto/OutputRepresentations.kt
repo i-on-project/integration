@@ -33,33 +33,28 @@ data class TimetableDto(
             )
             val calendarTerm = timetableTeachers.timetable[0].calendarTerm
 
-            val courseMap = HashMap<String, MutableList<SectionDto>>()
-
             // to get classes/courses associated to sections as per DTO definition
-            for (timetable in timetableTeachers.timetable)
-                for (course in timetable.courses) {
-
+            val classes = timetableTeachers.timetable.flatMap { timetable ->
+                timetable.courses.map { course ->
                     val events = course.events.flatMap(EventDto.Factory::from)
                     val instructors = getInstructors(timetableTeachers.teachers, course, timetable.calendarSection)
 
-                    if (courseMap[course.label.acr] != null)
-                        courseMap[course.label.acr]?.add(
-                            SectionDto(
-                                timetable.calendarSection,
-                                events,
-                                instructors
-                            )
-                        )
-                    else {
-                        courseMap[course.label.acr] =
-                            mutableListOf(SectionDto(timetable.calendarSection, events, instructors))
-                    }
-                }
+                    val section = SectionDto(
+                        timetable.calendarSection,
+                        getCurricularTermFromSection(timetable.calendarSection),
+                        events,
+                        instructors
+                    )
 
-            val classes = courseMap.toList().map { (acronym, sections) ->
-                val curricularTerm = getCurricularTermFromSection(sections.first().section)
-                ClassDto(acronym, curricularTerm, sections)
+                    val acronym = course.label.acr
+
+                    return@map acronym to section
+                    // Create a new list if no entry exists, merge with previous when it does
+                    // courseMap.merge(course.label.acr, listOf(section), List<SectionDto>::plus)
+                }
             }
+                .groupBy(keySelector = { it.first }, valueTransform = { it.second })
+                .map { (acronym, sections) -> ClassDto(acronym, sections) }
 
             return TimetableDto(
                 creationDateTime,
@@ -91,12 +86,12 @@ data class TimetableDto(
 
 data class ClassDto(
     val acr: String,
-    val curricularTerm: Int,
     val sections: List<SectionDto>
 )
 
 data class SectionDto(
     val section: String,
+    val curricularTerm: Int,
     val events: List<EventDto>,
     val instructors: List<InstructorDto>
 )
