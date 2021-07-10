@@ -35,23 +35,8 @@ data class TimetableDto(
 
             // to get classes/courses associated to sections as per DTO definition
             val classes = timetableTeachers.timetable.flatMap { timetable ->
-                timetable.courses.map { course ->
-                    val events = course.events.flatMap(EventDto.Factory::from)
-                    val instructors = getInstructors(timetableTeachers.teachers, course, timetable.calendarSection)
-
-                    val section = SectionDto(
-                        timetable.calendarSection,
-                        getCurricularTermFromSection(timetable.calendarSection),
-                        events,
-                        instructors
-                    )
-
-                    val acronym = course.label.acr
-
-                    return@map acronym to section
-                    // Create a new list if no entry exists, merge with previous when it does
-                    // courseMap.merge(course.label.acr, listOf(section), List<SectionDto>::plus)
-                }
+                val calendarSection = timetable.calendarSection
+                timetable.courses.map { course -> getAcronymAndSectionDto(course, timetableTeachers, calendarSection) }
             }
                 .groupBy(keySelector = { it.first }, valueTransform = { it.second })
                 .map { (acronym, sections) -> ClassDto(acronym, sections) }
@@ -64,6 +49,25 @@ data class TimetableDto(
                 calendarTerm,
                 classes
             )
+        }
+
+        private fun getAcronymAndSectionDto(
+            course: Course,
+            timetableTeachers: TimetableTeachers,
+            calendarSection: String
+        ): Pair<String, SectionDto> {
+            val events = course.events.flatMap(EventDto.Factory::from)
+            val instructors = getInstructors(timetableTeachers.teachers, course, calendarSection)
+
+            val acronym = course.label.acr
+            val section = SectionDto(
+                calendarSection,
+                getCurricularTermFromSection(calendarSection),
+                events,
+                instructors
+            )
+
+            return acronym to section
         }
 
         private fun getInstructors(
