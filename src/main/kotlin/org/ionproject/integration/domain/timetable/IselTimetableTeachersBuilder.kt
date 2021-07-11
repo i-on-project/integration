@@ -31,12 +31,15 @@ import java.time.ZonedDateTime
 
 class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData> {
     companion object {
+        private const val CALENDAR_TERM_REGEX =
+            """\b(\s?Ano\sLetivo\s?:\s?)(\d{2,4}\/\d{2,4})\s?-\s?(Verão|Inverno)\b"""
         private const val SCHOOL_REGEX = """\A.*"""
         private const val PROGRAMME_REGEX = """^(Licenciatura|Mestrado).*$"""
-        private const val CLASS_SECTION_REGEX = """\sTurma\s?:\s?[LM][A-Z+]+\d{1,2}\w+"""
+        private const val CLASS_SECTION_REGEX = """\bTurma\s?:\s?([LM][A-Z+]+\d{1,2}\w+)\b"""
         private const val TIME_SLOT_REGEX = """([8-9]|1[0-9]|2[0-3]).([03])0"""
         private const val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 58
         private const val HEIGHT_HALF_HOUR_THRESHOLD = 20
+        private const val YEAR_OFFSET = 2000 // Add to term years with only two digits (i.e. 20/21 instead of 2020/2021)
     }
 
     private var iselTimetableTeachers = Try.of { TimetableTeachers() }
@@ -98,8 +101,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         val schoolText = RegexUtils.findMatches(SCHOOL_REGEX, data)[0].trimEnd()
         val programmeText = RegexUtils.findMatches(PROGRAMME_REGEX, data, RegexOption.MULTILINE)[0].trimEnd()
         val calendarTerm = getCalendarTerm(data)
-        val classSection =
-            RegexUtils.findMatches(CLASS_SECTION_REGEX, data, RegexOption.MULTILINE)[0].replace("Turma :", "").trim()
+        val classSection = getSection(data)
         val schoolAcr = generateAcronym(schoolText, IgnoredWords.of(Language.PT))
         val programmeArc = generateAcronym(programmeText, IgnoredWords.of(Language.PT))
 
@@ -173,6 +175,27 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         )
     }
 
+    private fun getCalendarTerm(rawData: String): String {
+        if (!RegexUtils.isMatch(CALENDAR_TERM_REGEX, rawData))
+            throw IllegalArgumentException("Invalid calendar term: $rawData")
+
+        val (_, _, termYears, termSemester) = RegexUtils.findMatches(CALENDAR_TERM_REGEX, rawData)
+
+        val (startYear, endYear) = getYearsFromText(termYears)
+        val termNumber = getTermNumberFromSemesterText(termSemester)
+
+        return "$startYear-$endYear-$termNumber"
+    }
+
+    private fun getSection(rawData: String): String {
+        if (!RegexUtils.isMatch(CLASS_SECTION_REGEX, rawData))
+            throw IllegalArgumentException("Invalid class section: $rawData")
+
+        val (_, section) = RegexUtils.findMatches(CLASS_SECTION_REGEX, rawData)
+
+        return section
+    }
+
     private fun getDuration(cell: Cell): Duration = when {
         cell.height > HEIGHT_ONE_HALF_HOUR_THRESHOLD -> {
             Duration.ofHours(3)
@@ -231,5 +254,19 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         val time = matches[0].split('.')
 
         return LocalTime.of(time[0].toInt(), time[1].toInt())
+    }
+
+    private fun getYearsFromText(data: String): Pair<Int, Int> {
+        val (first, second) = data.split("/")
+            .map(String::toInt)
+            .map { if (it < YEAR_OFFSET) it + YEAR_OFFSET else it }
+
+        return first to second
+    }
+
+    private fun getTermNumberFromSemesterText(semesterText: String): Int = when (semesterText) {
+        "Inverno" -> 1
+        "Verão" -> 2
+        else -> throw IllegalArgumentException("Invalid term description: $semesterText")
     }
 }
