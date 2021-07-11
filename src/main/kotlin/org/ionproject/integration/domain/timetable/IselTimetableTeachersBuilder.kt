@@ -34,7 +34,6 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         private const val SCHOOL_REGEX = """\A.*"""
         private const val PROGRAMME_REGEX = """^(Licenciatura|Mestrado).*$"""
         private const val CLASS_SECTION_REGEX = """\sTurma\s?:\s?[LM][A-Z+]+\d{1,2}\w+"""
-        private const val CALENDAR_TERM_REGEX = """\b(\s?Ano\sLetivo\s?:\s?)(\d{4}\/\d{2})\s?-\s?(Verão|Inverno)\b""" // Ex.: Ano Letivo: 2020/21-Verão
         private const val TIME_SLOT_REGEX = """([8-9]|1[0-9]|2[0-3]).([03])0"""
         private const val HEIGHT_ONE_HALF_HOUR_THRESHOLD = 58
         private const val HEIGHT_HALF_HOUR_THRESHOLD = 20
@@ -98,12 +97,7 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         val retrievalDateTime = DateUtils.formatToISO8601(ZonedDateTime.now())
         val schoolText = RegexUtils.findMatches(SCHOOL_REGEX, data)[0].trimEnd()
         val programmeText = RegexUtils.findMatches(PROGRAMME_REGEX, data, RegexOption.MULTILINE)[0].trimEnd()
-        val calendarTerm = RegexUtils.findMatches(CALENDAR_TERM_REGEX, data, RegexOption.MULTILINE)[0]
-            .replace("Ano Letivo :", "")
-            .trim()
-            .let {
-                normalizeTerm(it)
-            }
+        val calendarTerm = getCalendarTerm(data)
         val classSection =
             RegexUtils.findMatches(CLASS_SECTION_REGEX, data, RegexOption.MULTILINE)[0].replace("Turma :", "").trim()
         val schoolAcr = generateAcronym(schoolText, IgnoredWords.of(Language.PT))
@@ -123,18 +117,6 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         courseTeacher.programme = programme
         courseTeacher.calendarTerm = calendarTerm
         courseTeacher.calendarSection = classSection
-    }
-
-    private fun normalizeTerm(raw: String): String {
-        val startYear = raw.take(4).toInt()
-
-        val termNumber = when (val termType = raw.substringAfter('-')) {
-            "Inverno" -> 1
-            "Verão" -> 2
-            else -> throw IllegalArgumentException("Invalid term description: $termType")
-        }
-
-        return "$startYear-${startYear + 1}-$termNumber"
     }
 
     private fun getCourseList(data: Array<Array<Cell>>): List<Course> {
