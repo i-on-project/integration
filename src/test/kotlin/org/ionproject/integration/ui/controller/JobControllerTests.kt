@@ -7,7 +7,7 @@ import org.ionproject.integration.application.job.JobType
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.infrastructure.exception.ArgumentException
 import org.ionproject.integration.infrastructure.file.OutputFormat
-import org.ionproject.integration.ui.dto.InputProcessor
+import org.ionproject.integration.ui.input.InputProcessor
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any

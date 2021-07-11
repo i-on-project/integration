@@ -2,7 +2,7 @@ package org.ionproject.integration.ui.controller
 
 import org.ionproject.integration.infrastructure.exception.ArgumentException
 import org.ionproject.integration.infrastructure.exception.JobNotFoundException
-import org.ionproject.integration.ui.dto.Problem
+import org.ionproject.integration.ui.output.Problem
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity

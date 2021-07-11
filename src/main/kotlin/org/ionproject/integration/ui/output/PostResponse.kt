@@ -1,4 +1,4 @@
-package org.ionproject.integration.ui.dto
+package org.ionproject.integration.ui.output
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.http.HttpStatus
