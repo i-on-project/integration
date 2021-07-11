@@ -10,6 +10,13 @@ import org.ionproject.integration.infrastructure.file.INVALID_FORMAT_ERROR
 import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
 import org.ionproject.integration.infrastructure.repository.IProgrammeRepository
+import org.ionproject.integration.ui.input.CreateJobDto
+import org.ionproject.integration.ui.input.FORMAT
+import org.ionproject.integration.ui.input.INSTITUTION
+import org.ionproject.integration.ui.input.INVALID_JOB_TYPE_ERROR
+import org.ionproject.integration.ui.input.InputProcessor
+import org.ionproject.integration.ui.input.MISSING_PARAMETER_ERROR
+import org.ionproject.integration.ui.input.PROGRAMME
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

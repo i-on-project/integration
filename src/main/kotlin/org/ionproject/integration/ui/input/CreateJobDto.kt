@@ -1,4 +1,4 @@
-package org.ionproject.integration.ui.dto
+package org.ionproject.integration.ui.input
 
 import org.ionproject.integration.application.job.JobType
 

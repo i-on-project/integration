@@ -1,10 +1,10 @@
 package org.ionproject.integration.ui.controller
 
 import org.ionproject.integration.application.JobEngine
-import org.ionproject.integration.ui.dto.CreateJobDto
-import org.ionproject.integration.ui.dto.InputProcessor
-import org.ionproject.integration.ui.dto.JobDetailDto
-import org.ionproject.integration.ui.dto.PostResponse
+import org.ionproject.integration.ui.input.CreateJobDto
+import org.ionproject.integration.ui.input.InputProcessor
+import org.ionproject.integration.ui.output.JobDetailDto
+import org.ionproject.integration.ui.output.PostResponse
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
