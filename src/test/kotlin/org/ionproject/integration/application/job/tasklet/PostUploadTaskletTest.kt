@@ -106,7 +106,7 @@ internal class PostUploadTaskletTest {
     }
 
     @Test
-    @Sql("../../../../../../../resources/org/ionproject/integration/step/tasklet/iseltimetable/implementations/insert-hash-post-upload-test.sql")
+    @Sql("insert-hash-post-upload-test.sql")
     fun `when file hash already exists then it is replaced`() {
         val hr = HashRepositoryImpl(ds)
         val jobId = "PostUploadTest3"

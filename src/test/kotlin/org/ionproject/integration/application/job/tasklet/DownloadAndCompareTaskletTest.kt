@@ -1,4 +1,4 @@
-package org.ionproject.integration.application.job.chunkbased
+package org.ionproject.integration.application.job.tasklet
 
 import com.icegreen.greenmail.util.DummySSLSocketFactory
 import com.icegreen.greenmail.util.GreenMail
@@ -11,10 +11,10 @@ import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.application.JobEngine.Companion.JOB_HASH_PARAMETER
 import org.ionproject.integration.application.JobEngine.Companion.TIMESTAMP_PARAMETER
 import org.ionproject.integration.application.config.AppProperties
-import org.ionproject.integration.application.job.tasklet.DownloadAndCompareTasklet
 import org.ionproject.integration.application.exception.DownloadAndCompareTaskletException
 import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
+import org.ionproject.integration.application.job.chunkbased.SpringBatchTestUtils
 import org.junit.FixMethodOrder
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
