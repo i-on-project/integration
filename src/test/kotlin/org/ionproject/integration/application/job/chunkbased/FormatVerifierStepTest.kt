@@ -13,7 +13,6 @@ import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
-import org.ionproject.integration.step.utils.SpringBatchTestUtils
 import org.ionproject.integration.infrastructure.CompositeException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

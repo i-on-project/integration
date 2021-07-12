@@ -2,8 +2,8 @@ package org.ionproject.integration.ui.input
 
 import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.infrastructure.file.OutputFormat
-import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
-import org.ionproject.integration.infrastructure.repository.IProgrammeRepository
+import org.ionproject.integration.infrastructure.repository.model.IInstitutionRepository
+import org.ionproject.integration.infrastructure.repository.model.IProgrammeRepository
 
 data class SafeTimetableJobDto(
     override val institution: String,

@@ -3,8 +3,8 @@ package org.ionproject.integration.ui.input
 import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.application.job.JobType
 import org.ionproject.integration.infrastructure.exception.ArgumentException
-import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
-import org.ionproject.integration.infrastructure.repository.IProgrammeRepository
+import org.ionproject.integration.infrastructure.repository.model.IInstitutionRepository
+import org.ionproject.integration.infrastructure.repository.model.IProgrammeRepository
 import org.springframework.stereotype.Component
 
 internal const val INVALID_JOB_TYPE_ERROR = "Invalid Job Type: %s"

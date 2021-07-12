@@ -7,7 +7,7 @@ import org.ionproject.integration.application.job.ISELAcademicCalendarJob
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.dto.SchoolDto
 import org.ionproject.integration.infrastructure.http.IFileDownloader
-import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
+import org.ionproject.integration.infrastructure.repository.model.IInstitutionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
