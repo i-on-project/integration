@@ -14,13 +14,13 @@ import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.file.FileComparatorImpl
 import org.ionproject.integration.infrastructure.file.FileDigestImpl
 import org.ionproject.integration.infrastructure.file.OutputFormat
-import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
+import org.ionproject.integration.infrastructure.repository.hash.HashRepositoryImpl
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.AcademicCalendarExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
-import org.ionproject.integration.infrastructure.repository.IInstitutionRepository
+import org.ionproject.integration.infrastructure.repository.model.IInstitutionRepository
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory

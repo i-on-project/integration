@@ -14,7 +14,7 @@ import org.ionproject.integration.domain.timetable.TimetableTeachers
 import org.ionproject.integration.domain.timetable.dto.RawTimetableData
 import org.ionproject.integration.infrastructure.file.FileComparatorImpl
 import org.ionproject.integration.infrastructure.file.FileDigestImpl
-import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
+import org.ionproject.integration.infrastructure.repository.hash.HashRepositoryImpl
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
 import org.springframework.batch.core.Step

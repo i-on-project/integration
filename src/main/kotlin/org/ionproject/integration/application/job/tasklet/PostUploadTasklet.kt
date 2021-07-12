@@ -2,7 +2,7 @@ package org.ionproject.integration.application.job.tasklet
 
 import org.ionproject.integration.application.JobEngine.Companion.JOB_HASH_PARAMETER
 import javax.sql.DataSource
-import org.ionproject.integration.infrastructure.hash.HashRepositoryImpl
+import org.ionproject.integration.infrastructure.repository.hash.HashRepositoryImpl
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.configuration.annotation.StepScope

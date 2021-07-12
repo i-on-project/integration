@@ -10,7 +10,7 @@ import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.ProgrammeModel
 import org.ionproject.integration.infrastructure.exception.JobNotFoundException
 import org.ionproject.integration.infrastructure.file.OutputFormat
-import org.ionproject.integration.infrastructure.repository.IIntegrationJobRepository
+import org.ionproject.integration.infrastructure.repository.job.IIntegrationJobRepository
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters

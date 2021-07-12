@@ -1,6 +1,6 @@
 package org.ionproject.integration.infrastructure.file
 
-import org.ionproject.integration.infrastructure.hash.IHashRepository
+import org.ionproject.integration.infrastructure.repository.hash.IHashRepository
 import java.io.File
 import org.ionproject.integration.infrastructure.Try
 
