@@ -24,7 +24,7 @@ internal class HashRepositoryImplTest {
     }
 
     @Test
-    @Sql("../../../../../../resources/org/ionproject/integration/hash/implementations/insert-test-job.sql")
+    @Sql("insert-test-job.sql")
     fun whenFetchingExistingHash_thenAssertContentEquals() {
         val job = "testJob"
         val hr = HashRepositoryImpl(ds)
@@ -44,7 +44,7 @@ internal class HashRepositoryImplTest {
     }
 
     @Test
-    @Sql("../../../../../../resources/org/ionproject/integration/hash/implementations/insert-yet-another-job.sql")
+    @Sql("insert-yet-another-job.sql")
     fun whenJobEntryExists_thenReplaceHashValue() {
         val job = "yetAnotherJob"
         val hash = byteArrayOf(9, 9, 9)

@@ -52,7 +52,7 @@ internal class FileComparatorImplTest {
     }
 
     @Test
-    @Sql("../../../../../../resources/org/ionproject/integration/file/implementations/insert-file-comparator-job.sql")
+    @Sql("insert-file-comparator-job.sql")
     fun whenHashIsTheSameAsRecorded_thenAssertTrue() {
         val fc = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
         val file = File("src/test/resources/test.pdf")
@@ -61,7 +61,7 @@ internal class FileComparatorImplTest {
     }
 
     @Test
-    @Sql("../../../../../../resources/org/ionproject/integration/file/implementations/insert-hash-not-same.sql")
+    @Sql("insert-hash-not-same.sql")
     fun whenHashIsNotTheSame_thenAssertFalse() {
         val fc = FileComparatorImpl(FileDigestImpl(), HashRepositoryImpl(ds))
         val file = File("src/test/resources/test.pdf")
