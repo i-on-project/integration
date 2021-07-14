@@ -13,8 +13,8 @@ import org.ionproject.integration.infrastructure.text.RegexUtils
 import java.time.ZonedDateTime
 
 data class Evaluations(
-    val creationDateTime: String = "",
-    val retrievalDateTime: String = "",
+    val creationDateTime: ZonedDateTime,
+    val retrievalDateTime: ZonedDateTime,
     val school: School,
     val programme: Programme,
     val calendarTerm: String = "",
@@ -29,8 +29,8 @@ data class Evaluations(
             val calendarTerm = buildCalendarTerm(rawEvaluationsData)
 
             return Evaluations(
-                rawEvaluationsData.creationDate,
-                DateUtils.formatToISO8601(ZonedDateTime.now()),
+                creationDateTime = ZonedDateTime.parse(rawEvaluationsData.creationDate),
+                ZonedDateTime.now(),
                 School(
                     jobProgramme.institutionModel.name,
                     jobProgramme.institutionModel.acronym

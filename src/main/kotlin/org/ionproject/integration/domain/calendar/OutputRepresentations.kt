@@ -13,8 +13,8 @@ data class AcademicCalendarDto(
     companion object {
         fun from(academicCalendar: AcademicCalendar): AcademicCalendarDto {
             return AcademicCalendarDto(
-                academicCalendar.creationDateTime,
-                academicCalendar.retrievalDateTime,
+                DateUtils.formatToISO8601(academicCalendar.creationDateTime),
+                DateUtils.formatToISO8601(academicCalendar.retrievalDateTime),
                 SchoolDto(academicCalendar.school.name, academicCalendar.school.acr),
                 academicCalendar.language.value,
                 TermDto.from(academicCalendar.terms)

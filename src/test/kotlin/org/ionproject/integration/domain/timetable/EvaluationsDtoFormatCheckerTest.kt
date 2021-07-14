@@ -7,7 +7,6 @@ import org.ionproject.integration.domain.evaluations.Evaluations
 import org.ionproject.integration.domain.evaluations.EvaluationsDto
 import org.ionproject.integration.domain.evaluations.Exam
 import org.ionproject.integration.domain.evaluations.ExamCategory
-import org.ionproject.integration.infrastructure.DateUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
@@ -22,8 +21,8 @@ internal class EvaluationsDtoFormatCheckerTest {
 
         val evaluations =
             Evaluations(
-                DateUtils.formatToISO8601(ZonedDateTime.of(2021, 7, 8, 0, 12, 56, 0, ZoneId.systemDefault())),
-                DateUtils.formatToISO8601(ZonedDateTime.of(2021, 7, 8, 0, 12, 56, 0, ZoneId.systemDefault())),
+                ZonedDateTime.of(2021, 7, 8, 0, 12, 56, 0, ZoneId.systemDefault()),
+                ZonedDateTime.of(2021, 7, 8, 0, 12, 56, 0, ZoneId.systemDefault()),
                 School(
                     "Instituto Superior de Engenharia de Lisboa",
                     "ISEL"

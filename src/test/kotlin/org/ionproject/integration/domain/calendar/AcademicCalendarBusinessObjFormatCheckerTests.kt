@@ -17,6 +17,7 @@ import java.io.File
 import java.net.URI
 import java.time.LocalDate
 import java.time.Month
+import java.time.ZonedDateTime
 import javax.sql.DataSource
 
 class AcademicCalendarBusinessObjFormatCheckerTests {
@@ -58,7 +59,7 @@ class AcademicCalendarBusinessObjFormatCheckerTests {
 
         val academicCalendar = AcademicCalendar.from(calendarData, institution)
         val academicCalendarBO = AcademicCalendar(
-            "2020-07-06T16:00:21Z",
+            ZonedDateTime.parse("2020-07-06T16:00:21Z"),
             academicCalendar.retrievalDateTime,
             School(institution.name, institution.acronym),
             Language.PT,
