@@ -6,6 +6,7 @@ import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.application.job.ISELAcademicCalendarJob
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.dto.SchoolDto
+import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.repository.model.IInstitutionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -215,7 +216,7 @@ internal class AcademicCalendarDtoFormatCheckerTests {
 
         val academicCalendarExpectedDto = AcademicCalendarDto(
             "2020-07-06T16:00:21Z",
-            academicCalendar.retrievalDateTime,
+            DateUtils.formatToISO8601(academicCalendar.retrievalDateTime),
             SchoolDto("Instituto Superior de Engenharia de Lisboa", "ISEL"),
             "pt-PT",
             listOf(

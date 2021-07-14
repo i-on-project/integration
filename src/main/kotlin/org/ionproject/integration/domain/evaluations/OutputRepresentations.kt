@@ -15,8 +15,8 @@ data class EvaluationsDto(
     companion object {
         fun from(evaluations: Evaluations): EvaluationsDto {
             return EvaluationsDto(
-                evaluations.creationDateTime,
-                evaluations.retrievalDateTime,
+                DateUtils.formatToISO8601(evaluations.creationDateTime),
+                DateUtils.formatToISO8601(evaluations.retrievalDateTime),
                 SchoolDto(
                     evaluations.school.name,
                     evaluations.school.acr

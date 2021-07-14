@@ -10,8 +10,8 @@ import java.time.LocalDate
 import java.time.ZonedDateTime
 
 data class AcademicCalendar(
-    val creationDateTime: String = "",
-    val retrievalDateTime: String = "",
+    val creationDateTime: ZonedDateTime,
+    val retrievalDateTime: ZonedDateTime,
     val school: School = School(),
     val language: Language = Language.PT,
     val terms: List<Term> = listOf()
@@ -29,8 +29,8 @@ data class AcademicCalendar(
 
         fun from(rawCalendarData: RawCalendarData, jobInstitution: InstitutionModel): AcademicCalendar =
             AcademicCalendar(
-                creationDateTime = rawCalendarData.creationDate,
-                retrievalDateTime = DateUtils.formatToISO8601(ZonedDateTime.now()),
+                creationDateTime = ZonedDateTime.parse(rawCalendarData.creationDate),
+                retrievalDateTime = ZonedDateTime.now(),
                 School(
                     jobInstitution.name,
                     jobInstitution.acronym
