@@ -16,7 +16,6 @@ import org.ionproject.integration.domain.timetable.model.CourseTeacher
 import org.ionproject.integration.domain.timetable.model.Faculty
 import org.ionproject.integration.domain.timetable.model.Label
 import org.ionproject.integration.domain.timetable.model.RecurrentEvent
-import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.tabula.Cell
@@ -77,7 +76,10 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
             val teacherList = mutableListOf<CourseTeacher>()
 
             rawTimetableData.textData.forEachIndexed { idx, data ->
-                val timetable = Timetable(creationDateTime = rawTimetableData.creationDate)
+                val timetable = Timetable(
+                    creationDateTime = ZonedDateTime.parse(rawTimetableData.creationDate),
+                    retrievalDateTime = ZonedDateTime.now()
+                )
                 val courseTeacher = CourseTeacher()
 
                 setCommonData(data, timetable, courseTeacher)
@@ -97,7 +99,6 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
     }
 
     private fun setCommonData(data: String, timetable: Timetable, courseTeacher: CourseTeacher) {
-        val retrievalDateTime = DateUtils.formatToISO8601(ZonedDateTime.now())
         val schoolText = RegexUtils.findMatches(SCHOOL_REGEX, data)[0].trimEnd()
         val programmeText = RegexUtils.findMatches(PROGRAMME_REGEX, data, RegexOption.MULTILINE)[0].trimEnd()
         val calendarTerm = getCalendarTerm(data)
@@ -108,7 +109,6 @@ class IselTimetableTeachersBuilder : ITimetableTeachersBuilder<RawTimetableData>
         val school = School(name = schoolText, acr = schoolAcr)
         val programme = Programme(name = programmeText, acr = programmeArc)
 
-        timetable.retrievalDateTime = retrievalDateTime
         timetable.school = school
         timetable.programme = programme
         timetable.calendarTerm = calendarTerm

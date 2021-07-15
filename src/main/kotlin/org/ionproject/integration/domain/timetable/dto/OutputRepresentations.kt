@@ -10,6 +10,7 @@ import org.ionproject.integration.domain.timetable.model.CourseTeacher
 import org.ionproject.integration.domain.timetable.model.EventCategory
 import org.ionproject.integration.domain.timetable.model.Instructor
 import org.ionproject.integration.domain.timetable.model.RecurrentEvent
+import org.ionproject.integration.infrastructure.DateUtils
 
 data class TimetableDto(
     val creationDateTime: String,
@@ -23,8 +24,8 @@ data class TimetableDto(
         fun from(timetableTeachers: TimetableTeachers): TimetableDto {
 
             with(timetableTeachers) {
-                val creationDateTime = timetable[0].creationDateTime
-                val retrievalDateTime = timetable[0].retrievalDateTime
+                val creationDateTime = DateUtils.formatToISO8601(timetable[0].creationDateTime)
+                val retrievalDateTime = DateUtils.formatToISO8601(timetable[0].retrievalDateTime)
                 val school = SchoolDto(
                     timetable[0].school.name,
                     timetable[0].school.acr

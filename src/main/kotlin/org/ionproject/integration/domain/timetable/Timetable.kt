@@ -1,12 +1,13 @@
 package org.ionproject.integration.domain.timetable
 
-import org.ionproject.integration.domain.timetable.model.Course
 import org.ionproject.integration.domain.common.Programme
 import org.ionproject.integration.domain.common.School
+import org.ionproject.integration.domain.timetable.model.Course
+import java.time.ZonedDateTime
 
 data class Timetable(
-    var creationDateTime: String = "",
-    var retrievalDateTime: String = "",
+    var creationDateTime: ZonedDateTime,
+    var retrievalDateTime: ZonedDateTime,
     var school: School = School(),
     var programme: Programme = Programme(),
     var calendarTerm: String = "",

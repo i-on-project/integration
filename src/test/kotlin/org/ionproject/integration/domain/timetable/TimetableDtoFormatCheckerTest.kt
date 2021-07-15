@@ -1,24 +1,24 @@
 package org.ionproject.integration.domain.timetable
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.ionproject.integration.domain.timetable.model.ClassDetail
+import org.ionproject.integration.domain.common.Programme
+import org.ionproject.integration.domain.common.School
+import org.ionproject.integration.domain.common.Weekday
+import org.ionproject.integration.domain.common.dto.ProgrammeDto
+import org.ionproject.integration.domain.common.dto.SchoolDto
 import org.ionproject.integration.domain.timetable.dto.ClassDto
+import org.ionproject.integration.domain.timetable.dto.EventDto
+import org.ionproject.integration.domain.timetable.dto.InstructorDto
+import org.ionproject.integration.domain.timetable.dto.SectionDto
+import org.ionproject.integration.domain.timetable.dto.TimetableDto
+import org.ionproject.integration.domain.timetable.model.ClassDetail
 import org.ionproject.integration.domain.timetable.model.Course
 import org.ionproject.integration.domain.timetable.model.CourseTeacher
 import org.ionproject.integration.domain.timetable.model.EventCategory
-import org.ionproject.integration.domain.timetable.dto.EventDto
 import org.ionproject.integration.domain.timetable.model.Faculty
 import org.ionproject.integration.domain.timetable.model.Instructor
-import org.ionproject.integration.domain.timetable.dto.InstructorDto
 import org.ionproject.integration.domain.timetable.model.Label
-import org.ionproject.integration.domain.common.Programme
-import org.ionproject.integration.domain.common.dto.ProgrammeDto
 import org.ionproject.integration.domain.timetable.model.RecurrentEvent
-import org.ionproject.integration.domain.common.School
-import org.ionproject.integration.domain.common.dto.SchoolDto
-import org.ionproject.integration.domain.timetable.dto.SectionDto
-import org.ionproject.integration.domain.timetable.dto.TimetableDto
-import org.ionproject.integration.domain.common.Weekday
 import org.ionproject.integration.infrastructure.DateUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -113,8 +113,8 @@ internal class TimetableDtoFormatCheckerTest {
         val timetableTeachers = TimetableTeachers(
             listOf(
                 Timetable(
-                    DateUtils.formatToISO8601(date),
-                    DateUtils.formatToISO8601(date),
+                    date,
+                    date,
                     School(
                         "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                         "ISEL"
@@ -253,11 +253,12 @@ internal class TimetableDtoFormatCheckerTest {
 
     @Test
     fun `when Complex Business object is equal to expected Dto then Success`() {
+        val date = ZonedDateTime.of(2021, 4, 21, 20, 49, 16, 0, ZoneId.systemDefault())
         val timetableTeachers = TimetableTeachers(
             listOf(
                 Timetable(
-                    dateFormatted,
-                    dateFormatted,
+                    date,
+                    date,
                     School(
                         "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                         "ISEL"
@@ -324,8 +325,8 @@ internal class TimetableDtoFormatCheckerTest {
                     )
                 ),
                 Timetable(
-                    dateFormatted,
-                    dateFormatted,
+                    date,
+                    date,
                     School(
                         "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                         "ISEL"
