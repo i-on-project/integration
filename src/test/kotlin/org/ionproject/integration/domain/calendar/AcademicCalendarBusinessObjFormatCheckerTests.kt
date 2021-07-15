@@ -3,9 +3,11 @@ package org.ionproject.integration.domain.calendar
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.application.job.ISELAcademicCalendarJob
+import org.ionproject.integration.domain.common.CalendarTerm
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.Language
 import org.ionproject.integration.domain.common.School
+import org.ionproject.integration.domain.common.Term
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.repository.model.IInstitutionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -17,6 +19,7 @@ import java.io.File
 import java.net.URI
 import java.time.LocalDate
 import java.time.Month
+import java.time.Year
 import java.time.ZonedDateTime
 import javax.sql.DataSource
 
@@ -64,8 +67,8 @@ class AcademicCalendarBusinessObjFormatCheckerTests {
             School(institution.name, institution.acronym),
             Language.PT,
             listOf(
-                Term(
-                    "2020-2021-1",
+                TermEvents(
+                    CalendarTerm(Year.parse("2020"), Term.FALL),
                     listOf(
                         Event(
                             "Interrupção de atividades letivas (Natal)",
@@ -118,8 +121,8 @@ class AcademicCalendarBusinessObjFormatCheckerTests {
                         )
                     )
                 ),
-                Term(
-                    "2020-2021-2",
+                TermEvents(
+                    CalendarTerm(Year.parse("2020"), Term.SPRING),
                     listOf(
                         Event(
                             "Interrupção de atividades letivas (Páscoa)",

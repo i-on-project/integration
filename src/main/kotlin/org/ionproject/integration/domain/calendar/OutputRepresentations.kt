@@ -8,7 +8,7 @@ data class AcademicCalendarDto(
     val retrievalDateTime: String,
     val school: SchoolDto,
     val language: String,
-    val terms: List<TermDto>
+    val terms: List<TermEventsDto>
 ) {
     companion object {
         fun from(academicCalendar: AcademicCalendar): AcademicCalendarDto {
@@ -17,13 +17,13 @@ data class AcademicCalendarDto(
                 DateUtils.formatToISO8601(academicCalendar.retrievalDateTime),
                 SchoolDto(academicCalendar.school.name, academicCalendar.school.acr),
                 academicCalendar.language.value,
-                TermDto.from(academicCalendar.terms)
+                TermEventsDto.from(academicCalendar.terms)
             )
         }
     }
 }
 
-data class TermDto(
+data class TermEventsDto(
     val calendarTerm: String,
     val interruptions: List<EventDto>,
     val evaluations: List<EvaluationDto>,
@@ -31,9 +31,9 @@ data class TermDto(
     val otherEvents: List<EventDto>
 ) {
     companion object {
-        fun from(terms: List<Term>): List<TermDto> = terms.map {
-            TermDto(
-                it.calendarTerm,
+        fun from(terms: List<TermEvents>): List<TermEventsDto> = terms.map {
+            TermEventsDto(
+                calendarTerm = it.calendarTerm.toString(),
                 EventDto.from(it.interruptions),
                 EvaluationDto.from(it.evaluations),
                 LecturesDto.from(it.lectures),

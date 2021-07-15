@@ -44,7 +44,7 @@ internal class AcademicCalendarDtoFormatCheckerTests {
             SchoolDto("Instituto Superior Engenharia Lisboa", "ISEL"),
             "pt-PT",
             listOf(
-                TermDto(
+                TermEventsDto(
                     "2020-2021-1",
                     listOf(
                         EventDto(
@@ -98,7 +98,7 @@ internal class AcademicCalendarDtoFormatCheckerTests {
                         )
                     )
                 ),
-                TermDto(
+                TermEventsDto(
                     "2020-2021-2",
                     listOf(
                         EventDto(
@@ -220,7 +220,7 @@ internal class AcademicCalendarDtoFormatCheckerTests {
             SchoolDto("Instituto Superior de Engenharia de Lisboa", "ISEL"),
             "pt-PT",
             listOf(
-                TermDto(
+                TermEventsDto(
                     "2020-2021-1",
                     listOf(
                         EventDto(
@@ -274,7 +274,7 @@ internal class AcademicCalendarDtoFormatCheckerTests {
                         )
                     )
                 ),
-                TermDto(
+                TermEventsDto(
                     "2020-2021-2",
                     listOf(
                         EventDto(

@@ -1,12 +1,15 @@
 package org.ionproject.integration.domain.calendar
 
+import org.ionproject.integration.domain.common.CalendarTerm
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.Language
 import org.ionproject.integration.domain.common.School
+import org.ionproject.integration.domain.common.Term
 import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.infrastructure.IntervalDate
 import org.ionproject.integration.infrastructure.text.RegexUtils
 import java.time.LocalDate
+import java.time.Year
 import java.time.ZonedDateTime
 
 data class AcademicCalendar(
@@ -14,7 +17,7 @@ data class AcademicCalendar(
     val retrievalDateTime: ZonedDateTime,
     val school: School = School(),
     val language: Language = Language.PT,
-    val terms: List<Term> = listOf()
+    val terms: List<TermEvents> = listOf()
 ) {
     companion object {
         private const val EVENT_REGEX = """(?<=text":")[^"{}]+"""
@@ -39,14 +42,14 @@ data class AcademicCalendar(
                 buildTerms(rawCalendarData)
             )
 
-        private fun buildTerms(rawCalendarData: RawCalendarData): List<Term> {
-            val termList = mutableListOf<Term>()
+        private fun buildTerms(rawCalendarData: RawCalendarData): List<TermEvents> {
+            val termList = mutableListOf<TermEvents>()
             val tables = rawCalendarData.table.split(TABLE_DELIMITER)
             val term1 = parseTables(tables[1])
             val term2 = parseTables(tables[2] + tables[3])
 
-            termList.add(buildTerm(term1, rawCalendarData.textData[0], CalendarTerm.WINTER))
-            termList.add(buildTerm(term2, rawCalendarData.textData[0], CalendarTerm.SUMMER))
+            termList.add(buildTerm(term1, rawCalendarData.textData[0], Term.FALL))
+            termList.add(buildTerm(term2, rawCalendarData.textData[0], Term.SPRING))
 
             return termList
         }
@@ -54,7 +57,7 @@ data class AcademicCalendar(
         private fun parseTables(table: String): List<String> =
             RegexUtils.findMatches(EVENT_REGEX, table)
 
-        private fun buildTerm(events: List<String>, pdfRawText: String, term: CalendarTerm): Term {
+        private fun buildTerm(events: List<String>, pdfRawText: String, term: Term): TermEvents {
             val interruptions = mutableListOf<Event>()
             val evaluations = mutableListOf<Evaluation>()
             val otherEvents = mutableListOf<Event>()
@@ -99,18 +102,24 @@ data class AcademicCalendar(
                 }
             }
 
-            return Term(
-                RegexUtils.findMatches(CALENDAR_TERM_REGEX, pdfRawText)
-                    .first()
-                    .trim()
-                    .replace('/', '-')
-                    .plus("-${getTermNumber(term)}"),
+            return TermEvents(
+                CalendarTerm(
+                    getYear(pdfRawText),
+                    term
+                ),
                 interruptions,
                 evaluations,
                 lectures,
                 otherEvents
             )
         }
+
+        private fun getYear(pdfRawText: String) = Year.parse(
+            RegexUtils.findMatches(CALENDAR_TERM_REGEX, pdfRawText)
+                .first()
+                .trim()
+                .take(4)
+        )
 
         private fun getLectures(
             descriptions: List<IndexedValue<String>>,
@@ -156,12 +165,6 @@ data class AcademicCalendar(
             return DateUtils.getDateRange(eventDate)
         }
 
-        private fun getTermNumber(term: CalendarTerm) =
-            when (term) {
-                CalendarTerm.WINTER -> "1"
-                CalendarTerm.SUMMER -> "2"
-            }
-
         private fun getEventType(event: String): EventType {
             return when {
                 event.contains(PT_INTERRUPTION_REGEX.toRegex(RegexOption.IGNORE_CASE)) -> EventType.INTERRUPTION
@@ -181,8 +184,8 @@ data class AcademicCalendar(
     }
 }
 
-data class Term(
-    val calendarTerm: String = "",
+data class TermEvents(
+    val calendarTerm: CalendarTerm,
     val interruptions: List<Event>,
     val evaluations: List<Evaluation>,
     val lectures: List<Lectures>,
@@ -208,11 +211,6 @@ data class Lectures(
     val startDate: LocalDate,
     val endDate: LocalDate
 )
-
-enum class CalendarTerm {
-    WINTER,
-    SUMMER
-}
 
 enum class EventType {
     INTERRUPTION,
