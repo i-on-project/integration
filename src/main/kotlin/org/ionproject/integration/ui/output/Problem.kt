@@ -1,38 +1,43 @@
 package org.ionproject.integration.ui.output
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.ionproject.integration.infrastructure.exception.ArgumentException
+import org.ionproject.integration.infrastructure.exception.IntegrationException
+import org.ionproject.integration.infrastructure.exception.InvalidTokenException
 import org.ionproject.integration.infrastructure.exception.JobNotFoundException
+import org.ionproject.integration.infrastructure.exception.TokenMissingException
 import org.springframework.http.HttpStatus
 import javax.servlet.http.HttpServletRequest
 
-private const val ARGUMENT_EX_URI = "https://github.com/i-on-project/integration/blob/master/docs/infrastructure/ArgumentException.md"
-private const val JOB_NOT_FOUND_EX_URI = "https://github.com/i-on-project/integration/blob/master/docs/infrastructure/JobNotFoundException.md"
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Problem(
+    @JsonIgnore
+    val httpStatus: HttpStatus,
     val type: String,
-    val title: String,
-    val status: Int? = null,
+    val title: String = httpStatus.reasonPhrase,
+    val status: Int? = httpStatus.value(),
     val detail: String? = null,
     val instance: String? = null
 ) {
     companion object Factory {
-        fun of(argumentException: ArgumentException, request: HttpServletRequest): Problem =
-            Problem(
-                title = HttpStatus.BAD_REQUEST.reasonPhrase,
-                status = HttpStatus.BAD_REQUEST.value(),
-                detail = argumentException.message,
-                type = ARGUMENT_EX_URI,
-                instance = request.requestURI
-            )
+        fun of(exception: IntegrationException, request: HttpServletRequest): Problem =
+            when (exception) {
+                is ArgumentException -> generateProblem(exception, HttpStatus.BAD_REQUEST, request)
+                is InvalidTokenException -> generateProblem(exception, HttpStatus.FORBIDDEN, request)
+                is JobNotFoundException -> generateProblem(exception, HttpStatus.NOT_FOUND, request)
+                is TokenMissingException -> generateProblem(exception, HttpStatus.UNAUTHORIZED, request)
+            }
 
-        fun of(jobNotFoundException: JobNotFoundException, request: HttpServletRequest): Problem {
+        private fun generateProblem(
+            exception: IntegrationException,
+            httpStatus: HttpStatus,
+            request: HttpServletRequest
+        ): Problem {
             return Problem(
-                title = HttpStatus.NOT_FOUND.reasonPhrase,
-                status = HttpStatus.NOT_FOUND.value(),
-                detail = jobNotFoundException.message,
-                type = JOB_NOT_FOUND_EX_URI,
+                httpStatus = httpStatus,
+                detail = exception.message,
+                type = exception.definitionUri.toString(),
                 instance = request.requestURI
             )
         }

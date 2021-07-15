@@ -1,5 +1,7 @@
 package org.ionproject.integration.infrastructure.exception
 
-sealed class IntegrationException(message: String) : RuntimeException(message)
+import java.net.URI
 
-class ArgumentException(message: String) : IntegrationException(message)
+sealed class IntegrationException(message: String) : RuntimeException(message) {
+    abstract val definitionUri: URI
+}
