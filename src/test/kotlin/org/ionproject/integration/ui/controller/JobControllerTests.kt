@@ -83,7 +83,7 @@ class JobControllerTests {
 
         whenever(jobEngine.getRunningJobs()) doReturn listOf(mockJob1, mockJob2)
 
-        mockMvc.perform(get("$contextPath$JOBS_URI").contextPath(contextPath))
+        mockMvc.perform(get("$contextPath$JOBS_RESOURCE").contextPath(contextPath))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(containsString(expectedResponse)))
@@ -101,12 +101,12 @@ class JobControllerTests {
         val expectedResponse = """{"location":"http://localhost/integration/jobs/1","status":"CREATED"}"""
 
         mockMvc.perform(
-            post("$contextPath$JOBS_URI").contextPath(contextPath)
+            post("$contextPath$JOBS_RESOURCE").contextPath(contextPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}")
         )
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", """http://localhost$contextPath$JOBS_URI/1"""))
+            .andExpect(header().string("Location", """http://localhost$contextPath$JOBS_RESOURCE/1"""))
             .andExpect(content().string(containsString(expectedResponse)))
     }
 
@@ -118,7 +118,7 @@ class JobControllerTests {
             """{"type":"https://github.com/i-on-project/integration/blob/master/docs/infrastructure/ArgumentException.md","title":"Bad Request","status":400,"detail":"You've been a bad, bad boy!","instance":"/integration/jobs""""
 
         mockMvc.perform(
-            post("$contextPath$JOBS_URI").contextPath(contextPath)
+            post("$contextPath$JOBS_RESOURCE").contextPath(contextPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}")
         )
