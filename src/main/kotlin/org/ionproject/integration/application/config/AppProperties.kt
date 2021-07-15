@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
 import javax.validation.constraints.NotEmpty
 
+const val PROJECT_DOCUMENTATION_ROOT = "https://github.com/i-on-project/integration/blob/master/docs/infrastructure/"
+
 @Component
 @ConfigurationProperties(prefix = "ion")
 @Validated
@@ -33,6 +35,9 @@ class AppProperties {
 
     @NotEmpty
     lateinit var gitBranchName: String
+
+    @NotEmpty
+    lateinit var token: String
 
     val gitRepoUrl by lazy { "$gitServer$gitRepository.git" }
 

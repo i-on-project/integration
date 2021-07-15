@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-internal const val JOBS_URI = "/jobs"
+internal const val JOBS_RESOURCE = "/jobs"
 private const val HTTP_PORT = 80
 
 @RestController
-@RequestMapping(JOBS_URI)
+@RequestMapping(JOBS_RESOURCE)
 class JobController(
     val jobEngine: JobEngine,
     val inputProcessor: InputProcessor,
@@ -77,6 +77,6 @@ class JobController(
     private fun HttpServletRequest.getLocationForJobRequest(jobStatus: JobEngine.JobStatus): String {
         val portField = if (serverPort != HTTP_PORT) ":$serverPort" else ""
 
-        return "$scheme://$serverName$portField$contextPath$JOBS_URI/${jobStatus.jobId}"
+        return "$scheme://$serverName$portField$contextPath$JOBS_RESOURCE/${jobStatus.jobId}"
     }
 }
