@@ -1,12 +1,5 @@
 package org.ionproject.integration.application.job.tasklet
 
-import com.icegreen.greenmail.util.DummySSLSocketFactory
-import com.icegreen.greenmail.util.GreenMail
-import com.icegreen.greenmail.util.ServerSetupTest
-import java.io.File
-import java.lang.reflect.UndeclaredThrowableException
-import java.security.Security
-import java.time.Instant
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.application.JobEngine.Companion.JOB_HASH_PARAMETER
 import org.ionproject.integration.application.JobEngine.Companion.TIMESTAMP_PARAMETER
@@ -16,7 +9,6 @@ import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.application.job.chunkbased.SpringBatchTestUtils
 import org.junit.FixMethodOrder
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -39,6 +31,9 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.io.File
+import java.lang.reflect.UndeclaredThrowableException
+import java.time.Instant
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
@@ -222,23 +217,8 @@ internal class DownloadAndCompareTaskletUrlNotPdfTest {
 
     val utils = SpringBatchTestUtils()
 
-    private lateinit var testSmtp: GreenMail
-
-    @BeforeEach
-    fun testSmtpInit() {
-        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
-        testSmtp = GreenMail(ServerSetupTest.SMTP)
-        testSmtp.start()
-    }
-
-    @AfterEach
-    fun stopMailServer() {
-        testSmtp.stop()
-    }
-
     @Test
     fun whenUrlIsNotPdf_ThenAssertExceptionIsInvalidFormatAndPathIsNotIncludedInContext() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val localFileDestination = appProperties.tempFilesDir.path
         val pathKey = "file-path"
         val ec = utils.createExecutionContext()
@@ -294,20 +274,6 @@ internal class DownloadAndCompareTaskletServerErrorTest {
     }
 
     val utils = SpringBatchTestUtils()
-
-    private lateinit var testSmtp: GreenMail
-
-    @BeforeEach
-    fun testSmtpInit() {
-        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
-        testSmtp = GreenMail(ServerSetupTest.SMTP)
-        testSmtp.start()
-    }
-
-    @AfterEach
-    fun stopMailServer() {
-        testSmtp.stop()
-    }
 
     private fun initJobParameters(): JobParameters {
         return JobParametersBuilder()

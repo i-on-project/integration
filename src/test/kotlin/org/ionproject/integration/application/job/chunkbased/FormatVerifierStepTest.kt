@@ -1,23 +1,12 @@
 package org.ionproject.integration.application.job.chunkbased
 
-import com.icegreen.greenmail.util.DummySSLSocketFactory
-import com.icegreen.greenmail.util.GreenMail
-import com.icegreen.greenmail.util.GreenMailUtil
-import com.icegreen.greenmail.util.ServerSetupTest
-import java.io.File
-import java.lang.reflect.UndeclaredThrowableException
-import java.nio.file.Paths
-import java.security.Security
-import java.time.Instant
-import javax.mail.internet.MimeMessage
 import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
 import org.ionproject.integration.infrastructure.CompositeException
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,6 +23,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.io.File
+import java.lang.reflect.UndeclaredThrowableException
+import java.nio.file.Paths
+import java.time.Instant
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(
@@ -75,23 +68,8 @@ class FormatVerifierStepTestSuccessful {
         "[{\"extraction_method\":\"lattice\",\"top\":70.61023,\"left\":56.7,\"width\":481.9666748046875,\"height\":38.750816345214844,\"right\":538.6667,\"bottom\":109.361046,\"data\":[[{\"top\":70.61023,\"left\":56.7,\"width\":240.90000915527344,\"height\":19.450233459472656,\"text\":\"Table header 1\"},{\"top\":70.61023,\"left\":297.6,\"width\":241.06668090820312,\"height\":19.450233459472656,\"text\":\"Table header 2\"}],[{\"top\":90.06046,\"left\":56.7,\"width\":240.90000915527344,\"height\":19.300582885742188,\"text\":\"1\"},{\"top\":90.06046,\"left\":297.6,\"width\":241.06668090820312,\"height\":19.300582885742188,\"text\":\"2\"}]]}]"
     private val text = listOf("Turma: LI11D Ano Letivo: 2019/20-Verão\nTable header 1 Table header 2\n1 2")
 
-    private lateinit var testSmtp: GreenMail
-
-    @BeforeEach
-    fun testSmtpInit() {
-        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
-        testSmtp = GreenMail(ServerSetupTest.SMTP)
-        testSmtp.start()
-    }
-
-    @AfterEach
-    fun stopMailServer() {
-        testSmtp.stop()
-    }
-
     @Test
     fun whenStepIsSuccessful_thenAssertFileDoesNotExistAndRawDataIsCompleteAndHashIsInContext() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         // Arrange
         val src = File("src/test/resources/formatTest.pdf".replace("/", File.separator))
         val temp = File("src/test/resources/formatVerifierStepTestSuccess.pdf".replace("/", File.separator))
@@ -159,24 +137,9 @@ internal class FormatVerifierStepTestUnexistingFile {
 
     private val utils = SpringBatchTestUtils()
 
-    private lateinit var testSmtp: GreenMail
-
-    @BeforeEach
-    fun testSmtpInit() {
-        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
-        testSmtp = GreenMail(ServerSetupTest.SMTP)
-        testSmtp.start()
-    }
-
-    @AfterEach
-    fun stopMailServer() {
-        testSmtp.stop()
-    }
-
     @Test
     fun whenFileDoesntExist_thenAssertThrowsException() {
         // Arrange
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val se = utils.createStepExecution()
         se.jobExecution.executionContext.put("file-path", Paths.get("src/test/resources/UnexistingFile.pdf"))
 
@@ -236,24 +199,10 @@ internal class FormatVerifierStepTestInvalidFormat {
     }
 
     private val utils = SpringBatchTestUtils()
-    private lateinit var testSmtp: GreenMail
-
-    @BeforeEach
-    fun testSmtpInit() {
-        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
-        testSmtp = GreenMail(ServerSetupTest.SMTP)
-        testSmtp.start()
-    }
-
-    @AfterEach
-    fun stopMailServer() {
-        testSmtp.stop()
-    }
 
     @Test
     fun `when file has invalid format then assert an exception is thrown`() {
         // Arrange
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val src = File("src/test/resources/test.pdf".replace("/", File.separator))
         val temp = File("src/test/resources/formatVerifierStepTestTemp.pdf".replace("/", File.separator))
         try {
@@ -283,7 +232,6 @@ internal class FormatVerifierStepTestInvalidFormat {
     @Test
     fun `when File has invalid format then assert mail is sent`() {
         // Arrange
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         val src = File("src/test/resources/test.pdf".replace("/", File.separator))
         val temp = File("src/test/resources/formatVerifierStepTestTemp2.pdf".replace("/", File.separator))
         try {
@@ -306,13 +254,6 @@ internal class FormatVerifierStepTestInvalidFormat {
 
             // Assert
             assertEquals(ExitStatus.FAILED.exitCode, je.exitStatus.exitCode)
-            val messages: Array<MimeMessage> = testSmtp.receivedMessages
-            assertEquals(1, messages.size)
-            assertEquals("i-on integration Alert - Job FAILED", messages[0].subject)
-            assertTrue(
-                GreenMailUtil.getBody(messages[0])
-                    .contains("FAILED for file: LEIC_0310.pdf with message The timetable header changed its format")
-            )
         } finally {
             assertFalse(temp.delete())
         }
@@ -353,23 +294,8 @@ internal class FormatVerifierStepTestEmptyPath {
 
     private val utils = SpringBatchTestUtils()
 
-    private lateinit var testSmtp: GreenMail
-
-    @BeforeEach
-    fun testSmtpInit() {
-        Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory::class.java.name)
-        testSmtp = GreenMail(ServerSetupTest.SMTP)
-        testSmtp.start()
-    }
-
-    @AfterEach
-    fun stopMailServer() {
-        testSmtp.stop()
-    }
-
     @Test
     fun whenPathIsEmpty_thenAssertThrowsException() {
-        testSmtp.setUser("alert-mailbox@domain.com", "changeit")
         // Arrange
         val jp = initJobParameters()
         val se = utils.createStepExecution()
