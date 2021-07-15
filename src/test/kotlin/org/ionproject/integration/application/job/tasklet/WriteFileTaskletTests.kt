@@ -3,18 +3,15 @@ package org.ionproject.integration.application.job.tasklet
 import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.application.job.ISELTimetableJob
+import org.ionproject.integration.application.job.chunkbased.SpringBatchTestUtils
 import org.ionproject.integration.domain.common.Programme
-import org.ionproject.integration.domain.common.dto.ProgrammeDto
 import org.ionproject.integration.domain.common.School
+import org.ionproject.integration.domain.common.dto.ProgrammeDto
 import org.ionproject.integration.domain.common.dto.SchoolDto
 import org.ionproject.integration.domain.timetable.Timetable
-import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.ionproject.integration.domain.timetable.TimetableTeachers
-import org.ionproject.integration.application.job.chunkbased.SpringBatchTestUtils
-import org.ionproject.integration.infrastructure.text.JsonUtils
-import org.ionproject.integration.infrastructure.orThrow
+import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -30,15 +27,15 @@ import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.batch.test.MetaDataInstanceFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.io.File
+import java.time.ZonedDateTime
 
 internal class WriteFileTaskletTestFixtures {
     companion object {
         val timetableTeachers = TimetableTeachers(
             listOf(
                 Timetable(
-                    "20210421T204916Z",
-                    "20210421T204916Z",
+                    ZonedDateTime.parse("2021-04-21T20:49:16Z"),
+                    ZonedDateTime.parse("2021-04-21T20:49:16Z"),
                     School(
                         "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                         "ISEL"
@@ -84,8 +81,8 @@ class WriteFileTaskletTests {
     @BeforeEach
     fun setUp() {
         timetableDto = TimetableDto(
-            "20210421T204916Z",
-            "20210421T204916Z",
+            "2021-04-21-T20:49:16Z",
+            "2021-04-21T20:49:16Z",
             SchoolDto(
                 "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                 "ISEL"
@@ -112,20 +109,6 @@ class WriteFileTaskletTests {
     }
 
     @Test
-    fun `when write file to disk then if file exists returns success`() {
-        val localFilePath = "src/test/resources/timetable.json"
-        val file = File(localFilePath)
-        try {
-            file.writeText(
-                JsonUtils.toJson(state.timetableTeachers.timetable[0]).orThrow()
-            )
-            assertTrue(file.exists())
-        } finally {
-            file.deleteOnExit()
-        }
-    }
-
-    @Test
     fun `when dispatcher returns success then execute tasklet execution ends`() {
 
         assertEquals(RepeatStatus.FINISHED, writeFileTaskletSuccess.execute(stepContribution, chunkContext))
@@ -140,8 +123,8 @@ class WriteFileTaskletTests {
     fun `when calendar term is not expected then execute fail`() {
 
         val badTimetableDto = TimetableDto(
-            "20210421T204916Z",
-            "20210421T204916Z",
+            "2021-04-21T20:49:16Z",
+            "2021-04-21T20:49:16Z",
             SchoolDto(
                 "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
                 "ISEL"
