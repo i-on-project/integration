@@ -1,17 +1,17 @@
 package org.ionproject.integration.application.job.tasklet
 
 import org.ionproject.integration.application.JobEngine
-import org.ionproject.integration.application.job.ISELTimetableJob
-import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
-import org.ionproject.integration.application.dto.CalendarTerm
 import org.ionproject.integration.application.dispatcher.DispatchResult
 import org.ionproject.integration.application.dispatcher.IDispatcher
+import org.ionproject.integration.application.dto.CalendarTermDto
 import org.ionproject.integration.application.dto.InstitutionMetadata
-import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.ionproject.integration.application.dto.ProgrammeMetadata
-import org.ionproject.integration.domain.common.Term
 import org.ionproject.integration.application.dto.TimetableData
+import org.ionproject.integration.application.job.ISELTimetableJob
+import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
+import org.ionproject.integration.domain.common.Validator
 import org.ionproject.integration.domain.timetable.dto.TimetableDto
+import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.StepContribution
@@ -53,6 +53,10 @@ class WriteFileTasklet(
     }
 
     internal fun generateTimetableDataFromDto(timetableDto: TimetableDto): TimetableData {
+        val term = timetableDto.calendarTerm.takeLast(1).toInt()
+        if (Validator.isNotValidTerm(term))
+            throw IllegalArgumentException("Invalid term description: $term")
+
         return TimetableData(
             ProgrammeMetadata(
                 InstitutionMetadata(
@@ -63,13 +67,9 @@ class WriteFileTasklet(
                 timetableDto.programme.name,
                 timetableDto.programme.acr
             ),
-            CalendarTerm(
+            CalendarTermDto(
                 timetableDto.calendarTerm.take(4).toInt(),
-                when (timetableDto.calendarTerm.takeLast(1).toInt()) {
-                    1 -> Term.FALL
-                    2 -> Term.SPRING
-                    else -> throw IllegalArgumentException("Invalid Term ${timetableDto.calendarTerm}")
-                }
+                term
             ),
             timetableDto
         )

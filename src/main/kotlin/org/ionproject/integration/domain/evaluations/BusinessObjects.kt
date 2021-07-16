@@ -1,15 +1,18 @@
 package org.ionproject.integration.domain.evaluations
 
 import com.squareup.moshi.Types
+import org.ionproject.integration.domain.common.CalendarTerm
 import org.ionproject.integration.domain.common.Programme
 import org.ionproject.integration.domain.common.ProgrammeModel
 import org.ionproject.integration.domain.common.School
+import org.ionproject.integration.domain.common.Term
 import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.infrastructure.Try
 import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.tabula.Table
 import org.ionproject.integration.infrastructure.text.JsonUtils
 import org.ionproject.integration.infrastructure.text.RegexUtils
+import java.time.Year
 import java.time.ZonedDateTime
 
 data class Evaluations(
@@ -17,7 +20,7 @@ data class Evaluations(
     val retrievalDateTime: ZonedDateTime,
     val school: School,
     val programme: Programme,
-    val calendarTerm: String = "",
+    val calendarTerm: CalendarTerm,
     val exams: List<Exam>
 ) {
     companion object {
@@ -44,25 +47,26 @@ data class Evaluations(
             )
         }
 
-        private fun getCalendarYear(calendarTerm: String) =
-            when (val termNumber = calendarTerm.last()) {
-                '1' -> calendarTerm.take(4)
-                '2' -> calendarTerm.substring(5, 9)
+        private fun getCalendarYear(calendarTerm: CalendarTerm) =
+            when (val termNumber = calendarTerm.term) {
+                Term.FALL -> calendarTerm.startYear.value.toString()
+                Term.SPRING -> (calendarTerm.startYear.value + 1).toString()
                 else -> throw IllegalArgumentException("Invalid term description: $termNumber")
             }
 
-        private fun buildCalendarTerm(rawEvaluationsData: RawEvaluationsData): String {
+        private fun buildCalendarTerm(rawEvaluationsData: RawEvaluationsData): CalendarTerm {
             val calendarTerm =
                 RegexUtils.findMatches(CALENDAR_TERM_REGEX, rawEvaluationsData.textData.toString()).first()
-                    .replace("/", "-")
 
-            val termNumber = when (val termType = calendarTerm.substringBefore(" ").lowercase()) {
-                WINTER_TERM -> 1
-                SUMMER_TERM -> 2
+            // Parses string as "verão 2020/2021"
+            val year = Year.parse(calendarTerm.substringAfter(" ").take(4))
+            val term = when (val termType = calendarTerm.substringBefore(" ").lowercase()) {
+                WINTER_TERM -> Term.FALL
+                SUMMER_TERM -> Term.SPRING
                 else -> throw IllegalArgumentException("Invalid term description: $termType")
             }
 
-            return calendarTerm.substringAfter(" ") + "-" + termNumber
+            return CalendarTerm(year, term)
         }
 
         private fun buildExamList(

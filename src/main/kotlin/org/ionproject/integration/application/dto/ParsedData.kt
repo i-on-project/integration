@@ -1,7 +1,6 @@
 package org.ionproject.integration.application.dto
 
 import org.ionproject.integration.domain.calendar.AcademicCalendarDto
-import org.ionproject.integration.domain.common.Term
 import org.ionproject.integration.domain.evaluations.EvaluationsDto
 import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.ionproject.integration.infrastructure.file.Filepath
@@ -18,7 +17,7 @@ sealed class ParsedData(val data: Any) {
 
 data class TimetableData(
     val programme: ProgrammeMetadata,
-    val term: CalendarTerm,
+    val term: CalendarTermDto,
     private val dto: TimetableDto
 ) : ParsedData(dto) {
 
@@ -79,7 +78,7 @@ data class AcademicCalendarData(
 
     data class EvaluationsData(
         val programme: ProgrammeMetadata,
-        val term: CalendarTerm,
+        val term: CalendarTermDto,
         private val dto: EvaluationsDto
     ) : ParsedData(dto) {
         companion object Factory {
@@ -97,13 +96,9 @@ data class AcademicCalendarData(
                         evaluationsDto.programme.name,
                         evaluationsDto.programme.acr
                     ),
-                    CalendarTerm(
+                    CalendarTermDto(
                         evaluationsDto.calendarTerm.take(4).toInt(),
-                        when (evaluationsDto.calendarTerm.takeLast(1).toInt()) {
-                            1 -> Term.FALL
-                            2 -> Term.SPRING
-                            else -> throw IllegalArgumentException("Invalid Term ${evaluationsDto.calendarTerm}")
-                        }
+                        evaluationsDto.calendarTerm.takeLast(1).toInt()
                     ),
                     evaluationsDto
                 )

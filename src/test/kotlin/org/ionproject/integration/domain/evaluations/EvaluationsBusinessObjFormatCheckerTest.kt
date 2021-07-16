@@ -3,11 +3,13 @@ package org.ionproject.integration.domain.evaluations
 import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.dispatcher.IDispatcher
 import org.ionproject.integration.application.job.ISELEvaluationsJob
+import org.ionproject.integration.domain.common.CalendarTerm
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.domain.common.Programme
 import org.ionproject.integration.domain.common.ProgrammeModel
 import org.ionproject.integration.domain.common.ProgrammeResources
 import org.ionproject.integration.domain.common.School
+import org.ionproject.integration.domain.common.Term
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.repository.model.IInstitutionRepository
 import org.ionproject.integration.infrastructure.repository.model.IProgrammeRepository
@@ -18,6 +20,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import java.io.File
 import java.net.URI
+import java.time.Year
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.sql.DataSource
@@ -87,11 +90,14 @@ class EvaluationsBusinessObjFormatCheckerTest {
                     "Licenciatura em Engenharia Informática e de Computadores",
                     "LEIC"
                 ),
-                "2020-2021-2",
+                CalendarTerm(
+                    Year.parse("2020"),
+                    Term.SPRING
+                ),
                 listOf(
                     Exam(
                         "AApl",
-                        ZonedDateTime.of(2021, 7, 7, 10, 0, 0, 0, ZoneId.systemDefault()),
+                        ZonedDateTime.of(2021, 7, 7, 10, 0, 0, 0, ZoneId.of("Portugal")),
                         ZonedDateTime.of(2021, 7, 7, 13, 0, 0, 0, ZoneId.systemDefault()),
                         ExamCategory.EXAM_NORMAL,
                         ""
