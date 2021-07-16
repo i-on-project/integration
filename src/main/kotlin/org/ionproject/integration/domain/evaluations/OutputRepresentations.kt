@@ -25,7 +25,7 @@ data class EvaluationsDto(
                     evaluations.programme.name,
                     evaluations.programme.acr
                 ),
-                evaluations.calendarTerm,
+                evaluations.calendarTerm.toString(),
                 ExamDto.from(evaluations.exams)
             )
         }

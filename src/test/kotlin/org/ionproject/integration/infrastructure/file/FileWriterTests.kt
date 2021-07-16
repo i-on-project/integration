@@ -1,7 +1,7 @@
 package org.ionproject.integration.infrastructure.file
 
 import org.ionproject.integration.application.config.AppProperties
-import org.ionproject.integration.application.dto.CalendarTerm
+import org.ionproject.integration.application.dto.CalendarTermDto
 import org.ionproject.integration.application.dto.InstitutionMetadata
 import org.ionproject.integration.application.dto.ProgrammeMetadata
 import org.ionproject.integration.application.dto.TimetableData
@@ -131,4 +131,4 @@ private val timetable = TimetableDto(
 
 private val institution = InstitutionMetadata("Instituto Superior de Engenharia de Lisboa", "ISEL", "pt.ipl.isel")
 private val programmeMetadata = ProgrammeMetadata(institution, "Eng. Informática e de Computadores", "LEIC")
-val meta = TimetableData(programmeMetadata, CalendarTerm(2020, Term.SPRING), timetable)
+val meta = TimetableData(programmeMetadata, CalendarTermDto(2020, Term.SPRING.number), timetable)

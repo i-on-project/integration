@@ -19,7 +19,7 @@ object DateUtils {
     private const val CALENDAR_SIMPLE_FORMAT = "yyyy-MM-dd"
     private const val PT_DATA_RANGE_DELIMITERS_REGEX = "\\b(?:\\sa\\s|\\se\\s)\\b"
     private const val PT_DATE_DELIMITER = " de "
-    private const val CALENDAR_ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ssX"
+    private const val CALENDAR_ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss[X]"
 
     private val localePT = Locale
         .Builder()
@@ -60,7 +60,7 @@ object DateUtils {
         zonedDateTime.format(DateTimeFormatter.ofPattern(CALENDAR_ISO8601_FORMAT))
 
     fun formatToISO8601(localDateTime: LocalDateTime): String {
-        val zonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.systemDefault())
+        val zonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.of("Portugal"))
         return formatToISO8601(zonedDateTime)
     }
 
@@ -109,9 +109,9 @@ object DateUtils {
         val rawDate = "${dayMonth.split(".").first()} $year"
         val date = LocalDate.parse(rawDate, dateFormat)
 
-        val startDateTime = ZonedDateTime.of(LocalDateTime.of(date, timeParsed), ZoneId.systemDefault())
+        val startDateTime = ZonedDateTime.of(LocalDateTime.of(date, timeParsed), ZoneId.of("Portugal"))
         val endDateTime =
-            ZonedDateTime.of(LocalDateTime.of(date, addToStartTime(timeParsed, durationParsed)), ZoneId.systemDefault())
+            ZonedDateTime.of(LocalDateTime.of(date, addToStartTime(timeParsed, durationParsed)), ZoneId.of("Portugal"))
         return IntervalDateTime(startDateTime, endDateTime)
     }
 
@@ -119,12 +119,12 @@ object DateUtils {
         time.plusHours(duration.hour.toLong()).plusMinutes(duration.minute.toLong())
 
     private fun buildBeginDate(string: String, month: Month, year: Int): LocalDate {
-        if (isMonthAndYearUnavailable(string))
-            return LocalDate.of(year, month, string.toInt())
+        return if (isMonthAndYearUnavailable(string))
+            LocalDate.of(year, month, string.toInt())
         else if (isYearUnavailable(string))
-            return getDateFrom(string + PT_DATE_DELIMITER + year)
+            getDateFrom(string + PT_DATE_DELIMITER + year)
         else
-            return getDateFrom(string)
+            getDateFrom(string)
     }
 
     private fun isYearUnavailable(string: String): Boolean = string.trim().takeLast(4).toIntOrNull() == null
