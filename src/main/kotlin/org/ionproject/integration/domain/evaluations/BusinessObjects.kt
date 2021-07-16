@@ -8,12 +8,12 @@ import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.domain.common.Term
 import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.infrastructure.Try
-import org.ionproject.integration.infrastructure.Zone
 import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.tabula.Table
 import org.ionproject.integration.infrastructure.text.JsonUtils
 import org.ionproject.integration.infrastructure.text.RegexUtils
 import java.time.Year
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 data class Evaluations(
@@ -29,12 +29,12 @@ data class Evaluations(
         private const val SUMMER_TERM = "verão"
         private const val WINTER_TERM = "inverno"
 
-        fun from(rawEvaluationsData: RawEvaluationsData, jobProgramme: ProgrammeModel, timeZone: Zone): Evaluations {
+        fun from(rawEvaluationsData: RawEvaluationsData, jobProgramme: ProgrammeModel, timeZone: String): Evaluations {
             val calendarTerm = buildCalendarTerm(rawEvaluationsData)
 
             return Evaluations(
                 creationDateTime = ZonedDateTime.parse(rawEvaluationsData.creationDate),
-                ZonedDateTime.now(),
+                ZonedDateTime.now(ZoneId.of(timeZone)),
                 School(
                     jobProgramme.institutionModel.name,
                     jobProgramme.institutionModel.acronym
@@ -74,7 +74,7 @@ data class Evaluations(
             rawEvaluationsData: RawEvaluationsData,
             jobProgramme: ProgrammeModel,
             year: String,
-            timeZone: Zone
+            timeZone: String
         ): List<Exam> =
             rawEvaluationsData.table.toTableList().map { getExamsFromTable(it, jobProgramme.acronym, year, timeZone) }.orThrow()
 
@@ -85,7 +85,7 @@ data class Evaluations(
             tableList: List<Table>,
             programmeAcronym: String,
             year: String,
-            timeZone: Zone
+            timeZone: String
         ): List<Exam> {
             val examList = mutableListOf<Exam>()
             for (table in tableList) {

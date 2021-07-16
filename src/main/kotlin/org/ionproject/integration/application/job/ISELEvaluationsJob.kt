@@ -12,7 +12,6 @@ import org.ionproject.integration.domain.evaluations.Evaluations
 import org.ionproject.integration.domain.evaluations.EvaluationsDto
 import org.ionproject.integration.domain.evaluations.RawEvaluationsData
 import org.ionproject.integration.infrastructure.Try
-import org.ionproject.integration.infrastructure.Zone
 import org.ionproject.integration.infrastructure.file.FileComparatorImpl
 import org.ionproject.integration.infrastructure.file.FileDigestImpl
 import org.ionproject.integration.infrastructure.file.OutputFormat
@@ -116,7 +115,7 @@ class ISELEvaluationsJob(
     fun createEvaluationsPDFBusinessObjectsTasklet() =
         stepBuilderFactory.get("Create Business Objects from Evaluations Raw Data")
             .tasklet { _, context ->
-                State.evaluations = Evaluations.from(State.rawEvaluationsData, getJobProgramme(context), Zone.Portugal) // TODO: get this from raw data
+                State.evaluations = Evaluations.from(State.rawEvaluationsData, getJobProgramme(context), "Europe/Lisbon") // TODO: get this from raw data
                 RepeatStatus.FINISHED
             }
             .build()
