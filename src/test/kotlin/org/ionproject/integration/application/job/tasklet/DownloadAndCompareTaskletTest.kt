@@ -135,6 +135,7 @@ internal class DownloadAndCompareTaskletDownloadSuccessfulButHashTheSameAsRecord
     ]
 )
 @TestPropertySource("classpath:application.properties")
+@SpringBootTest
 internal class DownloadAndCompareTaskletMissingPropertiesTest {
 
     @Autowired
@@ -193,6 +194,7 @@ internal class DownloadAndCompareTaskletMissingPropertiesTest {
     ]
 )
 @TestPropertySource("classpath:application.properties")
+@SpringBootTest
 internal class DownloadAndCompareTaskletUrlNotPdfTest {
 
     @Autowired

@@ -2,7 +2,9 @@ package org.ionproject.integration.ui.controller
 
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
+import org.ionproject.integration.IOnIntegrationApplication
 import org.ionproject.integration.application.JobEngine
+import org.ionproject.integration.application.config.AppProperties
 import org.ionproject.integration.application.job.JobType
 import org.ionproject.integration.domain.common.InstitutionModel
 import org.ionproject.integration.infrastructure.exception.ArgumentException
@@ -16,10 +18,12 @@ import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockServletContext
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -33,6 +37,8 @@ import java.time.LocalDateTime
 
 @WebMvcTest
 @TestPropertySource("classpath:application.properties")
+@AutoConfigureMockMvc(addFilters = false)
+@ContextConfiguration(classes = [IOnIntegrationApplication::class, AppProperties::class])
 class JobControllerTests {
     @MockBean
     private lateinit var jobEngine: JobEngine

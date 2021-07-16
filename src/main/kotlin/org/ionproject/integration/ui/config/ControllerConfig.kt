@@ -1,7 +1,6 @@
 package org.ionproject.integration.ui.config
 
 import org.ionproject.integration.infrastructure.exception.IntegrationException
-import org.ionproject.integration.infrastructure.exception.TokenMissingException
 import org.ionproject.integration.ui.output.Problem
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -25,18 +24,6 @@ class ControllerConfig : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [IntegrationException::class])
     fun handleIntegrationException(exception: IntegrationException, request: WebRequest): ResponseEntity<Problem> {
-        logError(request, exception)
-
-        val problem = Problem.of(exception, (request as ServletWebRequest).request)
-
-        return ResponseEntity
-            .status(problem.httpStatus)
-            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-            .body(problem)
-    }
-
-    @ExceptionHandler(value = [TokenMissingException::class])
-    fun handleTokenMissingException(exception: TokenMissingException, request: WebRequest): ResponseEntity<Problem> {
         logError(request, exception)
 
         val problem = Problem.of(exception, (request as ServletWebRequest).request)
