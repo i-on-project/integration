@@ -60,7 +60,7 @@ object DateUtils {
         zonedDateTime.format(DateTimeFormatter.ofPattern(CALENDAR_ISO8601_FORMAT))
 
     fun formatToISO8601(localDateTime: LocalDateTime): String {
-        val zonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.of("Portugal"))
+        val zonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.of("UTC"))
         return formatToISO8601(zonedDateTime)
     }
 
@@ -110,15 +110,12 @@ object DateUtils {
         val rawDate = "${dayMonth.split(".").first()} $year"
         val date = LocalDate.parse(rawDate, dateFormat)
 
-/*        val startDateTime = ZonedDateTime.of(LocalDateTime.of(date, timeParsed), ZoneId.of("Portugal"))
-        val endDateTime =
-            ZonedDateTime.of(LocalDateTime.of(date, addToStartTime(timeParsed, durationParsed)), ZoneId.of("Portugal"))*/
         val startDateTime = convertDateToUTC(LocalDateTime.of(date, timeParsed), timeZone)
         val endDateTime = convertDateToUTC(LocalDateTime.of(date, addToStartTime(timeParsed, durationParsed)), timeZone)
         return IntervalDateTime(startDateTime, endDateTime)
     }
 
-    private fun convertDateToUTC(datetime: LocalDateTime, oldZone: Zone): ZonedDateTime {
+    fun convertDateToUTC(datetime: LocalDateTime, oldZone: Zone): ZonedDateTime {
         val oldZoneId = ZoneId.of(oldZone.name)
         val newZoneId = ZoneId.of("UTC")
         return ZonedDateTime.of(datetime.atZone(oldZoneId).withZoneSameInstant(newZoneId).toLocalDateTime(), newZoneId)
