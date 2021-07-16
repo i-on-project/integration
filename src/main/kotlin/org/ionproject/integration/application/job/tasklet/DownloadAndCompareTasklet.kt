@@ -60,7 +60,8 @@ class DownloadAndCompareTasklet(
             throw DownloadAndCompareTaskletException("Specified path $localFileDestination is a directory")
         }
         if (file.exists()) {
-            throw DownloadAndCompareTaskletException("File already exists in $localFileDestination")
+            log.warn("File already exists in $localFileDestination. Deleting...")
+            file.delete()
         }
 
         val path = downloader.download(targetUri, localFileDestination, appProperties.timeoutInSeconds)
