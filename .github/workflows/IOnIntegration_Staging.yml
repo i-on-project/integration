@@ -61,6 +61,8 @@ jobs:
           echo "::add-mask::${{ steps.split2.outputs._2}}"
           echo "::add-mask::$HD_GIT_USER"
           echo "::add-mask::${{secrets.GIT_USER}}"
+          echo "::add-mask::$HD_TOKEN"
+          echo "::add-mask::${{secrets.API_TOKEN}}"
         env:
           HD_SQL_HOST: jdbc:postgresql://${{ steps.split1.outputs._1}}
           HD_SQL_USER: ${{ steps.split3.outputs._2}}
@@ -72,6 +74,7 @@ jobs:
           HD_GIT_USER: ${{secrets.GIT_USER}}
           HD_GIT_PASSWORD: ""
           HD_GIT_BRANCH: staging
+          HD_TOKEN: ${{secrets.API_TOKEN}}
 
       - name: Print Environment Variables
         if: ${{ env.ACT }}
