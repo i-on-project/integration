@@ -81,7 +81,7 @@ class WriteFileTaskletTests {
     @BeforeEach
     fun setUp() {
         timetableDto = TimetableDto(
-            "2021-04-21-T20:49:16+01",
+            "2021-04-21T20:49:16+01",
             "2021-04-21T20:49:16+01",
             SchoolDto(
                 "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",

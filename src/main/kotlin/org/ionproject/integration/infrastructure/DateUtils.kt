@@ -96,7 +96,8 @@ object DateUtils {
         year: String,
         dayMonth: String, // Format: 15 Jul.(Quinta)
         time: String,
-        duration: String
+        duration: String,
+        timeZone: Zone
     ): IntervalDateTime {
         val timeFormat = DateTimeFormatter.ofPattern("HH'h'mm")
         val durationFormat = DateTimeFormatter.ofPattern("H'h'mm")
@@ -109,10 +110,18 @@ object DateUtils {
         val rawDate = "${dayMonth.split(".").first()} $year"
         val date = LocalDate.parse(rawDate, dateFormat)
 
-        val startDateTime = ZonedDateTime.of(LocalDateTime.of(date, timeParsed), ZoneId.of("Portugal"))
+/*        val startDateTime = ZonedDateTime.of(LocalDateTime.of(date, timeParsed), ZoneId.of("Portugal"))
         val endDateTime =
-            ZonedDateTime.of(LocalDateTime.of(date, addToStartTime(timeParsed, durationParsed)), ZoneId.of("Portugal"))
+            ZonedDateTime.of(LocalDateTime.of(date, addToStartTime(timeParsed, durationParsed)), ZoneId.of("Portugal"))*/
+        val startDateTime = convertDateToUTC(LocalDateTime.of(date, timeParsed), timeZone)
+        val endDateTime = convertDateToUTC(LocalDateTime.of(date, addToStartTime(timeParsed, durationParsed)), timeZone)
         return IntervalDateTime(startDateTime, endDateTime)
+    }
+
+    private fun convertDateToUTC(datetime: LocalDateTime, oldZone: Zone): ZonedDateTime {
+        val oldZoneId = ZoneId.of(oldZone.name)
+        val newZoneId = ZoneId.of("UTC")
+        return ZonedDateTime.of(datetime.atZone(oldZoneId).withZoneSameInstant(newZoneId).toLocalDateTime(), newZoneId)
     }
 
     private fun addToStartTime(time: LocalTime, duration: LocalTime): LocalTime =
@@ -140,3 +149,8 @@ data class IntervalDate(
     val from: LocalDate,
     val to: LocalDate
 )
+
+enum class Zone {
+    Portugal,
+    UTC
+}

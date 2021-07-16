@@ -8,6 +8,7 @@ import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.domain.common.Term
 import org.ionproject.integration.infrastructure.DateUtils
 import org.ionproject.integration.infrastructure.Try
+import org.ionproject.integration.infrastructure.Zone
 import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.tabula.Table
 import org.ionproject.integration.infrastructure.text.JsonUtils
@@ -28,7 +29,7 @@ data class Evaluations(
         private const val SUMMER_TERM = "verão"
         private const val WINTER_TERM = "inverno"
 
-        fun from(rawEvaluationsData: RawEvaluationsData, jobProgramme: ProgrammeModel): Evaluations {
+        fun from(rawEvaluationsData: RawEvaluationsData, jobProgramme: ProgrammeModel, timeZone: Zone): Evaluations {
             val calendarTerm = buildCalendarTerm(rawEvaluationsData)
 
             return Evaluations(
@@ -43,7 +44,7 @@ data class Evaluations(
                     jobProgramme.acronym
                 ),
                 calendarTerm,
-                buildExamList(rawEvaluationsData, jobProgramme, getCalendarYear(calendarTerm))
+                buildExamList(rawEvaluationsData, jobProgramme, getCalendarYear(calendarTerm), timeZone)
             )
         }
 
@@ -72,9 +73,10 @@ data class Evaluations(
         private fun buildExamList(
             rawEvaluationsData: RawEvaluationsData,
             jobProgramme: ProgrammeModel,
-            year: String
+            year: String,
+            timeZone: Zone
         ): List<Exam> =
-            rawEvaluationsData.table.toTableList().map { getExamsFromTable(it, jobProgramme.acronym, year) }.orThrow()
+            rawEvaluationsData.table.toTableList().map { getExamsFromTable(it, jobProgramme.acronym, year, timeZone) }.orThrow()
 
         private fun String.toTableList(): Try<List<Table>> =
             JsonUtils.fromJson(this, Types.newParameterizedType(List::class.java, Table::class.java))
@@ -82,7 +84,8 @@ data class Evaluations(
         private fun getExamsFromTable(
             tableList: List<Table>,
             programmeAcronym: String,
-            year: String
+            year: String,
+            timeZone: Zone
         ): List<Exam> {
             val examList = mutableListOf<Exam>()
             for (table in tableList) {
@@ -95,7 +98,8 @@ data class Evaluations(
                                 year,
                                 cleanedLine[TableColumn.NORMAL_EXAM_DATE.ordinal].text,
                                 cleanedLine[TableColumn.NORMAL_EXAM_TIME.ordinal].text,
-                                cleanedLine[TableColumn.NORMAL_EXAM_DURATION.ordinal].text
+                                cleanedLine[TableColumn.NORMAL_EXAM_DURATION.ordinal].text,
+                                timeZone
                             )
                         examList.add(
                             Exam(
@@ -111,7 +115,8 @@ data class Evaluations(
                                 year,
                                 cleanedLine[TableColumn.ALTERN_EXAM_DATE.ordinal].text,
                                 cleanedLine[TableColumn.ALTERN_EXAM_TIME.ordinal].text,
-                                cleanedLine[TableColumn.ALTERN_EXAM_DURATION.ordinal].text
+                                cleanedLine[TableColumn.ALTERN_EXAM_DURATION.ordinal].text,
+                                timeZone
                             )
                         examList.add(
                             Exam(
@@ -127,7 +132,8 @@ data class Evaluations(
                                 year,
                                 cleanedLine[TableColumn.SPECIAL_EXAM_DATE.ordinal].text,
                                 cleanedLine[TableColumn.SPECIAL_EXAM_TIME.ordinal].text,
-                                cleanedLine[TableColumn.SPECIAL_EXAM_DURATION.ordinal].text
+                                cleanedLine[TableColumn.SPECIAL_EXAM_DURATION.ordinal].text,
+                                timeZone
                             )
                         examList.add(
                             Exam(
@@ -147,7 +153,8 @@ data class Evaluations(
                                 year,
                                 cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DATE.ordinal].text,
                                 cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_TIME.ordinal].text,
-                                cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DURATION.ordinal].text
+                                cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DURATION.ordinal].text,
+                                timeZone
                             )
                         examList.add(
                             Exam(

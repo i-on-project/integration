@@ -166,11 +166,11 @@ class DateUtilsTests {
         val durationStr = "3h00"
 
         // Act
-        val intervalDate = DateUtils.getEvaluationDateTimeFrom("2021", dayMonthStr, timeStr, durationStr)
+        val intervalDate = DateUtils.getEvaluationDateTimeFrom("2021", dayMonthStr, timeStr, durationStr, Zone.Portugal)
 
         // Assert
-        assertEquals("2021-06-29T19:00Z[UTC]", intervalDate.from.toString())
-        assertEquals("2021-06-29T22:00Z[UTC]", intervalDate.to.toString())
+        assertEquals("2021-06-29T18:00Z[UTC]", intervalDate.from.toString())
+        assertEquals("2021-06-29T21:00Z[UTC]", intervalDate.to.toString())
     }
 
     @Test
@@ -181,10 +181,10 @@ class DateUtilsTests {
         val durationStr = "2h30"
 
         // Act
-        val intervalDate = DateUtils.getEvaluationDateTimeFrom("2021", dayMonthStr, timeStr, durationStr)
+        val intervalDate = DateUtils.getEvaluationDateTimeFrom("2021", dayMonthStr, timeStr, durationStr, Zone.Portugal)
 
         // Assert
-        assertEquals("2021-06-02T19:30Z[UTC]", intervalDate.from.toString())
-        assertEquals("2021-06-02T22:00Z[UTC]", intervalDate.to.toString())
+        assertEquals("2021-06-02T18:30Z[UTC]", intervalDate.from.toString())
+        assertEquals("2021-06-02T21:00Z[UTC]", intervalDate.to.toString())
     }
 }

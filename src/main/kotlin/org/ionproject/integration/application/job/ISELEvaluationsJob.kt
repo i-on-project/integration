@@ -12,15 +12,16 @@ import org.ionproject.integration.domain.evaluations.Evaluations
 import org.ionproject.integration.domain.evaluations.EvaluationsDto
 import org.ionproject.integration.domain.evaluations.RawEvaluationsData
 import org.ionproject.integration.infrastructure.Try
+import org.ionproject.integration.infrastructure.Zone
 import org.ionproject.integration.infrastructure.file.FileComparatorImpl
 import org.ionproject.integration.infrastructure.file.FileDigestImpl
 import org.ionproject.integration.infrastructure.file.OutputFormat
-import org.ionproject.integration.infrastructure.repository.hash.HashRepositoryImpl
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.orThrow
 import org.ionproject.integration.infrastructure.pdfextractor.EvaluationsExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.ITextPdfExtractor
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
+import org.ionproject.integration.infrastructure.repository.hash.HashRepositoryImpl
 import org.ionproject.integration.infrastructure.repository.model.IInstitutionRepository
 import org.ionproject.integration.infrastructure.repository.model.IProgrammeRepository
 import org.springframework.batch.core.ExitStatus
@@ -115,7 +116,7 @@ class ISELEvaluationsJob(
     fun createEvaluationsPDFBusinessObjectsTasklet() =
         stepBuilderFactory.get("Create Business Objects from Evaluations Raw Data")
             .tasklet { _, context ->
-                State.evaluations = Evaluations.from(State.rawEvaluationsData, getJobProgramme(context))
+                State.evaluations = Evaluations.from(State.rawEvaluationsData, getJobProgramme(context), Zone.Portugal) // TODO: get this from raw data
                 RepeatStatus.FINISHED
             }
             .build()
