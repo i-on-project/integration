@@ -87,6 +87,11 @@ It's Web front-end can be accessed by pointing your browser to `localhost:8080` 
 
 On startup a repository named **"integration-data"** is created and initialized to mirror the existing production repository.
 
+##### git-setup
+If you inspect the docker compose file you might notice a node named "git-setup". It's only function is run a cUrl command that submits a POST request to the actual git server node in to order to guarantee the starter repository is created on first launch.
+
+This node is ephemeral, runs only once on app start up and is then shut down.
+
 ##### Git Credentials
 The server is deployed with a single **account** that can be accessed by entering `root` for both username and password fields.
 
@@ -146,6 +151,20 @@ The file `my.secrets` is a local file that has additional environment variables 
 * `HEROKU_EMAIL`
 * `GITHUB_TOKEN`
 * `GIT_USER`
+
+## Web API
+Integration exposes a simple Web API to allow the creation of new job executions, checking currently running jobs and querying the status of any previous created execution through it's ID.
+
+The Web API currently exposes the following resources:
+| Resource    | HTTP Method |                 Description              |
+| ----------- | ----------- | ---------------------------------------- |
+| /jobs       | GET         | Retrieve all running jobs.               |
+| /jobs/{id}  | GET         | Retrieve details about job with id={id}. |
+| /jobs       | POST        | Create a new job execution.              |
+
+
+### Authentication
+API requests must submit a Base64 encoded token in the **Bearer** token format. The application expects only one valid token which is configured and passed as the **TOKEN** environment variable.
 
 ## Documentation
 
