@@ -1,5 +1,6 @@
 - name: Instituto Superior de Engenharia de Lisboa
   identifier: pt.ipl.isel
+  timezone: Europe/Lisbon
   resources:
     - type: academic_calendar
       uri: https://www.isel.pt/media/uploads/OS09P2020_signed.pdf
