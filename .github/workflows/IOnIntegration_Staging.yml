@@ -56,6 +56,11 @@ jobs:
           echo "::add-mask::$HD_SQL_HOST"
           echo "::add-mask::$HD_SQL_USER"
           echo "::add-mask::$HD_SQL_PASSWORD"
+          echo "::add-mask::${{ steps.split1.outputs._1}}"
+          echo "::add-mask::${{ steps.split3.outputs._2}}"
+          echo "::add-mask::${{ steps.split2.outputs._2}}"
+          echo "::add-mask::$HD_GIT_USER"
+          echo "::add-mask::${{secrets.GIT_USER}}"
         env:
           HD_SQL_HOST: jdbc:postgresql://${{ steps.split1.outputs._1}}
           HD_SQL_USER: ${{ steps.split3.outputs._2}}
