@@ -42,7 +42,10 @@ data class TimetableDto(
                     }
                 }
                     .groupBy(keySelector = { it.first }, valueTransform = { it.second })
-                    .map { (acronym, sections) -> ClassDto(acronym, sections) }
+                    .map { (acronym, sections) ->
+                        val normalizedSections = sections.normalized()
+                        ClassDto(acronym, normalizedSections)
+                    }
 
                 return TimetableDto(
                     creationDateTime,
@@ -89,6 +92,18 @@ data class TimetableDto(
                     }
                 }
         }
+    }
+}
+
+private fun List<SectionDto>.normalized(): List<SectionDto> {
+    return groupBy { it.section }.values.map { sections ->
+        val sample = sections.first() // All fields will be the same except the events
+        SectionDto(
+            section = sample.section,
+            curricularTerm = sample.curricularTerm,
+            instructors = sample.instructors,
+            events = sections.flatMap { section -> section.events }
+        )
     }
 }
 
