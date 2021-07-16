@@ -43,16 +43,7 @@ jobs:
         with:
           string: ${{steps.split2.outputs._1}}
           split-by: '/'
-
-      - uses: akhileshns/heroku-deploy@v3.12.12
-        if: ${{ !env.ACT }}
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
-          usedocker: true
-          docker_heroku_process_type: web
-      - run: |
+        run: |
           echo "::add-mask::$HD_SQL_HOST"
           echo "::add-mask::$HD_SQL_USER"
           echo "::add-mask::$HD_SQL_PASSWORD"
@@ -63,6 +54,15 @@ jobs:
           echo "::add-mask::${{secrets.GIT_USER}}"
           echo "::add-mask::$HD_TOKEN"
           echo "::add-mask::${{secrets.API_TOKEN}}"
+
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        if: ${{ !env.ACT }}
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          usedocker: true
+          docker_heroku_process_type: web
         env:
           HD_SQL_HOST: jdbc:postgresql://${{ steps.split1.outputs._1}}
           HD_SQL_USER: ${{ steps.split3.outputs._2}}
