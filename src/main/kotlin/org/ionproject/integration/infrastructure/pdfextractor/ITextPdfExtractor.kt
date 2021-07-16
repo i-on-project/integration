@@ -49,7 +49,7 @@ class ITextPdfExtractor : IPdfExtractor {
         return DateUtils.formatToISO8601(
             ZonedDateTime.ofInstant(
                 creationDateCalendar.toInstant(),
-                ZoneId.systemDefault()
+                ZoneId.of("UTC")
             )
         )
     }

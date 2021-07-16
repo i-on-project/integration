@@ -97,7 +97,7 @@ object DateUtils {
         dayMonth: String, // Format: 15 Jul.(Quinta)
         time: String,
         duration: String,
-        timeZone: Zone
+        timeZone: String
     ): IntervalDateTime {
         val timeFormat = DateTimeFormatter.ofPattern("HH'h'mm")
         val durationFormat = DateTimeFormatter.ofPattern("H'h'mm")
@@ -115,8 +115,8 @@ object DateUtils {
         return IntervalDateTime(startDateTime, endDateTime)
     }
 
-    fun convertDateToUTC(datetime: LocalDateTime, oldZone: Zone): ZonedDateTime {
-        val oldZoneId = ZoneId.of(oldZone.name)
+    fun convertDateToUTC(datetime: LocalDateTime, oldZone: String): ZonedDateTime {
+        val oldZoneId = ZoneId.of(oldZone)
         val newZoneId = ZoneId.of("UTC")
         return ZonedDateTime.of(datetime.atZone(oldZoneId).withZoneSameInstant(newZoneId).toLocalDateTime(), newZoneId)
     }
@@ -146,8 +146,3 @@ data class IntervalDate(
     val from: LocalDate,
     val to: LocalDate
 )
-
-enum class Zone {
-    Portugal,
-    UTC
-}

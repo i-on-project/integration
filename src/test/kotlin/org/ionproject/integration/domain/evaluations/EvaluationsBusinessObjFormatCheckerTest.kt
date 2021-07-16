@@ -10,7 +10,6 @@ import org.ionproject.integration.domain.common.ProgrammeModel
 import org.ionproject.integration.domain.common.ProgrammeResources
 import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.domain.common.Term
-import org.ionproject.integration.infrastructure.Zone
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.repository.model.IInstitutionRepository
 import org.ionproject.integration.infrastructure.repository.model.IProgrammeRepository
@@ -43,6 +42,8 @@ class EvaluationsBusinessObjFormatCheckerTest {
     private val mockProgrammeRepository = mock<IProgrammeRepository> {}
 
     private val mockDataSource = mock<DataSource> {}
+
+    private val EUROPE_LISBON_TIMEZONE = "Europe/Lisbon"
 
     @Test
     fun `when given an evaluations pdf if business object extraction is as expected then success`() {
@@ -77,7 +78,7 @@ class EvaluationsBusinessObjFormatCheckerTest {
             )
         )
 
-        val evaluationsRetrieved = Evaluations.from(evaluationsData, programme, Zone.Portugal)
+        val evaluationsRetrieved = Evaluations.from(evaluationsData, programme, EUROPE_LISBON_TIMEZONE)
 
         val evaluationsExpected =
             Evaluations(

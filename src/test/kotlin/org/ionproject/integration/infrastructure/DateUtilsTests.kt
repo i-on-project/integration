@@ -9,6 +9,8 @@ import java.time.format.DateTimeParseException
 
 class DateUtilsTests {
 
+    private val EUROPE_LISBON_TIMEZONE = "Europe/Lisbon"
+
     @Test
     fun `when Valid String With Full Date then Return Date`() {
         // Arrange
@@ -166,7 +168,7 @@ class DateUtilsTests {
         val durationStr = "3h00"
 
         // Act
-        val intervalDate = DateUtils.getEvaluationDateTimeFrom("2021", dayMonthStr, timeStr, durationStr, Zone.Portugal)
+        val intervalDate = DateUtils.getEvaluationDateTimeFrom("2021", dayMonthStr, timeStr, durationStr, EUROPE_LISBON_TIMEZONE)
 
         // Assert
         assertEquals("2021-06-29T18:00Z[UTC]", intervalDate.from.toString())
@@ -181,7 +183,7 @@ class DateUtilsTests {
         val durationStr = "2h30"
 
         // Act
-        val intervalDate = DateUtils.getEvaluationDateTimeFrom("2021", dayMonthStr, timeStr, durationStr, Zone.Portugal)
+        val intervalDate = DateUtils.getEvaluationDateTimeFrom("2021", dayMonthStr, timeStr, durationStr, EUROPE_LISBON_TIMEZONE)
 
         // Assert
         assertEquals("2021-06-02T18:30Z[UTC]", intervalDate.from.toString())
