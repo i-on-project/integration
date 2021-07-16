@@ -42,16 +42,18 @@ jobs:
         with:
           string: ${{steps.split2.outputs._1}}
           split-by: '/'
+      - name: Add variable masks
+        id: add_masks
         run: |
-          echo "::add-mask::$HD_SQL_HOST"
-          echo "::add-mask::$HD_SQL_USER"
-          echo "::add-mask::$HD_SQL_PASSWORD"
-          echo "::add-mask::${{ steps.split1.outputs._1}}"
-          echo "::add-mask::${{ steps.split3.outputs._2}}"
-          echo "::add-mask::${{ steps.split2.outputs._2}}"
-          echo "::add-mask::$HD_GIT_USER"
+          echo "::add-mask::$((HD_SQL_HOST"))
+          echo "::add-mask::$((HD_SQL_USER"))
+          echo "::add-mask::$((HD_SQL_PASSWORD"))
+          echo "::add-mask::$(( steps.split1.outputs._1))"
+          echo "::add-mask::$(( steps.split3.outputs._2))"
+          echo "::add-mask::$(( steps.split2.outputs._2))"
+          echo "::add-mask::$(( HD_GIT_USER ))"
           echo "::add-mask::${{secrets.GIT_USER}}"
-          echo "::add-mask::$HD_TOKEN"
+          echo "::add-mask::$(( HD_TOKEN ))"
           echo "::add-mask::${{secrets.API_TOKEN}}"
 
       - uses: akhileshns/heroku-deploy@v3.12.12
