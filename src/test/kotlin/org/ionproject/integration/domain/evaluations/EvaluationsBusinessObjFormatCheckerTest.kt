@@ -43,7 +43,7 @@ class EvaluationsBusinessObjFormatCheckerTest {
 
     private val mockDataSource = mock<DataSource> {}
 
-    private val EUROPE_LISBON_TIMEZONE = "Europe/Lisbon"
+    private val europeLisbonTimezone = "Europe/Lisbon"
 
     @Test
     fun `when given an evaluations pdf if business object extraction is as expected then success`() {
@@ -79,7 +79,7 @@ class EvaluationsBusinessObjFormatCheckerTest {
             )
         )
 
-        val evaluationsRetrieved = Evaluations.from(evaluationsData, programme, EUROPE_LISBON_TIMEZONE)
+        val evaluationsRetrieved = Evaluations.from(evaluationsData, programme, europeLisbonTimezone)
 
         val evaluationsExpected =
             Evaluations(
