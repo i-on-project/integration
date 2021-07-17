@@ -1,6 +1,7 @@
 package org.ionproject.integration.ui.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.ui.input.CreateJobDto
 import org.ionproject.integration.ui.input.InputProcessor
+import org.ionproject.integration.ui.output.JobDetailCollectionDto
 import org.ionproject.integration.ui.output.JobDetailDto
 import org.ionproject.integration.ui.output.PostResponse
 import org.ionproject.integration.ui.output.Problem
@@ -93,6 +95,21 @@ class JobController(
         }
     }
 
+    @Operation(summary = "Get running and pending Job executions.")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "List of running or pending job executions.",
+                content = [
+                    Content(
+                        mediaType = JSON_MEDIA_TYPE,
+                        schema = Schema(implementation = JobDetailCollectionDto::class)
+                    )
+                ],
+            )
+        ]
+    )
     @GetMapping(produces = [JSON_MEDIA_TYPE])
     fun getJobs(servletRequest: HttpServletRequest): List<JobDetailDto> =
         jobEngine.getRunningJobs()
@@ -101,8 +118,24 @@ class JobController(
                 JobDetailDto.of(job, url, JobDetailDto.DetailType.METADATA_ONLY)
             }
 
+    @Operation(summary = "Get details about a specific job execution.")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Job's current status, metadata and arguments.",
+                content = [Content(mediaType = JSON_MEDIA_TYPE, schema = Schema(implementation = JobDetailDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Job ID provided does not exist.",
+                content = [Content(mediaType = PROBLEM_MEDIA_TYPE, schema = Schema(implementation = Problem::class))]
+            )
+        ]
+    )
     @GetMapping("/{id}", produces = [JSON_MEDIA_TYPE])
     fun getJobDetails(
+        @Parameter(description = "Job ID")
         @PathVariable id: Long,
         servletRequest: HttpServletRequest
     ): JobDetailDto {
