@@ -5,10 +5,6 @@ import org.ionproject.integration.domain.common.CalendarTerm
 import org.ionproject.integration.domain.common.Programme
 import org.ionproject.integration.domain.common.School
 import org.ionproject.integration.domain.common.Term
-import org.ionproject.integration.domain.evaluations.Evaluations
-import org.ionproject.integration.domain.evaluations.EvaluationsDto
-import org.ionproject.integration.domain.evaluations.Exam
-import org.ionproject.integration.domain.evaluations.ExamCategory
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.Year

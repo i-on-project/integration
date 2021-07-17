@@ -6,5 +6,6 @@ data class InstitutionModel(
     val name: String,
     val acronym: String,
     val identifier: String,
+    val timezone: String,
     val academicCalendarUri: URI
 )

@@ -207,6 +207,7 @@ internal class AcademicCalendarDtoFormatCheckerTests {
             "Instituto Superior de Engenharia de Lisboa",
             "ISEL",
             "pt.ipl.isel",
+            "Europe/Lisbon",
             URI("")
         )
 
