@@ -121,7 +121,7 @@ class JobControllerTests {
         whenever(inputProcessor.getJobRequest(any())) doThrow ArgumentException("You've been a bad, bad boy!")
 
         val expectedResponse =
-            """{"type":"https://github.com/i-on-project/integration/blob/master/docs/infrastructure/ArgumentException.md","title":"Bad Request","status":400,"detail":"You've been a bad, bad boy!","instance":"/integration/jobs""""
+            """{"type":"https://github.com/i-on-project/integration/blob/master/docs/infrastructure/ArgumentException.md","title":"Invalid or missing argument","status":400,"detail":"You've been a bad, bad boy!","instance":"/integration/jobs""""
 
         mockMvc.perform(
             post("$contextPath$JOBS_RESOURCE").contextPath(contextPath)
