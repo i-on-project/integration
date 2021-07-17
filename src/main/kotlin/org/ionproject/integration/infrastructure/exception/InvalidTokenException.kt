@@ -8,4 +8,6 @@ private const val URI = "${PROJECT_DOCUMENTATION_ROOT}InvalidTokenException.md"
 class InvalidTokenException : IntegrationException("Invalid authentication token provided") {
     override val definitionUri: URI
         get() = URI(URI)
+    override val title: String
+        get() = "Invalid Token"
 }
