@@ -11,7 +11,7 @@ data class CreateJobDto(
     @Schema(description = "Institution unique identifier.", example = "pt.ipl.isel")
     val institution: String? = null,
 
-    @Schema(description = "Programme acronym.", example = "LEIC")
+    @Schema(description = "Programme acronym. Only required for programme-specific jobs.", example = "LEIC")
     val programme: String? = null,
 
     @Schema(description = "Output format of the produced data.", implementation = OutputFormat::class)
