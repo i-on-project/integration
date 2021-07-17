@@ -69,7 +69,7 @@ class AcademicCalendarBusinessObjFormatCheckerTests {
             Language.PT,
             listOf(
                 TermEvents(
-                    CalendarTerm(Year.parse("2020"), Term.FALL),
+                    CalendarTerm(Year.of(2020), Year.parse("2021"), Term.FALL),
                     listOf(
                         Event(
                             "Interrupção de atividades letivas (Natal)",
@@ -123,7 +123,7 @@ class AcademicCalendarBusinessObjFormatCheckerTests {
                     )
                 ),
                 TermEvents(
-                    CalendarTerm(Year.parse("2020"), Term.SPRING),
+                    CalendarTerm(Year.of(2020), Year.parse("2021"), Term.SPRING),
                     listOf(
                         Event(
                             "Interrupção de atividades letivas (Páscoa)",

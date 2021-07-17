@@ -94,7 +94,8 @@ class EvaluationsBusinessObjFormatCheckerTest {
                     "LEIC"
                 ),
                 CalendarTerm(
-                    Year.parse("2020"),
+                    Year.of(2020),
+                    Year.of(2021),
                     Term.SPRING
                 ),
                 listOf(

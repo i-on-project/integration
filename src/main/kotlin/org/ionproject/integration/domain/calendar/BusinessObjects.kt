@@ -103,10 +103,7 @@ data class AcademicCalendar(
             }
 
             return TermEvents(
-                CalendarTerm(
-                    getYear(pdfRawText),
-                    term
-                ),
+                getCalendarTerm(pdfRawText, term),
                 interruptions,
                 evaluations,
                 lectures,
@@ -114,12 +111,20 @@ data class AcademicCalendar(
             )
         }
 
-        private fun getYear(pdfRawText: String) = Year.parse(
-            RegexUtils.findMatches(CALENDAR_TERM_REGEX, pdfRawText)
-                .first()
-                .trim()
-                .take(4)
-        )
+        private fun getCalendarTerm(pdfRawText: String, term: Term): CalendarTerm {
+            val year =
+                RegexUtils.findMatches(CALENDAR_TERM_REGEX, pdfRawText)
+                    .first()
+                    .trim()
+                    .take(4)
+                    .toInt()
+
+            return CalendarTerm(
+                Year.of(year),
+                Year.of(year + 1),
+                term
+            )
+        }
 
         private fun getLectures(
             descriptions: List<IndexedValue<String>>,

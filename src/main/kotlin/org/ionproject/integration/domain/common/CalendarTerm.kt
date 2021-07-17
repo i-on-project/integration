@@ -4,7 +4,8 @@ import java.time.Year
 
 data class CalendarTerm(
     val startYear: Year,
+    val endYear: Year,
     val term: Term
 ) {
-    override fun toString() = "${startYear.value}-${startYear.value + 1}-${term.number}"
+    override fun toString() = "${startYear.value}-${endYear.value}-${term.number}"
 }
