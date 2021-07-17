@@ -9,6 +9,7 @@ import org.ionproject.integration.infrastructure.exception.InvalidTokenException
 import org.ionproject.integration.infrastructure.exception.JobNotFoundException
 import org.ionproject.integration.infrastructure.exception.TokenMissingException
 import org.springframework.http.HttpStatus
+import java.net.URI
 import java.net.URL
 import javax.servlet.http.HttpServletRequest
 
@@ -18,7 +19,7 @@ data class Problem(
     val httpStatus: HttpStatus,
 
     @Schema(
-        description = "A URL to a page with mor details about the problem.",
+        description = "URL to a page with more details about the problem.",
         implementation = URL::class,
         example = "https://github.com/i-on-project/integration/blob/master/docs/infrastructure/ArgumentException.md"
     )
@@ -31,7 +32,7 @@ data class Problem(
     val title: String,
 
     @Schema(
-        description = "The HTTP status code.",
+        description = "HTTP status code.",
         example = "400",
         implementation = HttpStatus::class
     )
@@ -44,9 +45,9 @@ data class Problem(
     val detail: String? = null,
 
     @Schema(
-        description = "URI that described where the problem occured.",
+        description = "URI that describes where the problem occured.",
         example = "/integration/jobs/111",
-        implementation = Int::class
+        implementation = URI::class
     )
     val instance: String? = null
 ) {
