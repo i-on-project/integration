@@ -65,6 +65,7 @@ class EvaluationsBusinessObjFormatCheckerTest {
             "Instituto Superior de Engenharia de Lisboa",
             "ISEL",
             "pt.ipl.isel",
+            "Europe/Lisbon",
             URI("")
         )
 

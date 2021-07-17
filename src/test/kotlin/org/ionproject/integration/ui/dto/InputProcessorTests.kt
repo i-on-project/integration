@@ -30,6 +30,8 @@ private const val TEST_SCHOOL_ACRONYM = "TS"
 private const val TEST_PROGRAMME_ACRONYM = "SP"
 private const val TEST_PROGRAMME_NAME = "Some Engineering Programme I Guess"
 private const val TEST_SCHOOL_ID = "test.school"
+private const val TEST_TIME_ZONE = "Europe/Lisbon"
+
 private val TEST_URI = URI("test.school./someFile.pdf")
 
 class InputProcessorTests {
@@ -37,6 +39,7 @@ class InputProcessorTests {
         TEST_SCHOOL_NAME,
         TEST_SCHOOL_ACRONYM,
         TEST_SCHOOL_ID,
+        TEST_TIME_ZONE,
         TEST_URI
     )
 

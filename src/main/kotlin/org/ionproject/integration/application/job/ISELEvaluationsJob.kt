@@ -115,7 +115,7 @@ class ISELEvaluationsJob(
     fun createEvaluationsPDFBusinessObjectsTasklet() =
         stepBuilderFactory.get("Create Business Objects from Evaluations Raw Data")
             .tasklet { _, context ->
-                State.evaluations = Evaluations.from(State.rawEvaluationsData, getJobProgramme(context), "Europe/Lisbon") // TODO: get this from raw data
+                State.evaluations = Evaluations.from(State.rawEvaluationsData, getJobProgramme(context), getJobInstitution(context).timezone)
                 RepeatStatus.FINISHED
             }
             .build()

@@ -46,6 +46,7 @@ class InstitutionRepositoryImpl : IInstitutionRepository {
 internal data class InstitutionDto(
     val name: String = "",
     val identifier: String = "",
+    val timezone: String = "UTC",
     val resources: List<ResourceDto> = listOf(),
     val programmes: List<ProgrammeDto> = listOf()
 ) {
@@ -57,6 +58,7 @@ internal data class InstitutionDto(
             name = this.name,
             acronym = institutionAcronym,
             identifier = this.identifier,
+            timezone = this.timezone,
             academicCalendarUri = URI(calendar.uri)
         )
     }

@@ -52,7 +52,7 @@ class JobControllerTests {
     @Value("\${server.servlet.context-path}")
     private lateinit var contextPath: String
 
-    private val mockInstitution = InstitutionModel("test", "test", "test", URI("www.test.com"))
+    private val mockInstitution = InstitutionModel("test", "test", "test", "Europe/Lisbon", URI("www.test.com"))
 
     @BeforeEach
     fun setUp() {
