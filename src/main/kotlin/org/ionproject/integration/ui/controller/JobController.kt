@@ -66,9 +66,7 @@ class JobController(
     )
     @PostMapping(consumes = [JSON_MEDIA_TYPE], produces = [JSON_MEDIA_TYPE])
     fun createJob(
-        @OpenApiRequestBody(
-            description = "Parameters required to create a new job."
-        )
+        @OpenApiRequestBody(description = "Parameters required to create a new job.")
         @RequestBody
         body: CreateJobDto,
         servletRequest: HttpServletRequest,
