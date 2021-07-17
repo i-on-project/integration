@@ -14,7 +14,6 @@ import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
@@ -117,28 +116,5 @@ class WriteFileTaskletTests {
     @Test
     fun `when dispatcher returns failure then execute tasklet execution ends`() {
         assertEquals(RepeatStatus.FINISHED, writeFileTaskletFailure.execute(stepContribution, chunkContext))
-    }
-
-    @Test
-    fun `when calendar term is not expected then execute fail`() {
-
-        val badTimetableDto = TimetableDto(
-            "2021-04-21T20:49:16+01",
-            "2021-04-21T20:49:16+01",
-            SchoolDto(
-                "INSTITUTO SUPERIOR DE ENGENHARIA DE LISBOA",
-                "ISEL"
-            ),
-            ProgrammeDto(
-                "Licenciatura em Engenharia Informática e de Computadores",
-                "LEIC"
-            ),
-            "2020-2021-4",
-            listOf()
-        )
-
-        assertThrows<IllegalArgumentException> {
-            writeFileTaskletSuccess.generateTimetableDataFromDto(badTimetableDto)
-        }
     }
 }
