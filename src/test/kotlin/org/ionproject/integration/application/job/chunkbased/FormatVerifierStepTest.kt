@@ -196,7 +196,7 @@ internal class FormatVerifierStepTestInvalidFormat {
 
     private val utils = SpringBatchTestUtils()
 
-    // @Test
+    @Test
     fun `when file has invalid format then assert an exception is thrown`() {
         // Arrange
         val src = File("src/test/resources/test.pdf".replace("/", File.separator))

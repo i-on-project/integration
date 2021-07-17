@@ -14,9 +14,9 @@ import org.ionproject.integration.domain.timetable.TimetableTeachers
 import org.ionproject.integration.domain.timetable.dto.RawTimetableData
 import org.ionproject.integration.infrastructure.file.FileComparatorImpl
 import org.ionproject.integration.infrastructure.file.FileDigestImpl
-import org.ionproject.integration.infrastructure.repository.hash.HashRepositoryImpl
 import org.ionproject.integration.infrastructure.http.IFileDownloader
 import org.ionproject.integration.infrastructure.pdfextractor.PDFBytesFormatChecker
+import org.ionproject.integration.infrastructure.repository.hash.HashRepositoryImpl
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory

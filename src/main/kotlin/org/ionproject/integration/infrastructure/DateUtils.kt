@@ -124,13 +124,10 @@ object DateUtils {
     private fun addToStartTime(time: LocalTime, duration: LocalTime): LocalTime =
         time.plusHours(duration.hour.toLong()).plusMinutes(duration.minute.toLong())
 
-    private fun buildBeginDate(string: String, month: Month, year: Int): LocalDate {
-        return if (isMonthAndYearUnavailable(string))
-            LocalDate.of(year, month, string.toInt())
-        else if (isYearUnavailable(string))
-            getDateFrom(string + PT_DATE_DELIMITER + year)
-        else
-            getDateFrom(string)
+    private fun buildBeginDate(string: String, month: Month, year: Int): LocalDate = when {
+        isMonthAndYearUnavailable(string) -> LocalDate.of(year, month, string.toInt())
+        isYearUnavailable(string) -> getDateFrom(string + PT_DATE_DELIMITER + year)
+        else -> getDateFrom(string)
     }
 
     private fun isYearUnavailable(string: String): Boolean = string.trim().takeLast(4).toIntOrNull() == null

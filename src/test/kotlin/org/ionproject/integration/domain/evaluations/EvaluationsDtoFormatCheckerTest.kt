@@ -32,6 +32,7 @@ internal class EvaluationsDtoFormatCheckerTest {
                 ),
                 CalendarTerm(
                     Year.parse("2020"),
+                    Year.parse("2021"),
                     Term.SPRING
                 ),
                 listOf(

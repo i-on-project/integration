@@ -9,7 +9,6 @@ import org.ionproject.integration.application.dto.ProgrammeMetadata
 import org.ionproject.integration.application.dto.TimetableData
 import org.ionproject.integration.application.job.ISELTimetableJob
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
-import org.ionproject.integration.domain.common.Validator
 import org.ionproject.integration.domain.timetable.dto.TimetableDto
 import org.ionproject.integration.infrastructure.file.OutputFormat
 import org.slf4j.LoggerFactory
@@ -54,8 +53,6 @@ class WriteFileTasklet(
 
     internal fun generateTimetableDataFromDto(timetableDto: TimetableDto): TimetableData {
         val term = timetableDto.calendarTerm.takeLast(1).toInt()
-        if (Validator.isNotValidTerm(term))
-            throw IllegalArgumentException("Invalid term description: $term")
 
         return TimetableData(
             ProgrammeMetadata(

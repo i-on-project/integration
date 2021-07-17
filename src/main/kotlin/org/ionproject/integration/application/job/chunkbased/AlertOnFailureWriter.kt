@@ -1,12 +1,11 @@
 package org.ionproject.integration.application.job.chunkbased
 
-import java.net.URI
-import org.ionproject.integration.infrastructure.notification.EmailAlertChannel
-import org.ionproject.integration.infrastructure.notification.EmailAlertService
 import org.ionproject.integration.application.JobResult
 import org.ionproject.integration.application.job.TIMETABLE_JOB_NAME
-import org.ionproject.integration.infrastructure.notification.EmailUtils
 import org.ionproject.integration.infrastructure.Try
+import org.ionproject.integration.infrastructure.notification.EmailAlertChannel
+import org.ionproject.integration.infrastructure.notification.EmailAlertService
+import org.ionproject.integration.infrastructure.notification.EmailUtils
 import org.ionproject.integration.infrastructure.orThrow
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.stereotype.Component
+import java.net.URI
 
 @StepScope
 @Component("AlertOnFailureWriter")
@@ -37,7 +37,6 @@ class AlertOnFailureWriter() : ItemWriter<Try<Boolean>> {
             { r -> log.info("Result for Step 2 is $r") },
             { e ->
                 log.info("Step 2 is about to throw exception $e with message ${e.message}")
-                sendEmail(e)
             }
         )
         item.orThrow()

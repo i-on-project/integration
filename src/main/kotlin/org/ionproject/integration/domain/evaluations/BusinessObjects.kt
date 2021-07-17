@@ -50,8 +50,8 @@ data class Evaluations(
 
         private fun getCalendarYear(calendarTerm: CalendarTerm) =
             when (val termNumber = calendarTerm.term) {
-                Term.FALL -> calendarTerm.startYear.value.toString()
-                Term.SPRING -> (calendarTerm.startYear.value + 1).toString()
+                Term.FALL -> calendarTerm.startYear.toString()
+                Term.SPRING -> calendarTerm.endYear.toString()
                 else -> throw IllegalArgumentException("Invalid term description: $termNumber")
             }
 
@@ -60,14 +60,15 @@ data class Evaluations(
                 RegexUtils.findMatches(CALENDAR_TERM_REGEX, rawEvaluationsData.textData.toString()).first()
 
             // Parses string as "verão 2020/2021"
-            val year = Year.parse(calendarTerm.substringAfter(" ").take(4))
+            val startYear = Year.parse(calendarTerm.substringAfter(" ").take(4))
+            val endYear = Year.of(startYear.value + 1)
             val term = when (val termType = calendarTerm.substringBefore(" ").lowercase()) {
                 WINTER_TERM -> Term.FALL
                 SUMMER_TERM -> Term.SPRING
                 else -> throw IllegalArgumentException("Invalid term description: $termType")
             }
 
-            return CalendarTerm(year, term)
+            return CalendarTerm(startYear, endYear, term)
         }
 
         private fun buildExamList(
@@ -76,7 +77,8 @@ data class Evaluations(
             year: String,
             timeZone: String
         ): List<Exam> =
-            rawEvaluationsData.table.toTableList().map { getExamsFromTable(it, jobProgramme.acronym, year, timeZone) }.orThrow()
+            rawEvaluationsData.table.toTableList().map { getExamsFromTable(it, jobProgramme.acronym, year, timeZone) }
+                .orThrow()
 
         private fun String.toTableList(): Try<List<Table>> =
             JsonUtils.fromJson(this, Types.newParameterizedType(List::class.java, Table::class.java))
