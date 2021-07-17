@@ -90,84 +90,82 @@ data class Evaluations(
             timeZone: String
         ): List<Exam> {
             val examList = mutableListOf<Exam>()
-            for (table in tableList) {
-                for (line in table.data) {
-                    val cleanedLine = line.dropWhile { it.text.isBlank() }
-                    val courseAcronym = trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text)
-                    if (cleanedLine[TableColumn.SUMMER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym)) {
-                        val intervalDateTimeNormal =
-                            DateUtils.getEvaluationDateTimeFrom(
-                                year,
-                                cleanedLine[TableColumn.NORMAL_EXAM_DATE.ordinal].text,
-                                cleanedLine[TableColumn.NORMAL_EXAM_TIME.ordinal].text,
-                                cleanedLine[TableColumn.NORMAL_EXAM_DURATION.ordinal].text,
-                                timeZone
-                            )
-                        examList.add(
-                            Exam(
-                                courseAcronym,
-                                intervalDateTimeNormal.from,
-                                intervalDateTimeNormal.to,
-                                ExamCategory.EXAM_NORMAL,
-                                ""
-                            )
+            tableList.flatMap { it.data.toList() }.map { line ->
+                val cleanedLine = line.dropWhile { it.text.isBlank() }
+                val courseAcronym = trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text)
+                if (cleanedLine[TableColumn.SUMMER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym)) {
+                    val intervalDateTimeNormal =
+                        DateUtils.getEvaluationDateTimeFrom(
+                            year,
+                            cleanedLine[TableColumn.NORMAL_EXAM_DATE.ordinal].text,
+                            cleanedLine[TableColumn.NORMAL_EXAM_TIME.ordinal].text,
+                            cleanedLine[TableColumn.NORMAL_EXAM_DURATION.ordinal].text,
+                            timeZone
                         )
-                        val intervalDateTimeAltern =
-                            DateUtils.getEvaluationDateTimeFrom(
-                                year,
-                                cleanedLine[TableColumn.ALTERN_EXAM_DATE.ordinal].text,
-                                cleanedLine[TableColumn.ALTERN_EXAM_TIME.ordinal].text,
-                                cleanedLine[TableColumn.ALTERN_EXAM_DURATION.ordinal].text,
-                                timeZone
-                            )
-                        examList.add(
-                            Exam(
-                                courseAcronym,
-                                intervalDateTimeAltern.from,
-                                intervalDateTimeAltern.to,
-                                ExamCategory.EXAM_ALTERN,
-                                ""
-                            )
+                    examList.add(
+                        Exam(
+                            courseAcronym,
+                            intervalDateTimeNormal.from,
+                            intervalDateTimeNormal.to,
+                            ExamCategory.EXAM_NORMAL,
+                            ""
                         )
-                        val intervalDateTimeSpecial =
-                            DateUtils.getEvaluationDateTimeFrom(
-                                year,
-                                cleanedLine[TableColumn.SPECIAL_EXAM_DATE.ordinal].text,
-                                cleanedLine[TableColumn.SPECIAL_EXAM_TIME.ordinal].text,
-                                cleanedLine[TableColumn.SPECIAL_EXAM_DURATION.ordinal].text,
-                                timeZone
-                            )
-                        examList.add(
-                            Exam(
-                                courseAcronym,
-                                intervalDateTimeSpecial.from,
-                                intervalDateTimeSpecial.to,
-                                ExamCategory.EXAM_SPECIAL,
-                                ""
-                            )
+                    )
+                    val intervalDateTimeAltern =
+                        DateUtils.getEvaluationDateTimeFrom(
+                            year,
+                            cleanedLine[TableColumn.ALTERN_EXAM_DATE.ordinal].text,
+                            cleanedLine[TableColumn.ALTERN_EXAM_TIME.ordinal].text,
+                            cleanedLine[TableColumn.ALTERN_EXAM_DURATION.ordinal].text,
+                            timeZone
                         )
-                    }
-                    if (cleanedLine[TableColumn.WINTER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym) &&
-                        !cleanedLine[TableColumn.SUMMER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym)
-                    ) {
-                        val intervalDateTimeSpecial =
-                            DateUtils.getEvaluationDateTimeFrom(
-                                year,
-                                cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DATE.ordinal].text,
-                                cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_TIME.ordinal].text,
-                                cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DURATION.ordinal].text,
-                                timeZone
-                            )
-                        examList.add(
-                            Exam(
-                                courseAcronym,
-                                intervalDateTimeSpecial.from,
-                                intervalDateTimeSpecial.to,
-                                ExamCategory.EXAM_SPECIAL,
-                                ""
-                            )
+                    examList.add(
+                        Exam(
+                            courseAcronym,
+                            intervalDateTimeAltern.from,
+                            intervalDateTimeAltern.to,
+                            ExamCategory.EXAM_ALTERN,
+                            ""
                         )
-                    }
+                    )
+                    val intervalDateTimeSpecial =
+                        DateUtils.getEvaluationDateTimeFrom(
+                            year,
+                            cleanedLine[TableColumn.SPECIAL_EXAM_DATE.ordinal].text,
+                            cleanedLine[TableColumn.SPECIAL_EXAM_TIME.ordinal].text,
+                            cleanedLine[TableColumn.SPECIAL_EXAM_DURATION.ordinal].text,
+                            timeZone
+                        )
+                    examList.add(
+                        Exam(
+                            courseAcronym,
+                            intervalDateTimeSpecial.from,
+                            intervalDateTimeSpecial.to,
+                            ExamCategory.EXAM_SPECIAL,
+                            ""
+                        )
+                    )
+                }
+                if (cleanedLine[TableColumn.WINTER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym) &&
+                    !cleanedLine[TableColumn.SUMMER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym)
+                ) {
+                    val intervalDateTimeSpecial =
+                        DateUtils.getEvaluationDateTimeFrom(
+                            year,
+                            cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DATE.ordinal].text,
+                            cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_TIME.ordinal].text,
+                            cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DURATION.ordinal].text,
+                            timeZone
+                        )
+                    examList.add(
+                        Exam(
+                            courseAcronym,
+                            intervalDateTimeSpecial.from,
+                            intervalDateTimeSpecial.to,
+                            ExamCategory.EXAM_SPECIAL,
+                            ""
+                        )
+                    )
                 }
             }
             return examList.toList()
