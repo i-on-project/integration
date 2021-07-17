@@ -13,6 +13,7 @@ class AuthFilter(private val validToken: String) : OncePerRequestFilter() {
     companion object {
         private const val HEADER = "Authorization"
         private const val PREFIX = "Bearer "
+        private val SWAGGER_KEYWORDS = listOf("swagger", "api-docs")
     }
 
     override fun doFilterInternal(
@@ -22,20 +23,25 @@ class AuthFilter(private val validToken: String) : OncePerRequestFilter() {
     ) {
         val token = getToken(request)
 
-        if (token != validToken)
+        if (token == null || token != validToken)
             throw InvalidTokenException()
 
         filterChain.doFilter(request, response)
     }
 
-    private fun getToken(request: HttpServletRequest): String {
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean {
+        val path = request.requestURI
+        return SWAGGER_KEYWORDS.any(path::contains)
+    }
+
+    private fun getToken(request: HttpServletRequest): String? {
         if (!isTokenPresent(request))
             throw TokenMissingException()
 
-        return runCatching {
+        return runCatching<String> {
             val token = request.getHeader(AUTHORIZATION).substringAfter(PREFIX)
             return String(Base64.getDecoder().decode(token))
-        }.getOrDefault("INVALID_TOKEN")
+        }.getOrNull()
     }
 
     private fun isTokenPresent(request: HttpServletRequest): Boolean {
