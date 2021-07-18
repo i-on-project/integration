@@ -158,9 +158,10 @@ Integration exposes a simple Web API to allow the creation of new job executions
 The Web API currently exposes the following resources:
 | Resource    | HTTP Method |                 Description              |
 | ----------- | ----------- | ---------------------------------------- |
-| /jobs       | GET         | Retrieve all running jobs.               |
-| /jobs/{id}  | GET         | Retrieve details about job with id={id}. |
-| /jobs       | POST        | Create a new job execution.              |
+| /integration/jobs       | GET         | Retrieve all running jobs.               |
+| /integration/jobs/{id}  | GET         | Retrieve details about job with id={id}. |
+| /integration/jobs       | POST        | Create a new job execution.              |
+| /integration/swagger       | GET        | Open API Specification.               |
 
 
 ### Authentication
