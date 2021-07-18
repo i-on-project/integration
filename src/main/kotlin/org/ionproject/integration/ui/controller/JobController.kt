@@ -1,11 +1,18 @@
 package org.ionproject.integration.ui.controller
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
+import io.swagger.v3.oas.annotations.info.Info
+import io.swagger.v3.oas.annotations.info.License
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.security.SecurityScheme
+import io.swagger.v3.oas.annotations.security.SecuritySchemes
 import org.ionproject.integration.application.JobEngine
 import org.ionproject.integration.ui.input.CreateJobDto
 import org.ionproject.integration.ui.input.InputProcessor
@@ -32,6 +39,23 @@ private const val PROBLEM_MEDIA_TYPE = "application/problem+json"
 
 @RestController
 @RequestMapping(JOBS_RESOURCE)
+@OpenAPIDefinition(
+    info = Info(
+        title = "i-on Integration Web API",
+        version = "1.0.0",
+        description = "This API allows the creation of parameterized job executions as well as retrieving data about running tasks and details about specific jobs.",
+        license = License(name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0"),
+    ),
+    security = [SecurityRequirement(name = "bearerAuth")]
+)
+@SecuritySchemes(
+    SecurityScheme(
+        name = "bearerAuth",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "bearer"
+    )
+)
 @ApiResponses(
     ApiResponse(
         responseCode = "403",
