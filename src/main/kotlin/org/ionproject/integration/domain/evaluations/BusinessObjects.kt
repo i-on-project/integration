@@ -93,7 +93,11 @@ data class Evaluations(
             tableList.flatMap { it.data.toList() }.map { line ->
                 val cleanedLine = line.dropWhile { it.text.isBlank() }
                 val courseAcronym = trimCourse(cleanedLine[TableColumn.COURSE.ordinal].text)
-                if (cleanedLine[TableColumn.SUMMER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym)) {
+
+                val summer = cleanedLine[TableColumn.SUMMER_EXAM_PROGRAMME.ordinal].text
+                val winter = cleanedLine[TableColumn.WINTER_EXAM_PROGRAMME.ordinal].text
+
+                if (summer.contains(programmeAcronym)) {
                     val intervalDateTimeNormal =
                         DateUtils.getEvaluationDateTimeFrom(
                             year,
@@ -146,15 +150,15 @@ data class Evaluations(
                         )
                     )
                 }
-                if (cleanedLine[TableColumn.WINTER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym) &&
-                    !cleanedLine[TableColumn.SUMMER_EXAM_PROGRAMME.ordinal].text.contains(programmeAcronym)
-                ) {
+                if (winter.contains(programmeAcronym) && !summer.contains(programmeAcronym)) {
+                    val useAlternate = summer.isNotBlank()
+
                     val intervalDateTimeSpecial =
                         DateUtils.getEvaluationDateTimeFrom(
                             year,
-                            cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DATE.ordinal].text,
-                            cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_TIME.ordinal].text,
-                            cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DURATION.ordinal].text,
+                            cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DATE.getIndex(useAlternate)].text,
+                            cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_TIME.getIndex(useAlternate)].text,
+                            cleanedLine[TableColumnWinterCourse.SPECIAL_EXAM_DURATION.getIndex(useAlternate)].text,
                             timeZone
                         )
                     examList.add(
@@ -210,12 +214,10 @@ private enum class TableColumn {
     SPECIAL_EXAM_DURATION
 }
 
-private enum class TableColumnWinterCourse {
-    COURSE,
-    WINTER_EXAM_PROGRAMME,
-    SUMMER_EXAM_PROGRAMME,
-    WINTER_COURSE,
-    SPECIAL_EXAM_DATE,
-    SPECIAL_EXAM_TIME,
-    SPECIAL_EXAM_DURATION
+private enum class TableColumnWinterCourse(val idx: Int, val alternateIdx: Int) {
+    SPECIAL_EXAM_DATE(4, 9),
+    SPECIAL_EXAM_TIME(5, 10),
+    SPECIAL_EXAM_DURATION(6, 11);
+
+    fun getIndex(useAlternate: Boolean): Int = if (useAlternate) alternateIdx else idx
 }
