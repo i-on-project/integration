@@ -20,6 +20,12 @@ jobs:
         if: ${{ env.ACT }}
         run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
+      - name: Reset Staging Database
+        id: databaseReset
+        run: heroku pg:reset DATABASE --app ${{secrets.HEROKU_APP_NAME}} --confirm ${{secrets.HEROKU_APP_NAME}}
+        env:
+          HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
+
       - name: Retrieve Database URL
         id: databaseUrl
         run: echo "::set-output name=url::$(heroku config:get DATABASE_URL -a ${{secrets.HEROKU_APP_NAME}})"
