@@ -130,7 +130,7 @@ class JobEngine(
         }
 
         override fun hashCode(): Int {
-            var result = format.hashCode()
+            var result = format.name.hashCode()
             result = 31 * result + institution.hashCode()
             return result
         }
