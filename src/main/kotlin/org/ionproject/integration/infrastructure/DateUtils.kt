@@ -1,5 +1,6 @@
 package org.ionproject.integration.infrastructure
 
+import org.ionproject.integration.infrastructure.text.removeDuplicateSpaces
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -75,9 +76,11 @@ object DateUtils {
         val fromDate: LocalDate
         val toDate: LocalDate
 
-        if (isDateRange(eventDateString)) {
+        val cleanDateString = eventDateString.removeDuplicateSpaces()
 
-            val list = eventDateString.lowercase().split(PT_DATA_RANGE_DELIMITERS_REGEX.toRegex())
+        if (isDateRange(cleanDateString)) {
+
+            val list = cleanDateString.lowercase().split(PT_DATA_RANGE_DELIMITERS_REGEX.toRegex())
 
             // End date
             toDate = getDateFrom(list[1])
@@ -85,7 +88,7 @@ object DateUtils {
             // Begin date
             fromDate = buildBeginDate(list[0], toDate.month, toDate.year)
         } else {
-            fromDate = getDateFrom(eventDateString)
+            fromDate = getDateFrom(cleanDateString)
             toDate = fromDate
         }
 
