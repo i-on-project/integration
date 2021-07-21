@@ -419,7 +419,7 @@ internal class TimetableDtoFormatCheckerTest {
                         Faculty(
                             ClassDetail(
                                 "E",
-                                "L_H2", // TODO redundant in having the location on ClassDetail IMO
+                                "L_H2",
                                 EventCategory.LECTURE
                             ),
                             listOf(
@@ -473,7 +473,7 @@ internal class TimetableDtoFormatCheckerTest {
                         Faculty(
                             ClassDetail(
                                 "E",
-                                "L_H2", // TODO redundant in having the location on ClassDetail IMO
+                                "L_H2",
                                 EventCategory.LECTURE
                             ),
                             listOf(
