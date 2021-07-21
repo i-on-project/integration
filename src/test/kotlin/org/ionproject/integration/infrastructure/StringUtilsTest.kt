@@ -3,6 +3,7 @@ package org.ionproject.integration.infrastructure
 import org.ionproject.integration.domain.common.Language
 import org.ionproject.integration.infrastructure.text.IgnoredWords
 import org.ionproject.integration.infrastructure.text.generateAcronym
+import org.ionproject.integration.infrastructure.text.removeDuplicateSpaces
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -119,6 +120,54 @@ class StringUtilsTest {
         "ESSLD",
         IgnoredWords.of(Language.PT)
     )
+
+    @Test
+    fun `given a string when having 2 consecutive spaces then replace it`() {
+        val expected = "21 a 22"
+        val actual = "21  a 22".removeDuplicateSpaces()
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `given a string when having more than 2 consecutive spaces then replace it`() {
+        val expected = "miami disco"
+        val actual = "miami     disco".removeDuplicateSpaces()
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `given a string when having multiple consecutive spaces then replace all`() {
+        val expected = "humans are such easy prey"
+        val actual = "humans  are   such    easy     prey".removeDuplicateSpaces()
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `given a string without consecutive spaces then return unchanged`() {
+        val expected = "extreme weather events !"
+        val actual = "extreme weather events !".removeDuplicateSpaces()
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `given a string with consecutive newlines then replace with one newline`() {
+        val expected = "extreme\nevents !"
+        val actual = "extreme\n\nevents !".removeDuplicateSpaces()
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `given a string with consecutive newlines and whitespace then replace with all`() {
+        val expected = "cowboys\nfrom hell !"
+        val actual = "cowboys\n\nfrom   hell  !".removeDuplicateSpaces()
+
+        assertEquals(expected, actual)
+    }
 }
 
 private fun assertAcronymEquals(origin: String, acronym: String, toIgnore: List<String> = emptyList()) =

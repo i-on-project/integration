@@ -23,3 +23,5 @@ fun generateAcronym(text: String, ignoredWords: List<String> = emptyList()): Str
         .map(String::first)
         .joinToString("")
         .uppercase()
+
+fun String.removeDuplicateSpaces(): String = replace("\\s+".toRegex()) { it.value.first().toString() }
