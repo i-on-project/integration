@@ -147,10 +147,7 @@ data class AcademicCalendar(
                     )
                 )
                 // if there are multiple events it's necessary to split per each section
-            } else {
-                // TODO: when there's different dates for different sections
             }
-
             return lectures
         }
 
