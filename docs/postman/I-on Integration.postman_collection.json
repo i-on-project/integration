@@ -1,0 +1,508 @@
+{
+	"info": {
+		"_postman_id": "329e8b5b-7971-46a6-9586-fb4dca9f5e21",
+		"name": "I-on Integration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Timetable jobs",
+			"item": [
+				{
+					"name": "MEIM :: YAML",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"meim\",\r\n    \"format\": \"yaml\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MEIM :: JSON",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"meim\",\r\n    \"format\": \"json\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LEETC :: JSON",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"leetc\",\r\n    \"format\": \"json\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LEETC :: YAML",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"leetc\",\r\n    \"format\": \"YAML\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LEIC :: JSON",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"leic\",\r\n    \"format\": \"json\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LEIC :: YAML",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"leic\",\r\n    \"format\": \"YAML\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LEIM :: JSON",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"leim\",\r\n    \"format\": \"json\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LEIM :: YAML",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"leim\",\r\n    \"format\": \"YAML\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LEIRT :: JSON",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"leirt\",\r\n    \"format\": \"json\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LEIRT :: YAML",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"leirt\",\r\n    \"format\": \"YAML\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MEIC :: JSON",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"meic\",\r\n    \"format\": \"json\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MEIC :: YAML",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"meic\",\r\n    \"format\": \"YAML\",\r\n    \"type\": \"timetable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/integration/jobs",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"integration",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "create calendar job",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"format\": \"yaml\",\r\n    \"type\": \"calendar\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/integration/jobs",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"integration",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create evaluations job",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"programme\": \"meic\",\r\n    \"format\": \"json\",\r\n    \"type\": \"evaluations\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/integration/jobs",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"integration",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get running jobs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/integration/jobs",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"integration",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get job by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"format\": \"yaml\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/integration/jobs/111",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"integration",
+						"jobs",
+						"111"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get job by ID Copy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"format\": \"yaml\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/integration/jobs/111",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"integration",
+						"jobs",
+						"111"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://3a6332e7-ae34-4b21-b424-331bbc430a1a.mock.pstmn.io"
+		}
+	]
+}
