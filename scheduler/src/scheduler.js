@@ -8,9 +8,7 @@ import {buildCalendarRequest, buildTimetableRequest, buildEvaluationRequest} fro
 
 
 try {
-    const [uri, token, format, configFile] = process.argv.slice(2)
-
-    const filePath = configFile
+    const [uri, token, format, filePath] = process.argv.slice(2)
 
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
@@ -20,7 +18,6 @@ try {
     let data = yaml.load(fileContents)
 
     const institutions = getInstitutions(data)
-
 
     const params = {token, format, uri}
 
