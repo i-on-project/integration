@@ -1,0 +1,17 @@
+{
+  "name": "scheduler",
+  "version": "1.0.0",
+  "description": "Uses i-on Integration's web API to create job executions for supported institutions and programmes.",
+  "type": "module",
+  "main": "scheduler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/scheduler.js"
+  },
+  "author": "i-on Integration",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "2.6.1",
+    "js-yaml": "4.1.0"
+  }
+}
