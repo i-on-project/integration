@@ -167,6 +167,11 @@ The Web API currently exposes the following resources:
 ### Authentication
 API requests must submit a Base64 encoded token in the **Bearer** token format. The application expects only one valid token which is configured and passed as the **TOKEN** environment variable.
 
+### Testing with Postman
+We have included a [Postman collection](docs/postman/I-on%20Integration.postman_collection.json) and [environment](docs/postman/Local%20Dev.postman_environment.json) to help test and understand the Web API through practical examples.
+
+The collection export
+
 ## Documentation
 
 [Check wiki for additional information](https://github.com/i-on-project/integration/wiki)
