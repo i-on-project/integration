@@ -436,37 +436,6 @@
 				}
 			},
 			"response": []
-		},
-		{
-			"name": "Get job by ID Copy",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"institution\": \"pt.ipl.isel\",\r\n    \"format\": \"yaml\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{BASE_URL}}/integration/jobs/111",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"integration",
-						"jobs",
-						"111"
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"auth": {
