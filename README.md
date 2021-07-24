@@ -170,7 +170,7 @@ API requests must submit a Base64 encoded token in the **Bearer** token format. 
 ### Testing with Postman
 We have included a [Postman collection](docs/postman/I-on%20Integration.postman_collection.json) and [environment](docs/postman/Local%20Dev.postman_environment.json) to help test and understand the Web API through practical examples.
 
-The collection export
+Please consult the [Postman documentation](https://learning.postman.com/docs/getting-started/importing-and-exporting-data/) for the most up to date information on how to import collections and environments.
 
 ## Documentation
 
